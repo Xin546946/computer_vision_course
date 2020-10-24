@@ -14,8 +14,8 @@ MESSAGE ( STATUS "include path ${OpenCV_INCLUDE_DIRS}" )
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 
-add_executable(opencv_func opencv_kmeans.cpp)
-target_link_libraries(opencv_func ${EIGEN_LIBS} ${OpenCV_LIBS})
+add_executable(test_opencv_kmeans test_opencv_kmeans.cpp)
+target_link_libraries(_test_opencv_kmeans ${EIGEN_LIBS} ${OpenCV_LIBS})
 
-add_executable(self_implement self_implement.cpp)
-target_link_libraries(self_implement ${EIGEN_LIBS} ${OpenCV_LIBS})
+add_executable(test_kmeans test_kmeans.cpp)
+target_link_libraries(test_kmeans ${EIGEN_LIBS} ${OpenCV_LIBS})

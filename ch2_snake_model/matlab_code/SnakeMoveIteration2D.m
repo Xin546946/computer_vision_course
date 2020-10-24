@@ -31,10 +31,10 @@ N=GetContourNormals2D(P);
 Fext2=delta*N;
 
 % Update contour positions
-% ssx = gamma*P(:,1) + Fext1(:,1) + Fext2(:,1);
-% ssy = gamma*P(:,2) + Fext1(:,2) + Fext2(:,2);
-ssx = gamma*P(:,1) + Fext1(:,1);
-ssy = gamma*P(:,2) + Fext1(:,2);
+ssx = gamma*P(:,1) + Fext1(:,1) + Fext2(:,1);
+ssy = gamma*P(:,2) + Fext1(:,2) + Fext2(:,2);
+% ssx = gamma*P(:,1) + Fext1(:,1);
+% ssy = gamma*P(:,2) + Fext1(:,2);
 P(:,1) = B * ssx;
 P(:,2) = B * ssy;
 

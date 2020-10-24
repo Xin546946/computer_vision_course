@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/kit/CLionProjects/Snake_active_contour/test_snake.cpp
+iostream
+-
+vector
+-
+random
+-
+algorithm
+-
+stdio.h
+-
+string
+-
+opencv2/imgproc/imgproc.hpp
+-
+opencv2/opencv.hpp
+-
+opencv2/core/core.hpp
+-
+opencv2/highgui/highgui.hpp
+-
+chrono
+-
+
