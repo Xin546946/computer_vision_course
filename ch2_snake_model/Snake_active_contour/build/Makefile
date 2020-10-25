@@ -111,32 +111,6 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named snake_model
-
-# Build rule for target.
-snake_model: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 snake_model
-.PHONY : snake_model
-
-# fast build rule for target.
-snake_model/fast:
-	$(MAKE) -f CMakeFiles/snake_model.dir/build.make CMakeFiles/snake_model.dir/build
-.PHONY : snake_model/fast
-
-#=============================================================================
-# Target rules for targets named snake
-
-# Build rule for target.
-snake: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 snake
-.PHONY : snake
-
-# fast build rule for target.
-snake/fast:
-	$(MAKE) -f CMakeFiles/snake.dir/build.make CMakeFiles/snake.dir/build
-.PHONY : snake/fast
-
-#=============================================================================
 # Target rules for targets named test_snake
 
 # Build rule for target.
@@ -149,32 +123,18 @@ test_snake/fast:
 	$(MAKE) -f CMakeFiles/test_snake.dir/build.make CMakeFiles/test_snake.dir/build
 .PHONY : test_snake/fast
 
-snake.o: snake.cpp.o
+#=============================================================================
+# Target rules for targets named snake_model
 
-.PHONY : snake.o
+# Build rule for target.
+snake_model: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 snake_model
+.PHONY : snake_model
 
-# target to build an object file
-snake.cpp.o:
-	$(MAKE) -f CMakeFiles/snake.dir/build.make CMakeFiles/snake.dir/snake.cpp.o
-.PHONY : snake.cpp.o
-
-snake.i: snake.cpp.i
-
-.PHONY : snake.i
-
-# target to preprocess a source file
-snake.cpp.i:
-	$(MAKE) -f CMakeFiles/snake.dir/build.make CMakeFiles/snake.dir/snake.cpp.i
-.PHONY : snake.cpp.i
-
-snake.s: snake.cpp.s
-
-.PHONY : snake.s
-
-# target to generate assembly for a file
-snake.cpp.s:
-	$(MAKE) -f CMakeFiles/snake.dir/build.make CMakeFiles/snake.dir/snake.cpp.s
-.PHONY : snake.cpp.s
+# fast build rule for target.
+snake_model/fast:
+	$(MAKE) -f CMakeFiles/snake_model.dir/build.make CMakeFiles/snake_model.dir/build
+.PHONY : snake_model/fast
 
 snake_model.o: snake_model.cpp.o
 
@@ -237,13 +197,9 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... rebuild_cache"
-	@echo "... snake_model"
 	@echo "... edit_cache"
-	@echo "... snake"
 	@echo "... test_snake"
-	@echo "... snake.o"
-	@echo "... snake.i"
-	@echo "... snake.s"
+	@echo "... snake_model"
 	@echo "... snake_model.o"
 	@echo "... snake_model.i"
 	@echo "... snake_model.s"

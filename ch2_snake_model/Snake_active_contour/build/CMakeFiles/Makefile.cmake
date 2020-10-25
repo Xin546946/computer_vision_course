@@ -48,7 +48,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/snake_model.dir/DependInfo.cmake"
-  "CMakeFiles/snake.dir/DependInfo.cmake"
   "CMakeFiles/test_snake.dir/DependInfo.cmake"
+  "CMakeFiles/snake_model.dir/DependInfo.cmake"
   )
