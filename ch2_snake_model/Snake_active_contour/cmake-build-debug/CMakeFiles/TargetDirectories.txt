@@ -1,5 +1,0 @@
-/home/kit/CLionProjects/Snake_active_contour/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/kit/CLionProjects/Snake_active_contour/cmake-build-debug/CMakeFiles/self_implement.dir
-/home/kit/CLionProjects/Snake_active_contour/cmake-build-debug/CMakeFiles/test_snake.dir
-/home/kit/CLionProjects/Snake_active_contour/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/kit/CLionProjects/Snake_active_contour/cmake-build-debug/CMakeFiles/find_contour.dir

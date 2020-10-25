@@ -1,4 +1,0 @@
-/home/kit/CLionProjects/Snake_active_contour/build/CMakeFiles/rebuild_cache.dir
-/home/kit/CLionProjects/Snake_active_contour/build/CMakeFiles/edit_cache.dir
-/home/kit/CLionProjects/Snake_active_contour/build/CMakeFiles/test_snake.dir
-/home/kit/CLionProjects/Snake_active_contour/build/CMakeFiles/snake_model.dir
