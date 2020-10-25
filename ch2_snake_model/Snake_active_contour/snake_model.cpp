@@ -88,7 +88,7 @@ Mat external_force_image(Mat img, const float w_line, const float w_edge,
     return e_extern;
 }
 
-void min_max(Mat& x, Mat& y, vector<Point>& C, double num, Mat u) {
+void min_max(Mat x, Mat y, vector<Point>& C, double num, Mat u) {
     // int size_1, size_2;
     // size_1, size_2 = u.size();
     cout << "The size of u is: " << u.size() << endl;
@@ -276,8 +276,8 @@ vector<Point> get_contour_normal(vector<Point> C) {
     return contour_normal;
 }
 
-void snake_move_iteration(Mat internal_force_matrix, vector<Point>& C, Mat& x,
-                          Mat& y, Mat u, Mat v, double time_step = 1,
+void snake_move_iteration(Mat internal_force_matrix, vector<Point>& C, Mat x,
+                          Mat y, Mat u, Mat v, double time_step = 1,
                           double kappa = 10, double delta = 0.01) {
     // kappa : external image field weight
     // delta: Balloon Force weight
@@ -287,14 +287,14 @@ void snake_move_iteration(Mat internal_force_matrix, vector<Point>& C, Mat& x,
     Mat fyq(x.size(), u.type());
 
     for (int i = 0; i < x.cols; i++) {
-        fxq.at<float>(i, 0) = u.at<float>(x.at<int>(i, 0), y.at<int>(i, 0));
-        fyq.at<float>(i, 0) = v.at<float>(x.at<int>(i, 0), y.at<int>(i, 0));
+        fxq.at<float>(0, i) = u.at<float>(x.at<float>(0, i), y.at<float>(0, i));
+        fyq.at<float>(0, i) = v.at<float>(x.at<float>(0, i), y.at<float>(0, i));
     }
 
-    cout << fxq << endl;
+    // cout << fxq << endl;
 
-    x = internal_force_matrix * (time_step * x + fxq * kappa);
-    y = internal_force_matrix * (time_step * x + fyq * kappa);
+    x = (internal_force_matrix * (time_step * x + fxq * kappa).t()).t();
+    y = (internal_force_matrix * (time_step * x + fyq * kappa).t()).t();
 
     min_max(x, y, C, 1, u);
 }

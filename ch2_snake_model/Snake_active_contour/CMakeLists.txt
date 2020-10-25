@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10.2)
 project(ACTIVE_CONTOUR)
 
 set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_FLAGS -g)
 
 include_directories( "/usr/include/eigen3" )
 
