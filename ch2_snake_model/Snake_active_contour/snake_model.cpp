@@ -1,5 +1,5 @@
 
-#include "include/debug_print.cpp"
+#include "include/debug_print.h"
 #include <algorithm>
 #include <chrono>
 #include <iostream>
