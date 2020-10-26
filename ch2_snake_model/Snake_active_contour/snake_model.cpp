@@ -1,4 +1,5 @@
 
+#include "include/debug_print.cpp"
 #include <algorithm>
 #include <chrono>
 #include <iostream>
@@ -320,10 +321,8 @@ int main(int argc, char* argv[]) {
     contour_initialize_1(150, 170, 120, contour_img, snake_coords);
     int num_points = snake_coords[0].size();
     vector<Point> C = snake_coords[0];
-    /*cout << "************************" << endl;
-    for(int i{0};i<C.size();i++)
-        cout << C.at(i) << " ";
-    cout << endl;*/
+    // todo learn to show(), show_vec(), show_string()
+    show_vec(C);
     Mat e_ext;
     e_ext = external_force_image(input_img, 0.04, 2, 0.01, 10);
     // namedWindow("e_ext", 0);
