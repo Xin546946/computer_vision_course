@@ -122,13 +122,24 @@ Mat circshift(Mat input, int down_shift) {
 }
 
 void contour_initialize_1(int center_x, int center_y, int radius,
-                          Mat& contour_img,
-                          vector<vector<Point>>& snake_coords) {
+                          Mat contour_img, vector<Point>& snake_coords) {
     Point center(center_x, center_y);
     circle(contour_img, center, radius, 255, 1, 8);
-
-    findContours(contour_img, snake_coords, CV_RETR_EXTERNAL,
-                 CV_CHAIN_APPROX_NONE);
+    // cout << contour_img << endl;
+    // vector<Point> snake_coords;
+    Point p;
+    // Mat test = Mat::zeros(contour_img.size(), 0);
+    for (int r = 0; r < contour_img.rows; r++) {
+        for (int c = 0; c < contour_img.cols; c++) {
+            // cout << contour_img.at<float>(r,c) << endl;
+            if (contour_img.at<int>(r, c) == 255) {
+                p.x = r;
+                p.y = c;
+                snake_coords.push_back(p);
+                // test.at<int>(r, c) = 255;
+            }
+        }
+    }
 }
 
 void dispImage(Mat& img, String windowName, int delay) {
@@ -192,10 +203,10 @@ void grad_vector_field(Mat& u, Mat& v, float mu, int ITER) {
     dt = 1;
 
     // Solve the differential equation iteratively//
-    // Diffusion function being implemented is from the paper Snakes, Shapes and
-    // Gradient Vector FLow by Chenyang Xu and Jerry L Prince
-    // u = u + mu * del2(u) -(u - fx) * (fx2 + fy2);
-    // v = v + mu * del2(v) - (v - fy) * (fx2 + fy2);
+    // Diffusion function being implemented is from the paper Snakes, Shapes
+    // and Gradient Vector FLow by Chenyang Xu and Jerry L Prince u = u + mu
+    // * del2(u) -(u - fx) * (fx2 + fy2); v = v + mu * del2(v) - (v - fy) *
+    // (fx2 + fy2);
     Mat img = imread(
         "/home/kit/CLionProjects/Snake_active_contour/build/testimage.png", 0);
     double sigma = 20;
@@ -282,6 +293,7 @@ void snake_move_iteration(Mat internal_force_matrix, vector<Point>& C, Mat x,
                           double kappa = 10, double delta = 0.01) {
     // kappa : external image field weight
     // delta: Balloon Force weight
+
     min_max(x, y, C, 1, u);
     // TODO get u[x,y] for all x and y, v[x,y] for all x and y failed
     Mat fxq(x.size(), u.type());
@@ -306,23 +318,26 @@ int main(int argc, char* argv[]) {
     // calculate the gvf
     float mu = 0.2;
     int ITER = 50;
-    // hyperparameter
-    double alpha = 0.01;
-    double beta = 0.01;
-    double gamma = 1;
 
     // read the image
-    Mat input_img = imread(argv[1], 0);
+    Mat input_img = imread(argv[1], CV_8UC1);
+    int img_row = input_img.rows;
+    int img_col = input_img.cols;
+    Point center(floor(img_row / 2), floor(img_col / 2));
 
-    // generate the contour, we initialize it as a circle using opencv function
+    // generate the contour, we initialize it as a circle using opencv
+    // function
 
-    vector<vector<Point>> snake_coords;
-    Mat contour_img = Mat::zeros(input_img.rows, input_img.cols, CV_8U);
-    contour_initialize_1(150, 170, 120, contour_img, snake_coords);
-    int num_points = snake_coords[0].size();
-    vector<Point> C = snake_coords[0];
+    vector<Point> snake_coords;
+
+    Mat contour_img = Mat::zeros(input_img.rows, input_img.cols, CV_8UC1);
+    contour_initialize_1(center.x, center.y, 100, contour_img, snake_coords);
+
+    int snake_len = snake_coords.size();
+    cout << input_img.size() << endl;
+
     // todo learn to show(), show_vec(), show_string()
-    show_vec(C);
+    // show_vec(C);
     Mat e_ext;
     e_ext = external_force_image(input_img, 0.04, 2, 0.01, 10);
     // namedWindow("e_ext", 0);
@@ -332,7 +347,8 @@ int main(int argc, char* argv[]) {
     Mat image, fx, fy, fx_eq;
 
     GaussianBlur(e_ext, image, Size(3, 3), sigma2, sigma2);
-    Sobel(image, fx, CV_32F, 1, 0, 3);  // Compute gradient of blurred edge map
+    Sobel(image, fx, CV_32F, 1, 0,
+          3);  // Compute gradient of blurred edge map
     Sobel(image, fy, CV_32F, 0, 1, 3);
     /*namedWindow("sobel x: y direction will be drawn", 0);
     imshow("sobel x: y direction will be drawn", fx);
@@ -380,6 +396,7 @@ int main(int argc, char* argv[]) {
     input_img.convertTo(tmp, 0);
     cvtColor(tmp, dem_img, CV_GRAY2RGB);
     dem_img.copyTo(snake_move);
+
     Scalar color(0, 255, 0);
     drawOptFlowMap(uy, ux, dem_img, 8, 8, color);
     namedWindow("Grad Field", 0);
@@ -390,13 +407,14 @@ int main(int argc, char* argv[]) {
     Mat internal_force_matrix;
 
     snake_internal_force_matrix2d(0.01, 0.01, 1, internal_force_matrix,
-                                  num_points);
+                                  snake_len);
     // namedWindow("Internal force matrix", 0);
     // imshow("Internal force matrix", internal_force_matrix);
     // waitKey(0);
 
     // move the snake iteratively
-    size_t snake_len = C.size();
+    //TODO using x,y plot no desired circle
+    //TODO snake_move_iteration function should be rewriten
     Mat x(1, snake_len, CV_32F);
     Mat y(1, snake_len, CV_32F);
     cout << x.size() << endl;
@@ -404,11 +422,17 @@ int main(int argc, char* argv[]) {
     x_ptr = x.ptr<float>(0);
     y_ptr = y.ptr<float>(0);
     for (size_t i = 0; i < snake_len; i++) {
-        x_ptr[i] = C[i].x;
-        y_ptr[i] = C[i].y;
+        x_ptr[i] = snake_coords[i].x;
+        y_ptr[i] = snake_coords[i].y;
     }
-
-    cout << C.size() << endl;
+    Mat test = Mat::zeros(internal_force_matrix.size(),0);
+    for(int i=0;i<x.cols;i++)
+    {
+        test.at<float>(floor(x.at<float>(0,i)),floor(y.at<float>(0,i))) = 255;
+    }
+    namedWindow("window",0);
+    imshow("window",test);
+    waitKey(0);
     int max_iterations = 100;
     Mat dbg_img;
     cvtColor(tmp, dbg_img, CV_GRAY2RGB);
@@ -421,16 +445,21 @@ int main(int argc, char* argv[]) {
     for (int i{0}; i < max_iterations; i++) {
         snake_move_orig.copyTo(snake_move);
 
-        snake_move_iteration(internal_force_matrix, C, x, y, uy, ux, 1, 10,
-                             0.01);
-
-        cout << y.size() << endl;
-        cout << x.size() << endl;
+        snake_move_iteration(internal_force_matrix, snake_coords, x, y, uy, ux,
+                             1, 10, 0.01);
+        Mat test = Mat::zeros(snake_move.size(), 0);
         for (size_t j = 0; j < x.cols; j++) {
-            snake_move.at<float>(floor(x.at<float>(0, j)),
-                                 floor(y.at<float>(0, j))) = 255;
+            snake_move_orig.at<Vec3b>(snake_coords[j].x,snake_coords[j].y) =
+                255;
         }
-        dispImage(snake_move, "Snake on Image", 50);
+        dispImage(snake_move_orig, "Snake on Image", 50);
+        for (size_t j = 0; j < x.cols; j++) {
+            test.at<Vec3b>(floor(x.at<float>(0, j)), floor(y.at<float>(0, j))) =
+                255;
+        }
+        dispImage(test, "Snake on Image", 50);
+
+        waitKey(0);
     }
 
     for (size_t j = 0; j < x.cols; j++) {
