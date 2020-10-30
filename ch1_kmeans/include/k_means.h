@@ -27,4 +27,4 @@ class Kmeans {
 
     std::vector<Sample> samples_;
     std::vector<Center> centers_;
-}
+};
