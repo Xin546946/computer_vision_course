@@ -95,7 +95,12 @@ std::vector<Center> Kmeans::get_result_centers() const {
 }
 /**
  * @brief Execute k means algorithm
- *                1. initialize k centers randomly
+ *                1. in
+ *
+
+
+
+ s randomly
  *                2. assign each feature to the corresponding centers
  *                3. calculate new centers
  *                4. check terminate condition, if it is not fulfilled, return
