@@ -89,7 +89,7 @@ std::vector<Center> Kmeans::get_result_centers() const {
  *                2. assign each feature to the corresponding centers
  *                3. calculate new centers
  *                4. check terminate condition, if it is not fulfilled, return
- * to step 2
+ *                   to step 2
  * @param max_iteration
  * @param smallest_convergence_radius
  */
@@ -108,9 +108,15 @@ void Kmeans::run(int max_iteration, float smallest_convergence_radius) {
  * repeated elements
  *
  */
-void Kmeans::initial_centers() {
-    // TODO Write a function to initialize the centers
-    // helper funtion:
+void Kmeans::initialize_centers() {
+    std::set<int> random_idx =
+        get_random_index(samples_.size() - 1, centers_.size());
+    int i_center = 0;
+
+    for (auto index : random_idx) {
+        centers_[i_center].position_ = samples_[index].feature_;
+        i_center++;
+    }
 }
 /**
  * @brief check terminate conditions, namely maximal iteration is reached or it
