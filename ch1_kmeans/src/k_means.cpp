@@ -6,32 +6,11 @@
 static std::random_device rd;
 static std::mt19937 rng(rd());
 
-/**
- * @brief Get n random numbers from 1 to parameter max_idx
- *
- * @param max_idx
- * @param n
- * @return std::set<int> A set of random numbers, which has n elements
- */
 std::set<int> get_random_index(int max_idx, int n);
 
-/**
- * @brief Calculate the L2 norm of current centers and last centers
- *
- * @param current_centers current assigned centers with 3 channels
- * @param last_centers  last assigned centers with 3 channels
- * @return float
- */
 float check_convergence(const std::vector<Center>& current_centers,
                         const std::vector<Center>& last_centers);
 
-/**
- * @brief calculate L2 norm of two arrays
- *
- * @param arr1
- * @param arr2
- * @return float
- */
 inline float calc_square_dist(const std::array<float, 3>& arr1,
                               const std::array<float, 3>& arr2);
 
@@ -166,7 +145,13 @@ bool Kmeans::is_terminate(int current_iter, int max_iteration,
         convergence_rate < smallest_convergence_rate)
         return true;
 }
-
+/**
+ * @brief Get n random numbers from 1 to parameter max_idx
+ *
+ * @param max_idx
+ * @param n
+ * @return std::set<int> A set of random numbers, which has n elements
+ */
 std::set<int> get_random_index(int max_idx, int n) {
     std::uniform_int_distribution<int> dist(1, max_idx + 1);
 
@@ -176,7 +161,13 @@ std::set<int> get_random_index(int max_idx, int n) {
     }
     return random_idx;
 }
-
+/**
+ * @brief Calculate the L2 norm of current centers and last centers
+ *
+ * @param current_centers current assigned centers with 3 channels
+ * @param last_centers  last assigned centers with 3 channels
+ * @return float
+ */
 float check_convergence(const std::vector<Center>& current_centers,
                         const std::vector<Center>& last_centers) {
     float convergence_rate = 0;
@@ -188,6 +179,13 @@ float check_convergence(const std::vector<Center>& current_centers,
     return convergence_rate;
 }
 
+/**
+ * @brief calculate L2 norm of two arrays
+ *
+ * @param arr1
+ * @param arr2
+ * @return float
+ */
 inline float calc_square_distance(const std::array<float, 3>& arr1,
                                   const std::array<float, 3>& arr2) {
     return std::pow((arr1[0] - arr2[0]), 2) + std::pow((arr1[1] - arr2[1]), 2) +
