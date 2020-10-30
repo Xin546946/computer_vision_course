@@ -3,7 +3,8 @@
 
 struct Sample {
     Sample(const std::array<float, 3>& feature, const int row, const int col,
-           const int label_ = -1);
+           const int label = -1)
+           : feature_(feature), row_(row), col_(col), label_(label){};
 
     std::array<float, 3> feature_;
     int label_;
@@ -17,11 +18,13 @@ struct Center {
 
 class Kmeans {
    public:
-    Kmeans(cv::Mat samples, const int k);
+    Kmeans(cv::Mat img, const int k);
     void run();
 
    private:
-    void initial_center();
+    void initial_center(){
+        
+    }
     void update_center();
     void update_label();
 
