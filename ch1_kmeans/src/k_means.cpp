@@ -45,19 +45,20 @@ Kmeans::Kmeans(cv::Mat img, const int k) {
 }
 
 /**
- * @brief move the centers according to new lables
+ * @brief initialize k centers randomly, using set to ensure there are no
+ * repeated elements
  *
  */
-void Kmeans::update_centers() {
-    // backup centers of last iteration
-    last_centers_ = centers_;
+// TODO Try to implement a better initialization function
+void Kmeans::initialize_centers() {
+    std::set<int> random_idx =
+        get_random_index(samples_.size() - 1, centers_.size());
+    int i_center = 0;
 
-    std::vector<std::array<float, 3>> sum_features_per_center(
-        centers_.size(), {0.0f, 0.0f, 0.0f});
-    std::vector<int> num_features_per_center(centers_.size(), 0);
-
-    // calculate the mean value of feature vectors in each cluster
-    // TODO complete update centers functions.
+    for (auto index : random_idx) {
+        centers_[i_center].feature_ = samples_[index].feature_;
+        i_center++;
+    }
 }
 
 /**
@@ -66,15 +67,38 @@ void Kmeans::update_centers() {
  */
 void Kmeans::update_labels() {
     for (Sample& sample : samples_) {
-        float min_square_dist = std::numeric_limits<float>::max();
-        for (int i_label = 0; i_label < centers_.size(); i_label++) {
-            float square_dist = calc_square_distance(
-                sample.feature_, centers_[i_label].position_);
-            if (square_dist < min_square_dist) {
-                // TODO update labels of each feature 2 lines
-            }
-        }
+        // TODO update labels of each feature
     }
+}
+
+/**
+ * @brief move the centers according to new lables
+ *
+ */
+void Kmeans::update_centers() {
+    // backup centers of last iteration
+    last_centers_ = centers_;
+    // calculate the mean value of feature vectors in each cluster
+    // TODO complete update centers functions.
+}
+
+/**
+ * @brief check terminate conditions, namely maximal iteration is reached or it
+ * convergents
+ *
+ * @param current_iter
+ * @param max_iteration
+ * @param smallest_convergence_radius
+ * @return true
+ * @return false
+ */
+bool Kmeans::is_terminate(int current_iter, int max_iteration,
+                          float smallest_convergence_radius) const {
+    // TODO Write a terminate function.
+    // helper funtion: check_convergence(const std::vector<Center>&
+    // current_centers, const std::vector<Center>& last_centers)
+
+    return true;
 }
 
 std::vector<Sample> Kmeans::get_result_samples() const {
@@ -103,39 +127,7 @@ void Kmeans::run(int max_iteration, float smallest_convergence_radius) {
         update_centers();
     }
 }
-/**
- * @brief initialize k centers randomly, using set to ensure there are no
- * repeated elements
- *
- */
-void Kmeans::initialize_centers() {
-    std::set<int> random_idx =
-        get_random_index(samples_.size() - 1, centers_.size());
-    int i_center = 0;
 
-    for (auto index : random_idx) {
-        centers_[i_center].position_ = samples_[index].feature_;
-        i_center++;
-    }
-}
-/**
- * @brief check terminate conditions, namely maximal iteration is reached or it
- * convergents
- *
- * @param current_iter
- * @param max_iteration
- * @param smallest_convergence_rate
- * @return true
- * @return false
- */
-bool Kmeans::is_terminate(int current_iter, int max_iteration,
-                          float smallest_convergence_rate) const {
-    // TODO Write a terminate function.
-    // helper funtion: check_convergence(const std::vector<Center>&
-    // current_centers, const std::vector<Center>& last_centers)
-
-    return true;
-}
 /**
  * @brief Get n random numbers from 1 to parameter max_idx
  *
@@ -161,13 +153,13 @@ std::set<int> get_random_index(int max_idx, int n) {
  */
 float check_convergence(const std::vector<Center>& current_centers,
                         const std::vector<Center>& last_centers) {
-    float convergence_rate = 0;
+    float convergence_radius = 0;
     for (int i_center = 0; i_center < current_centers.size(); i_center++) {
-        convergence_rate +=
-            calc_square_distance(current_centers[i_center].position_,
-                                 last_centers[i_center].position_);
+        convergence_radius +=
+            calc_square_distance(current_centers[i_center].feature_,
+                                 last_centers[i_center].feature_);
     }
-    return convergence_rate;
+    return convergence_radius;
 }
 
 /**
