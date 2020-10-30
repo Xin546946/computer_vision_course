@@ -1,5 +1,5 @@
+#include <array>
 #include <opencv2/core.hpp>
-#include <vector>
 
 struct Sample {
     Sample(const std::array<float, 3>& feature, const int row, const int col,
