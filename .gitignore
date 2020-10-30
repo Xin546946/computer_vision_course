@@ -8,8 +8,7 @@ tmp
 .idea
 *.json
 *.xml
-
-
+**/exercise_intro
 
 
 
