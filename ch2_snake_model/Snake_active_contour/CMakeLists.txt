@@ -11,7 +11,9 @@ MESSAGE ( STATUS "OpenCV library status:" )
 MESSAGE ( STATUS "version ${OpenCV_VERSION}" )
 MESSAGE ( STATUS "libraries ${OpenCV_LIBS}" )
 MESSAGE ( STATUS "include path ${OpenCV_INCLUDE_DIRS}" )
+
 include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${CMAKE_SOURCE_DIR}/include)
 
 
 add_executable(test_snake test_snake.cpp)
