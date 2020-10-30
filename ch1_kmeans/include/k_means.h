@@ -19,15 +19,19 @@ struct Center {
 class Kmeans {
    public:
     Kmeans(cv::Mat img, const int k);
-    void run();
+    void run(int max_iteration, 
+            float smallest_convergence_rate);
 
    private:
-    void initial_center(){
-        
-    }
-    void update_center();
-    void update_label();
+    void initial_centers();
+    void update_centers();
+    void update_labels();
+
+    bool is_terminate(int current_iter,
+                    int max_iteration, 
+                    float smallest_convergence_rate) const;
 
     std::vector<Sample> samples_;
     std::vector<Center> centers_;
+    std::vector<Center> last_centers_;
 };
