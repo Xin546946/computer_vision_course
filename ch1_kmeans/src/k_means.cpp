@@ -94,7 +94,7 @@ std::vector<Center> Kmeans::get_result_centers() const {
  * @param smallest_convergence_radius
  */
 void Kmeans::run(int max_iteration, float smallest_convergence_radius) {
-    initial_centers();
+    initialize_centers();
     int current_iter = 0;
     while (!is_terminate(current_iter, max_iteration,
                          smallest_convergence_radius)) {
@@ -108,9 +108,21 @@ void Kmeans::run(int max_iteration, float smallest_convergence_radius) {
  * repeated elements
  *
  */
+<<<<<<< HEAD
 void Kmeans::initial_centers() {
     // TODO Write a function to initialize the centers
     // helper funtion:
+=======
+void Kmeans::initialize_centers() {
+    std::set<int> random_idx =
+        get_random_index(samples_.size() - 1, centers_.size());
+    int i_center = 0;
+
+    for (auto index : random_idx) {
+        centers_[i_center].position_ = samples_[index].feature_;
+        i_center++;
+    }
+>>>>>>> 9a4edf81b4aa43e1a444568b85bbe0b27d09c502
 }
 /**
  * @brief check terminate conditions, namely maximal iteration is reached or it
