@@ -4,7 +4,7 @@
 #include <set>
 
 /**
- * @brief: Each sample is the data that to be clustered
+ * @brief: Each sample is the data that to be clustered.
  *
  */
 struct Sample {

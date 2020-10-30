@@ -89,7 +89,7 @@ std::vector<Center> Kmeans::get_result_centers() const {
  *                2. assign each feature to the corresponding centers
  *                3. calculate new centers
  *                4. check terminate condition, if it is not fulfilled, return
- * to step 2
+ *                   to step 2
  * @param max_iteration
  * @param smallest_convergence_radius
  */
