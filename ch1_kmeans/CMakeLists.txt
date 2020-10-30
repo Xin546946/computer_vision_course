@@ -19,3 +19,6 @@ target_link_libraries(test_opencv_kmeans ${EIGEN_LIBS} ${OpenCV_LIBS})
 
 add_executable(test_kmeans test_kmeans.cpp)
 target_link_libraries(test_kmeans ${EIGEN_LIBS} ${OpenCV_LIBS})
+
+add_executable(test_k_means test_k_means.cpp)
+target_link_libraries(test_k_means test_k_means.cpp)
