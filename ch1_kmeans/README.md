@@ -15,7 +15,7 @@
   * 所有的需要完成的模块都用TODO 进行了标记, 代码中有更详细的备注.
 
     1. ~~~cpp
-       void Kmeans::initial_centers();	
+       void Kmeans::initialize_centers();	
        ~~~
 
        初始化每个簇的中心点, 基本实现方法已经给出, 如果能实现更好的初始化方法可以获得加分.  请分析不同方法的收敛情况和聚类效果.
