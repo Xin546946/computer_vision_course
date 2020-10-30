@@ -21,16 +21,16 @@
        初始化每个簇的中心点, 基本实现方法已经给出, 如果能实现更好的初始化方法可以获得加分.  请分析不同方法的收敛情况和聚类效果.
 
     2. ~~~cpp
-       void Kmeans::update_centers();
-       ~~~
-
-       根据每次迭代后聚类的结果, 重新计算新的中心位置.
-
-    3. ~~~cpp
        void Kmeans::update_labels();
        ~~~
 
        根据每次迭代后新的中心位置, 重新为每个样本分配新的中心.
+
+    3. ~~~cpp
+       void Kmeans::update_centers();
+       ~~~
+
+       根据每次迭代后聚类的结果, 重新计算新的中心位置.
 
     4. ~~~cpp
        bool Kmeans::is_terminate(int current_iter, int max_iteration, float smallest_convergence_rate);
