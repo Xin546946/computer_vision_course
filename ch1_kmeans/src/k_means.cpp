@@ -66,3 +66,7 @@ void Kmeans::update_centers() {
         }
     }
 }
+
+std::vector<Sample> Kmeans::get_result() const {
+    return samples_;
+}

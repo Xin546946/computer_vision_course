@@ -20,6 +20,7 @@ class Kmeans {
    public:
     Kmeans(cv::Mat img, const int k);
     void run();
+    std::vector<Sample> get_result() const;
 
    private:
     void initial_centers();
