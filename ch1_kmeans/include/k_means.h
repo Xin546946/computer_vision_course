@@ -35,7 +35,7 @@ class Kmeans {
     void run(int max_iteration, float smallest_convergence_rate);
 
    private:
-    void initial_centers();
+    void initialize_centers();
     void update_centers();
     void update_labels();
 
