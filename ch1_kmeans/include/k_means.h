@@ -2,11 +2,18 @@
 #include <vector>
 
 struct Sample {
-    std::vector<int> feature_;
+    Sample(const std::array<float, 3>& feature, const int row, const int col,
+           const int label_ = -1);
+
+    std::array<float, 3> feature_;
     int label_;
     int row_;
     int col_;
-}
+};
+
+struct Center {
+    std::array<float, 3> position_;
+};
 
 class Kmeans {
    public:
@@ -18,6 +25,6 @@ class Kmeans {
     void update_center();
     void update_label();
 
-    cv::Mat samples_;
-    std::vector<Sample> centers_;
+    std::vector<Sample> samples_;
+    std::vector<Center> centers_;
 }
