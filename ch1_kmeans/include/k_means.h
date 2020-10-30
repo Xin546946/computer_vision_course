@@ -38,9 +38,8 @@ class Kmeans {
     void initial_centers();
     void update_centers();
     void update_labels();
-
-    bool is_terminate(int current_iter, int max_iteration,
-                      float smallest_convergence_rate) const;
+    void bool is_terminate(int current_iter, int max_iteration,
+                           float smallest_convergence_rate) const;
 
     std::vector<Sample> samples_;       // all the data to be clustered
     std::vector<Center> centers_;       // center of each cluster

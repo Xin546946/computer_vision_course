@@ -6,6 +6,12 @@
 static std::random_device rd;
 static std::mt19937 rng(rd());
 
+/**
+ * @brief get_random_index, check_convergence, calc_square_distance are helper
+ * functions, you can use it to finish your homework:)
+ *
+ */
+
 std::set<int> get_random_index(int max_idx, int n);
 
 float check_convergence(const std::vector<Center>& current_centers,
@@ -51,22 +57,7 @@ void Kmeans::update_centers() {
     std::vector<int> num_features_per_center(centers_.size(), 0);
 
     // calculate the mean value of feature vectors in each cluster
-
-    for (const Sample& sample : samples_) {
-        for (int channel = 0; channel < 3; channel++) {
-            sum_features_per_center[sample.label_][channel] +=
-                sample.feature_[channel];
-        }
-        num_features_per_center[sample.label_]++;
-    }
-
-    for (int i_center = 0; i_center < centers_.size(); i_center++) {
-        for (int channel = 0; channel < 3; channel++) {
-            centers_[i_center].position_[channel] =
-                sum_features_per_center[i_center][channel] /
-                num_features_per_center[i_center];
-        }
-    }
+    // TODO complete update centers functions.
 }
 
 /**
@@ -80,8 +71,7 @@ void Kmeans::update_labels() {
             float square_dist = calc_square_distance(
                 sample.feature_, centers_[i_label].position_);
             if (square_dist < min_square_dist) {
-                min_square_dist = square_dist;
-                sample.label_ = i_label;
+                // TODO update labels of each feature 2 lines
             }
         }
     }
@@ -119,14 +109,8 @@ void Kmeans::run(int max_iteration, float smallest_convergence_radius) {
  *
  */
 void Kmeans::initial_centers() {
-    std::set<int> random_idx =
-        get_random_index(samples_.size() - 1, centers_.size());
-    int i_center = 0;
-
-    for (auto index : random_idx) {
-        centers_[i_center].position_ = samples_[index].feature_;
-        i_center++;
-    }
+    // TODO Write a function to initialize the centers
+    // helper funtion:
 }
 /**
  * @brief check terminate conditions, namely maximal iteration is reached or it
@@ -140,10 +124,11 @@ void Kmeans::initial_centers() {
  */
 bool Kmeans::is_terminate(int current_iter, int max_iteration,
                           float smallest_convergence_rate) const {
-    float convergence_rate = check_convergence(last_centers_, centers_);
-    if (current_iter == max_iteration ||
-        convergence_rate < smallest_convergence_rate)
-        return true;
+    // TODO Write a terminate function.
+    // helper funtion: check_convergence(const std::vector<Center>&
+    // current_centers, const std::vector<Center>& last_centers)
+
+    return true;
 }
 /**
  * @brief Get n random numbers from 1 to parameter max_idx
