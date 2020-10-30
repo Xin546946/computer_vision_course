@@ -11,8 +11,8 @@ std::set<int> get_random_index(int max_idx, int n);
 float check_convergence(const std::vector<Center>& current_centers,
                         const std::vector<Center>& last_centers);
 
-inline float calc_square_dist(const std::array<float, 3>& arr1,
-                              const std::array<float, 3>& arr2);
+inline float calc_square_distance(const std::array<float, 3>& arr1,
+                                  const std::array<float, 3>& arr2);
 
 /**
  * @brief Construct a new Kmeans object
@@ -77,8 +77,8 @@ void Kmeans::update_labels() {
     for (Sample& sample : samples_) {
         float min_square_dist = std::numeric_limits<float>::max();
         for (int i_label = 0; i_label < centers_.size(); i_label++) {
-            float square_dist =
-                calc_square_dist(sample.feature_, centers_[i_label].position_);
+            float square_dist = calc_square_distance(
+                sample.feature_, centers_[i_label].position_);
             if (square_dist < min_square_dist) {
                 min_square_dist = square_dist;
                 sample.label_ = i_label;

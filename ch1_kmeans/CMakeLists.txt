@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.10.2)
 project(kmeans_clustering)
 
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "-g")
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS "-o2")
 
-find_package(OpenCV 3.2.0 REQUIRED)
+find_package(OpenCV REQUIRED)
 
 MESSAGE ( STATUS "OpenCV library status:" )
 MESSAGE ( STATUS "version ${OpenCV_VERSION}" )
@@ -16,11 +16,6 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 
 add_library(k_means ${CMAKE_SOURCE_DIR}/src/k_means.cpp)
 
-add_executable(test_opencv_kmeans test_opencv_kmeans.cpp)
-target_link_libraries(test_opencv_kmeans ${OpenCV_LIBS})
-
-add_executable(test_kmeans test_kmeans.cpp)
-target_link_libraries(test_kmeans ${OpenCV_LIBS})
 
 add_executable(test_k_means ${CMAKE_SOURCE_DIR}/src/test_k_means.cpp)
 target_link_libraries(test_k_means ${OpenCV_LIBS} k_means)
