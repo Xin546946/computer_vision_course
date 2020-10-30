@@ -12,6 +12,7 @@ MESSAGE ( STATUS "libraries ${OpenCV_LIBS}" )
 MESSAGE ( STATUS "include path ${OpenCV_INCLUDE_DIRS}" )
 
 include_directories(${OpenCV_INCLUDE_DIRS})
+include_directories(${CMAKE_SOURCE_DIR}/include)
 
 add_library(k_means ${CMAKE_SOURCE_DIR}/src/k_means.cpp)
 

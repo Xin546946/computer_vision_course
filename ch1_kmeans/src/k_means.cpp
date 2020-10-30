@@ -1,19 +1,18 @@
 #include "k_means.h"
 #include <algorithm>
-#include <set>
 #include <vector>
 
-std::set<int> get_random_index(int max_idx, int n);
+static std::random_device rd;
+static std::mt19937 rng(rd());
 
+std::set<int> get_random_index(int max_idx, int n);
 float check_convergence(std::vector<Center> current_centers,
                         std::vector<Center> last_centers);
 
 float calc_square_dist(const std::array<float, 3>& arr1,
-                       const std::array<float, 3>& arr2) {
-    return arr1[0] * arr2[0] + arr1[1] * arr2[1] + arr1[2] * arr2[2];
-}
+                       const std::array<float, 3>& arr2);
 
-Kmeans::Kmeans(cv::Mat img, const int k) : rng(rd()) {
+Kmeans::Kmeans(cv::Mat img, const int k) {
     centers_.resize(k);
     last_centers_.resize(k);
     samples_.reserve(img.rows * img.cols);
@@ -51,15 +50,32 @@ void Kmeans::update_centers() {
     }
 }
 
-std::vector<Sample> Kmeans::get_result() const {
-    return samples_;
+void Kmeans::update_labels() {
+    for (Sample& sample : samples_) {
+        float min_square_dist = std::numeric_limits<float>::max();
+        for (int i_label = 0; i_label < 3; i_label++) {
+            float square_dist =
+                calc_square_dist(sample.feature_, centers_[i_label].position_);
+            if (square_dist < min_square_dist) {
+                min_square_dist = square_dist;
+                sample.label_ = i_label;
+            }
+        }
+    }
 }
 
-void Kmeans::run(int max_iteration, float smallest_convergence_rate) {
+std::vector<Sample> Kmeans::get_result_samples() const {
+    return samples_;
+}
+std::vector<Center> Kmeans::get_result_centers() const {
+    return centers_;
+}
+
+void Kmeans::run(int max_iteration, float smallest_convergence_radius) {
     initial_centers();
     int current_iter = 0;
-    while (
-        is_terminate(current_iter, max_iteration, smallest_convergence_rate)) {
+    while (is_terminate(current_iter, max_iteration,
+                        smallest_convergence_radius)) {
         current_iter++;
         update_labels();
         update_centers();
@@ -85,7 +101,7 @@ bool Kmeans::is_terminate(int current_iter, int max_iteration,
         return true;
 }
 
-std::set<int> Kmeans::get_random_index(int max_idx, int n) const {
+std::set<int> get_random_index(int max_idx, int n) {
     std::uniform_int_distribution<int> dist(1, max_idx + 1);
 
     std::set<int> random_idx;
@@ -104,4 +120,9 @@ float check_convergence(std::vector<Center> current_centers,
                              last_centers[i_center].position_);
     }
     return convergence_rate;
+}
+
+float calc_square_dist(const std::array<float, 3>& arr1,
+                       const std::array<float, 3>& arr2) {
+    return arr1[0] * arr2[0] + arr1[1] * arr2[1] + arr1[2] * arr2[2];
 }
