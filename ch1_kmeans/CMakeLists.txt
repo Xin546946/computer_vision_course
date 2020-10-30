@@ -13,12 +13,13 @@ MESSAGE ( STATUS "include path ${OpenCV_INCLUDE_DIRS}" )
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 
+add_library(k_means ${CMAKE_SOURCE_DIR}/src/k_means.cpp)
 
 add_executable(test_opencv_kmeans test_opencv_kmeans.cpp)
-target_link_libraries(test_opencv_kmeans ${EIGEN_LIBS} ${OpenCV_LIBS})
+target_link_libraries(test_opencv_kmeans ${OpenCV_LIBS})
 
 add_executable(test_kmeans test_kmeans.cpp)
-target_link_libraries(test_kmeans ${EIGEN_LIBS} ${OpenCV_LIBS})
+target_link_libraries(test_kmeans ${OpenCV_LIBS})
 
-add_executable(test_k_means test_k_means.cpp)
-target_link_libraries(test_k_means test_k_means.cpp)
+add_executable(test_k_means ${CMAKE_SOURCE_DIR}/src/test_k_means.cpp)
+target_link_libraries(test_k_means ${OpenCV_LIBS} k_means)
