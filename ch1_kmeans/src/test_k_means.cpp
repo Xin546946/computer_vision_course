@@ -7,14 +7,15 @@ int main(int argc, char** argv) {
 
     if (img.empty()) {
         std::cerr << "useage: ./test_k_means input_image_path k iteration\n "
-                     "example: ./opencv_func "
+                     "example: ./test_k_means "
                      "../images/test_data/lena.png 3 10"
                   << std::endl;
         std::exit(-1);
     }
 
-    if (img.channels() == 3) {
+    if (img.channels() != 3) {
         std::cout << "please use a image with 3 channels";
+        std::exit(-1);
     }
 
     int k = strtol(argv[2], NULL, 10);
@@ -29,6 +30,7 @@ int main(int argc, char** argv) {
     std::vector<Center> centers = kmeans.get_result_centers();
 
     cv::Mat result(img.size(), img.type());
+
     for (const Sample& sample : samples) {
         for (int channel = 0; channel < 3; channel++) {
             result.at<cv::Vec3b>(sample.row_, sample.col_)[channel] =

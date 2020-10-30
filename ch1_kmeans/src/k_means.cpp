@@ -6,8 +6,8 @@ static std::random_device rd;
 static std::mt19937 rng(rd());
 
 std::set<int> get_random_index(int max_idx, int n);
-float check_convergence(std::vector<Center> current_centers,
-                        std::vector<Center> last_centers);
+float check_convergence(const std::vector<Center>& current_centers,
+                        const std::vector<Center>& last_centers);
 
 float calc_square_dist(const std::array<float, 3>& arr1,
                        const std::array<float, 3>& arr2);
@@ -21,7 +21,7 @@ Kmeans::Kmeans(cv::Mat img, const int k) {
         for (int c = 0; c < img.cols; c++) {
             std::array<float, 3> tmp_feature;
             for (int channel = 0; channel < 3; channel++) {
-                tmp_feature[channel] = img.at<cv::Vec3f>(r, c)[channel];
+                tmp_feature[channel] = img.at<cv::Vec3b>(r, c)[channel];
             }
             samples_.emplace_back(tmp_feature, r, c, -1);
         }
@@ -31,21 +31,23 @@ Kmeans::Kmeans(cv::Mat img, const int k) {
 void Kmeans::update_centers() {
     last_centers_ = centers_;
 
-    std::vector<std::array<float, 3>> sum_features(centers_.size(),
-                                                   {0.0f, 0.0f, 0.0f});
-    std::vector<int> sum_count(centers_.size(), 0);
+    std::vector<std::array<float, 3>> sum_features_per_center(
+        centers_.size(), {0.0f, 0.0f, 0.0f});
+    std::vector<int> num_features_per_center(centers_.size(), 0);
 
     for (const Sample& sample : samples_) {
         for (int channel = 0; channel < 3; channel++) {
-            sum_features[sample.label_][channel] += sample.feature_[channel];
-            sum_count[sample.label_]++;
+            sum_features_per_center[sample.label_][channel] +=
+                sample.feature_[channel];
         }
+        num_features_per_center[sample.label_]++;
     }
 
     for (int i_center = 0; i_center < centers_.size(); i_center++) {
         for (int channel = 0; channel < 3; channel++) {
             centers_[i_center].position_[channel] =
-                sum_features[i_center][channel] / sum_count[i_center];
+                sum_features_per_center[i_center][channel] /
+                num_features_per_center[i_center];
         }
     }
 }
@@ -53,7 +55,7 @@ void Kmeans::update_centers() {
 void Kmeans::update_labels() {
     for (Sample& sample : samples_) {
         float min_square_dist = std::numeric_limits<float>::max();
-        for (int i_label = 0; i_label < 3; i_label++) {
+        for (int i_label = 0; i_label < centers_.size(); i_label++) {
             float square_dist =
                 calc_square_dist(sample.feature_, centers_[i_label].position_);
             if (square_dist < min_square_dist) {
@@ -74,8 +76,8 @@ std::vector<Center> Kmeans::get_result_centers() const {
 void Kmeans::run(int max_iteration, float smallest_convergence_radius) {
     initial_centers();
     int current_iter = 0;
-    while (is_terminate(current_iter, max_iteration,
-                        smallest_convergence_radius)) {
+    while (!is_terminate(current_iter, max_iteration,
+                         smallest_convergence_radius)) {
         current_iter++;
         update_labels();
         update_centers();
@@ -111,8 +113,8 @@ std::set<int> get_random_index(int max_idx, int n) {
     return random_idx;
 }
 
-float check_convergence(std::vector<Center> current_centers,
-                        std::vector<Center> last_centers) {
+float check_convergence(const std::vector<Center>& current_centers,
+                        const std::vector<Center>& last_centers) {
     float convergence_rate = 0;
     for (int i_center = 0; i_center < current_centers.size(); i_center++) {
         convergence_rate +=
@@ -124,5 +126,6 @@ float check_convergence(std::vector<Center> current_centers,
 
 float calc_square_dist(const std::array<float, 3>& arr1,
                        const std::array<float, 3>& arr2) {
-    return arr1[0] * arr2[0] + arr1[1] * arr2[1] + arr1[2] * arr2[2];
+    return std::pow((arr1[0] - arr2[0]), 2) + std::pow((arr1[1] - arr2[1]), 2) +
+           std::pow((arr1[2] - arr2[2]), 2);
 }
