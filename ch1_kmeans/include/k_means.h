@@ -4,11 +4,7 @@
 struct Sample {
     Sample(const std::array<float, 3>& feature, const int row, const int col,
            const int label = -1)
-<<<<<<< HEAD
         : feature_(feature), row_(row), col_(col), label_(label){};
-=======
-           : feature_(feature), row_(row), col_(col), label_(label){};
->>>>>>> 9f527b7816017431288acd282de91b62dedafb7e
 
     std::array<float, 3> feature_;
     int label_;
@@ -26,12 +22,13 @@ class Kmeans {
     void run();
 
    private:
-    void initial_center(){
-        
-    }
-    void update_center();
-    void update_label();
+    void initial_centers();
+    void update_centers();
+    void update_labels();
+
+    bool is_terminate() const;
 
     std::vector<Sample> samples_;
     std::vector<Center> centers_;
+    std::vector<Center> last_centers_;
 };
