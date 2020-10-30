@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
     for (const Sample& sample : samples) {
         for (int channel = 0; channel < 3; channel++) {
             result.at<cv::Vec3b>(sample.row_, sample.col_)[channel] =
-                centers[sample.label_].position_[channel];
+                centers[sample.label_].feature_[channel];
         }
     }
     cv::Mat concat_img;

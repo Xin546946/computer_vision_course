@@ -19,7 +19,7 @@ struct Sample {
 };
 
 struct Center {
-    std::array<float, 3> position_;  // center's position
+    std::array<float, 3> feature_;  // center's position
 };
 
 /**
@@ -36,8 +36,8 @@ class Kmeans {
 
    private:
     void initialize_centers();
-    void update_centers();
     void update_labels();
+    void update_centers();
     bool is_terminate(int current_iter, int max_iteration,
                       float smallest_convergence_rate) const;
 
