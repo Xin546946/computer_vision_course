@@ -6,11 +6,32 @@
 static std::random_device rd;
 static std::mt19937 rng(rd());
 
+/**
+ * @brief Get n random numbers from 1 to parameter max_idx
+ *
+ * @param max_idx
+ * @param n
+ * @return std::set<int> A set of random numbers, which has n elements
+ */
 std::set<int> get_random_index(int max_idx, int n);
 
+/**
+ * @brief Calculate the L2 norm of current centers and last centers
+ *
+ * @param current_centers current assigned centers with 3 channels
+ * @param last_centers  last assigned centers with 3 channels
+ * @return float
+ */
 float check_convergence(const std::vector<Center>& current_centers,
                         const std::vector<Center>& last_centers);
 
+/**
+ * @brief calculate L2 norm of two arrays
+ *
+ * @param arr1
+ * @param arr2
+ * @return float
+ */
 inline float calc_square_dist(const std::array<float, 3>& arr1,
                               const std::array<float, 3>& arr2);
 
@@ -93,7 +114,16 @@ std::vector<Sample> Kmeans::get_result_samples() const {
 std::vector<Center> Kmeans::get_result_centers() const {
     return centers_;
 }
-
+/**
+ * @brief Execute k means algorithm
+ *                1. initialize k centers randomly
+ *                2. assign each feature to the corresponding centers
+ *                3. calculate new centers
+ *                4. check terminate condition, if it is not fulfilled, return
+ * to step 2
+ * @param max_iteration
+ * @param smallest_convergence_radius
+ */
 void Kmeans::run(int max_iteration, float smallest_convergence_radius) {
     initial_centers();
     int current_iter = 0;
@@ -104,7 +134,11 @@ void Kmeans::run(int max_iteration, float smallest_convergence_radius) {
         update_centers();
     }
 }
-
+/**
+ * @brief initialize k centers randomly, using set to ensure there are no
+ * repeated elements
+ *
+ */
 void Kmeans::initial_centers() {
     std::set<int> random_idx =
         get_random_index(samples_.size() - 1, centers_.size());
@@ -115,7 +149,16 @@ void Kmeans::initial_centers() {
         i_center++;
     }
 }
-
+/**
+ * @brief check terminate conditions, namely maximal iteration is reached or it
+ * convergents
+ *
+ * @param current_iter
+ * @param max_iteration
+ * @param smallest_convergence_rate
+ * @return true
+ * @return false
+ */
 bool Kmeans::is_terminate(int current_iter, int max_iteration,
                           float smallest_convergence_rate) const {
     float convergence_rate = check_convergence(last_centers_, centers_);
