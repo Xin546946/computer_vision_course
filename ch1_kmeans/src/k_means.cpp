@@ -39,6 +39,40 @@ Kmeans::Kmeans(cv::Mat img, const int k) {
 }
 
 /**
+ * @brief initialize k centers randomly, using set to ensure there are no
+ * repeated elements
+ *
+ */
+void Kmeans::initialize_centers() {
+    std::set<int> random_idx =
+        get_random_index(samples_.size() - 1, centers_.size());
+    int i_center = 0;
+
+    for (auto index : random_idx) {
+        centers_[i_center].feature_ = samples_[index].feature_;
+        i_center++;
+    }
+}
+
+/**
+ * @brief change the label of each sample to the nearst center
+ *
+ */
+void Kmeans::update_labels() {
+    for (Sample& sample : samples_) {
+        float min_square_dist = std::numeric_limits<float>::max();
+        for (int i_label = 0; i_label < centers_.size(); i_label++) {
+            float square_dist = calc_square_distance(
+                sample.feature_, centers_[i_label].feature_);
+            if (square_dist < min_square_dist) {
+                min_square_dist = square_dist;
+                sample.label_ = i_label;
+            }
+        }
+    }
+}
+
+/**
  * @brief move the centers according to new lables
  *
  */
@@ -70,21 +104,21 @@ void Kmeans::update_centers() {
 }
 
 /**
- * @brief change the label of each sample to the nearst center
+ * @brief check terminate conditions, namely maximal iteration is reached or it
+ * convergents
  *
+ * @param current_iter
+ * @param max_iteration
+ * @param smallest_convergence_rate
+ * @return true
+ * @return false
  */
-void Kmeans::update_labels() {
-    for (Sample& sample : samples_) {
-        float min_square_dist = std::numeric_limits<float>::max();
-        for (int i_label = 0; i_label < centers_.size(); i_label++) {
-            float square_dist = calc_square_distance(
-                sample.feature_, centers_[i_label].feature_);
-            if (square_dist < min_square_dist) {
-                min_square_dist = square_dist;
-                sample.label_ = i_label;
-            }
-        }
-    }
+bool Kmeans::is_terminate(int current_iter, int max_iteration,
+                          float smallest_convergence_rate) const {
+    float convergence_rate = check_convergence(last_centers_, centers_);
+    if (current_iter == max_iteration ||
+        convergence_rate < smallest_convergence_rate)
+        return true;
 }
 
 std::vector<Sample> Kmeans::get_result_samples() const {
@@ -113,38 +147,7 @@ void Kmeans::run(int max_iteration, float smallest_convergence_radius) {
         update_centers();
     }
 }
-/**
- * @brief initialize k centers randomly, using set to ensure there are no
- * repeated elements
- *
- */
-void Kmeans::initialize_centers() {
-    std::set<int> random_idx =
-        get_random_index(samples_.size() - 1, centers_.size());
-    int i_center = 0;
 
-    for (auto index : random_idx) {
-        centers_[i_center].feature_ = samples_[index].feature_;
-        i_center++;
-    }
-}
-/**
- * @brief check terminate conditions, namely maximal iteration is reached or it
- * convergents
- *
- * @param current_iter
- * @param max_iteration
- * @param smallest_convergence_rate
- * @return true
- * @return false
- */
-bool Kmeans::is_terminate(int current_iter, int max_iteration,
-                          float smallest_convergence_rate) const {
-    float convergence_rate = check_convergence(last_centers_, centers_);
-    if (current_iter == max_iteration ||
-        convergence_rate < smallest_convergence_rate)
-        return true;
-}
 /**
  * @brief Get n random numbers from 1 to parameter max_idx
  *
