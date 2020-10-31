@@ -1,7 +1,8 @@
 #include "k_means.h"
 #include <algorithm>
+#include <iostream>
+#include <random>
 #include <vector>
-
 // to generate random number
 static std::random_device rd;
 static std::mt19937 rng(rd());
@@ -153,6 +154,8 @@ void Kmeans::run(int max_iteration, float smallest_convergence_radius) {
     }
 }
 
+std::set<int> get_fixed_index(int max_idx, int n) {
+}
 /**
  * @brief Get n random numbers from 1 to parameter max_idx
  *
@@ -198,4 +201,67 @@ inline float calc_square_distance(const std::array<float, 3>& arr1,
                                   const std::array<float, 3>& arr2) {
     return std::pow((arr1[0] - arr2[0]), 2) + std::pow((arr1[1] - arr2[1]), 2) +
            std::pow((arr1[2] - arr2[2]), 2);
+}
+
+void Kmeans::test_value_function(cv::Mat img) {
+    std::cout << "Elbow Method for calculate Sum of square error:" << std::endl;
+    std::cout << "k : value function : difference" << '\n';
+    float last_value_function = 0;
+    for (int k = 1; k < 10; k++) {
+        Kmeans kmeans_property(img, k);
+        kmeans_property.run(10, 1e-6);
+        std::vector<Sample> samples_property =
+            kmeans_property.get_result_samples();
+        std::vector<Center> centers_property =
+            kmeans_property.get_result_centers();
+        float value_function = 0;
+        float differ__rate;
+        for (Sample sample : samples_property) {
+            value_function += calc_square_distance(
+                sample.feature_, centers_property[sample.label_].feature_);
+        }
+        if (last_value_function != 0)
+            differ__rate = (last_value_function - value_function);
+        last_value_function = value_function;
+        if (differ__rate != 0)
+            std::cout << k << " : " << value_function << " : " << differ__rate
+                      << '\n';
+    }
+}
+
+Sehouette_Coefficient Kmeans::get_sehouette_coefficient(Sample sample) {
+    Sehouette_Coefficient sehouette_coefficient;
+    int counter_a = 0;
+    const int size = centers_.size();
+    std::vector<float> b_calcu(size);
+    std::vector<int> counter_b(size);
+    b_calcu[sample.label_] = 1e15;
+    float max_number = 1e15;
+    int index = 0;
+    for (Sample sample_i : samples_) {
+        for (int label = 0; label < size; label++) {
+            if (sample_i.label_ == sample.label_) {
+                sehouette_coefficient.a_ +=
+                    calc_square_distance(sample_i.feature_, sample.feature_);
+                counter_a++;
+            } else {
+                for (int label = 0;
+                     (label < centers_.size() && label != sample.label_);
+                     label++) {
+                    b_calcu[label] += calc_square_distance(sample_i.feature_,
+                                                           sample.feature_);
+                    counter_b[label]++;
+                }
+
+                for (int it = 0; it < size; it++) {
+                    if (b_calcu[it] < max_number) {
+                        max_number = b_calcu[it];
+                        index = it;
+                    }
+                }
+                sehouette_coefficient.b_ = max_number / counter_b[index];
+            }
+        }
+    }
+    return sehouette_coefficient;
 }

@@ -46,28 +46,8 @@ int main(int argc, char** argv) {
 
     // figure out the relationship of k and function value
     // TODO Value function is not always decreated!
-    std::cout << "k : value function : difference" << '\n';
-    float last_value_function = 0;
-    for (k = 2; k < 20; k++) {
-        Kmeans kmeans_property(img, k);
-        kmeans_property.run(1, convergence_radius);
-        std::vector<Sample> samples_property =
-            kmeans_property.get_result_samples();
-        std::vector<Center> centers_property =
-            kmeans_property.get_result_centers();
-        float value_function = 0;
-        float differ__rate;
-        for (Sample sample : samples_property) {
-            value_function += calc_square_distance(
-                sample.feature_, centers_property[sample.label_].feature_);
-        }
-        if (last_value_function != 0)
-            differ__rate = (last_value_function - value_function);
-        last_value_function = value_function;
-        if (differ__rate != 0)
-            std::cout << k << " : " << value_function << " : " << differ__rate
-                      << '\n';
-    }
+
+    kmeans.test_value_function(img);
 
     return 0;
 }
