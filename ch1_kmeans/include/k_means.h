@@ -19,7 +19,7 @@ struct Sample {
 };
 
 struct Center {
-    std::array<float, 3> position_;  // center's position
+    std::array<float, 3> feature_;  // center's position
 };
 
 /**

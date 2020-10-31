@@ -62,7 +62,7 @@ void Kmeans::update_centers() {
 
     for (int i_center = 0; i_center < centers_.size(); i_center++) {
         for (int channel = 0; channel < 3; channel++) {
-            centers_[i_center].position_[channel] =
+            centers_[i_center].feature_[channel] =
                 sum_features_per_center[i_center][channel] /
                 num_features_per_center[i_center];
         }
@@ -78,7 +78,7 @@ void Kmeans::update_labels() {
         float min_square_dist = std::numeric_limits<float>::max();
         for (int i_label = 0; i_label < centers_.size(); i_label++) {
             float square_dist = calc_square_distance(
-                sample.feature_, centers_[i_label].position_);
+                sample.feature_, centers_[i_label].feature_);
             if (square_dist < min_square_dist) {
                 min_square_dist = square_dist;
                 sample.label_ = i_label;
@@ -129,7 +129,7 @@ void Kmeans::initialize_centers() {
     int i_center = 0;
 
     for (auto index : random_idx) {
-        centers_[i_center].position_ = samples_[index].feature_;
+        centers_[i_center].feature_ = samples_[index].feature_;
         i_center++;
     }
 }
@@ -178,8 +178,8 @@ float check_convergence(const std::vector<Center>& current_centers,
     float convergence_rate = 0;
     for (int i_center = 0; i_center < current_centers.size(); i_center++) {
         convergence_rate +=
-            calc_square_distance(current_centers[i_center].position_,
-                                 last_centers[i_center].position_);
+            calc_square_distance(current_centers[i_center].feature_,
+                                 last_centers[i_center].feature_);
     }
     return convergence_rate;
 }
