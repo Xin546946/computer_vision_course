@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
     float last_value_function = 0;
     for (k = 2; k < 20; k++) {
         Kmeans kmeans_property(img, k);
-        kmeans_property.run(iteration, convergence_radius);
+        kmeans_property.run(1, convergence_radius);
         std::vector<Sample> samples_property =
             kmeans_property.get_result_samples();
         std::vector<Center> centers_property =
@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
         if (last_value_function != 0)
             differ__rate = (last_value_function - value_function);
         last_value_function = value_function;
-        if (last_value_function != 0)
+        if (differ__rate != 0)
             std::cout << k << " : " << value_function << " : " << differ__rate
                       << '\n';
     }

@@ -121,6 +121,11 @@ bool Kmeans::is_terminate(int current_iter, int max_iteration,
         return true;
 }
 
+// std::vector<Center> Kmeans::get_initial_center_for_test() {
+//   initialize_centers();
+//   return centers_;
+//}
+
 std::vector<Sample> Kmeans::get_result_samples() const {
     return samples_;
 }

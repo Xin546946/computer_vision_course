@@ -32,6 +32,7 @@ class Kmeans {
 
     std::vector<Sample> get_result_samples() const;
     std::vector<Center> get_result_centers() const;
+    std::vector<Center> get_initial_center_for_test();
     void run(int max_iteration, float smallest_convergence_rate);
 
    private:
