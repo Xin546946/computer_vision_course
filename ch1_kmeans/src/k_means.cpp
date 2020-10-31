@@ -228,7 +228,8 @@ void Kmeans::test_value_function(cv::Mat img) {
                       << '\n';
     }
 }
-
+// TODO It calculate only sehouette coefficient for one sample, reference:
+// https://zhuanlan.zhihu.com/p/54636128
 Sehouette_Coefficient Kmeans::get_sehouette_coefficient(Sample sample) {
     Sehouette_Coefficient sehouette_coefficient;
     int counter_a = 0;
