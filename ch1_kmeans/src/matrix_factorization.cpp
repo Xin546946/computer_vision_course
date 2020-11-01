@@ -22,10 +22,11 @@ int main() {
     // V = V.array().abs() * 255;
     V = ((Eigen::MatrixXf::Random(5, 8) + Eigen::MatrixXf::Ones(5, 8)) *
          122.5f);
+
     // Eigen::MatrixXi X = V.cast<int>();
     // std::cout << X << std::endl;
     int max_iteration = 100;
-    int r = 8;
+    int r = 2;
     non_negative_matrix_factorization(V, W, H, max_iteration, r);
     std::cout << H << std::endl;
     std::cout << W << std::endl;
@@ -42,15 +43,18 @@ void non_negative_matrix_factorization(Eigen::MatrixXf V, Eigen::MatrixXf W,
     W = Eigen::MatrixXf(m, r);
     W.setRandom();
     W.array().abs();
-
+    W = ((Eigen::MatrixXf::Random(m, r) + Eigen::MatrixXf::Ones(m, r)) *
+         122.5f);
     // Create our W with randomiyed initial values
     H = Eigen::MatrixXf(r, n);
     H.setRandom();
     H.array().abs();
+    H = ((Eigen::MatrixXf::Random(r, n) + Eigen::MatrixXf::Ones(r, n)) *
+         122.5f);
 
     // plot H and W
     // Create an identity matirx
-    Eigen::MatrixXf ones = Eigen::MatrixXf::Constant(n, m, 1.0);
+    // Eigen::MatrixXf ones = Eigen::MatrixXf::Constant(n, m, 1.0);
     float epsilon = 0.0001f;
 
     // Run the multiplicate update rules for max_iteration iterations
