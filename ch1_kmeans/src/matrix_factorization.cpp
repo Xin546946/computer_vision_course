@@ -51,7 +51,7 @@ void non_negative_matrix_factorization(Eigen::MatrixXf V, Eigen::MatrixXf W,
     H.array().abs();
     H = ((Eigen::MatrixXf::Random(r, n) + Eigen::MatrixXf::Ones(r, n)) *
          122.5f);
-
+    std::cout << W * H << std::endl;
     // plot H and W
     // Create an identity matirx
     // Eigen::MatrixXf ones = Eigen::MatrixXf::Constant(n, m, 1.0);
@@ -71,11 +71,13 @@ void non_negative_matrix_factorization(Eigen::MatrixXf V, Eigen::MatrixXf W,
         Eigen::MatrixXf WHHT = W * H * H.transpose();
         Eigen::MatrixXf step_length_W = VHT.array() / (WHHT.array() + epsilon);
         W = W.array() * step_length_W.array();
-        // std::cout << W << std::endl;
+        // std::cout << W    << std::endl;
         float loss = (V - W * H).array().square().sum();
-        std::cout << "norm(V-WH) is : " << loss << '\n';
+        // std::cout << "norm(V-WH) is : " << loss << '\n';
     }
     std::cout << V << std::endl;
     std::cout << "************" << std::endl;
     std::cout << W * H << std::endl;
+    std::cout << "************" << std::endl;
+    std::cout << V - W * H << std::endl;
 }
