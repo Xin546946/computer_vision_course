@@ -20,11 +20,11 @@ int main() {
 
     // V.setRandom();
     // V = V.array().abs() * 255;
-    V = ((Eigen::MatrixXf::Random(1024, 64) + Eigen::MatrixXf::Ones(1024, 64)) *
+    V = ((Eigen::MatrixXf::Random(5, 8) + Eigen::MatrixXf::Ones(5, 8)) *
          122.5f);
     // Eigen::MatrixXi X = V.cast<int>();
     // std::cout << X << std::endl;
-    int max_iteration = 1000;
+    int max_iteration = 100;
     int r = 8;
     non_negative_matrix_factorization(V, W, H, max_iteration, r);
     std::cout << H << std::endl;
@@ -56,26 +56,19 @@ void non_negative_matrix_factorization(Eigen::MatrixXf V, Eigen::MatrixXf W,
     // Run the multiplicate update rules for max_iteration iterations
     for (int i = 0; i < max_iteration; i++) {
         // update H
-        Eigen::MatrixXf WH = (W * H).array() + epsilon;
-        Eigen::MatrixXf numerator = (V.array() / WH.array());
-        numerator = numerator * H.transpose();
-        Eigen::MatrixXf denominator = (H * ones).array() + epsilon;
-
-        W = W.array() * numerator.array();
-        W = W.array() / denominator.transpose().array();
+        Eigen::MatrixXf WTV = W.transpose() * V;       //  r*n
+        Eigen::MatrixXf WTWH = W.transpose() * W * H;  // r*n
+        Eigen::MatrixXf step_length_H = WTV.array() / (WTWH.array() + epsilon);
+        H = H.array() * step_length_H.array();
+        // std::cout << H << std::endl;
         // std::cout << W << std::endl;
-        // update H
-        WH = (W * H).array() + epsilon;
-        numerator = (V.array() / WH.array());
-        numerator = W.transpose() * numerator;
-        denominator = (ones * W).array() + epsilon;
-
-        H = H.array() * numerator.array();
-        H = H.array() / denominator.transpose().array();
-
-        Eigen::MatrixXf differ = V - W * H;
-        Eigen::MatrixXf measure = differ.array().square();
-        float loss = measure.sum();
+        // update w
+        Eigen::MatrixXf VHT = V * H.transpose();
+        Eigen::MatrixXf WHHT = W * H * H.transpose();
+        Eigen::MatrixXf step_length_W = VHT.array() / (WHHT.array() + epsilon);
+        W = W.array() * step_length_W.array();
+        // std::cout << W << std::endl;
+        float loss = (V - W * H).array().square().sum();
         std::cout << "norm(V-WH) is : " << loss << '\n';
     }
 }
