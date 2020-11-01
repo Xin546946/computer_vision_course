@@ -75,4 +75,7 @@ void non_negative_matrix_factorization(Eigen::MatrixXf V, Eigen::MatrixXf W,
         float loss = (V - W * H).array().square().sum();
         std::cout << "norm(V-WH) is : " << loss << '\n';
     }
+    std::cout << V << std::endl;
+    std::cout << "************" << std::endl;
+    std::cout << W * H << std::endl;
 }
