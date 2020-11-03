@@ -1,5 +1,15 @@
 #include <opencv2/core.hpp>
-
+#include <vector>
+struct Sample {
+    cv::Mat derivative_x_;
+    cv::Mat derivative_y_;
+    cv::Mat laplacian_;
+    cv::Mat gaussian_;
+    float feature_;
+    int row_;  // row in original image
+    int col_;  // col in original image
+};
+// TODO maybe need to be adjusted
 struct Contour {
     Contour(const int num_points, const std::vector<cv::Point> contours,
             const cv::Point center, const int radius)
@@ -32,10 +42,11 @@ struct Internal_Matrix_Param {
 };
 
 struct GVF_Param {
-    GVF_Param(const float mu, const float max_iteration)
-        : mu_(mu), max_iterations_(max_iteration){};
+    GVF_Param(const float mu, const float max_iteration, float sigma)
+        : mu_(mu), max_iterations_(max_iteration), sigma_(sigma){};
     float mu_;
     int max_iterations_;
+    float sigma_;
 };
 
 struct Snake_Move_Param {
@@ -53,12 +64,14 @@ struct Snake_Move_Param {
 
 class Snake_Model {
    public:
+    std::vector<Sample> get_result_samples() const;
     // parameter: img,
     Snake_Model(cv::Mat img, Contour contour,
                 Internal_Matrix_Param internal_param,
                 External_Energy_Param external_param, GVF_Param gvf_param,
                 Snake_Move_Param snake_move_param);
     void run();
+    std::vector<cv::Point> get_contour();
 
    private:
     void initial_contour();
@@ -73,4 +86,5 @@ class Snake_Model {
     External_Energy_Param external_param_;
     GVF_Param gvf_param_;
     Snake_Move_Param snake_move_param_;
+    std::vector<Sample> samples_;
 };
