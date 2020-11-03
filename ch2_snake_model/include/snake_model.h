@@ -11,14 +11,11 @@ struct Sample {
 };
 // TODO maybe need to be adjusted
 struct Contour {
-    Contour(const int num_points, const std::vector<cv::Point> contours,
-            const cv::Point center, const int radius)
-        : num_points_(num_points),
-          contours_(contours),
-          center_(center),
-          radius_(radius){};
+    Contour(const int num_points, const cv::Point center, const int radius)
+        : num_points_(num_points), center_(center), radius_(radius){};
     int num_points_;
     std::vector<cv::Point> contours_;
+
     cv::Point center_;
     int radius_;
 };
@@ -62,13 +59,15 @@ struct Snake_Move_Param {
     int max_iterations_;
 };
 
+// TODO Energy can also be abstracted as a class!! Think
+// TODO how to separate gvf and snake
 class Snake_Model {
    public:
     std::vector<Sample> get_result_samples() const;
     // parameter: img,
     Snake_Model(cv::Mat img, Contour contour,
                 Internal_Matrix_Param internal_param,
-                External_Energy_Param external_param, GVF_Param gvf_param,
+                External_Energy_Param external_param,
                 Snake_Move_Param snake_move_param);
     void run();
     std::vector<cv::Point> get_contour();

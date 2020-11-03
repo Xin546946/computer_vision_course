@@ -209,7 +209,7 @@ void Kmeans::test_value_function(cv::Mat img) {
     float last_value_function = 0;
     for (int k = 1; k < 10; k++) {
         Kmeans kmeans_property(img, k);
-        kmeans_property.run(10, 1e-6);
+        kmeans_property.run(1000, 1e-20);
         std::vector<Sample> samples_property =
             kmeans_property.get_result_samples();
         std::vector<Center> centers_property =

@@ -17,8 +17,8 @@ int main() {
     Eigen::MatrixXf H;
     Eigen::MatrixXf W;
 
-    int max_iteration = 100;
-    int num_basis = 5;
+    int max_iteration = 500;
+    int num_basis = 15;
     non_negative_matrix_factorization(V, W, H, max_iteration, num_basis);
     return 0;
 }

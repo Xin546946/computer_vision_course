@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
     GVF_Param gvf_param{0.2f, 50, 1};
     Snake_Move_Param snake_move_param{1, 10, 0.01f};
     Snake_Model snake_model(img, contour, internal_param, external_param,
-                            gvf_param, snake_move_param);
+                            snake_move_param);
     snake_model.run();
 
     return 0;
