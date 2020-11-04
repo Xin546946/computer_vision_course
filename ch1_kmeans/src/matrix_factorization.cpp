@@ -2,8 +2,7 @@
 #include <iostream>
 
 #include <Eigen/Core>
-#include <Eigen/Dense>
-#include <Eigen/QR>
+//#include <Eigen/Dense>
 
 void non_negative_matrix_factorization(const Eigen::MatrixXf& V,
                                        Eigen::MatrixXf& H, Eigen::MatrixXf& W,
@@ -17,8 +16,8 @@ int main() {
     Eigen::MatrixXf H;
     Eigen::MatrixXf W;
 
-    int max_iteration = 500;
-    int num_basis = 15;
+    int max_iteration = 100;
+    int num_basis = 4;
     non_negative_matrix_factorization(V, W, H, max_iteration, num_basis);
     return 0;
 }

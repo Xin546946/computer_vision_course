@@ -132,8 +132,8 @@ Eext = ExternalForceImage2D(I,Options.Wline, Options.Wedge, Options.Wterm,Option
 % Make the external force (flow) field.
 Fx=ImageDerivatives2D(Eext,Options.Sigma2,'x');
 Fy=ImageDerivatives2D(Eext,Options.Sigma2,'y');
-Fext(:,:,1)=-Fx*2*Options.Sigma2^2;
-Fext(:,:,2)=-Fy*2*Options.Sigma2^2;
+Fext(:,:,1)=-Fx*2*Options.Sigma2^2; % u 
+Fext(:,:,2)=-Fy*2*Options.Sigma2^2; % v
 
 % Do Gradient vector flow, optimalization
 Fext=GVFOptimizeImageForces2D(Fext, Options.Mu, Options.GIterations, Options.Sigma3);
