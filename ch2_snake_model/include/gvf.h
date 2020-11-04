@@ -5,6 +5,7 @@
 struct ParamGVF {
     ParamGVF(const float mu, const float max_iteration, float sigma)
         : mu_(mu), max_iterations_(max_iteration), sigma_(sigma){};
+
     float mu_;
     int max_iterations_;
     float sigma_;
@@ -12,7 +13,8 @@ struct ParamGVF {
 
 class GVF : public GradientDescentBase {
    public:
-    GVF(cv::Mat img, ParamGVF param_gvf) : param_gvf_(param_gvf(0.2f, 50, 1));
+    GVF(cv::Mat img, ParamGVF param_gvf)
+        : param_gvf_(param_gvf = ParamGVF(0.2f, 50, 1));
 
    private:
     void initialize() override;
