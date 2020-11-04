@@ -13,7 +13,7 @@ struct ParamGVF {
 
 class GVF : public GradientDescentBase {
    public:
-    GVF(cv::Mat2f grad_img_original,
+    GVF(cv::Mat2f grad_original, cv::Mat laplacian_original,
         const ParamGVF& param_gvf = ParamGVF(0.2f, 50, 1));
 
    private:
@@ -21,7 +21,8 @@ class GVF : public GradientDescentBase {
     void update() override;
 
     ParamGVF param_gvf_;
-    cv::Mat mag_original_;
-    cv::Mat2f grad_img_original_;
-    cv::Mat2f grad_img_gvf_;
+    cv::Mat mag_grad_original_;
+    cv::Mat2f grad_original_;
+    cv::Mat2f gvf_;
+    cv::Mat laplacian_original_;
 };
