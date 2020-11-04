@@ -1,4 +1,5 @@
 #include "gvf.h"
+#include "display.h"
 #include <cmath>
 #include <iostream>
 #include <opencv2/imgproc.hpp>
@@ -35,11 +36,10 @@ void GVF::initialize() {
 }
 
 void GVF::update() {
-    cv::GaussianBlur(gvf_x_, gvf_x_, cv::Size(21, 21), 21, 21);
-    cv::GaussianBlur(gvf_y_, gvf_y_, cv::Size(21, 21), 21, 21);
-
     cv::Laplacian(gvf_x_, laplacian_gvf_x_, CV_32F, 1, cv::BORDER_REFLECT);
     cv::Laplacian(gvf_y_, laplacian_gvf_y_, CV_32F, 1, cv::BORDER_REFLECT);
+    cv::GaussianBlur(laplacian_gvf_x_, laplacian_gvf_x_, cv::Size(3, 3), 3, 3);
+    cv::GaussianBlur(laplacian_gvf_y_, laplacian_gvf_y_, cv::Size(3, 3), 3, 3);
 
     cv::Mat data_term_dev_x;
     cv::multiply(mag_grad_original_, gvf_x_ - grad_x_original_,
@@ -50,6 +50,9 @@ void GVF::update() {
 
     gvf_x_ += param_gvf_.mu_ * laplacian_gvf_x_ - data_term_dev_x;
     gvf_y_ += param_gvf_.mu_ * laplacian_gvf_y_ - data_term_dev_y;
+
+    disp_image(gvf_x_, "gvf_x_", 1);
+    disp_image(gvf_y_, "gvf_y_", 1);
 }
 
 std::vector<cv::Mat> GVF::get_result_gvf() const {
