@@ -1,5 +1,6 @@
 #include "gvf.h"
 #include <cmath>
+#include <iostream>
 #include <opencv2/imgproc.hpp>
 
 ParamGVF::ParamGVF(float mu, int max_iteration, float sigma)
@@ -48,4 +49,8 @@ std::vector<cv::Mat> GVF::get_result_gvf() const {
     gvf_result[0] = gvf_x_.clone();
     gvf_result[1] = gvf_y_.clone();
     return gvf_result;
+}
+
+void GVF::print_terminate_info() const {
+    std::cout << "GVF iteration finished." << std::endl;
 }

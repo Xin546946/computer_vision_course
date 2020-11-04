@@ -1,7 +1,8 @@
+
 #include "display.h"
 
-void drawOptFlowMap(cv::Mat& fx, cv::Mat& fy, cv::Mat& cflowmap, int step,
-                    double scaleFactor, cv::Scalar& color) {
+void draw_optical_flow(cv::Mat& fx, cv::Mat& fy, cv::Mat& cflowmap, int step,
+                       double scaleFactor, cv::Scalar& color) {
     for (int r = 0; r < cflowmap.rows; r += step)
         for (int c = 0; c < cflowmap.cols; c += step) {
             cv::Point2f fxy;
@@ -20,7 +21,7 @@ void drawOptFlowMap(cv::Mat& fx, cv::Mat& fy, cv::Mat& cflowmap, int step,
 }
 
 //--Overloaded functions to display an image in a new window--//
-void dispImage(cv::Mat& img) {
+void disp_image(cv::Mat& img) {
     if (img.empty()) {  // Read image and display after checking for image
                         // validity
         std::cout << "Error reading image file!";
@@ -32,7 +33,7 @@ void dispImage(cv::Mat& img) {
     }
 }
 
-void dispImage(cv::Mat& img, cv::String windowName) {
+void disp_image(cv::Mat& img, cv::String windowName) {
     if (img.empty()) {  // Read image and display after checking for image
                         // validity
         std::cout << "Error reading image File!";
@@ -43,7 +44,7 @@ void dispImage(cv::Mat& img, cv::String windowName) {
     }
 }
 
-void dispImage(cv::Mat& img, cv::String windowName, int delay) {
+void disp_image(cv::Mat& img, cv::String windowName, int delay) {
     if (img.empty()) {  // Read image and display after checking for image
                         // validity
         std::cout << "Error reading image File!";
@@ -55,7 +56,7 @@ void dispImage(cv::Mat& img, cv::String windowName, int delay) {
     }
 }
 
-void dispImage(cv::Mat& img, cv::String windowName, cv::String error_msg) {
+void disp_image(cv::Mat& img, cv::String windowName, cv::String error_msg) {
     if (img.empty()) {  // Read image and display after checking for image
                         // validity
         std::cout << error_msg;
@@ -67,8 +68,8 @@ void dispImage(cv::Mat& img, cv::String windowName, cv::String error_msg) {
     }
 }
 
-void dispImage(cv::Mat& img, cv::String windowName, cv::String error_msg,
-               int delay) {
+void disp_image(cv::Mat& img, cv::String windowName, cv::String error_msg,
+                int delay) {
     if (img.empty()) {  // Read image and display after checking for image
                         // validity
         std::cout << error_msg;

@@ -7,5 +7,6 @@ class GradientDescentBase {
    private:
     virtual void initialize() = 0;
     virtual void update() = 0;
-    virtual bool is_terminate(int current_iter, int max_iteration);
+    virtual bool is_terminate(int current_iter, int max_iteration) const;
+    virtual void print_terminate_info() const;
 };

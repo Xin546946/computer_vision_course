@@ -3,7 +3,7 @@
 #include <opencv2/core.hpp>
 #include <vector>
 struct ParamGVF {
-    ParamGVF(float mu, int max_iteration, float sigma);
+    ParamGVF(float mu = 0.2f, int max_iteration = 50, float sigma = 1);
     // ParamGVF(const ParamGVF& param_gvf) = default;
 
     float mu_;
@@ -17,11 +17,13 @@ class GVF : public GradientDescentBase {
     // grad_y_original: gaussian(img).dy
     GVF(cv::Mat grad_x_original, cv::Mat grad_y_original,
         const ParamGVF& param_gvf = ParamGVF(0.2f, 50, 1));
+    std::vector<cv::Mat> get_result_gvf() const;
 
    private:
     void initialize() override;
     void update() override;
-    std::vector<cv::Mat> get_result_gvf() const;
+    void print_terminate_info() const override;
+
     ParamGVF param_gvf_;
     cv::Mat mag_grad_original_;  // grad_x_original_**2 + grad_y_original_**2
     cv::Mat grad_x_original_;    // partial derivative w.r.t. x
