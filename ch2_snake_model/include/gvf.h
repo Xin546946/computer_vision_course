@@ -3,11 +3,10 @@
 #include <opencv2/core.hpp>
 #include <vector>
 struct ParamGVF {
-    ParamGVF(float mu = 0.2f, int max_iteration = 50, float sigma = 1);
+    ParamGVF(float mu = 0.2f, float sigma = 1.0f);
     // ParamGVF(const ParamGVF& param_gvf) = default;
 
     float mu_;
-    int max_iteration_;
     float sigma_;
 };
 
@@ -16,7 +15,7 @@ class GVF : public GradientDescentBase {
     // grad_x_original: gaussian(img).dx
     // grad_y_original: gaussian(img).dy
     GVF(cv::Mat grad_x_original, cv::Mat grad_y_original,
-        const ParamGVF& param_gvf = ParamGVF(0.2f, 50, 1));
+        const ParamGVF& param_gvf = ParamGVF(0.2f, 1.0f));
     std::vector<cv::Mat> get_result_gvf() const;
 
    private:

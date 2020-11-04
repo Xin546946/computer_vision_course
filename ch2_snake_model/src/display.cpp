@@ -11,12 +11,12 @@ void draw_optical_flow(cv::Mat& fx, cv::Mat& fy, cv::Mat& cflowmap, int step,
             fxy.y = fy.at<float>(r, c);
 
             if (fxy.x != 0 || fxy.y != 0) {
-                cv::line(cflowmap, cv::Point(r, c),
-                         cv::Point(cvRound(r + (fxy.x) * scaleFactor),
-                                   cvRound(c + (fxy.y) * scaleFactor)),
+                cv::line(cflowmap, cv::Point(c, r),
+                         cv::Point(cvRound(c + (fxy.x) * scaleFactor),
+                                   cvRound(r + (fxy.y) * scaleFactor)),
                          color);
             }
-            cv::circle(cflowmap, cv::Point(r, c), 1, color, -1);
+            cv::circle(cflowmap, cv::Point(c, r), 1, color, -1);
         }
 }
 

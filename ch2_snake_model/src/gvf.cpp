@@ -3,8 +3,7 @@
 #include <iostream>
 #include <opencv2/imgproc.hpp>
 
-ParamGVF::ParamGVF(float mu, int max_iteration, float sigma)
-    : mu_(mu), max_iteration_(max_iteration), sigma_(sigma) {
+ParamGVF::ParamGVF(float mu, float sigma) : mu_(mu), sigma_(sigma) {
 }
 
 /**
@@ -21,7 +20,7 @@ GVF::GVF(cv::Mat grad_x_original, cv::Mat grad_y_original,
       grad_x_original_(grad_x_original.clone()),
       grad_y_original_(grad_y_original.clone()),
       gvf_x_(grad_x_original.clone()),
-      gvf_y_(grad_x_original.clone()),
+      gvf_y_(grad_y_original.clone()),
       laplacian_gvf_x_(cv::Mat::zeros(grad_x_original_.size(), CV_32F)),
       laplacian_gvf_y_(cv::Mat::zeros(grad_y_original_.size(), CV_32F)) {
     cv::Mat grad_x_2, grad_y_2;
@@ -36,12 +35,21 @@ void GVF::initialize() {
 }
 
 void GVF::update() {
+    cv::GaussianBlur(gvf_x_, gvf_x_, cv::Size(21, 21), 21, 21);
+    cv::GaussianBlur(gvf_y_, gvf_y_, cv::Size(21, 21), 21, 21);
+
     cv::Laplacian(gvf_x_, laplacian_gvf_x_, CV_32F, 1, cv::BORDER_REFLECT);
     cv::Laplacian(gvf_y_, laplacian_gvf_y_, CV_32F, 1, cv::BORDER_REFLECT);
-    gvf_x_ += param_gvf_.mu_ * laplacian_gvf_x_ -
-              mag_grad_original_ * (gvf_x_ - grad_x_original_);
-    gvf_y_ += param_gvf_.mu_ * laplacian_gvf_y_ -
-              mag_grad_original_ * (gvf_y_ - grad_y_original_);
+
+    cv::Mat data_term_dev_x;
+    cv::multiply(mag_grad_original_, gvf_x_ - grad_x_original_,
+                 data_term_dev_x);
+    cv::Mat data_term_dev_y;
+    cv::multiply(mag_grad_original_, gvf_y_ - grad_y_original_,
+                 data_term_dev_y);
+
+    gvf_x_ += param_gvf_.mu_ * laplacian_gvf_x_ - data_term_dev_x;
+    gvf_y_ += param_gvf_.mu_ * laplacian_gvf_y_ - data_term_dev_y;
 }
 
 std::vector<cv::Mat> GVF::get_result_gvf() const {
