@@ -1,4 +1,5 @@
 #include "gvf.h"
+#include <cmath>
 #include <opencv2/imgproc.hpp>
 /**
  * @brief Construct a new GVF::GVF object
@@ -6,13 +7,11 @@
  * @param img
  * @param param_gvf
  */
-GVF::GVF(cv::Mat2f grad_original, cv::Mat laplacian_original,
-         const ParamGVF& param_gvf)
+GVF::GVF(cv::Mat grad_original, const ParamGVF& param_gvf)
     : param_gvf_(param_gvf),
       mag_grad_original_(cv::Mat::zeros(
           cv::Size(grad_original_.rows, grad_original_.cols), CV_32F)),
-      grad_original_(grad_original.clone()),
-      laplacian_original_(laplacian_original.clone()) {
+      grad_original_(grad_original.clone()) {
     for (int r = 0; r < grad_original.rows; r++) {
         for (int c = 0; c < grad_original.cols; c++) {
             mag_grad_original_.at<float>(r, c) =
@@ -27,9 +26,10 @@ void GVF::initialize() {
 
 void GVF::update() {
     cv::Mat data_term_derivative;
-    cv::Mat laplacian_gvf_ = laplacian_original_.clone();
-    cv::multiply(mag_grad_original_, (gvf_ - grad_original_),
-                 data_term_derivative);
-    gvf_ += data_term_derivative - param_gvf_.mu_ * laplacian_gvf_;
-    cv::Laplacian(gvf_, laplacian_gvf_, CV_32F, 1, cv::BORDER_REFLECT);
+    // TODO
+    // gvf_(i) = gvf_(i) +  param_gvf_.mu * laplacian_gvf_(i) -
+    // mag_grad_original_ * (gvf_(i) - grad_original_(i))
+    for (int channel = 0; channel < 2; channel++) {
+        gvf_[channel] = gvf_[channel]
+    }
 }
