@@ -4,7 +4,7 @@
 #include <iostream>
 #include <opencv2/imgproc.hpp>
 ParamGVF::ParamGVF(float mu, float sigma, float step)
-    : mu_(mu), sigma_(sigma), step_(step) {
+    : smooth_term_weight_(mu), sigma_(sigma), step_(step) {
 }
 
 /**
@@ -29,8 +29,6 @@ GVF::GVF(cv::Mat grad_x_original, cv::Mat grad_y_original,
 }
 
 void GVF::initialize() {
-    // grad_x_original_.copyTo(gvf_x_);
-    // grad_y_original_.copyTo(gvf_y_);
     gvf_x_ = grad_x_original_.clone();
     gvf_y_ = grad_y_original_.clone();
 }
@@ -52,10 +50,17 @@ void GVF::update() {
     cv::multiply(mag_grad_original_, gvf_y_ - grad_y_original_,
                  data_term_dev_y);
 
-    gvf_x_ += 1e-8 * (param_gvf_.mu_ * laplacian_gvf_x - data_term_dev_x);
-    gvf_y_ += 1e-8 * (param_gvf_.mu_ * laplacian_gvf_y - data_term_dev_y);
+    gvf_x_ += 1e-8 * (param_gvf_.smooth_term_weight_ * laplacian_gvf_x -
+                      data_term_dev_x);
+    gvf_y_ += 1e-8 * (param_gvf_.smooth_term_weight_ * laplacian_gvf_y -
+                      data_term_dev_y);
 
     display_gvf(gvf_x_, gvf_y_);
+}
+
+float GVF::compute_energy() {
+}
+void GVF::roll_back_state() {
 }
 
 std::vector<cv::Mat> GVF::get_result_gvf() const {
