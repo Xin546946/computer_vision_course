@@ -1,12 +1,12 @@
 #pragma once
-#include <numeric>
+#include <limits>
 
 class GradientDescentBase {
    public:
-    GradientDescentBase() = default;
+    GradientDescentBase(float step_size);
     void run(int max_iteration);
 
-   private:
+   protected:
     virtual void initialize() = 0;
     virtual void update() = 0;
     virtual bool is_terminate(int current_iter, int max_iteration) const;
@@ -18,6 +18,6 @@ class GradientDescentBase {
 
     virtual void print_terminate_info() const;
 
-    float energy_ = std::numeric_limits<float>::max();
     float step_size_ = 1e-10;
+    float energy_ = std::numeric_limits<float>::max();
 };

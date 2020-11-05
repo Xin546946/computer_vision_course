@@ -2,6 +2,10 @@
 
 #include <iostream>
 
+GradientDescentBase::GradientDescentBase(float step_size)
+    : step_size_(step_size) {
+}
+
 void GradientDescentBase::run(int max_iteration) {
     initialize();
     float last_energy = compute_energy();

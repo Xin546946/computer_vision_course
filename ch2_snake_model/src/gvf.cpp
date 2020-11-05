@@ -16,7 +16,8 @@ ParamGVF::ParamGVF(float mu, float sigma, float init_step_size)
  */
 GVF::GVF(cv::Mat grad_x_original, cv::Mat grad_y_original,
          const ParamGVF& param_gvf)
-    : param_gvf_(param_gvf),
+    : GradientDescentBase(param_gvf.init_step_size_),
+      param_gvf_(param_gvf),
       mag_grad_original_(cv::Mat::zeros(grad_x_original.size(), CV_32F)),
       grad_x_original_(grad_x_original.clone()),
       grad_y_original_(grad_y_original.clone()),
@@ -34,8 +35,10 @@ void GVF::initialize() {
 }
 
 void GVF::update() {
-    cv::GaussianBlur(gvf_x_, gvf_x_, cv::Size(3, 3), 3, 3);
-    cv::GaussianBlur(gvf_y_, gvf_y_, cv::Size(3, 3), 3, 3);
+    cv::GaussianBlur(gvf_x_, gvf_x_, cv::Size(3, 3), param_gvf_.sigma_,
+                     param_gvf_.sigma_);
+    cv::GaussianBlur(gvf_y_, gvf_y_, cv::Size(3, 3), param_gvf_.sigma_,
+                     param_gvf_.sigma_);
 
     cv::Mat laplacian_gvf_x;  // Laplacian of gvf_x_
     cv::Mat laplacian_gvf_y;  // Laplacian of gvf_y_
@@ -50,10 +53,10 @@ void GVF::update() {
     cv::multiply(mag_grad_original_, gvf_y_ - grad_y_original_,
                  data_term_dev_y);
 
-    gvf_x_ += 1e-8 * (param_gvf_.smooth_term_weight_ * laplacian_gvf_x -
-                      data_term_dev_x);
-    gvf_y_ += 1e-8 * (param_gvf_.smooth_term_weight_ * laplacian_gvf_y -
-                      data_term_dev_y);
+    gvf_x_ += step_size_ * (param_gvf_.smooth_term_weight_ * laplacian_gvf_x -
+                            data_term_dev_x);
+    gvf_y_ += step_size_ * (param_gvf_.smooth_term_weight_ * laplacian_gvf_y -
+                            data_term_dev_y);
 
     display_gvf(gvf_x_, gvf_y_);
 }
