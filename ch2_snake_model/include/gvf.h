@@ -37,4 +37,10 @@ class GVF : public GradientDescentBase {
 
     cv::Mat last_gvf_x_;
     cv::Mat last_gvf_y_;
+
+    cv::Mat data_term_dev_x_;
+    cv::Mat data_term_dev_y_;
+
+    cv::Mat laplacian_gvf_x_;  // Laplacian of gvf_x_
+    cv::Mat laplacian_gvf_y_;  // Laplacian of gvf_y_
 };

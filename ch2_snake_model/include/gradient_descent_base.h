@@ -1,12 +1,12 @@
 #pragma once
-#include <numeric>
+#include <limits>
 
 class GradientDescentBase {
    public:
     GradientDescentBase() = default;
     void run(int max_iteration);
 
-   private:
+   protected:
     virtual void initialize() = 0;
     virtual void update() = 0;
     virtual bool is_terminate(int current_iter, int max_iteration) const;
