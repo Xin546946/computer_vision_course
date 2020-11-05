@@ -3,7 +3,7 @@
 
 class GradientDescentBase {
    public:
-    GradientDescentBase() = default;
+    GradientDescentBase(float step_size);
     void run(int max_iteration);
 
    protected:
@@ -18,6 +18,6 @@ class GradientDescentBase {
 
     virtual void print_terminate_info() const;
 
-    float energy_ = std::numeric_limits<float>::max();
     float step_size_ = 1e-10;
+    float energy_ = std::numeric_limits<float>::max();
 };
