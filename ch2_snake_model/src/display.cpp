@@ -20,6 +20,22 @@ void draw_optical_flow(cv::Mat& fx, cv::Mat& fy, cv::Mat& cflowmap, int step,
         }
 }
 
+
+void display_gvf(cv::Mat fx,cv::Mat fy){
+    cv::Mat cflowmap = cv::Mat::zeros(fx.size(),CV_8UC3);
+    
+    int step = 8;
+    double scaleFactor = 7;
+    cv::Scalar color = cv::Scalar(0,255,0);
+    cv::Mat disp_fx = fx.clone();
+    cv::Mat disp_fy = fy.clone();
+    cv::normalize(disp_fx,disp_fx,-1,1,cv::NORM_MINMAX);
+    cv::normalize(disp_fy,disp_fy,-1,1,cv::NORM_MINMAX);
+    draw_optical_flow(disp_fx, disp_fy,  cflowmap,  step, scaleFactor, color) ;
+    disp_image(cflowmap,"gvf display",1);
+    
+}
+
 //--Overloaded functions to display an image in a new window--//
 void disp_image(cv::Mat& img) {
     if (img.empty()) {  // Read image and display after checking for image
