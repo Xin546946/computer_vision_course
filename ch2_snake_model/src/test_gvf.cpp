@@ -15,20 +15,5 @@ int main(int argc, char** argv) {
     ParamGVF param_gvf(1e-5, 1);
     GVF gvf(grad_x_original, grad_y_original, param_gvf);
     gvf.run(2000);
-    std::vector<cv::Mat> gvf_result = gvf.get_result_gvf();
-
-    cv::normalize(gvf_result[0], gvf_result[0], -1, 1, cv::NORM_MINMAX);
-    // disp_image(gvf_result[0], "gvf[0]", 0);
-    // std::cout << gvf_result[0] << std::endl;
-
-    cv::normalize(gvf_result[1], gvf_result[1], -1, 1, cv::NORM_MINMAX);
-    // disp_image(gvf_result[1], "gvf[1]", 0);
-
-    cv::Mat gvf_show = img.clone();
-    cv::cvtColor(gvf_show, gvf_show, CV_GRAY2RGB);
-
-    cv::Scalar color(0, 255, 0);
-    draw_optical_flow(gvf_result[0], gvf_result[1], gvf_show, 8, 5, color);
-    disp_image(gvf_show, "gvf", 0);
     return 0;
 }
