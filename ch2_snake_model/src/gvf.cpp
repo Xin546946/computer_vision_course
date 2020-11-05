@@ -55,15 +55,6 @@ void GVF::update() {
     gvf_x_ += 1e-8 * (param_gvf_.mu_ * laplacian_gvf_x - data_term_dev_x);
     gvf_y_ += 1e-8 * (param_gvf_.mu_ * laplacian_gvf_y - data_term_dev_y);
 
-      /*  cv::Scalar color(0, 255, 0);
-        cv::Mat tmp = cv::Mat::zeros(gvf_y_.size(), CV_8UC3);
-        cv::Mat   vf_x;
-        cv::Mat tmp_gvf_x,tmp_gvf_y;
-
-        cv::normalize(gvf_x_, tmp_gvf_x, -1, 1, cv::NORM_MINMAX);
-        cv::normalize(gvf_y_, tmp_gvf_y, -1, 1, cv::NORM_MINMAX);
-        draw_optical_flow(tmp_gvf_x, tmp_gvf_y, tmp, 8, 10, color);
-        disp_image(tmp, "gvf", 1); */
     display_gvf(gvf_x_, gvf_y_);
 }
 
