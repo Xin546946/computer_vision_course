@@ -5,30 +5,30 @@
 int main(int argc, char** argv) {
     cv::Mat img = cv::imread(argv[1], 0);
     std::cout << "Image channels: " << img.channels() << std::endl;
-    cv::GaussianBlur(img, img, cv::Size(3, 3), 3, 3);
+    cv::GaussianBlur(img, img, cv::Size(7, 7), 7, 7);
     disp_image(img, "gauss", 0);
     cv::Mat grad_x_original, grad_y_original;
 
     cv::Sobel(img, grad_x_original, CV_32F, 1, 0, 3);
     cv::Sobel(img, grad_y_original, CV_32F, 0, 1, 3);
 
-    ParamGVF param_gvf(0, 1);
+    ParamGVF param_gvf(1e-5, 1);
     GVF gvf(grad_x_original, grad_y_original, param_gvf);
-    gvf.run(1000);
+    gvf.run(2000);
     std::vector<cv::Mat> gvf_result = gvf.get_result_gvf();
 
-    // cv::normalize(gvf_result[0], gvf_result[0]);
+    cv::normalize(gvf_result[0], gvf_result[0], -1, 1, cv::NORM_MINMAX);
     // disp_image(gvf_result[0], "gvf[0]", 0);
     // std::cout << gvf_result[0] << std::endl;
 
-    // cv::normalize(gvf_result[1], gvf_result[1]);
+    cv::normalize(gvf_result[1], gvf_result[1], -1, 1, cv::NORM_MINMAX);
     // disp_image(gvf_result[1], "gvf[1]", 0);
 
     cv::Mat gvf_show = img.clone();
     cv::cvtColor(gvf_show, gvf_show, CV_GRAY2RGB);
 
     cv::Scalar color(0, 255, 0);
-    draw_optical_flow(gvf_result[0], gvf_result[1], gvf_show, 5, 0.0001, color);
-    disp_image(gvf_show, "gvf");
+    draw_optical_flow(gvf_result[0], gvf_result[1], gvf_show, 8, 5, color);
+    disp_image(gvf_show, "gvf", 0);
     return 0;
 }

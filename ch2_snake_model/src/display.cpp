@@ -14,9 +14,9 @@ void draw_optical_flow(cv::Mat& fx, cv::Mat& fy, cv::Mat& cflowmap, int step,
                 cv::line(cflowmap, cv::Point(c, r),
                          cv::Point(cvRound(c + (fxy.x) * scaleFactor),
                                    cvRound(r + (fxy.y) * scaleFactor)),
-                         color);
+                         color, 1, cv::LINE_AA);
             }
-            cv::circle(cflowmap, cv::Point(c, r), 1, color, -1);
+            cv::circle(cflowmap, cv::Point(c, r), 1, cv::Scalar(255, 0, 0), 1);
         }
 }
 

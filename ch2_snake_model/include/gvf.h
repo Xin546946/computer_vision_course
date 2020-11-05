@@ -29,6 +29,4 @@ class GVF : public GradientDescentBase {
     cv::Mat grad_y_original_;    // partial derivative w.r.t. y
     cv::Mat gvf_x_;
     cv::Mat gvf_y_;
-    cv::Mat laplacian_gvf_x_;  // Laplacian of gvf_x_
-    cv::Mat laplacian_gvf_y_;  // Laplacian of gvf_y_
 };
