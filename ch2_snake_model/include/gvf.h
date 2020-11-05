@@ -28,7 +28,7 @@ class GVF : public GradientDescentBase {
     void initialize() override;
     void update() override;
 
-    double compute_energy() override;
+    float compute_energy() override;
     void roll_back_state() override;
     void back_up_state() override;
 

@@ -34,14 +34,14 @@ GVF::GVF(cv::Mat grad_x_original, cv::Mat grad_y_original,
 void GVF::initialize() {
     gvf_x_ = grad_x_original_.clone();
     gvf_y_ = grad_y_original_.clone();
+
+    cv::GaussianBlur(gvf_x_, gvf_x_, cv::Size(5, 5), param_gvf_.sigma_,
+                     param_gvf_.sigma_, cv::BORDER_REPLICATE);
+    cv::GaussianBlur(gvf_y_, gvf_y_, cv::Size(5, 5), param_gvf_.sigma_,
+                     param_gvf_.sigma_, cv::BORDER_REPLICATE);
 }
 
 void GVF::update() {
-    cv::GaussianBlur(gvf_x_, gvf_x_, cv::Size(3, 3), param_gvf_.sigma_,
-                     param_gvf_.sigma_);
-    cv::GaussianBlur(gvf_y_, gvf_y_, cv::Size(3, 3), param_gvf_.sigma_,
-                     param_gvf_.sigma_);
-
     cv::Laplacian(gvf_x_, laplacian_gvf_x_, CV_32F, 1, cv::BORDER_REFLECT);
     cv::Laplacian(gvf_y_, laplacian_gvf_y_, CV_32F, 1, cv::BORDER_REFLECT);
 
@@ -62,7 +62,7 @@ void GVF::update() {
     display_gvf(gvf_x_, gvf_y_, 1);
 }
 
-double GVF::compute_energy() {
+float GVF::compute_energy() {
     cv::Mat data_term_x, data_term_y;
 
     cv::Mat data_term_dev_x;

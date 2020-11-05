@@ -17,7 +17,7 @@ void GradientDescentBase::run(int max_iteration) {
         back_up_state();
         update();
 
-        double new_energy = compute_energy();
+        float new_energy = compute_energy();
         std::cout.precision(5);
         std::cout << "current step size : " << step_size_;
         if (new_energy < last_energy_) {
@@ -51,5 +51,5 @@ void GradientDescentBase::print_terminate_info() const {
 
 void GradientDescentBase::update_step_size(bool is_energy_decent) {
     step_size_ *= (is_energy_decent) ? 1.5 : 0.5;
-    step_size_ = std::max(std::min(1e20, step_size_), 1e-30);
+    step_size_ = std::max(std::min(1e20f, step_size_), 1e-30f);
 }
