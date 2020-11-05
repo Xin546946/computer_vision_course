@@ -4,7 +4,7 @@
 #include <iostream>
 #include <opencv2/imgproc.hpp>
 ParamGVF::ParamGVF(float mu, float sigma, float init_step_size)
-    : smooth_term_weight_(mu), sigma_(sigma), init_step_size_(init_step_size_) {
+    : smooth_term_weight_(mu), sigma_(sigma), init_step_size_(init_step_size) {
 }
 
 /**
@@ -39,10 +39,10 @@ void GVF::initialize() {
 }
 
 void GVF::update() {
-    cv::GaussianBlur(gvf_x_, gvf_x_, cv::Size(3, 3), param_gvf_.sigma_,
-                     param_gvf_.sigma_);
-    cv::GaussianBlur(gvf_y_, gvf_y_, cv::Size(3, 3), param_gvf_.sigma_,
-                     param_gvf_.sigma_);
+    // cv::GaussianBlur(gvf_x_, gvf_x_, cv::Size(3, 3), param_gvf_.sigma_,
+    //                 param_gvf_.sigma_);
+    // cv::GaussianBlur(gvf_y_, gvf_y_, cv::Size(3, 3), param_gvf_.sigma_,
+    //                 param_gvf_.sigma_);
 
     cv::Laplacian(gvf_x_, laplacian_gvf_x_, CV_32F, 1, cv::BORDER_REFLECT);
     cv::Laplacian(gvf_y_, laplacian_gvf_y_, CV_32F, 1, cv::BORDER_REFLECT);
@@ -68,6 +68,9 @@ float GVF::compute_energy() {
     cv::multiply(data_term_dev_x_, gvf_x_ - grad_x_original_, data_term_x);
     cv::multiply(data_term_dev_y_, gvf_y_ - grad_y_original_, data_term_y);
     cv::Mat smooth_term, data_term;
+
+    data_term = data_term_x + data_term_y;
+
     cv::Mat gvf_x_dev_x, gvf_x_dev_y, gvf_y_dev_x, gvf_y_dev_y;
     cv::Sobel(gvf_x_, gvf_x_dev_x, CV_32F, 1, 0, 3);
     cv::Sobel(gvf_x_, gvf_x_dev_y, CV_32F, 0, 1, 3);
@@ -79,8 +82,12 @@ float GVF::compute_energy() {
     cv::pow(gvf_y_dev_x, 2.0f, gvf_y_dev_x_2);
     cv::pow(gvf_y_dev_y, 2.0f, gvf_y_dev_y_2);
     smooth_term = gvf_x_dev_x_2 + gvf_x_dev_y_2 + gvf_y_dev_x_2 + gvf_y_dev_y_2;
+    float smooth_energy = cv::sum(smooth_term)[0];
+    float data_energy = cv::sum(data_term)[0];
+    std::cout << "smooth term : " << smooth_energy << '\n';
+    std::cout << "data term : " << data_energy << '\n';
 
-    return cv::sum(smooth_term + data_term)[0];
+    return cv::sum(param_gvf_.smooth_term_weight_ * smooth_term + data_term)[0];
 }
 
 void GVF::roll_back_state() {

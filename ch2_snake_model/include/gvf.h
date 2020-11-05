@@ -2,9 +2,17 @@
 #include "gradient_descent_base.h"
 #include <opencv2/core.hpp>
 #include <vector>
+
 struct ParamGVF {
-    ParamGVF(float smooth_term_weight = 0.2f, float sigma = 3.0f,
-             float init_step_size = 1e-12);
+    /**
+     * @brief Construct a new Param G V F object
+     *
+     * @param smooth_term_weight
+     * @param sigma
+     * @param init_step_size
+     */
+    ParamGVF(float smooth_term_weight = 10, float sigma = 3.0f,
+             float init_step_size = 1e-7);
     float init_step_size_;
     float smooth_term_weight_;
     float sigma_;
