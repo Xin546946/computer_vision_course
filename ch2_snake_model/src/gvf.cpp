@@ -23,8 +23,6 @@ GVF::GVF(cv::Mat grad_x_original, cv::Mat grad_y_original,
       grad_y_original_(grad_y_original.clone()),
       gvf_x_(grad_x_original.clone()),
       gvf_y_(grad_y_original.clone()),
-      data_term_dev_x_(cv::Mat::zeros(grad_x_original.size(), CV_32F)),
-      data_term_dev_y_(cv::Mat::zeros(grad_x_original.size(), CV_32F)),
       laplacian_gvf_x_(cv::Mat::zeros(grad_x_original.size(), CV_32F)),
       laplacian_gvf_y_(cv::Mat::zeros(grad_x_original.size(), CV_32F)) {
     cv::Mat grad_x_2, grad_y_2;
@@ -47,26 +45,34 @@ void GVF::update() {
     cv::Laplacian(gvf_x_, laplacian_gvf_x_, CV_32F, 1, cv::BORDER_REFLECT);
     cv::Laplacian(gvf_y_, laplacian_gvf_y_, CV_32F, 1, cv::BORDER_REFLECT);
 
-    // cv::Mat data_term_dev_x;
+    cv::Mat data_term_dev_x;
     cv::multiply(mag_grad_original_, gvf_x_ - grad_x_original_,
-                 data_term_dev_x_);
+                 data_term_dev_x);
 
-    // cv::Mat data_term_dev_y;
+    cv::Mat data_term_dev_y;
     cv::multiply(mag_grad_original_, gvf_y_ - grad_y_original_,
-                 data_term_dev_y_);
+                 data_term_dev_y);
 
     gvf_x_ += step_size_ * (param_gvf_.smooth_term_weight_ * laplacian_gvf_x_ -
-                            data_term_dev_x_);
+                            data_term_dev_x);
     gvf_y_ += step_size_ * (param_gvf_.smooth_term_weight_ * laplacian_gvf_y_ -
-                            data_term_dev_y_);
+                            data_term_dev_y);
 
     display_gvf(gvf_x_, gvf_y_);
 }
 
-float GVF::compute_energy() {
+double GVF::compute_energy() {
     cv::Mat data_term_x, data_term_y;
-    cv::multiply(data_term_dev_x_, gvf_x_ - grad_x_original_, data_term_x);
-    cv::multiply(data_term_dev_y_, gvf_y_ - grad_y_original_, data_term_y);
+
+    cv::Mat data_term_dev_x;
+    cv::multiply(mag_grad_original_, gvf_x_ - grad_x_original_,
+                 data_term_dev_x);
+
+    cv::Mat data_term_dev_y;
+    cv::multiply(mag_grad_original_, gvf_y_ - grad_y_original_,
+                 data_term_dev_y);
+    cv::multiply(data_term_dev_x, gvf_x_ - grad_x_original_, data_term_x);
+    cv::multiply(data_term_dev_y, gvf_y_ - grad_y_original_, data_term_y);
     cv::Mat smooth_term, data_term;
 
     data_term = data_term_x + data_term_y;
