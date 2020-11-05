@@ -46,6 +46,7 @@ void GVF::update() {
     cv::Laplacian(gvf_y_, laplacian_gvf_y_, CV_32F, 1, cv::BORDER_REFLECT);
 
     cv::Mat data_term_dev_x;
+
     cv::multiply(mag_grad_original_, gvf_x_ - grad_x_original_,
                  data_term_dev_x);
 
@@ -58,7 +59,7 @@ void GVF::update() {
     gvf_y_ += step_size_ * (param_gvf_.smooth_term_weight_ * laplacian_gvf_y_ -
                             data_term_dev_y);
 
-    display_gvf(gvf_x_, gvf_y_);
+    display_gvf(gvf_x_, gvf_y_, 0);
 }
 
 double GVF::compute_energy() {
@@ -97,13 +98,14 @@ double GVF::compute_energy() {
 }
 
 void GVF::roll_back_state() {
-    gvf_x_ = last_gvf_x_;
-    gvf_y_ = last_gvf_y_;
+    // todo delete
+    gvf_x_ = last_gvf_x_.clone();
+    gvf_y_ = last_gvf_y_.clone();
 }
 
 void GVF::back_up_state() {
-    last_gvf_x_ = gvf_x_;
-    last_gvf_y_ = gvf_y_;
+    last_gvf_x_ = gvf_x_.clone();
+    last_gvf_y_ = gvf_y_.clone();
 }
 
 std::vector<cv::Mat> GVF::get_result_gvf() const {

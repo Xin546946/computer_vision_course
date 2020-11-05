@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
     cv::Sobel(img, grad_x_original, CV_32F, 1, 0, 3);
     cv::Sobel(img, grad_y_original, CV_32F, 0, 1, 3);
 
-    ParamGVF param_gvf(1e10, 3, 1e-6);  // mu , sigma, init step size
+    ParamGVF param_gvf(0.2, 3, 0.1);  // mu , sigma, init step size
     GVF gvf(grad_x_original, grad_y_original, param_gvf);
     gvf.run(1000);
     return 0;
