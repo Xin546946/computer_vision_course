@@ -66,16 +66,16 @@ float GVF::compute_energy() {
     cv::multiply(data_term_dev_y_, gvf_y_ - grad_y_original_, data_term_y);
     cv::Mat smooth_term, data_term;
     cv::Mat gvf_x_dev_x, gvf_x_dev_y, gvf_y_dev_x, gvf_y_dev_y;
-    cv::Sobel(gvf_x_, gvf_x_dev_x, 1, 0, 3);
-    cv::Sobel(gvf_x_, gvf_x_dev_y, 0, 1, 3);
-    cv::Sobel(gvf_y_, gvf_y_dev_x, 1, 0, 3);
-    cv::Sobel(gvf_y_, gvf_y_dev_y, 0, 1, 3);
+    cv::Sobel(gvf_x_, gvf_x_dev_x, CV_32F, 1, 0, 3);
+    cv::Sobel(gvf_x_, gvf_x_dev_y, CV_32F, 0, 1, 3);
+    cv::Sobel(gvf_y_, gvf_y_dev_x, CV_32F, 1, 0, 3);
+    cv::Sobel(gvf_y_, gvf_y_dev_y, CV_32F, 0, 1, 3);
     cv::Mat gvf_x_dev_x_2, gvf_x_dev_y_2, gvf_y_dev_x_2, gvf_y_dev_y_2;
     cv::pow(gvf_x_dev_x, 2.0f, gvf_x_dev_x_2);
     cv::pow(gvf_x_dev_y, 2.0f, gvf_x_dev_y_2);
     cv::pow(gvf_y_dev_x, 2.0f, gvf_y_dev_x_2);
     cv::pow(gvf_y_dev_y, 2.0f, gvf_y_dev_y_2);
-    smooth_term = gvf_x_dev_x + gvf_x_dev_y + gvf_y_dev_x + gvf_y_dev_y;
+    smooth_term = gvf_x_dev_x_2 + gvf_x_dev_y_2 + gvf_y_dev_x_2 + gvf_y_dev_y_2;
 
     return cv::sum(smooth_term + data_term)[0];
 }
