@@ -37,10 +37,10 @@ void GVF::initialize() {
 }
 
 void GVF::update() {
-    // cv::GaussianBlur(gvf_x_, gvf_x_, cv::Size(3, 3), param_gvf_.sigma_,
-    //                 param_gvf_.sigma_);
-    // cv::GaussianBlur(gvf_y_, gvf_y_, cv::Size(3, 3), param_gvf_.sigma_,
-    //                 param_gvf_.sigma_);
+    cv::GaussianBlur(gvf_x_, gvf_x_, cv::Size(3, 3), param_gvf_.sigma_,
+                     param_gvf_.sigma_);
+    cv::GaussianBlur(gvf_y_, gvf_y_, cv::Size(3, 3), param_gvf_.sigma_,
+                     param_gvf_.sigma_);
 
     cv::Laplacian(gvf_x_, laplacian_gvf_x_, CV_32F, 1, cv::BORDER_REFLECT);
     cv::Laplacian(gvf_y_, laplacian_gvf_y_, CV_32F, 1, cv::BORDER_REFLECT);
@@ -59,7 +59,7 @@ void GVF::update() {
     gvf_y_ += step_size_ * (param_gvf_.smooth_term_weight_ * laplacian_gvf_y_ -
                             data_term_dev_y);
 
-    display_gvf(gvf_x_, gvf_y_, 0);
+    display_gvf(gvf_x_, gvf_y_, 1);
 }
 
 double GVF::compute_energy() {

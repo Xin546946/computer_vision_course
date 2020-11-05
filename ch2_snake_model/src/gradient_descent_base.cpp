@@ -23,15 +23,17 @@ void GradientDescentBase::run(int max_iteration) {
         if (new_energy < last_energy_) {
             update_step_size(true);
             std::cout << "  engery decresed, accept update , "
-                      << " current energy : " << new_energy
-                      << " energy diff: " << new_energy - last_energy_ << '\n';
+                      << " new energy : " << new_energy
+                      << " last energy : " << last_energy_;
+            std::cout << " energy decresed for: " << new_energy - last_energy_
+                      << '\n';
             last_energy_ = new_energy;
 
         } else {
             update_step_size(false);
             std::cout << "  engery incresed,   drop update , "
-                      << " current energy : " << new_energy
-                      << " energy diff: " << new_energy - last_energy_ << '\n';
+                      << " new energy : " << new_energy
+                      << " last energy : " << last_energy_ << '\n';
 
             roll_back_state();
         }
