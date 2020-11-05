@@ -3,9 +3,9 @@
 #include <opencv2/core.hpp>
 #include <vector>
 struct ParamGVF {
-    ParamGVF(float mu = 0.2f, float sigma = 1.0f);
+    ParamGVF(float mu = 0.2f, float sigma = 1.0f, float step = 1e-12);
     // ParamGVF(const ParamGVF& param_gvf) = default;
-
+    float step_;
     float mu_;
     float sigma_;
 };

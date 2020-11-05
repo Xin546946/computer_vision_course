@@ -3,8 +3,8 @@
 #include <cmath>
 #include <iostream>
 #include <opencv2/imgproc.hpp>
-
-ParamGVF::ParamGVF(float mu, float sigma) : mu_(mu), sigma_(sigma) {
+ParamGVF::ParamGVF(float mu, float sigma, float step)
+    : mu_(mu), sigma_(sigma), step_(step) {
 }
 
 /**
@@ -22,6 +22,11 @@ GVF::GVF(cv::Mat grad_x_original, cv::Mat grad_y_original,
       grad_y_original_(grad_y_original.clone()),
       gvf_x_(grad_x_original.clone()),
       gvf_y_(grad_y_original.clone()) {
+<<<<<<< HEAD
+=======
+    // laplacian_gvf_x_(cv::Mat::zeros(grad_x_original_.size(), CV_32F)),
+    // laplacian_gvf_y_(cv::Mat::zeros(grad_y_original_.size(), CV_32F)) {
+>>>>>>> 60ff58ecd7aef526f2a39818e4c093130b5cd31c
     cv::Mat grad_x_2, grad_y_2;
     cv::multiply(grad_x_original_, grad_x_original_, grad_x_2);
     cv::multiply(grad_y_original_, grad_y_original_, grad_y_2);
@@ -29,6 +34,8 @@ GVF::GVF(cv::Mat grad_x_original, cv::Mat grad_y_original,
 }
 
 void GVF::initialize() {
+    // grad_x_original_.copyTo(gvf_x_);
+    // grad_y_original_.copyTo(gvf_y_);
     gvf_x_ = grad_x_original_.clone();
     gvf_y_ = grad_y_original_.clone();
 }

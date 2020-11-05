@@ -1,4 +1,5 @@
 #include "gradient_descent_base.h"
+
 #include <iostream>
 
 void GradientDescentBase::run(int max_iteration) {
