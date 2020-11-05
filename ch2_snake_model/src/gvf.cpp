@@ -3,8 +3,8 @@
 #include <cmath>
 #include <iostream>
 #include <opencv2/imgproc.hpp>
-ParamGVF::ParamGVF(float mu, float sigma, float step)
-    : smooth_term_weight_(mu), sigma_(sigma), step_(step) {
+ParamGVF::ParamGVF(float mu, float sigma, float init_step_size)
+    : smooth_term_weight_(mu), sigma_(sigma), init_step_size_(init_step_size_) {
 }
 
 /**
@@ -61,6 +61,13 @@ void GVF::update() {
 float GVF::compute_energy() {
 }
 void GVF::roll_back_state() {
+    gvf_x_ = last_gvf_x_;
+    gvf_y_ = last_gvf_y_;
+}
+
+void GVF::back_up_state() {
+    last_gvf_x_ = gvf_x_;
+    last_gvf_y_ = gvf_y_;
 }
 
 std::vector<cv::Mat> GVF::get_result_gvf() const {

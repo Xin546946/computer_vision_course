@@ -4,14 +4,14 @@
 
 void GradientDescentBase::run(int max_iteration) {
     initialize();
-    float last_energy = computer_energy();
+    float last_energy = compute_energy();
     int current_iter = 0;
     while (!is_terminate(current_iter, max_iteration)) {
         current_iter++;
         back_up_state();
         update();
 
-        energy_ = computer_energy();
+        energy_ = compute_energy();
         if (energy_ < last_energy) {
             update_step_size(true);
             last_energy = energy_;

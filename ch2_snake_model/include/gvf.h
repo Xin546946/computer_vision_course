@@ -5,7 +5,7 @@
 struct ParamGVF {
     ParamGVF(float smooth_term_weight = 0.2f, float sigma = 3.0f,
              float init_step_size = 1e-12);
-    float step_;
+    float init_step_size_;
     float smooth_term_weight_;
     float sigma_;
 };
@@ -34,4 +34,7 @@ class GVF : public GradientDescentBase {
 
     cv::Mat gvf_x_;
     cv::Mat gvf_y_;
+
+    cv::Mat last_gvf_x_;
+    cv::Mat last_gvf_y_;
 };
