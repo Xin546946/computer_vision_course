@@ -81,7 +81,14 @@ int main(int argc, char** argv) {
     cv::Sobel(external_energy_img, grad_y_original, CV_32F, 0, 1, 3);
     grad_x_original = -grad_x_original * 2 * 20 * 20;
     grad_y_original = -grad_y_original * 2 * 20 * 20;
-    ParamGVF param_gvf(1e12, 21, 1e-12);  // mu , sigma, init step size
+    // Parameter tune:(offer good result)
+    // 1. Eext = wline*e_line + wedge*edge+wterm*term :
+    // param_gvf(1e122,1,1e-12)
+    // 2. grad||grad(img)||
+    // TODO NOT sensible to smooth term?? if smooth term = 0, energy also
+    // decreases
+    ParamGVF param_gvf(1e30, 21, 1e-12);  // mu , sigma, init step size
+
     GVF gvf(grad_x_original, grad_y_original, param_gvf);
     gvf.run(1e5);
     return 0;
