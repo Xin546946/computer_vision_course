@@ -35,7 +35,7 @@ class GVF : public GradientDescentBase {
 
     ParamGVF param_gvf_;
 
-    cv::Mat mag_grad_original_;  // grad_original_x_**2 + grad_original_y_**2
+    cv::Mat data_term_weight_;  // grad_original_x_**2 + grad_original_y_**2
 
     cv::Mat gvf_initial_x_;  // partial derivative w.r.t. x
     cv::Mat gvf_initial_y_;  // partial derivative w.r.t. y
