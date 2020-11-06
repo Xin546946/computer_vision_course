@@ -3,6 +3,7 @@ project(kmeans_clustering)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "-o2")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 
 find_package(OpenCV 3.2.0 REQUIRED)
 

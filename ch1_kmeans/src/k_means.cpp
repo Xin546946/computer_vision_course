@@ -117,9 +117,8 @@ void Kmeans::update_centers() {
 bool Kmeans::is_terminate(int current_iter, int max_iteration,
                           float smallest_convergence_rate) const {
     float convergence_rate = check_convergence(last_centers_, centers_);
-    if (current_iter == max_iteration ||
-        convergence_rate < smallest_convergence_rate)
-        return true;
+    return ((current_iter == max_iteration ||
+             convergence_rate < smallest_convergence_rate));
 }
 
 // std::vector<Center> Kmeans::get_initial_center_for_test() {
@@ -138,8 +137,8 @@ std::vector<Center> Kmeans::get_result_centers() const {
  *                1. initialize centers randomly
  *                2. assign each feature to the corresponding centers
  *                3. calculate new centers
- *                4. check terminate condition, if it is not fulfilled, return
- * to step 2
+ *                4. check terminate condition, if it is not fulfilled,
+ * return to step 2
  * @param max_iteration
  * @param smallest_convergence_radius
  */
