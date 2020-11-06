@@ -35,15 +35,19 @@ GVF::GVF(cv::Mat grad_x_original, cv::Mat grad_y_original,
  *        1. use external energy, such as gradient of image, or add some other
  * term, namely line, edge, curvature
  *        2. use grad||grad(img)|| to make the vector field towards to the edge
+ *        3.
  */
 void GVF::initialize() {
-    gvf_x_ = grad_x_original_.clone();
-    gvf_y_ = grad_y_original_.clone();
+    // gvf_x_ = grad_x_original_.clone();
+    // gvf_y_ = grad_y_original_.clone();
 
-    cv::abs(gvf_x_);
-    cv::abs(gvf_y_);
-    cv::Sobel(gvf_x_, gvf_x_, CV_32F, 1, 0, 3);
-    cv::Sobel(gvf_y_, gvf_y_, CV_32F, 0, 1, 3);
+    // cv::abs(gvf_x_);
+    // cv::abs(gvf_y_);
+    cv::sqrt(mag_grad_original_, mag_grad_original_);
+    cv::GaussianBlur(mag_grad_original_, mag_grad_original_, cv::Size(7, 7), 7,
+                     7);
+    cv::Sobel(mag_grad_original_, gvf_x_, CV_32F, 1, 0, 3);
+    cv::Sobel(mag_grad_original_, gvf_y_, CV_32F, 0, 1, 3);
 
     // cv::GaussianBlur(gvf_x_, gvf_x_, cv::Size(5, 5), param_gvf_.sigma_,
     //                  param_gvf_.sigma_, cv::BORDER_REPLICATE);
@@ -69,7 +73,7 @@ void GVF::update() {
     gvf_y_ += step_size_ * (param_gvf_.smooth_term_weight_ * laplacian_gvf_y_ -
                             data_term_dev_y);
 
-    display_gvf(gvf_x_, gvf_y_, 1);
+    display_gvf(gvf_x_, gvf_y_, 0);
 }
 
 float GVF::compute_energy() {

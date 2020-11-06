@@ -73,23 +73,26 @@ int main(int argc, char** argv) {
     cv::GaussianBlur(img, img, cv::Size(7, 7), 7, 7);
 
     cv::Mat grad_x_original, grad_y_original;
+    cv::Sobel(img, grad_x_original, CV_32F, 1, 0, 3);
+    cv::Sobel(img, grad_y_original, CV_32F, 0, 1, 3);
+    // cv::GaussianBlur(external_energy_img, external_energy_img, cv::Size(7,
+    // 7),
+    //                  7, 7);
 
-    cv::GaussianBlur(external_energy_img, external_energy_img, cv::Size(7, 7),
-                     7, 7);
     // cv::GaussianBlur(grad_y_original, grad_y_original, cv::Size(7, 7), 7, 7);
-    cv::Sobel(external_energy_img, grad_x_original, CV_32F, 1, 0, 3);
-    cv::Sobel(external_energy_img, grad_y_original, CV_32F, 0, 1, 3);
-    grad_x_original = -grad_x_original * 2 * 20 * 20;
-    grad_y_original = -grad_y_original * 2 * 20 * 20;
+    // cv::Sobel(external_energy_img, grad_x_original, CV_32F, 1, 0, 3);
+    // cv::Sobel(external_energy_img, grad_y_original, CV_32F, 0, 1, 3);
+    // grad_x_original = -grad_x_original * 2 * 20 * 20;
+    // grad_y_original = -grad_y_original * 2 * 20 * 20;
     // Parameter tune:(offer good result)
     // 1. Eext = wline*e_line + wedge*edge+wterm*term :
     // param_gvf(1e122,1,1e-12)
     // 2. grad||grad(img)||
     // TODO NOT sensible to smooth term?? if smooth term = 0, energy also
     // decreases
-    ParamGVF param_gvf(1e30, 21, 1e-12);  // mu , sigma, init step size
+    ParamGVF param_gvf(1e15, 21, 1e-5);  // mu , sigma, init step size
 
     GVF gvf(grad_x_original, grad_y_original, param_gvf);
-    gvf.run(1e5);
+    gvf.run(1e5);  // parameter: max_iteration
     return 0;
 }
