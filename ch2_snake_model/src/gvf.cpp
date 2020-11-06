@@ -43,12 +43,13 @@ void GVF::initialize() {
 
     // cv::abs(gvf_x_);
     // cv::abs(gvf_y_);
-    cv::sqrt(mag_grad_original_, mag_grad_original_);
+    cv::Mat sqrt_mag_grad_original;
+    cv::sqrt(mag_grad_original_, sqrt_mag_grad_original);
     // cv::GaussianBlur(mag_grad_original_, mag_grad_original_, cv::Size(7, 7),
     // 7,
     //                 7);
-    cv::Sobel(mag_grad_original_, gvf_x_, CV_32F, 1, 0, 3);
-    cv::Sobel(mag_grad_original_, gvf_y_, CV_32F, 0, 1, 3);
+    cv::Sobel(sqrt_mag_grad_original, gvf_x_, CV_32F, 1, 0, 3);
+    cv::Sobel(sqrt_mag_grad_original, gvf_y_, CV_32F, 0, 1, 3);
 
     // cv::GaussianBlur(gvf_x_, gvf_x_, cv::Size(5, 5), param_gvf_.sigma_,
     //                  param_gvf_.sigma_, cv::BORDER_REPLICATE);

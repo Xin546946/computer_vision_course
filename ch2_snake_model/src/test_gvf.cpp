@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
     // 2. grad||grad(img)||
     // TODO NOT sensible to smooth term?? if smooth term = 0, energy also
     // decreases
-    ParamGVF param_gvf(1e4, 21, 1e-5);  // mu , sigma, init step size
+    ParamGVF param_gvf(1e8, 21, 1e-10);  // mu , sigma, init step size
 
     GVF gvf(grad_x_original, grad_y_original, param_gvf);
     gvf.run(1e5);  // parameter: max_iteration
