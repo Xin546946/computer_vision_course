@@ -5,23 +5,20 @@
 
 struct ParamGVF {
     /**
-     * @brief Construct a new Param G V F object
+     * @brief Construct a new Param G V F:: Param G V F object
      *
-     * @param smooth_term_weight
-     * @param sigma
-     * @param init_step_size
+     * @param smooth_term_weight: weight of smooth term (mu)
+     * @param init_step_size : the init step size of gradient decent
      */
-    ParamGVF(double smooth_term_weight = 10, double sigma = 3.0f,
-             double init_step_size = 1e-7);
+    ParamGVF(double smooth_term_weight = 1e8, double init_step_size = 1e-7);
     double init_step_size_;
     double smooth_term_weight_;
-    double sigma_;
 };
 
 class GVF : public GradientDescentBase {
    public:
-    GVF(cv::Mat grad_x_original, cv::Mat grad_y_original,
-        const ParamGVF& param_gvf = ParamGVF(0.2f, 1.0f));
+    GVF(cv::Mat grad_original_x, cv::Mat grad_original_y,
+        const ParamGVF& param_gvf = ParamGVF(1e8, 1e-7));
 
     std::vector<cv::Mat> get_result_gvf() const;
 
@@ -37,9 +34,10 @@ class GVF : public GradientDescentBase {
 
     ParamGVF param_gvf_;
 
-    cv::Mat mag_grad_original_;  // grad_x_original_**2 + grad_y_original_**2
-    cv::Mat grad_x_original_;    // partial derivative w.r.t. x
-    cv::Mat grad_y_original_;    // partial derivative w.r.t. y
+    cv::Mat mag_grad_original_;  // grad_original_x_**2 + grad_original_y_**2
+
+    cv::Mat gvf_initial_x_;  // partial derivative w.r.t. x
+    cv::Mat gvf_initial_y_;  // partial derivative w.r.t. y
 
     cv::Mat gvf_x_;
     cv::Mat gvf_y_;
