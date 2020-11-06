@@ -77,7 +77,7 @@ void GVF::update() {
     gvf_y_ += step_size_ * (param_gvf_.smooth_term_weight_ * laplacian_gvf_y_ -
                             data_term_dev_y);
 
-    display_gvf(gvf_x_, gvf_y_, 1);
+    display_gvf(gvf_x_, gvf_y_, 1, false);
 }
 
 float GVF::compute_energy() {

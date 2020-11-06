@@ -22,6 +22,7 @@ class GVF : public GradientDescentBase {
    public:
     GVF(cv::Mat grad_x_original, cv::Mat grad_y_original,
         const ParamGVF& param_gvf = ParamGVF(0.2f, 1.0f));
+
     std::vector<cv::Mat> get_result_gvf() const;
 
    private:
