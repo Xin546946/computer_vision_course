@@ -9,14 +9,14 @@ int main(int argc, char** argv) {
     // preprocess the input image
     cv::GaussianBlur(img, img, cv::Size(3, 3), 3, 3);
 
-    cv::Mat grad_x_original, grad_y_original;
-    cv::Sobel(img, grad_x_original, CV_64F, 1, 0, 3);
-    cv::Sobel(img, grad_y_original, CV_64F, 0, 1, 3);
+    cv::Mat grad_original_x, grad_original_y;
+    cv::Sobel(img, grad_original_x, CV_64F, 1, 0, 3);
+    cv::Sobel(img, grad_original_y, CV_64F, 0, 1, 3);
 
     double smooth_term = 1e8;
     double step_size = 1e-10;
     ParamGVF param_gvf(smooth_term, step_size);  // TODO DELETE 21
-    GVF gvf(grad_x_original, grad_y_original, param_gvf);
+    GVF gvf(grad_original_x, grad_original_y, param_gvf);
 
     int max_iteration_gvf = 1e4;
     gvf.run(max_iteration_gvf);  // parameter: max_iteration

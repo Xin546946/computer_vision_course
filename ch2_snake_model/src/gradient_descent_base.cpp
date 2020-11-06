@@ -8,6 +8,7 @@ GradientDescentBase::GradientDescentBase(double step_size)
 }
 
 void GradientDescentBase::run(int max_iteration) {
+    std::cout.precision(5);
     initialize();
     last_energy_ = compute_energy();
     std::cout << "init energy : " << last_energy_ << "@@@@@@" << '\n';
@@ -18,16 +19,15 @@ void GradientDescentBase::run(int max_iteration) {
         update();
 
         double new_energy = compute_energy();
-        std::cout.precision(5);
-        std::cout << "current iteration : " << current_iter;
-        std::cout << "current step size : " << step_size_;
+        std::cout << "||current iteration|| : " << current_iter << " ";
+        std::cout << "||current step size|| : " << step_size_ << " ";
         // if (new_energy < last_energy_) {
         if (true) {
             update_step_size(true);
 
             std::cout << "  engery decresed, accept update , "
-                      << " new energy : " << new_energy
-                      << " last energy : " << last_energy_;
+                      << " ||new energy|| : " << new_energy
+                      << " ||last energy|| : " << last_energy_;
             std::cout << " energy decresed for: " << new_energy - last_energy_
                       << '\n';
             last_energy_ = new_energy;
@@ -36,8 +36,8 @@ void GradientDescentBase::run(int max_iteration) {
             update_step_size(false);
 
             std::cout << "  engery incresed,   drop update , "
-                      << " new energy : " << new_energy
-                      << " last energy : " << last_energy_ << '\n';
+                      << " ||new energy|| : " << new_energy
+                      << " ||last energy|| : " << last_energy_ << '\n';
 
             roll_back_state();
         }

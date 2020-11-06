@@ -109,9 +109,8 @@ double GVF::compute_energy() {
  *
  */
 void GVF::roll_back_state() {
-    // todo delete
-    gvf_x_ = last_gvf_x_.clone();
-    gvf_y_ = last_gvf_y_.clone();
+    gvf_x_ = last_gvf_x_;
+    gvf_y_ = last_gvf_y_;
 }
 /**
  * @brief back up gvf result in between
