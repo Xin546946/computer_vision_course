@@ -1,5 +1,6 @@
 #pragma once
 #include <limits>
+#include <string>
 
 class GradientDescentBase {
    public:
@@ -17,6 +18,7 @@ class GradientDescentBase {
     virtual void update_step_size(bool is_energy_decent);
 
     virtual void print_terminate_info() const;
+    virtual std::string return_drive_class_name() const = 0;
 
     double step_size_ = 1e-10;
     double last_energy_ = std::numeric_limits<double>::max();

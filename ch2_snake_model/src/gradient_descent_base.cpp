@@ -19,7 +19,8 @@ void GradientDescentBase::run(int max_iteration) {
         update();
 
         double new_energy = compute_energy();
-        std::cout << "||current iteration|| : " << current_iter << " ";
+        std::cout << return_drive_class_name() << " : "
+                  << "||current iteration|| : " << current_iter << " ";
         std::cout << "||current step size|| : " << step_size_ << " ";
         // if (new_energy < last_energy_) {
         if (true) {

@@ -17,9 +17,9 @@ ParamGVF::ParamGVF(double smooth_term_weight, double init_step_size)
 /**
  * @brief Construct a new GVF::GVF object
  *
- * @param grad_original_x : the image gradient of original image in the x
+ * @param grad_original_x : the gradient of original image in the x
  * direction
- * @param grad_original_y : the image gradient of original image in the y
+ * @param grad_original_y : the gradient of original image in the y
  * direction
  * @param param_gvf: the prameter set of gvf
  */
@@ -36,11 +36,10 @@ GVF::GVF(cv::Mat grad_original_x, cv::Mat grad_original_y,
     mag_grad_original_ = grad_x_2 + grad_y_2;
 }
 /**
- * @brief initialize the gvf: HIts there are different ways for initialization
+ * @brief initialize the gvf: Hits: there are different ways for initialization
  *        1. use external energy, such as gradient of image, or add some other
  * term, namely line, edge, curvature
  *        2. use grad||grad(img)|| to make the vector field towards to the edge
- *        3.
  */
 void GVF::initialize() {
     // initialize gvf in x and y direction. respectively
@@ -137,4 +136,8 @@ std::vector<cv::Mat> GVF::get_result_gvf() const {
  */
 void GVF::print_terminate_info() const {
     std::cout << "GVF iteration finished." << std::endl;
+}
+
+std::string GVF::return_drive_class_name() const {
+    return "GVF";
 }

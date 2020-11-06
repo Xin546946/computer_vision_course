@@ -31,6 +31,7 @@ class GVF : public GradientDescentBase {
     void back_up_state() override;
 
     void print_terminate_info() const override;
+    std::string return_drive_class_name() const override;
 
     ParamGVF param_gvf_;
 
