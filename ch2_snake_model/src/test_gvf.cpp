@@ -94,6 +94,12 @@ int main(int argc, char** argv) {
     ParamGVF param_gvf(1e8, 21, 1e-10);  // mu , sigma, init step size
 
     GVF gvf(grad_x_original, grad_y_original, param_gvf);
-    gvf.run(1e5);  // parameter: max_iteration
-    return 0;
+    gvf.run(1e4);  // parameter: max_iteration
+    std::vector<cv::Mat> gvf_result = gvf.get_result_gvf();
+    disp_image(gvf_result[0], "gvf x", 0);
+    disp_image(gvf_result[1], "gvf 1", 0);
+    bool save = true;
+    display_gvf(gvf_result[0], gvf_result[1], 0, save);
+    cv::imwrite("gvf_x.png", gvf_result[0]);
+    cv::imwrite("gvf_y.png", gvf_result[0]);
 }

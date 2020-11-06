@@ -20,7 +20,7 @@ void draw_optical_flow(cv::Mat& fx, cv::Mat& fy, cv::Mat& cflowmap, int step,
         }
 }
 
-void display_gvf(cv::Mat fx, cv::Mat fy, int delay) {
+void display_gvf(cv::Mat fx, cv::Mat fy, int delay, bool save = false) {
     cv::Mat cflowmap = cv::Mat::zeros(fx.size(), CV_8UC3);
 
     int step = 8;
@@ -32,6 +32,7 @@ void display_gvf(cv::Mat fx, cv::Mat fy, int delay) {
     cv::normalize(disp_fy, disp_fy, -1, 1, cv::NORM_MINMAX);
     draw_optical_flow(disp_fx, disp_fy, cflowmap, step, scaleFactor, color);
     disp_image(cflowmap, "gvf display", delay);
+    if (save) cv::imwrite("gvf_display.png", cflowmap);
 }
 
 //--Overloaded functions to display an image in a new window--//
