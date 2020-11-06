@@ -44,8 +44,9 @@ void GVF::initialize() {
     // cv::abs(gvf_x_);
     // cv::abs(gvf_y_);
     cv::sqrt(mag_grad_original_, mag_grad_original_);
-    cv::GaussianBlur(mag_grad_original_, mag_grad_original_, cv::Size(7, 7), 7,
-                     7);
+    // cv::GaussianBlur(mag_grad_original_, mag_grad_original_, cv::Size(7, 7),
+    // 7,
+    //                 7);
     cv::Sobel(mag_grad_original_, gvf_x_, CV_32F, 1, 0, 3);
     cv::Sobel(mag_grad_original_, gvf_y_, CV_32F, 0, 1, 3);
 
@@ -53,11 +54,13 @@ void GVF::initialize() {
     //                  param_gvf_.sigma_, cv::BORDER_REPLICATE);
     // cv::GaussianBlur(gvf_y_, gvf_y_, cv::Size(5, 5), param_gvf_.sigma_,
     //                  param_gvf_.sigma_, cv::BORDER_REPLICATE);
+    grad_x_original_ = gvf_x_.clone();
+    grad_y_original_ = gvf_y_.clone();
 }
 
 void GVF::update() {
-    // cv::Laplacian(gvf_x_, laplacian_gvf_x_, CV_32F, 1, cv::BORDER_REFLECT);
-    // cv::Laplacian(gvf_y_, laplacian_gvf_y_, CV_32F, 1, cv::BORDER_REFLECT);
+    cv::Laplacian(gvf_x_, laplacian_gvf_x_, CV_32F, 1, cv::BORDER_REFLECT);
+    cv::Laplacian(gvf_y_, laplacian_gvf_y_, CV_32F, 1, cv::BORDER_REFLECT);
 
     cv::Mat data_term_dev_x;
 
@@ -73,7 +76,7 @@ void GVF::update() {
     gvf_y_ += step_size_ * (param_gvf_.smooth_term_weight_ * laplacian_gvf_y_ -
                             data_term_dev_y);
 
-    display_gvf(gvf_x_, gvf_y_, 0);
+    display_gvf(gvf_x_, gvf_y_, 1);
 }
 
 float GVF::compute_energy() {

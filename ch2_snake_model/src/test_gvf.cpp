@@ -9,7 +9,7 @@ cv::Mat external_force_image(cv::Mat img, const float w_line,
     cv::Mat Ix, Iy, Ixx, Iyy, Ixy;
     // Gaussian blur
     cv::Mat image;
-    cv::GaussianBlur(img, image, cv::Size(11, 11), 11, 11);
+    cv::GaussianBlur(img, image, cv::Size(3, 3), 3, 3);
     image.convertTo(image, CV_32F);
 
     // calculate the image first derivative w.r.t. x, y as well as the second
@@ -68,9 +68,10 @@ cv::Mat external_force_image(cv::Mat img, const float w_line,
 
 int main(int argc, char** argv) {
     cv::Mat img = cv::imread(argv[1], 0);
-    cv::Mat external_energy_img = external_force_image(img, 0.04, 2, 0.01, 10);
+    // cv::Mat external_energy_img = external_force_image(img, 0.04, 2, 0.01,
+    // 10);
     std::cout << "Image channels: " << img.channels() << std::endl;
-    cv::GaussianBlur(img, img, cv::Size(7, 7), 7, 7);
+    cv::GaussianBlur(img, img, cv::Size(3, 3), 3, 3);
 
     cv::Mat grad_x_original, grad_y_original;
     cv::Sobel(img, grad_x_original, CV_32F, 1, 0, 3);
@@ -90,7 +91,7 @@ int main(int argc, char** argv) {
     // 2. grad||grad(img)||
     // TODO NOT sensible to smooth term?? if smooth term = 0, energy also
     // decreases
-    ParamGVF param_gvf(1e15, 21, 1e-5);  // mu , sigma, init step size
+    ParamGVF param_gvf(1e4, 21, 1e-5);  // mu , sigma, init step size
 
     GVF gvf(grad_x_original, grad_y_original, param_gvf);
     gvf.run(1e5);  // parameter: max_iteration
