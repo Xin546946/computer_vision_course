@@ -109,30 +109,44 @@ double GVF::compute_energy() {
     smooth_term = gvf_x_dev_x_2 + gvf_x_dev_y_2 + gvf_y_dev_x_2 + gvf_y_dev_y_2;
     double smooth_energy = cv::sum(smooth_term)[0];
     double data_energy = cv::sum(data_term)[0];
-    std::cout << "smooth term : " << smooth_energy << '\n';
-    std::cout << "data term : " << data_energy << '\n';
+    // std::cout << "smooth term energy: " << smooth_energy << '\n';
+    // std::cout << "data term energy: " << data_energy << '\n';
 
     return cv::sum(param_gvf_.smooth_term_weight_ * smooth_term + data_term)[0];
 }
 
+/**
+ * @brief roll back gvf result
+ *
+ */
 void GVF::roll_back_state() {
     // todo delete
     gvf_x_ = last_gvf_x_.clone();
     gvf_y_ = last_gvf_y_.clone();
 }
-
+/**
+ * @brief back up gvf result in between
+ *
+ */
 void GVF::back_up_state() {
     last_gvf_x_ = gvf_x_.clone();
     last_gvf_y_ = gvf_y_.clone();
 }
-
+/**
+ * @brief get gvf result: gvf_x_ and gvf_y_
+ *
+ * @return std::vector<cv::Mat> save them in a vector
+ */
 std::vector<cv::Mat> GVF::get_result_gvf() const {
     std::vector<cv::Mat> gvf_result(2);
     gvf_result[0] = gvf_x_.clone();
     gvf_result[1] = gvf_y_.clone();
     return gvf_result;
 }
-
+/**
+ * @brief print when terminate
+ *
+ */
 void GVF::print_terminate_info() const {
     std::cout << "GVF iteration finished." << std::endl;
 }
