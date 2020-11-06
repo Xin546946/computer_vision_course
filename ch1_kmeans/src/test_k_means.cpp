@@ -23,7 +23,7 @@ int main(int argc, char** argv) {
     int k = strtol(argv[2], NULL, 10);
     int iteration = strtol(argv[3], NULL, 10);
 
-    int convergence_radius = 1e-6;
+    float convergence_radius = 1e-6;
 
     Kmeans kmeans(img, k);
     kmeans.run(iteration, convergence_radius);
