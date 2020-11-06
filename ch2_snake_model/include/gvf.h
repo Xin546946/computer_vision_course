@@ -11,11 +11,11 @@ struct ParamGVF {
      * @param sigma
      * @param init_step_size
      */
-    ParamGVF(float smooth_term_weight = 10, float sigma = 3.0f,
-             float init_step_size = 1e-7);
-    float init_step_size_;
-    float smooth_term_weight_;
-    float sigma_;
+    ParamGVF(double smooth_term_weight = 10, double sigma = 3.0f,
+             double init_step_size = 1e-7);
+    double init_step_size_;
+    double smooth_term_weight_;
+    double sigma_;
 };
 
 class GVF : public GradientDescentBase {
@@ -28,7 +28,7 @@ class GVF : public GradientDescentBase {
     void initialize() override;
     void update() override;
 
-    float compute_energy() override;
+    double compute_energy() override;
     void roll_back_state() override;
     void back_up_state() override;
 

@@ -7,8 +7,8 @@ void draw_optical_flow(cv::Mat& fx, cv::Mat& fy, cv::Mat& cflowmap, int step,
         for (int c = 0; c < cflowmap.cols; c += step) {
             cv::Point2f fxy;
 
-            fxy.x = fx.at<float>(r, c);
-            fxy.y = fy.at<float>(r, c);
+            fxy.x = fx.at<double>(r, c);
+            fxy.y = fy.at<double>(r, c);
 
             if (fxy.x != 0 || fxy.y != 0) {
                 cv::line(cflowmap, cv::Point(c, r),

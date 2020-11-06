@@ -3,24 +3,24 @@
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 
-cv::Mat external_force_image(cv::Mat img, const float w_line,
-                             const float w_edge, const float w_term,
-                             const float sigma) {
+cv::Mat external_force_image(cv::Mat img, const double w_line,
+                             const double w_edge, const double w_term,
+                             const double sigma) {
     cv::Mat Ix, Iy, Ixx, Iyy, Ixy;
     // Gaussian blur
     cv::Mat image;
     cv::GaussianBlur(img, image, cv::Size(3, 3), 3, 3);
-    image.convertTo(image, CV_32F);
+    image.convertTo(image, CV_64F);
 
     // calculate the image first derivative w.r.t. x, y as well as the second
     // derivative w.r.t xx,yy,xy
-    cv::Sobel(image, Ix, CV_32F, 1, 0,
+    cv::Sobel(image, Ix, CV_64F, 1, 0,
               3);  // Compute gradient of blurred edge map
-    cv::Sobel(image, Iy, CV_32F, 0, 1, 3);
-    cv::Sobel(Ix, Ixx, CV_32F, 1, 0,
+    cv::Sobel(image, Iy, CV_64F, 0, 1, 3);
+    cv::Sobel(Ix, Ixx, CV_64F, 1, 0,
               3);  // Compute gradient of blurred edge map
-    cv::Sobel(Iy, Iyy, CV_32F, 0, 1, 3);
-    cv::Sobel(Ix, Ixy, CV_32F, 0, 1, 3);
+    cv::Sobel(Iy, Iyy, CV_64F, 0, 1, 3);
+    cv::Sobel(Ix, Ixy, CV_64F, 0, 1, 3);
 
     cv::Mat e_line, e_edge, e_term, e_extern;
     cv::GaussianBlur(image, e_line, cv::Size(3, 3), 1, 1);
@@ -74,15 +74,15 @@ int main(int argc, char** argv) {
     cv::GaussianBlur(img, img, cv::Size(3, 3), 3, 3);
 
     cv::Mat grad_x_original, grad_y_original;
-    cv::Sobel(img, grad_x_original, CV_32F, 1, 0, 3);
-    cv::Sobel(img, grad_y_original, CV_32F, 0, 1, 3);
+    cv::Sobel(img, grad_x_original, CV_64F, 1, 0, 3);
+    cv::Sobel(img, grad_y_original, CV_64F, 0, 1, 3);
     // cv::GaussianBlur(external_energy_img, external_energy_img, cv::Size(7,
     // 7),
     //                  7, 7);
 
     // cv::GaussianBlur(grad_y_original, grad_y_original, cv::Size(7, 7), 7, 7);
-    // cv::Sobel(external_energy_img, grad_x_original, CV_32F, 1, 0, 3);
-    // cv::Sobel(external_energy_img, grad_y_original, CV_32F, 0, 1, 3);
+    // cv::Sobel(external_energy_img, grad_x_original, CV_64F, 1, 0, 3);
+    // cv::Sobel(external_energy_img, grad_y_original, CV_64F, 0, 1, 3);
     // grad_x_original = -grad_x_original * 2 * 20 * 20;
     // grad_y_original = -grad_y_original * 2 * 20 * 20;
     // Parameter tune:(offer good result)

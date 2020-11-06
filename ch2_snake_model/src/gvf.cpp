@@ -3,7 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include <opencv2/imgproc.hpp>
-ParamGVF::ParamGVF(float mu, float sigma, float init_step_size)
+ParamGVF::ParamGVF(double mu, double sigma, double init_step_size)
     : smooth_term_weight_(mu), sigma_(sigma), init_step_size_(init_step_size) {
 }
 
@@ -18,13 +18,13 @@ GVF::GVF(cv::Mat grad_x_original, cv::Mat grad_y_original,
          const ParamGVF& param_gvf)
     : GradientDescentBase(param_gvf.init_step_size_),
       param_gvf_(param_gvf),
-      mag_grad_original_(cv::Mat::zeros(grad_x_original.size(), CV_32F)),
+      mag_grad_original_(cv::Mat::zeros(grad_x_original.size(), CV_64F)),
       grad_x_original_(grad_x_original.clone()),
       grad_y_original_(grad_y_original.clone()),
       gvf_x_(grad_x_original.clone()),
       gvf_y_(grad_y_original.clone()),
-      laplacian_gvf_x_(cv::Mat::zeros(grad_x_original.size(), CV_32F)),
-      laplacian_gvf_y_(cv::Mat::zeros(grad_x_original.size(), CV_32F)) {
+      laplacian_gvf_x_(cv::Mat::zeros(grad_x_original.size(), CV_64F)),
+      laplacian_gvf_y_(cv::Mat::zeros(grad_x_original.size(), CV_64F)) {
     cv::Mat grad_x_2, grad_y_2;
     cv::multiply(grad_x_original_, grad_x_original_, grad_x_2);
     cv::multiply(grad_y_original_, grad_y_original_, grad_y_2);
@@ -48,8 +48,8 @@ void GVF::initialize() {
     // cv::GaussianBlur(mag_grad_original_, mag_grad_original_, cv::Size(7, 7),
     // 7,
     //                 7);
-    cv::Sobel(sqrt_mag_grad_original, gvf_x_, CV_32F, 1, 0, 3);
-    cv::Sobel(sqrt_mag_grad_original, gvf_y_, CV_32F, 0, 1, 3);
+    cv::Sobel(sqrt_mag_grad_original, gvf_x_, CV_64F, 1, 0, 3);
+    cv::Sobel(sqrt_mag_grad_original, gvf_y_, CV_64F, 0, 1, 3);
 
     // cv::GaussianBlur(gvf_x_, gvf_x_, cv::Size(5, 5), param_gvf_.sigma_,
     //                  param_gvf_.sigma_, cv::BORDER_REPLICATE);
@@ -60,8 +60,8 @@ void GVF::initialize() {
 }
 
 void GVF::update() {
-    cv::Laplacian(gvf_x_, laplacian_gvf_x_, CV_32F, 1, cv::BORDER_REFLECT);
-    cv::Laplacian(gvf_y_, laplacian_gvf_y_, CV_32F, 1, cv::BORDER_REFLECT);
+    cv::Laplacian(gvf_x_, laplacian_gvf_x_, CV_64F, 1, cv::BORDER_REFLECT);
+    cv::Laplacian(gvf_y_, laplacian_gvf_y_, CV_64F, 1, cv::BORDER_REFLECT);
 
     cv::Mat data_term_dev_x;
 
@@ -80,7 +80,7 @@ void GVF::update() {
     display_gvf(gvf_x_, gvf_y_, 1);
 }
 
-float GVF::compute_energy() {
+double GVF::compute_energy() {
     cv::Mat data_term_x, data_term_y;
 
     cv::Mat data_term_dev_x;
@@ -97,18 +97,18 @@ float GVF::compute_energy() {
     data_term = data_term_x + data_term_y;
 
     cv::Mat gvf_x_dev_x, gvf_x_dev_y, gvf_y_dev_x, gvf_y_dev_y;
-    cv::Sobel(gvf_x_, gvf_x_dev_x, CV_32F, 1, 0, 3);
-    cv::Sobel(gvf_x_, gvf_x_dev_y, CV_32F, 0, 1, 3);
-    cv::Sobel(gvf_y_, gvf_y_dev_x, CV_32F, 1, 0, 3);
-    cv::Sobel(gvf_y_, gvf_y_dev_y, CV_32F, 0, 1, 3);
+    cv::Sobel(gvf_x_, gvf_x_dev_x, CV_64F, 1, 0, 3);
+    cv::Sobel(gvf_x_, gvf_x_dev_y, CV_64F, 0, 1, 3);
+    cv::Sobel(gvf_y_, gvf_y_dev_x, CV_64F, 1, 0, 3);
+    cv::Sobel(gvf_y_, gvf_y_dev_y, CV_64F, 0, 1, 3);
     cv::Mat gvf_x_dev_x_2, gvf_x_dev_y_2, gvf_y_dev_x_2, gvf_y_dev_y_2;
     cv::pow(gvf_x_dev_x, 2.0f, gvf_x_dev_x_2);
     cv::pow(gvf_x_dev_y, 2.0f, gvf_x_dev_y_2);
     cv::pow(gvf_y_dev_x, 2.0f, gvf_y_dev_x_2);
     cv::pow(gvf_y_dev_y, 2.0f, gvf_y_dev_y_2);
     smooth_term = gvf_x_dev_x_2 + gvf_x_dev_y_2 + gvf_y_dev_x_2 + gvf_y_dev_y_2;
-    float smooth_energy = cv::sum(smooth_term)[0];
-    float data_energy = cv::sum(data_term)[0];
+    double smooth_energy = cv::sum(smooth_term)[0];
+    double data_energy = cv::sum(data_term)[0];
     std::cout << "smooth term : " << smooth_energy << '\n';
     std::cout << "data term : " << data_energy << '\n';
 
