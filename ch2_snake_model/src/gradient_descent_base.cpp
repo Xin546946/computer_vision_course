@@ -19,9 +19,11 @@ void GradientDescentBase::run(int max_iteration) {
 
         float new_energy = compute_energy();
         std::cout.precision(5);
+        std::cout << "current iteration: " << current_iter;
         std::cout << "current step size : " << step_size_;
         if (new_energy < last_energy_) {
             update_step_size(true);
+
             std::cout << "  engery decresed, accept update , "
                       << " new energy : " << new_energy
                       << " last energy : " << last_energy_;
@@ -31,6 +33,7 @@ void GradientDescentBase::run(int max_iteration) {
 
         } else {
             update_step_size(false);
+
             std::cout << "  engery incresed,   drop update , "
                       << " new energy : " << new_energy
                       << " last energy : " << last_energy_ << '\n';
