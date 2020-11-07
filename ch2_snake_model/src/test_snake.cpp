@@ -28,8 +28,8 @@ int main(int argc, char** argv) {
         display_gvf(gvf_result[0], gvf_result[1], 0, save); */
 
     std::vector<cv::Mat> gvf_result(2);
-    gvf_result[0] = cv::imread("../images/test_data/star_gvf_x.png");
-    gvf_result[1] = cv::imread("../images/test_data/star_gvf_y.png");
+    gvf_result[0] = cv::imread("./images/test_data/star_gvf_x.png");
+    gvf_result[1] = cv::imread("./images/test_data/star_gvf_y.png");
 
     // Initialize a contour
     int max_x = gvf_result[0].rows;
