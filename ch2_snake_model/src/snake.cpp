@@ -84,6 +84,7 @@ Snake::Snake(cv::Mat original_img, cv::Mat gvf_x, cv::Mat gvf_y,
       gvf_x_(gvf_x.clone()),
       gvf_y_(gvf_y.clone()),
       gvf_contour_(cv::Size(2, contour.get_num_points()), CV_64F) {
+    cal_internal_force_matrix();
 }
 /**
  * @brief Overlodaded operator for [], that points_[i] return the i-th conotur
@@ -130,15 +131,21 @@ void Snake::cal_internal_force_matrix() {
                               contour_.get_num_points(), CV_64F);
     A = 2 * Id + circshift(-1 * Id, 0, 1);
     A = A + circshift(-1 * Id, 0, -1);
+    // std::cout << "A" << std::endl;
+    // std::cout << A << std::endl;
     // Building B matrix using helper function circshift
     cv::Mat B(contour_.get_num_points(), contour_.get_num_points(), CV_64F);
     B = 6 * Id + circshift(-4 * Id, 0, 1);
     B += circshift(Id, 0, 2);
-    B += circshift(-4 * Id, 1, 0);
+    B += circshift(-4 * Id, 0, -1);
     B += circshift(Id, 0, -2);
+    // std::cout << "B" << std::endl;
+    // std::cout << B << std::endl;
     // Build internal force matrix w.r.t. the corresponding parameters
     internal_force_matrix_ =
-        param_snake_.alpha_ * A - param_snake_.beta_ * B + Id;
+        +param_snake_.alpha_ * A + param_snake_.beta_ * B + Id;
+    std::cout << internal_force_matrix_ << std::endl;
+    internal_force_matrix_ = internal_force_matrix_.inv(CV_CHOLESKY);
 }
 
 void Snake::initialize() {
@@ -153,7 +160,7 @@ void clapping(cv::Vec2d& point, double max_x, double max_y) {
 void Snake::update() {
     // TODO Need to check if the contour within the image boundary
     display_contour(original_img_, contour_, 0);
-    cal_internal_force_matrix();
+
     for (int index = 0; index < contour_.get_num_points(); index++) {
         clapping(contour_[index], gvf_x_.cols, gvf_x_.rows);
 
@@ -162,7 +169,8 @@ void Snake::update() {
                       gvf_y_.at<double>(cv::Point2d(contour_[index])));
     }
     cv::Mat update_step =
-        internal_force_matrix_ * contour_.get_points() + gvf_contour_;
+        internal_force_matrix_ *
+        (param_snake_.step_size_ * contour_.get_points() + gvf_contour_);
 
     contour_.update(update_step);
 }
