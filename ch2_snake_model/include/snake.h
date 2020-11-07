@@ -30,7 +30,7 @@ struct ParamSnake {
 
 class Snake : public GradientDescentBase {
    public:
-    Snake(cv::Mat gvf_x, cv::Mat gvf_y, Contour contour,
+    Snake(cv::Mat original_img, cv::Mat gvf_x, cv::Mat gvf_y, Contour contour,
           ParamSnake param_snake);
 
     Contour get_contour() const;
@@ -47,6 +47,7 @@ class Snake : public GradientDescentBase {
     void print_terminate_info() const override;
     double compute_energy() override;
 
+    cv::Mat original_img_;
     cv::Mat internal_force_matrix_;
     ParamSnake param_snake_;
     Contour contour_;

@@ -73,9 +73,10 @@ void Contour::update(cv::Mat update_step) {
  * @param contour : initialized contour
  * @param param_snake : relavent parameters for snake model
  */
-Snake::Snake(cv::Mat gvf_x, cv::Mat gvf_y, Contour contour,
-             ParamSnake param_snake)
+Snake::Snake(cv::Mat original_img, cv::Mat gvf_x, cv::Mat gvf_y,
+             Contour contour, ParamSnake param_snake)
     : GradientDescentBase(param_snake.step_size_),
+      original_img_(original_img),
       internal_force_matrix_(cv::Mat::zeros(contour.get_num_points(),
                                             contour.get_num_points(), 0)),
       param_snake_(param_snake),
@@ -151,8 +152,7 @@ void clapping(cv::Vec2d& point, double max_x, double max_y) {
 
 void Snake::update() {
     // TODO Need to check if the contour within the image boundary
-    cv::Mat a = cv::Mat::zeros(gvf_x_.size(), CV_8UC1);
-    display_contour(a, contour_, 0);
+    display_contour(original_img_, contour_, 0);
     cal_internal_force_matrix();
     for (int index = 0; index < contour_.get_num_points(); index++) {
         clapping(contour_[index], gvf_x_.cols, gvf_x_.rows);
