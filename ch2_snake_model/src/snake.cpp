@@ -146,8 +146,8 @@ void Snake::initialize() {
 }
 
 void clapping(cv::Vec2d& point, double max_x, double max_y) {
-    point[0] = std::min(std::max(0.0, point[0]), max_x);
-    point[1] = std::min(std::max(0.0, point[1]), max_y);
+    point[0] = std::min(std::max(0.0, point[0]), max_x - 1);
+    point[1] = std::min(std::max(0.0, point[1]), max_y - 1);
 }
 
 void Snake::update() {
