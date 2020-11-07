@@ -34,13 +34,11 @@ int main(int argc, char** argv) {
     // Initialize a contour
     int max_x = gvf_result[0].rows;
     int max_y = gvf_result[1].cols;
-    double radius = 20;
-    cv::Point2d center;
-    center.x = 50;
-    center.y = 50;
+    double radius = std::min(max_x, max_y) / 3.f;
+    cv::Point2d center(max_x / 2.f, max_y / 2.f);
     int num_points = 100;
     Contour contour(max_x, max_y, radius, center, num_points);
-    ParamSnake param_snake{1, 2, 3, 1};
+    ParamSnake param_snake(1, 2, 3, 1);
     Snake snake_model(gvf_result[0], gvf_result[1], contour, param_snake);
     snake_model.run(100);
 
