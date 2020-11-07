@@ -36,6 +36,7 @@ GVF::GVF(cv::Mat grad_original_x, cv::Mat grad_original_y,
 
     cv::Mat mag_original;
     cv::sqrt(square_grad_original_x + square_grad_original_y, mag_original);
+    cv::GaussianBlur(mag_original, mag_original, cv::Size(3, 3), 3, 3);
     cv::Sobel(mag_original, gvf_initial_x_, CV_64F, 1, 0, 3);
     cv::Sobel(mag_original, gvf_initial_y_, CV_64F, 0, 1, 3);
 
