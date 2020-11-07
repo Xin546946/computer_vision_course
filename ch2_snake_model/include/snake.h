@@ -38,7 +38,7 @@ class Snake : public GradientDescentBase {
     void initialize() override;
     void update() override;
 
-    void cal_internal_force_matrix() const;
+    void cal_internal_force_matrix();
 
     cv::Mat get_contour();
 

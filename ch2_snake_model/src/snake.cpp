@@ -88,8 +88,8 @@ Snake::Snake(cv::Mat gvf_x, cv::Mat gvf_y, Contour contour,
  * @param i
  * @return cv::Point2d&
  */
-cv::Point2d& Contour::operator[](int i) {
-    return points_.at<cv::Point2d>(i);
+cv::Vec2d& Contour::operator[](int i) {
+    return points_.at<cv::Vec2d>(i);
 }
 /*************************************************************************/
 /******************FUNCTIONS FOR SNAKE CLASS******************************/
@@ -119,7 +119,7 @@ cv::Mat circshift(cv::Mat matrix, int down_shift, int right_shift) {
     return output;
 }
 
-void Snake::cal_internal_force_matrix() const {
+void Snake::cal_internal_force_matrix() {
     //  build A matrix using helper function circshift
     cv::Mat A(contour_.get_num_points(), contour_.get_num_points(), CV_64F);
     cv::Mat Id = cv::Mat::eye(contour_.get_num_points(),
