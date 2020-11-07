@@ -5,10 +5,10 @@
 #include <opencv2/imgproc.hpp>
 
 int main(int argc, char** argv) {
-    /*     cv::Mat img = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
+    cv::Mat img = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
 
-        // preprocess the input image
-        cv::GaussianBlur(img, img, cv::Size(3, 3), 3, 3);
+    // preprocess the input image
+    /**    cv::GaussianBlur(img, img, cv::Size(3, 3), 3, 3);
 
         cv::Mat grad_original_x, grad_original_y;
         cv::Sobel(img, grad_original_x, CV_64F, 1, 0, 3);
