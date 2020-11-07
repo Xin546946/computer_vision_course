@@ -144,7 +144,7 @@ void Snake::cal_internal_force_matrix() {
     // Build internal force matrix w.r.t. the corresponding parameters
     internal_force_matrix_ =
         +param_snake_.alpha_ * A + param_snake_.beta_ * B + Id;
-    std::cout << internal_force_matrix_ << std::endl;
+    // std::cout << internal_force_matrix_ << std::endl;
     internal_force_matrix_ = internal_force_matrix_.inv(CV_CHOLESKY);
 }
 
@@ -158,7 +158,6 @@ void clapping(cv::Vec2d& point, double max_x, double max_y) {
 }
 
 void Snake::update() {
-    // TODO Need to check if the contour within the image boundary
     display_contour(original_img_, contour_, 0);
 
     for (int index = 0; index < contour_.get_num_points(); index++) {
