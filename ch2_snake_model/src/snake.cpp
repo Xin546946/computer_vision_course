@@ -21,6 +21,8 @@ bool check_valid(int max_x, int max_y, double radius, cv::Point2d center) {
                              std::min(max_y - center.y, center.y));
 }
 
+// TODO copy constructor of Contour
+
 /**
  * @brief Construct a new Contour:: Contour object
  *
@@ -30,6 +32,7 @@ bool check_valid(int max_x, int max_y, double radius, cv::Point2d center) {
  * @param center : Define a circle contour with a center point
  * @param num_points : The number of contour points
  */
+
 Contour::Contour(int max_x, int max_y, double radius, cv::Point2d center,
                  int num_points)
     : points_(cv::Mat::zeros(cv::Size(num_points, 2), CV_64F)) {
@@ -52,7 +55,7 @@ Contour::Contour(int max_x, int max_y, double radius, cv::Point2d center,
 int Contour::get_num_points() const {
     return num_points_;
 }
-cv::Mat Contour::get_points() {
+cv::Mat Contour::get_points() const {
     return points_;
 }
 /**
@@ -70,8 +73,8 @@ Snake::Snake(cv::Mat gvf_x, cv::Mat gvf_y, Contour contour,
     : GradientDescentBase(param_snake.step_size_),
       param_snake_(param_snake),
       contour_(contour),
-      gvf_x_(gvf_x),
-      gvf_y_(gvf_y),
+      gvf_x_(gvf_x.clone()),
+      gvf_y_(gvf_y.clone()),
       gvf_contour_(cv::Size(contour_.get_num_points(), 2), CV_64F) {
 }
 /**
@@ -178,9 +181,9 @@ std::string Snake::return_drive_class_name() const {
     return "Snake";
 }
 
-void roll_back_state() {
+void Snake::roll_back_state() {
     int a = 1;
 }
-void back_up_state() {
+void Snake::back_up_state() {
     int a = 1;
 }
