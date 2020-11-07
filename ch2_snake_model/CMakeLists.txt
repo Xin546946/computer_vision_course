@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10.2)
 project(active_contour)
 
 set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_FLAGS "-o2")
+set(CMAKE_CXX_FLAGS "-g")
 set(CMAKE_CXX_FLAGS "-Wall -Wextra")
 
 
@@ -18,7 +18,7 @@ MESSAGE ( STATUS "include path ${OpenCV_INCLUDE_DIRS}" )
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/include)
-
+add_library(snake ${CMAKE_SOURCE_DIR}/src/snake.cpp)
 add_library(display ${CMAKE_SOURCE_DIR}/src/display.cpp)
 add_library(gvf ${CMAKE_SOURCE_DIR}/src/gvf.cpp)
 add_library(grad_des_base ${CMAKE_SOURCE_DIR}/src/gradient_descent_base.cpp)
@@ -26,4 +26,5 @@ target_link_libraries(gvf ${OpenCV_LIBS} grad_des_base)
 
 add_executable(test_gvf ${CMAKE_SOURCE_DIR}/src/test_gvf.cpp)
 target_link_libraries(test_gvf ${OpenCV_LIBS} gvf display)
-
+add_executable(test_snake ${CMAKE_SOURCE_DIR}/src/test_snake.cpp)
+target_link_libraries(test_snake ${OpenCV_LIBS} snake gvf display)
