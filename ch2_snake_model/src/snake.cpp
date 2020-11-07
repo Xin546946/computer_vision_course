@@ -35,7 +35,7 @@ bool check_valid(int max_x, int max_y, double radius, cv::Point2d center) {
 
 Contour::Contour(int max_x, int max_y, double radius, cv::Point2d center,
                  int num_points)
-    : points_(cv::Mat::zeros(cv::Size(num_points, 2), CV_64F)) {
+    : points_(cv::Mat::zeros(cv::Size(2, num_points), CV_64F)) {
     bool is_valid = check_valid(max_x, max_y, radius, center);
 
     // check if the radius and center is valid w.r.t the image size
@@ -53,7 +53,7 @@ Contour::Contour(int max_x, int max_y, double radius, cv::Point2d center,
 }
 
 int Contour::get_num_points() const {
-    return num_points_;
+    return points_.rows;
 }
 cv::Mat Contour::get_points() const {
     return points_.clone();

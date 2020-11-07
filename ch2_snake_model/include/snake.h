@@ -18,7 +18,6 @@ class Contour {
 
    protected:
     cv::Mat points_;
-    int num_points_;
 };
 
 struct ParamSnake {
