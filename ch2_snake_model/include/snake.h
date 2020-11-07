@@ -34,7 +34,7 @@ class Snake : public GradientDescentBase {
           ParamSnake param_snake);
 
    private:
-    void initialize() override;
+    s void initialize() override;
     void update() override;
 
     double compute_energy() override;
@@ -50,5 +50,9 @@ class Snake : public GradientDescentBase {
     ParamSnake param_snake_;
     Contour contour_;
     cv::Mat gvf_x_;
-    cv::Mat gvf_y_;  // TODO constructor
+    cv::Mat gvf_y_;
+    cv::Mat gvf_contour_;
+    cv::Mat contour_first_dev_;
+    cv::Mat contour_second_dev_;
+    cv::Mat contour_forth_dev_;
 };

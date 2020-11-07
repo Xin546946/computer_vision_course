@@ -69,7 +69,10 @@ Snake::Snake(cv::Mat gvf_x, cv::Mat gvf_y, Contour contour,
              ParamSnake param_snake)
     : GradientDescentBase(param_snake.step_size_),
       param_snake_(param_snake),
-      contour_(contour) {
+      contour_(contour),
+      gvf_x_(gvf_x),
+      gvf_y_(gvf_y),
+      gvf_contour_(cv::Size(contour_.get_num_points(), 2), CV_64F) {
 }
 /**
  * @brief Overlodaded operator for [], that points_[i] return the i-th conotur
@@ -132,15 +135,14 @@ void Snake::initialize() {
 }
 
 void Snake::update() {
-    cv::Mat gvf_contour(cv::Size(contour_.get_num_points(), 2), CV_64F);
     // TODO Need to check if the contour within the image boundary
     for (int index = 0; index < get_contour().rows; index++) {
-        gvf_contour.at<double>(index) = gvf_x_.at<double>(
+        gvf_contour_.at<double>(index) = gvf_x_.at<double>(
             round(contour_.get_points().at<cv::Point2d>(index).x),
             round(contour_.get_points().at<cv::Point2d>(index).y));
     }
     contour_.get_points() =
-        internal_force_matrix_.mul(contour_.get_points()) + gvf_contour;
+        internal_force_matrix_.mul(contour_.get_points()) + gvf_contour_;
 }
 
 void Snake::print_terminate_info() const {
