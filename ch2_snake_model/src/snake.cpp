@@ -167,10 +167,13 @@ void Snake::update() {
             cv::Vec2d(gvf_x_.at<double>(cv::Point2d(contour_[index])),
                       gvf_y_.at<double>(cv::Point2d(contour_[index])));
     }
+    cv::Mat a;
+    cv::normalize(gvf_contour_, a, -1, 1, cv::NORM_MINMAX);
     cv::Mat update_step =
-        internal_force_matrix_ *
-        (param_snake_.step_size_ * contour_.get_points() + gvf_contour_);
+        // internal_force_matrix_ *
+        // (param_snake_.step_size_ * contour_.get_points() + gvf_contour_);
 
+        contour_.get_points() + a;
     contour_.update(update_step);
 }
 
