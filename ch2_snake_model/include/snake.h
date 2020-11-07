@@ -11,9 +11,10 @@ class Contour {
             int num_points);
     // Contour(int max_x, int max_y, std::vector<Point> points);
 
-    cv::Point2d& operator[](int index);
+    cv::Vec2d& operator[](int index);
     cv::Mat get_points() const;
     int get_num_points() const;
+    void update(cv::Mat update_step);
 
    protected:
     cv::Mat points_;
@@ -47,7 +48,7 @@ class Snake : public GradientDescentBase {
     void print_terminate_info() const override;
     double compute_energy() override;
 
-    mutable cv::Mat internal_force_matrix_;
+    cv::Mat internal_force_matrix_;
     ParamSnake param_snake_;
     Contour contour_;
     cv::Mat gvf_x_;

@@ -56,7 +56,11 @@ int Contour::get_num_points() const {
     return num_points_;
 }
 cv::Mat Contour::get_points() const {
-    return points_;
+    return points_.clone();
+}
+
+void Contour::update(cv::Mat update_step) {
+    points_ = update_step.clone();
 }
 /**
  * @brief Construct a new Snake:: Snake object
@@ -137,36 +141,28 @@ void Snake::initialize() {
     // Already initialize in constructor.
 }
 
+void clapping(cv::Vec2d& point, double max_x, double max_y) {
+    point[0] = std::min(std::max(0.0, point[0]), max_x);
+    point[1] = std::min(std::max(0.0, point[1]), max_y);
+}
+
 void Snake::update() {
     // TODO Need to check if the contour within the image boundary
     for (int index = 0; index < get_contour().rows; index++) {
-        gvf_contour_.at<double>(index) = gvf_x_.at<double>(
-            round(contour_.get_points().at<cv::Point2d>(index).x),
-            round(contour_.get_points().at<cv::Point2d>(index).y));
+        clapping(contour_[index], gvf_x_.cols, gvf_x_.rows);
+
+        gvf_contour_.at<cv::Vec2d>(index) =
+            cv::Vec2d(gvf_x_.at<double>(cv::Point2d(contour_[index])),
+                      gvf_y_.at<double>(cv::Point2d(contour_[index])));
     }
-    contour_.get_points() =
+    cv::Mat update_step =
         internal_force_matrix_.mul(contour_.get_points()) + gvf_contour_;
+
+    contour_.update(update_step);
 }
 
 void Snake::print_terminate_info() const {
     std::cout << "Snake iteration finished." << std::endl;
-}
-
-void min_max(cv::Mat x, cv::Mat y, std::vector<cv::Point2d> C, double num,
-             cv::Mat u) {
-    // int size_1, size_2;
-    // size_1, size_2 = u.size();
-    std::cout << "The size of u is: " << u.size() << std::endl;
-    size_t size_1 = u.rows;
-    size_t size_2 = u.cols;
-
-    // double tmp_1, tmp_2;
-    for (int i{0}; i < C.size(); i++) {
-        x.at<double>(i) = x.at<double>(i) > num ? x.at<double>(i) : num;
-        x.at<double>(i) = x.at<double>(i) < size_1 ? x.at<double>(i) : size_1;
-        y.at<double>(i) = y.at<double>(i) > num ? y.at<double>(i) : num;
-        y.at<double>(i) = y.at<double>(i) < size_2 ? y.at<double>(i) : size_2;
-    }
 }
 
 cv::Mat Snake::get_contour() {
