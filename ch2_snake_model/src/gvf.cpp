@@ -39,7 +39,10 @@ GVF::GVF(cv::Mat grad_original_x, cv::Mat grad_original_y,
     cv::Sobel(mag_original, gvf_initial_x_, CV_64F, 1, 0, 3);
     cv::Sobel(mag_original, gvf_initial_y_, CV_64F, 0, 1, 3);
 
-    data_term_weight_ = gvf_initial_x_ + gvf_initial_y_;
+    cv::Mat square_gvf_initial_x, square_gvf_initial_y;
+    cv::pow(gvf_initial_x_, 2.0f, square_gvf_initial_x);
+    cv::pow(gvf_initial_y_, 2.0f, square_gvf_initial_y);
+    data_term_weight_ = square_gvf_initial_x + square_gvf_initial_y;
 }
 /**
  * @brief initialize the gvf: Hits: there are different ways for initialization
@@ -75,12 +78,13 @@ void GVF::update() {
 double GVF::compute_energy() {
     // compute data term
     cv::Mat data_term_x, data_term_y;
-    cv::Mat data_abs_diff_x = cv::abs(gvf_x_ - gvf_initial_x_);
-    cv::Mat data_abs_diff_y = cv::abs(gvf_y_ - gvf_initial_y_);
-    cv::pow(data_abs_diff_x.mul(data_term_weight_), 2.0f, data_term_x);
-    cv::pow(data_abs_diff_y.mul(data_term_weight_), 2.0f, data_term_y);
-    cv::Mat data_term = data_term_x + data_term_y;
+    cv::Mat data_square_diff_x;
+    cv::Mat data_square_diff_y;
+    cv::pow(gvf_x_ - gvf_initial_x_, 2.0f, data_square_diff_x);
+    cv::pow(gvf_y_ - gvf_initial_x_, 2.0f, data_square_diff_y);
 
+    cv::Mat data_square_diff = data_square_diff_x + data_square_diff_y;
+    double data_term = cv::sum(data_term_weight_.mul(data_square_diff))[0];
     // compute smooth term
     cv::Mat gvf_x_dev, gvf_y_dev;
     cv::Sobel(gvf_x_, gvf_x_dev, CV_64F, 1, 1, 3);
@@ -90,11 +94,11 @@ double GVF::compute_energy() {
     cv::pow(gvf_x_dev, 2.0f, gvf_x_dev_square);
     cv::pow(gvf_y_dev, 2.0f, gvf_y_dev_square);
 
-    cv::Mat smooth_term = gvf_x_dev_square + gvf_y_dev_square;
+    cv::Mat smooth_term =
+        param_gvf_.smooth_term_weight_ * (gvf_x_dev_square + gvf_y_dev_square);
     double smooth_energy = cv::sum(smooth_term)[0];
-    double data_energy = cv::sum(data_term)[0];
 
-    return cv::sum(param_gvf_.smooth_term_weight_ * smooth_term + data_term)[0];
+    return param_gvf_.smooth_term_weight_ * smooth_energy + data_term;
 }
 
 /**
