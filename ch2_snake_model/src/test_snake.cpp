@@ -38,7 +38,7 @@ int main(int argc, char** argv) {
     cv::Point2d center(max_x / 2.f, max_y / 2.f);
     int num_points = 100;
     Contour contour(max_x, max_y, radius, center, num_points);
-    ParamSnake param_snake(0.01, 0.01, 1, 1e-7);
+    ParamSnake param_snake(0.01, 0.01, 1, 1e-20);
     Snake snake_model(img, gvf_result[0], gvf_result[1], contour, param_snake);
     snake_model.run(1000);
     Contour result_contour = snake_model.get_contour();

@@ -6,7 +6,6 @@
 tmp
 .vscode
 .idea
-*.json
 *.xml
 
 
