@@ -1,5 +1,5 @@
+#pragma once
 #include "gradient_descent_base.h"
-
 #include <opencv2/core.hpp>
 #include <vector>
 
@@ -33,13 +33,13 @@ class Snake : public GradientDescentBase {
     Snake(cv::Mat gvf_x, cv::Mat gvf_y, Contour contour,
           ParamSnake param_snake);
 
+    Contour get_contour() const;
+
    private:
     void initialize() override;
     void update() override;
 
     void cal_internal_force_matrix();
-
-    cv::Mat get_contour();
 
     std::string return_drive_class_name() const override;
     void roll_back_state() override;

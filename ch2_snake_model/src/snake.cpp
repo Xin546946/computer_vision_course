@@ -1,4 +1,5 @@
 #include "snake.h"
+#include "display.h"
 #include <cmath>
 #include <iostream>
 
@@ -75,11 +76,13 @@ void Contour::update(cv::Mat update_step) {
 Snake::Snake(cv::Mat gvf_x, cv::Mat gvf_y, Contour contour,
              ParamSnake param_snake)
     : GradientDescentBase(param_snake.step_size_),
+      internal_force_matrix_(cv::Mat::zeros(contour.get_num_points(),
+                                            contour.get_num_points(), 0)),
       param_snake_(param_snake),
       contour_(contour),
       gvf_x_(gvf_x.clone()),
       gvf_y_(gvf_y.clone()),
-      gvf_contour_(cv::Size(contour_.get_num_points(), 2), CV_64F) {
+      gvf_contour_(cv::Size(2, contour.get_num_points()), CV_64F) {
 }
 /**
  * @brief Overlodaded operator for [], that points_[i] return the i-th conotur
@@ -148,7 +151,10 @@ void clapping(cv::Vec2d& point, double max_x, double max_y) {
 
 void Snake::update() {
     // TODO Need to check if the contour within the image boundary
-    for (int index = 0; index < get_contour().rows; index++) {
+    cv::Mat a = cv::Mat::zeros(gvf_x_.size(), CV_8UC1);
+    display_contour(a, contour_, 0);
+    cal_internal_force_matrix();
+    for (int index = 0; index < contour_.get_num_points(); index++) {
         clapping(contour_[index], gvf_x_.cols, gvf_x_.rows);
 
         gvf_contour_.at<cv::Vec2d>(index) =
@@ -156,7 +162,7 @@ void Snake::update() {
                       gvf_y_.at<double>(cv::Point2d(contour_[index])));
     }
     cv::Mat update_step =
-        internal_force_matrix_.mul(contour_.get_points()) + gvf_contour_;
+        internal_force_matrix_ * contour_.get_points() + gvf_contour_;
 
     contour_.update(update_step);
 }
@@ -165,8 +171,8 @@ void Snake::print_terminate_info() const {
     std::cout << "Snake iteration finished." << std::endl;
 }
 
-cv::Mat Snake::get_contour() {
-    return contour_.get_points();
+Contour Snake::get_contour() const {
+    return contour_;
 }
 
 double Snake::compute_energy() {

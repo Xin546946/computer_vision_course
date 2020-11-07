@@ -41,6 +41,8 @@ int main(int argc, char** argv) {
     ParamSnake param_snake(1, 2, 3, 1);
     Snake snake_model(gvf_result[0], gvf_result[1], contour, param_snake);
     snake_model.run(100);
+    Contour result_contour = snake_model.get_contour();
+    display_contour(img, result_contour, 0);
 
     return 0;
 }
