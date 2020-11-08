@@ -170,10 +170,10 @@ void Snake::update() {
     cv::Mat gvf_normalized;
     cv::normalize(gvf_contour_, gvf_normalized, -1, 1, cv::NORM_MINMAX);
     cv::Mat update_step =
-        // internal_force_matrix_ *
-        // (param_snake_.step_size_ * contour_.get_points() + gvf_contour_);
+        internal_force_matrix_ *
+        (param_snake_.step_size_ * contour_.get_points() + gvf_normalized);
 
-        contour_.get_points() + gvf_normalized;
+    // contour_.get_points() + gvf_normalized;
     contour_.update(update_step);
 }
 
