@@ -30,15 +30,15 @@ class Contour {
     cv::Mat get_points() const;
     int get_num_points() const;
 
-   protected:
+   private:
     cv::Mat points_;
 };
 
 struct ParamSnake {
-    ParamSnake(double alpha, double beta, double gamma, double step_size);
+    ParamSnake(double alpha, double beta, double step_size);
     double alpha_;
     double beta_;
-    double gamma_;
+
     double step_size_;
 };
 

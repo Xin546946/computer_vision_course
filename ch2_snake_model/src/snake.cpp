@@ -18,9 +18,8 @@ bool is_valid(int max_x, int max_y, double radius, cv::Point2d center) {
                              std::min(max_y - center.y, center.y));
 }
 
-ParamSnake::ParamSnake(double alpha, double beta, double gamma,
-                       double step_size)
-    : alpha_(alpha), beta_(beta), gamma_(gamma), step_size_(step_size) {
+ParamSnake::ParamSnake(double alpha, double beta, double step_size)
+    : alpha_(alpha), beta_(beta), step_size_(step_size) {
 }
 
 /**
@@ -40,12 +39,8 @@ Contour::Contour(int max_x, int max_y, double radius, cv::Point2d center,
         std::exit(-1);
     }
 
-    double angle = 2 * M_PI / num_points;
-
-    for (int i = 0; i < num_points; i++) {
-        points_.at<double>(i, 0) = center.x + radius * cos(-i * angle);
-        points_.at<double>(i, 1) = center.y + radius * sin(-i * angle);
-    }
+    // TODO initialize contour Hints: Circle would be easy to implement with
+    // angles!
 }
 
 Contour::Contour(cv::Mat points) : points_(points.clone()) {
@@ -128,29 +123,13 @@ cv::Mat circshift(cv::Mat matrix, int down_shift, int right_shift) {
     }
     return output;
 }
-
+// TODO Implement internal force matrix
 void Snake::cal_internal_force_matrix() {
     //  build A matrix using helper function circshift
-    cv::Mat A(contour_.get_num_points(), contour_.get_num_points(), CV_64F);
-    cv::Mat Id = cv::Mat::eye(contour_.get_num_points(),
-                              contour_.get_num_points(), CV_64F);
-    A = 2 * Id + circshift(-1 * Id, 0, 1);
-    A = A + circshift(-1 * Id, 0, -1);
-    // std::cout << "A" << std::endl;
-    // std::cout << A << std::endl;
-    // Building B matrix using helper function circshift
-    cv::Mat B(contour_.get_num_points(), contour_.get_num_points(), CV_64F);
-    B = 6 * Id + circshift(-4 * Id, 0, 1);
-    B += circshift(Id, 0, 2);
-    B += circshift(-4 * Id, 0, -1);
-    B += circshift(Id, 0, -2);
-    // std::cout << "B" << std::endl;
-    // std::cout << B << std::endl;
+    // build B matrix using helper function cirshift
     // Build internal force matrix w.r.t. the corresponding parameters
-    internal_force_matrix_ =
-        +param_snake_.alpha_ * A + param_snake_.beta_ * B + Id;
+
     // std::cout << internal_force_matrix_ << std::endl;
-    internal_force_matrix_ = internal_force_matrix_.inv(CV_CHOLESKY);
 }
 
 void Snake::initialize() {
@@ -161,7 +140,7 @@ void clapping(cv::Vec2d& point, double max_x, double max_y) {
     point[0] = std::min(std::max(0.0, point[0]), max_x - 1);
     point[1] = std::min(std::max(0.0, point[1]), max_y - 1);
 }
-
+// TODO implement update function
 void Snake::update() {
     display_contour(original_img_, contour_, 0);
 
@@ -173,13 +152,10 @@ void Snake::update() {
                       gvf_y_.at<double>(cv::Point2d(contour_[index])));
     }
     cv::Mat gvf_normalized(gvf_contour_.size(), gvf_contour_.type());
-    cv::normalize(gvf_contour_, gvf_normalized, -1, 1, cv::NORM_MINMAX);
-    cv::Mat new_points =
-        /*         internal_force_matrix_ *
-                (param_snake_.step_size_ * contour_.get_points() +
-           gvf_normalized); */
+    // Normalize function below will be extremly helpful to tune the parameter
+    // cv::normalize(gvf_contour_, gvf_normalized, -1, 1, cv::NORM_MINMAX);
+    // cv::Mat new_points = ???
 
-        contour_.get_points() + gvf_normalized;
     contour_ = Contour(new_points);
 }
 
@@ -190,9 +166,8 @@ void Snake::print_terminate_info() const {
 Contour Snake::get_contour() const {
     return contour_;
 }
-
+// TODO implement energy
 double Snake::compute_energy() {
-    // todo
 }
 
 std::string Snake::return_drive_class_name() const {
