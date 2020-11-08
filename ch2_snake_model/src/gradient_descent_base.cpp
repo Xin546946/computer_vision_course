@@ -15,7 +15,6 @@ void GradientDescentBase::run(int max_iteration) {
     int current_iter = 0;
     while (!is_terminate(current_iter, max_iteration)) {
         current_iter++;
-        back_up_state();
         update();
 
         double new_energy = compute_energy();
