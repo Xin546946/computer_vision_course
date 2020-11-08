@@ -63,7 +63,7 @@ void GVF::initialize() {
  *
  */
 void GVF::update() {
-    // todo: update the gvf after in iteration (ppt page : 24)
+    // TODO: update the gvf after in iteration (ppt page : 24)
 
     display_gvf(gvf_x_, gvf_y_, 1, false);
 }
@@ -73,7 +73,7 @@ void GVF::update() {
  * @return double
  */
 double GVF::compute_energy() {
-    // todo : compute current energy (ppt page : 23)
+    // TODO : compute current energy (ppt page : 23)
     // compute data term energy
     float smooth_term_energy;
     // compute smooth term energy
