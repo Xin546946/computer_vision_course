@@ -149,7 +149,7 @@ void Snake::cal_internal_force_matrix() {
     // std::cout << B << std::endl;
     // Build internal force matrix w.r.t. the corresponding parameters
     internal_force_matrix_ =
-        +param_snake_.alpha_ * A + param_snake_.beta_ * B + Id;
+        -param_snake_.alpha_ * A + param_snake_.beta_ * B + Id;
     // std::cout << internal_force_matrix_ << std::endl;
     internal_force_matrix_ = internal_force_matrix_.inv(CV_CHOLESKY);
 }
