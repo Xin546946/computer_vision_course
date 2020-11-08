@@ -53,6 +53,9 @@ Contour::Contour(int max_x, int max_y, double radius, cv::Point2d center,
     }
 }
 
+Contour::Contour(const Contour& contour) {
+    points_ = contour.points_.clone();
+}
 int Contour::get_num_points() const {
     return points_.rows;
 }
@@ -81,6 +84,7 @@ Snake::Snake(cv::Mat original_img, cv::Mat gvf_x, cv::Mat gvf_y,
                                             contour.get_num_points(), 0)),
       param_snake_(param_snake),
       contour_(contour),
+      last_contour_(contour_),
       gvf_x_(gvf_x.clone()),
       gvf_y_(gvf_y.clone()),
       gvf_contour_(cv::Size(2, contour.get_num_points()), CV_64F) {
@@ -167,13 +171,14 @@ void Snake::update() {
             cv::Vec2d(gvf_x_.at<double>(cv::Point2d(contour_[index])),
                       gvf_y_.at<double>(cv::Point2d(contour_[index])));
     }
-    cv::Mat gvf_normalized;
+    cv::Mat gvf_normalized(gvf_contour_.size(), gvf_contour_.type());
     cv::normalize(gvf_contour_, gvf_normalized, -1, 1, cv::NORM_MINMAX);
     cv::Mat update_step =
-        internal_force_matrix_ *
-        (param_snake_.step_size_ * contour_.get_points() + gvf_normalized);
+        /*         internal_force_matrix_ *
+                (param_snake_.step_size_ * contour_.get_points() +
+           gvf_normalized); */
 
-    // contour_.get_points() + gvf_normalized;
+        contour_.get_points() + gvf_normalized;
     contour_.update(update_step);
 }
 
@@ -186,7 +191,7 @@ Contour Snake::get_contour() const {
 }
 
 double Snake::compute_energy() {
-    return 0.1;
+    // todo
 }
 
 std::string Snake::return_drive_class_name() const {
@@ -194,8 +199,8 @@ std::string Snake::return_drive_class_name() const {
 }
 
 void Snake::roll_back_state() {
-    int a = 1;
+    contour_ = last_contour_;
 }
 void Snake::back_up_state() {
-    int a = 1;
+    last_contour_ = contour_;
 }

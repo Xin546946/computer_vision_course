@@ -4,12 +4,24 @@
 #include <vector>
 
 // namespace snake
+/**
+ * @brief contour in the snake model
+ *
+ */
 class Contour {
    public:
-    // Many methods could be implemented here
+    /**
+     * @brief Construct a new Contour object
+     *
+     * @param max_x : cols of the image
+     * @param max_y : rows of the image
+     * @param radius : radius of the contour
+     * @param center : center of the contour
+     * @param num_points : points on the contour
+     */
     Contour(int max_x, int max_y, double radius, cv::Point2d center,
             int num_points);
-    // Contour(int max_x, int max_y, std::vector<Point> points);
+    Contour(const Contour& contour);
 
     cv::Vec2d& operator[](int index);
     cv::Mat get_points() const;
@@ -51,6 +63,7 @@ class Snake : public GradientDescentBase {
     cv::Mat internal_force_matrix_;
     ParamSnake param_snake_;
     Contour contour_;
+    Contour last_contour_;
     cv::Mat gvf_x_;
     cv::Mat gvf_y_;
     cv::Mat gvf_contour_;
