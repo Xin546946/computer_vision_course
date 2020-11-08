@@ -3,10 +3,6 @@
 #include <cmath>
 #include <iostream>
 
-ParamSnake::ParamSnake(double alpha, double beta, double gamma,
-                       double step_size)
-    : alpha_(alpha), beta_(beta), gamma_(gamma), step_size_(step_size) {
-}
 /**
  * @brief Check if contour is valid
  *
@@ -17,12 +13,15 @@ ParamSnake::ParamSnake(double alpha, double beta, double gamma,
  * @return true
  * @return false
  */
-bool check_valid(int max_x, int max_y, double radius, cv::Point2d center) {
+bool is_valid(int max_x, int max_y, double radius, cv::Point2d center) {
     return radius < std::min(std::min(max_x - center.x, center.x),
                              std::min(max_y - center.y, center.y));
 }
 
-// TODO copy constructor of Contour
+ParamSnake::ParamSnake(double alpha, double beta, double gamma,
+                       double step_size)
+    : alpha_(alpha), beta_(beta), gamma_(gamma), step_size_(step_size) {
+}
 
 /**
  * @brief Construct a new Contour:: Contour object
@@ -33,14 +32,10 @@ bool check_valid(int max_x, int max_y, double radius, cv::Point2d center) {
  * @param center : Define a circle contour with a center point
  * @param num_points : The number of contour points
  */
-
 Contour::Contour(int max_x, int max_y, double radius, cv::Point2d center,
                  int num_points)
     : points_(cv::Mat::zeros(cv::Size(2, num_points), CV_64F)) {
-    bool is_valid = check_valid(max_x, max_y, radius, center);
-
-    // check if the radius and center is valid w.r.t the image size
-    if (!is_valid) {
+    if (!is_valid(max_x, max_y, radius, center)) {
         std::cerr << "Your Contour are out of boundary." << std::endl;
         std::exit(-1);
     }
@@ -53,18 +48,23 @@ Contour::Contour(int max_x, int max_y, double radius, cv::Point2d center,
     }
 }
 
+Contour::Contour(cv::Mat points) : points_(points.clone()) {
+}
+
 Contour::Contour(const Contour& contour) {
     points_ = contour.points_.clone();
 }
+
 int Contour::get_num_points() const {
     return points_.rows;
 }
+
 cv::Mat Contour::get_points() const {
     return points_.clone();
 }
 
-void Contour::update(cv::Mat update_step) {
-    points_ = update_step.clone();
+Contour Contour::operator=(const Contour& contour) {
+    points_ = contour.points_.clone();
 }
 /**
  * @brief Construct a new Snake:: Snake object
@@ -100,6 +100,7 @@ Snake::Snake(cv::Mat original_img, cv::Mat gvf_x, cv::Mat gvf_y,
 cv::Vec2d& Contour::operator[](int i) {
     return points_.at<cv::Vec2d>(i);
 }
+
 /*************************************************************************/
 /******************FUNCTIONS FOR SNAKE CLASS******************************/
 /************************************************************************/
@@ -174,13 +175,13 @@ void Snake::update() {
     }
     cv::Mat gvf_normalized(gvf_contour_.size(), gvf_contour_.type());
     cv::normalize(gvf_contour_, gvf_normalized, -1, 1, cv::NORM_MINMAX);
-    cv::Mat update_step =
+    cv::Mat new_points =
         /*         internal_force_matrix_ *
                 (param_snake_.step_size_ * contour_.get_points() +
            gvf_normalized); */
 
         contour_.get_points() + gvf_normalized;
-    contour_.update(update_step);
+    contour_ = Contour(new_points);
 }
 
 void Snake::print_terminate_info() const {

@@ -21,12 +21,14 @@ class Contour {
      */
     Contour(int max_x, int max_y, double radius, cv::Point2d center,
             int num_points);
+    Contour(cv::Mat points);
     Contour(const Contour& contour);
+    Contour operator=(const Contour& contour);
 
     cv::Vec2d& operator[](int index);
+
     cv::Mat get_points() const;
     int get_num_points() const;
-    void update(cv::Mat update_step);
 
    protected:
     cv::Mat points_;
