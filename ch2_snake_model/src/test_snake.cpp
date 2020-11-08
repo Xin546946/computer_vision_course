@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
     ParamGVF param_gvf(smooth_term, step_size);  // TODO DELETE 21
     GVF gvf(grad_original_x, grad_original_y, param_gvf);
 
-    int max_iteration_gvf = 3e3;
+    int max_iteration_gvf = 5e3;
     gvf.run(max_iteration_gvf);  // parameter: max_iteration
     std::vector<cv::Mat> gvf_result = gvf.get_result_gvf();
 
@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
     // Initialize a contour
     int max_x = gvf_result[0].rows;
     int max_y = gvf_result[1].cols;
-    double radius = std::min(max_x, max_y) / 4.f;
+    double radius = std::min(max_x, max_y) / 2.2f;
     cv::Point2d center(max_x / 2.f, max_y / 2.f);
     int num_points = 500;
     Contour contour(max_x, max_y, radius, center, num_points);
