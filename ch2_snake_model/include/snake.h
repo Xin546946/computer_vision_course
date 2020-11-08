@@ -23,7 +23,7 @@ class Contour {
             int num_points);
     Contour(cv::Mat points);
     Contour(const Contour& contour);
-    Contour operator=(const Contour& contour);
+    Contour& operator=(const Contour& contour);
 
     cv::Vec2d& operator[](int index);
 
@@ -42,6 +42,10 @@ struct ParamSnake {
     double step_size_;
 };
 
+/**
+ * @brief
+ *
+ */
 class Snake : public GradientDescentBase {
    public:
     Snake(cv::Mat original_img, cv::Mat gvf_x, cv::Mat gvf_y, Contour contour,
@@ -61,12 +65,13 @@ class Snake : public GradientDescentBase {
     void print_terminate_info() const override;
     double compute_energy() override;
 
-    cv::Mat original_img_;
-    cv::Mat internal_force_matrix_;
+    cv::Mat original_img_;           // original image for visualization
+    cv::Mat internal_force_matrix_;  // (Id-(alpha*A - beta*B))
     ParamSnake param_snake_;
-    Contour contour_;
-    Contour last_contour_;
-    cv::Mat gvf_x_;
-    cv::Mat gvf_y_;
-    cv::Mat gvf_contour_;
+    Contour contour_;       // current contour
+    Contour last_contour_;  // contour of last step
+
+    cv::Mat gvf_x_;        // gvf in the x direction
+    cv::Mat gvf_y_;        // gvf in the y direction
+    cv::Mat gvf_contour_;  // gvf on the contour
 };

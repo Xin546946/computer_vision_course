@@ -63,7 +63,7 @@ cv::Mat Contour::get_points() const {
     return points_.clone();
 }
 
-Contour Contour::operator=(const Contour& contour) {
+Contour& Contour::operator=(const Contour& contour) {
     points_ = contour.points_.clone();
 }
 /**
