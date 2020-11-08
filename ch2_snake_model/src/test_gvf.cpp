@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
 
     double smooth_term = 2e8;
     double step_size = 5e-10;
-    ParamGVF param_gvf(smooth_term, step_size);  // TODO DELETE 21
+    ParamGVF param_gvf(smooth_term, step_size);
     GVF gvf(grad_original_x, grad_original_y, param_gvf);
 
     int max_iteration_gvf = 2e4;

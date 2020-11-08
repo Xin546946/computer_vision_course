@@ -130,7 +130,6 @@ cv::Mat circshift(cv::Mat matrix, int down_shift, int right_shift) {
 }
 
 void Snake::cal_internal_force_matrix() {
-    // TODO find out a good internal force matrix
     //  build A matrix using helper function circshift
     cv::Mat A(contour_.get_num_points(), contour_.get_num_points(), CV_64F);
     cv::Mat Id = cv::Mat::eye(contour_.get_num_points(),
