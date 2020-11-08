@@ -31,7 +31,7 @@ int main(int argc, char** argv) {
     // Initialize a contour
     int max_x = gvf_result[0].rows;
     int max_y = gvf_result[1].cols;
-    double radius = std::min(max_x, max_y) / 3.0f;
+    double radius = std::min(max_x, max_y) / 3.f;
     cv::Point2d center(max_x / 2.f, max_y / 2.f);
     int num_points = 200;
     Contour contour(max_x, max_y, radius, center, num_points);
