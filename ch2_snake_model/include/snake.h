@@ -43,7 +43,7 @@ struct ParamSnake {
 };
 
 /**
- * @brief
+ * @brief Snake class
  *
  */
 class Snake : public GradientDescentBase {
