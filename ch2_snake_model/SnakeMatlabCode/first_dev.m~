@@ -1,0 +1,46 @@
+clc;
+clear;
+close all;
+%% initialize a contour
+y = [102 233 351 205 169];
+x = [103 166 307 248 210];
+P = [x(:) y(:)];
+P=InterpolateContourPoints2D(P,100);
+figure(100)
+xlim([100,400])
+ylim([100,400])
+plot(P(:,1),P(:,2),'.');
+
+%% define matrix A 
+A = 2 * eye(100);
+A = A + (-1) *circshift(eye(100),1);
+A = A + (-1) * circshift(eye(100),-1);
+
+%% define matrix B
+B = 6 * eye(100);
+B = B + (-4) *circshift(eye(100),-1);
+B = B + circshift(eye(100),-2);
+B = B + (-4) * circshift(eye(100),1);
+B = B + circshift(eye(100),2);
+%% Move the contour w.r.t. A
+% alpha = 1;
+% A_move_snake = inv((eye(100) - alpha * B));
+% for i = 1:100
+% %   xlim([150,250])
+% %   ylim([250,350])
+%     pause(0.5);
+%     P = B_move_snake * P;
+%     plot(P(:,1),P(:,2),'.');
+% end
+
+%% Move the contour w.r.t. B
+beta = 100;
+B_move_snake = inv((eye(100) + beta * B));
+for i = 1:1000
+    xlim([100,400])
+    ylim([100,400])
+    pause(0.0001);
+    P = B_move_snake * P;
+    plot(P(:,1),P(:,2),'.');
+end
+
