@@ -63,6 +63,7 @@ class Snake : public GradientDescentBase {
     void back_up_state() override;
     void print_terminate_info() const override;
     double compute_energy() override;
+    cv::Mat cal_balloon_force();
 
     cv::Mat original_img_;           // original image for visualization
     cv::Mat internal_force_matrix_;  // (Id-(alpha*A - beta*B))

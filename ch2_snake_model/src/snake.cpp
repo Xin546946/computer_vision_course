@@ -154,6 +154,22 @@ void Snake::cal_internal_force_matrix() {
     internal_force_matrix_ = internal_force_matrix_.inv(CV_CHOLESKY);
 }
 
+cv::Mat Snake::cal_balloon_force() {
+    cv::Mat balloon_force(contour_.get_num_points(), 2, CV_64F);
+    cv::Vec2f tangent;
+
+    for (int i = 0; i < contour_.get_num_points() - 1; i++) {
+        tangent = contour_[i + 1] - contour_[i];
+        balloon_force.at<cv::Vec2f>(i)[0] = -tangent[1];
+        balloon_force.at<cv::Vec2f>(i)[1] = tangent[0];
+    }
+    tangent = contour_[contour_.get_num_points() - 1] - contour_[0];
+    balloon_force.at<cv::Vec2d>(contour_.get_num_points() - 1)[0] = -tangent[1];
+    balloon_force.at<cv::Vec2d>(contour_.get_num_points() - 1)[1] = tangent[0];
+
+    return balloon_force;
+}
+
 void Snake::initialize() {
     // Already initialize in constructor.
 }
@@ -164,8 +180,9 @@ void clapping(cv::Vec2d& point, double max_x, double max_y) {
 }
 
 void Snake::update() {
-    display_contour(original_img_, contour_, 0);
-
+    display_contour(original_img_, contour_, 1);
+    double balloon_force_weight = 0.0;
+    cv::Mat balloon_force = cal_balloon_force();
     for (int index = 0; index < contour_.get_num_points(); index++) {
         clapping(contour_[index], gvf_x_.cols, gvf_x_.rows);
 
@@ -178,9 +195,10 @@ void Snake::update() {
     // std::cout << internal_force_matrix_ * param_snake_.step_size_ *
     //                  contour_.get_points()
     //           << std::endl;
-    cv::Mat new_points = internal_force_matrix_ * param_snake_.step_size_ *
-                             contour_.get_points() +
-                         gvf_normalized;
+    cv::Mat new_points =
+        internal_force_matrix_ *
+        (param_snake_.step_size_ * contour_.get_points() + gvf_normalized +
+         balloon_force_weight * balloon_force);
     std::cout << "Internal force change: "
               << internal_force_matrix_ * param_snake_.step_size_ *
                          contour_.get_points() -

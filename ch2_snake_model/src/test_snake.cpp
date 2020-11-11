@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
 
     // preprocess the input image
-    cv::GaussianBlur(img, img, cv::Size(3, 3), 3, 3);
+    // cv::GaussianBlur(img, img, cv::Size(3, 3), 3, 3);
 
     cv::Mat grad_original_x, grad_original_y;
     cv::Sobel(img, grad_original_x, CV_64F, 1, 0, 3);
@@ -20,25 +20,25 @@ int main(int argc, char** argv) {
     ParamGVF param_gvf(smooth_term, step_size);
     GVF gvf(grad_original_x, grad_original_y, param_gvf);
 
-    int max_iteration_gvf = 2e3;
+    int max_iteration_gvf = 3e3;
     gvf.run(max_iteration_gvf);  // parameter: max_iteration
     std::vector<cv::Mat> gvf_result = gvf.get_result_gvf();
 
-    display_gvf(gvf_result[0], gvf_result[1], 0, true);
+    display_gvf(gvf_result[0], gvf_result[1], 1, true);
     std::cout << gvf_result[0].type() << std::endl;
 
     // run snake
     int max_x = gvf_result[0].rows;
     int max_y = gvf_result[1].cols;
-    double radius = std::min(max_x, max_y) / 4.f;
+    double radius = std::min(max_x, max_y) / 4.0f;
     cv::Point2d center(max_x / 2.f, max_y / 2.f);
-    int num_points = 500;
+    int num_points = 300;
 
     Contour contour(max_x, max_y, radius, center, num_points);
-    ParamSnake param_snake(0.02f, 0.5f, 1.0f);
+    ParamSnake param_snake(0.02f, 0.1f, 1.0f);
 
     Snake snake_model(img, gvf_result[0], gvf_result[1], contour, param_snake);
-    snake_model.run(2500);
+    snake_model.run(1e4);
     Contour result_contour = snake_model.get_contour();
     display_contour(img, result_contour, 0);
 
