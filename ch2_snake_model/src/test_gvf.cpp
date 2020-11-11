@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
     cv::Sobel(img, grad_original_x, CV_64F, 1, 0, 3);
     cv::Sobel(img, grad_original_y, CV_64F, 0, 1, 3);
 
-    double smooth_term = 2e8;
+    double smooth_term = 1e8;
     double step_size = 5e-10;
     ParamGVF param_gvf(smooth_term, step_size);  // TODO DELETE 21
     GVF gvf(grad_original_x, grad_original_y, param_gvf);
