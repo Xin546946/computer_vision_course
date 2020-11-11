@@ -136,20 +136,22 @@ void Snake::cal_internal_force_matrix() {
                               contour_.get_num_points(), CV_64F);
     A = -2 * Id + circshift(Id, 0, 1) + circshift(Id, 0, -1);
 
-    std::cout << "A" << std::endl;
-    std::cout << A << std::endl;
+    // std::cout << "A" << std::endl;
+    // std::cout << A << std::endl;
     // Building B matrix using helper function circshift
     cv::Mat B(contour_.get_num_points(), contour_.get_num_points(), CV_64F);
     B = 6 * Id + circshift(-4 * Id, 0, 1) + circshift(Id, 0, 2) +
         circshift(-4 * Id, 0, -1) + circshift(Id, 0, -2);
 
-    std::cout << "B" << std::endl;
-    std::cout << B << std::endl;
+    // std::cout << "B" << std::endl;
+    // std::cout << B << std::endl;
     // Build internal force matrix w.r.t. the corresponding parameters
+    // internal_force_matrix_ =
+    //     Id - param_snake_.alpha_ * A + param_snake_.beta_ * B;
     internal_force_matrix_ =
-        Id - param_snake_.alpha_ * A + param_snake_.beta_ * B;
+        Id + param_snake_.alpha_ * A - param_snake_.beta_ * B;
     // std::cout << internal_force_matrix_ << std::endl;
-    internal_force_matrix_ = internal_force_matrix_.inv(CV_CHOLESKY);
+    // internal_force_matrix_ = internal_force_matrix_.inv(CV_CHOLESKY);
 }
 
 void Snake::initialize() {
@@ -173,13 +175,17 @@ void Snake::update() {
     }
     cv::Mat gvf_normalized(gvf_contour_.size(), gvf_contour_.type());
     cv::normalize(gvf_contour_, gvf_normalized, -1, 1, cv::NORM_MINMAX);
-    std::cout << internal_force_matrix_ * param_snake_.step_size_ *
+    // std::cout << internal_force_matrix_ * param_snake_.step_size_ *
+    //                  contour_.get_points()
+    //           << std::endl;
+    cv::Mat new_points = internal_force_matrix_ * param_snake_.step_size_ *
+                             contour_.get_points() +
+                         gvf_normalized;
+    std::cout << "Internal force change: "
+              << internal_force_matrix_ * param_snake_.step_size_ *
+                         contour_.get_points() -
                      contour_.get_points()
               << std::endl;
-    cv::Mat new_points =
-        internal_force_matrix_ *
-        (param_snake_.step_size_ * contour_.get_points() + gvf_normalized);
-
     // contour_.get_points() + gvf_normalized;
     contour_ = Contour(new_points);
 }
