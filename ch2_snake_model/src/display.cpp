@@ -96,14 +96,26 @@ void disp_image(cv::Mat& img, cv::String windowName, cv::String error_msg,
     }
 }
 
-void display_contour(cv::Mat img, Contour& contour, int delay) {
+void display_contour(cv::Mat img, Contour& contour, int delay,
+                     bool show_ballon_force) {
     cv::Mat img_rgb;
     cv::cvtColor(img, img_rgb, CV_GRAY2RGB);
-    for (int i = 0; i < contour.get_num_points() - 1; i++) {
+    int sz = contour.get_num_points() - 1;
+    for (int i = 0; i < sz - 1; i++) {
         cv::line(img_rgb, cv::Point2d(contour[i]), cv::Point2d(contour[i + 1]),
                  cv::Scalar(0, 0, 255), 4, cv::LINE_AA);
         cv::circle(img_rgb, cv::Point2d(contour[i]), 2, cv::Scalar(0, 255, 0),
                    2, 8, 0);
+
+        if (show_ballon_force) {
+            cv::Vec2d t = contour[i + 1] - contour[i];
+            cv::normalize(t, t);
+            cv::Vec2d n = cv::Vec2d(t[1], -t[0]);
+
+            cv::arrowedLine(img_rgb, cv::Point2d(contour[i]),
+                            cv::Point2d(contour[i] + n * 20),
+                            cv::Scalar(255, 0, 0), 1, 8);
+        }
     }
     cv::line(img_rgb, cv::Point2d(contour[0]),
              cv::Point2d(contour[contour.get_num_points() - 1]),
@@ -111,6 +123,17 @@ void display_contour(cv::Mat img, Contour& contour, int delay) {
 
     cv::circle(img_rgb, cv::Point2d(contour[0]), 2, cv::Scalar(255, 0, 0), 2, 8,
                0);
+
+    if (show_ballon_force) {
+        cv::Vec2d t = contour[0] - contour[sz - 1];
+        cv::normalize(t, t);
+        cv::Vec2d n = cv::Vec2d(t[1], -t[0]);
+
+        cv::arrowedLine(img_rgb, cv::Point2d(contour[sz - 1]),
+                        cv::Point2d(contour[sz - 1] + n * 20),
+                        cv::Scalar(255, 0, 0), 1, 8);
+    }
+
     cv::imshow("snake", img_rgb);
     cv::waitKey(delay);
 }
