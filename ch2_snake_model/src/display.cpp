@@ -103,13 +103,13 @@ void display_contour(cv::Mat img, Contour& contour, int delay) {
         cv::line(img_rgb, cv::Point2d(contour[i]), cv::Point2d(contour[i + 1]),
                  cv::Scalar(0, 0, 255), 4, cv::LINE_AA);
         cv::circle(img_rgb, cv::Point2d(contour[i]), 2, cv::Scalar(0, 255, 0),
-                   1, 8, 0);
+                   2, 8, 0);
     }
     cv::line(img_rgb, cv::Point2d(contour[0]),
              cv::Point2d(contour[contour.get_num_points() - 1]),
              cv::Scalar(0, 0, 255), 4, cv::LINE_AA);
 
-    cv::circle(img_rgb, cv::Point2d(contour[0]), 2, cv::Scalar(0, 255, 0), 1, 8,
+    cv::circle(img_rgb, cv::Point2d(contour[0]), 2, cv::Scalar(255, 0, 0), 2, 8,
                0);
     cv::imshow("snake", img_rgb);
     cv::waitKey(delay);
