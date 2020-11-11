@@ -66,6 +66,9 @@ class Snake : public GradientDescentBase {
 
     cv::Mat original_img_;           // original image for visualization
     cv::Mat internal_force_matrix_;  // (Id-(alpha*A - beta*B))
+    cv::Mat A_;
+    cv::Mat B_;
+    cv::Mat M_;
     ParamSnake param_snake_;
     Contour contour_;       // current contour
     Contour last_contour_;  // contour of last step

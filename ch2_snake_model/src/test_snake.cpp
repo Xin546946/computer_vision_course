@@ -35,7 +35,7 @@ int main(int argc, char** argv) {
     int num_points = 200;
 
     Contour contour(max_x, max_y, radius, center, num_points);
-    ParamSnake param_snake(1e-3, 1e-3, 0.8);
+    ParamSnake param_snake(1e-5, 0.002, 1);
 
     Snake snake_model(img, gvf_result[0], gvf_result[1], contour, param_snake);
     snake_model.run(1000);

@@ -79,6 +79,12 @@ Snake::Snake(cv::Mat original_img, cv::Mat gvf_x, cv::Mat gvf_y,
              Contour contour, ParamSnake param_snake)
     : GradientDescentBase(param_snake.step_size_),
       original_img_(original_img),
+      A_(cv::Mat::eye(contour.get_num_points(), contour.get_num_points(),
+                      CV_64F)),
+      B_(cv::Mat::eye(contour.get_num_points(), contour.get_num_points(),
+                      CV_64F)),
+      M_(cv::Mat::eye(contour.get_num_points(), contour.get_num_points(),
+                      CV_64F)),
       internal_force_matrix_(cv::Mat::zeros(contour.get_num_points(),
                                             contour.get_num_points(), 0)),
       param_snake_(param_snake),
@@ -88,6 +94,9 @@ Snake::Snake(cv::Mat original_img, cv::Mat gvf_x, cv::Mat gvf_y,
       gvf_y_(gvf_y.clone()),
       gvf_contour_(cv::Size(2, contour.get_num_points()), CV_64F) {
     cal_internal_force_matrix();
+
+    cv::Mat Id = cv::Mat::eye(contour_.get_num_points(),
+                              contour_.get_num_points(), CV_64F);
 }
 /**
  * @brief Overlodaded operator for [], that points_[i] return the i-th conotur
@@ -129,29 +138,20 @@ cv::Mat circshift(cv::Mat matrix, int down_shift, int right_shift) {
 }
 
 void Snake::cal_internal_force_matrix() {
-    // TODO find out a good internal force matrix
-    //  build A matrix using helper function circshift
-    cv::Mat A(contour_.get_num_points(), contour_.get_num_points(), CV_64F);
     cv::Mat Id = cv::Mat::eye(contour_.get_num_points(),
                               contour_.get_num_points(), CV_64F);
-    A = -2 * Id + circshift(Id, 0, 1) + circshift(Id, 0, -1);
 
-    // std::cout << "A" << std::endl;
-    // std::cout << A << std::endl;
-    // Building B matrix using helper function circshift
-    cv::Mat B(contour_.get_num_points(), contour_.get_num_points(), CV_64F);
-    B = 6 * Id + circshift(-4 * Id, 0, 1) + circshift(Id, 0, 2) +
-        circshift(-4 * Id, 0, -1) + circshift(Id, 0, -2);
-
-    // std::cout << "B" << std::endl;
-    // std::cout << B << std::endl;
     // Build internal force matrix w.r.t. the corresponding parameters
     // internal_force_matrix_ =
     //     Id - param_snake_.alpha_ * A + param_snake_.beta_ * B;
+    A_ = -2 * Id + circshift(Id, 0, 1) + circshift(Id, 0, -1);
+    B_ = 6 * Id + circshift(-4 * Id, 0, 1) + circshift(Id, 0, 2) +
+         circshift(-4 * Id, 0, -1) + circshift(Id, 0, -2);
+    M_ = -Id + circshift(Id, 0, 1);
     internal_force_matrix_ =
-        Id + param_snake_.alpha_ * A - param_snake_.beta_ * B;
+        Id - param_snake_.alpha_ * A_ + param_snake_.beta_ * B_;
     // std::cout << internal_force_matrix_ << std::endl;
-    // internal_force_matrix_ = internal_force_matrix_.inv(CV_CHOLESKY);
+    internal_force_matrix_ = internal_force_matrix_.inv(CV_CHOLESKY);
 }
 
 void Snake::initialize() {
@@ -199,7 +199,6 @@ Contour Snake::get_contour() const {
 }
 
 double Snake::compute_energy() {
-    // todo
 }
 
 std::string Snake::return_drive_class_name() const {
