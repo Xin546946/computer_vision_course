@@ -164,7 +164,7 @@ void clapping(cv::Vec2d& point, double max_x, double max_y) {
 }
 
 void Snake::update() {
-    display_contour(original_img_, contour_, 0);
+    display_contour(original_img_, contour_, 1);
 
     for (int index = 0; index < contour_.get_num_points(); index++) {
         clapping(contour_[index], gvf_x_.cols, gvf_x_.rows);
