@@ -18,9 +18,8 @@ bool is_valid(int max_x, int max_y, double radius, cv::Point2d center) {
                              std::min(max_y - center.y, center.y));
 }
 
-ParamSnake::ParamSnake(double alpha, double beta, double gamma,
-                       double step_size)
-    : alpha_(alpha), beta_(beta), gamma_(gamma), step_size_(step_size) {
+ParamSnake::ParamSnake(double alpha, double beta, double step_size)
+    : alpha_(alpha), beta_(beta), step_size_(step_size) {
 }
 
 /**
@@ -135,21 +134,20 @@ void Snake::cal_internal_force_matrix() {
     cv::Mat A(contour_.get_num_points(), contour_.get_num_points(), CV_64F);
     cv::Mat Id = cv::Mat::eye(contour_.get_num_points(),
                               contour_.get_num_points(), CV_64F);
-    A = 2 * Id + circshift(-1 * Id, 0, 1);
-    A = A + circshift(-1 * Id, 0, -1);
-    // std::cout << "A" << std::endl;
-    // std::cout << A << std::endl;
+    A = -2 * Id + circshift(Id, 0, 1) + circshift(Id, 0, -1);
+
+    std::cout << "A" << std::endl;
+    std::cout << A << std::endl;
     // Building B matrix using helper function circshift
     cv::Mat B(contour_.get_num_points(), contour_.get_num_points(), CV_64F);
-    B = 6 * Id + circshift(-4 * Id, 0, 1);
-    B += circshift(Id, 0, 2);
-    B += circshift(-4 * Id, 0, -1);
-    B += circshift(Id, 0, -2);
-    // std::cout << "B" << std::endl;
-    // std::cout << B << std::endl;
+    B = 6 * Id + circshift(-4 * Id, 0, 1) + circshift(Id, 0, 2) +
+        circshift(-4 * Id, 0, -1) + circshift(Id, 0, -2);
+
+    std::cout << "B" << std::endl;
+    std::cout << B << std::endl;
     // Build internal force matrix w.r.t. the corresponding parameters
     internal_force_matrix_ =
-        +param_snake_.alpha_ * A + param_snake_.beta_ * B + Id;
+        Id - param_snake_.alpha_ * A + param_snake_.beta_ * B;
     // std::cout << internal_force_matrix_ << std::endl;
     internal_force_matrix_ = internal_force_matrix_.inv(CV_CHOLESKY);
 }
@@ -175,12 +173,14 @@ void Snake::update() {
     }
     cv::Mat gvf_normalized(gvf_contour_.size(), gvf_contour_.type());
     cv::normalize(gvf_contour_, gvf_normalized, -1, 1, cv::NORM_MINMAX);
+    std::cout << internal_force_matrix_ * param_snake_.step_size_ *
+                     contour_.get_points()
+              << std::endl;
     cv::Mat new_points =
-        /*         internal_force_matrix_ *
-                (param_snake_.step_size_ * contour_.get_points() +
-           gvf_normalized); */
+        internal_force_matrix_ *
+        (param_snake_.step_size_ * contour_.get_points() + gvf_normalized);
 
-        contour_.get_points() + gvf_normalized;
+    // contour_.get_points() + gvf_normalized;
     contour_ = Contour(new_points);
 }
 
