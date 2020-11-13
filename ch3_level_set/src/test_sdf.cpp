@@ -15,5 +15,9 @@ int main(int argc, char** argv) {
     cv::Mat sdf_with_contour = sdf_map.draw_contour(sdf_draw);
     disp_image(sdf_with_contour, "sdf", 0);
 
+    cv::Mat fore_back_ground = sdf_map.get_fore_background_label_map();
+    disp_image(fore_back_ground, "fore- and background", 0);
+    double energy_grad_mag_map = sdf_map.get_gradient_magnitude_level_set();
+    std::cout << energy_grad_mag_map << std::endl;
     return 0;
 }
