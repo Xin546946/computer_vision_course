@@ -13,5 +13,6 @@ int main(int argc, char** argv) {
 
     cv::Mat sdf_draw = draw_sdf_map(sdf_map);
     disp_image(sdf_draw, "sdf", 0);
+
     return 0;
 }
