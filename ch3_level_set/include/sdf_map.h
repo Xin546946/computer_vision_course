@@ -17,13 +17,14 @@ class SDFMap {  // phi
                                            double eps);  // 1-Heaciside
     // todo define a heaviside function according to the std::for_each
     // todo using overload function for heaviside function
-    void update();
-    void get_length();  // get the total length of all contours
+    void update(cv::Mat step);
+
+    // void get_length();  // get the total length of all contours
 
     cv::Mat get_gradient_magnitude_level_set();
     cv::Mat get_contour();        // get zero level set
     int get_num_segment() const;  // get how many contours ***Hard***
-    cv::Mat get_back_and_forground_label_map()
+    cv::Mat get_back_and_foreground_label_map()
         const;  // get segment result, forground background
 
    private:
