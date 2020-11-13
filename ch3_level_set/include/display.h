@@ -1,6 +1,5 @@
 #pragma once
 #include "sdf_map.h"
-#include "snake.h"
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>

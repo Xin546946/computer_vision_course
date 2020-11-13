@@ -96,16 +96,17 @@ void disp_image(cv::Mat& img, cv::String windowName, cv::String error_msg,
     }
 }
 
-void display_contour(cv::Mat img, Contour& contour, int delay) {
-    cv::Mat img_rgb;
-    cv::cvtColor(img, img_rgb, CV_GRAY2RGB);
-    for (int i = 0; i < contour.get_num_points() - 1; i++) {
-        cv::line(img_rgb, cv::Point2d(contour[i]), cv::Point2d(contour[i + 1]),
-                 cv::Scalar(0, 0, 255), 4, cv::LINE_AA);
+// map a gray value image to color image
+cv::Mat apply_jetmap(cv::Mat image) {
+    cv::Mat result = image.clone();
+    if (image.channels() == 3) {
+        cv::cvtColor(result, result, CV_RGB2GRAY);
     }
-    cv::line(img_rgb, cv::Point2d(contour[0]),
-             cv::Point2d(contour[contour.get_num_points() - 1]),
-             cv::Scalar(0, 0, 255), 4, cv::LINE_AA);
-    cv::imshow("snake", img_rgb);
-    cv::waitKey(delay);
+
+    result.convertTo(result, CV_8UC1);
+    cv::normalize(result, result, 0, 255, cv::NORM_MINMAX);
+    assert(result.channels() == 1 || result.type() == CV_8UC1);
+    cv::applyColorMap(image, result, cv::COLORMAP_JET);
+
+    return result;
 }
