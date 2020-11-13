@@ -24,8 +24,8 @@
 
     \begin{algorithm}[htbp]
     \SetAlgoLined
-    \KwResult{local minimizer $\mathbf{x}^*$}
-     $\mathbf{x} = \mathbf{x}_0,\lambda = \lambda_0, num\_step = 0$\\
+    \KwIn{$\mathbf{x} = \mathbf{x}_0,\lambda = \lambda_0, num\_step = 0$\\}
+    \KwOut{local minimizer $\mathbf{x}^*$}
      \While{$num\_step < max\_num\_step\; \textbf{and} \;$}{
         $\triangle \mathbf{x}$ = get\_update\_step($\mathbf{x}$,$\lambda$)\;
       \eIf{is converge}{
