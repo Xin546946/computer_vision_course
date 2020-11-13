@@ -47,8 +47,34 @@ Contour::Contour(int max_x, int max_y, double radius, cv::Point2d center,
     double angle = 2 * M_PI / num_points;
 
     for (int i = 0; i < num_points; i++) {
-        points_.at<double>(i, 0) = center.x + radius * cos(-i * angle);
-        points_.at<double>(i, 1) = center.y + radius * sin(-i * angle);
+        points_.at<double>(i, 0) = center.x + radius * cos(i * angle);
+        points_.at<double>(i, 1) = center.y + radius * sin(i * angle);
+    }
+}
+
+Contour::Contour(int rows, int cols, int num_points) {
+    int side_length = 2 * (rows + cols) - 4;
+    int interval = static_cast<float>(side_length) / num_points + 1;
+    interval = std::max(interval, 1);
+
+    points_ = cv::Mat::zeros(cv::Size(2, num_points), CV_64F);
+    int id = 0;
+
+    // up
+    for (int c = 0; c < cols; c += interval) {
+        points_.at<cv::Vec2d>(id++) = cv::Vec2d(c, 0);
+    }
+    // right
+    for (int r = 1; r < rows - 1; r += interval) {
+        points_.at<cv::Vec2d>(id++) = cv::Vec2d(cols - 1, r);
+    }
+    // bottom
+    for (int c = cols; c >= 0; c -= interval) {
+        points_.at<cv::Vec2d>(id++) = cv::Vec2d(c, rows - 1);
+    }
+    // left
+    for (int r = rows - 1; r >= 0; r -= interval) {
+        points_.at<cv::Vec2d>(id++) = cv::Vec2d(0, r);
     }
 }
 
@@ -166,13 +192,13 @@ cv::Mat Snake::cal_balloon_force() {
     for (int i = 0; i < contour_.get_num_points() - 1; i++) {
         tangent = contour_[i + 1] - contour_[i];
         cv::normalize(tangent, tangent);
-        balloon_force.at<cv::Vec2d>(i)[0] = tangent[1];
-        balloon_force.at<cv::Vec2d>(i)[1] = -tangent[0];
+        balloon_force.at<cv::Vec2d>(i)[0] = -tangent[1];
+        balloon_force.at<cv::Vec2d>(i)[1] = tangent[0];
     }
     tangent = -contour_[contour_.get_num_points() - 1] + contour_[0];
     cv::normalize(tangent, tangent);
-    balloon_force.at<cv::Vec2d>(contour_.get_num_points() - 1)[0] = tangent[1];
-    balloon_force.at<cv::Vec2d>(contour_.get_num_points() - 1)[1] = -tangent[0];
+    balloon_force.at<cv::Vec2d>(contour_.get_num_points() - 1)[0] = -tangent[1];
+    balloon_force.at<cv::Vec2d>(contour_.get_num_points() - 1)[1] = +tangent[0];
 
     return balloon_force;
 }
@@ -188,7 +214,6 @@ void clapping(cv::Vec2d& point, double max_x, double max_y) {
 
 void Snake::update() {
     display_contour(original_img_, contour_, 1, false);
-
     cv::Mat balloon_force = cal_balloon_force();
     for (int index = 0; index < contour_.get_num_points(); index++) {
         clapping(contour_[index], gvf_x_.cols, gvf_x_.rows);
