@@ -1,0 +1,31 @@
+#pragma once
+#include <opencv2/core.hpp>
+
+class SDFMap {  // phi
+   public:
+    /**
+     * @brief Construct a new SDFMap object, Output a SDF
+     *
+     * @param center
+     * @param radius
+     */
+    SDFMap(int rows, int cols, cv::Point2d center, double radius);
+    friend cv::Mat heaviside(
+        SDFMap sdf_map,
+        double eps);  // if phi>0, H(phi) = 1; if phi<0, H(phi) = 0;
+    friend cv::Mat complementary_heaviside(SDFMap sdf_map,
+                                           double eps);  // 1-Heaciside
+    // todo define a heaviside function according to the std::for_each
+    // todo using overload function for heaviside function
+    void update();
+    void get_length();  // get the total length of all contours
+
+    cv::Mat get_gradient_magnitude_level_set();
+    cv::Mat get_contour();        // get zero level set
+    int get_num_segment() const;  // get how many contours ***Hard***
+    cv::Mat get_back_and_forground_label_map()
+        const;  // get segment result, forground background
+
+   private:
+    cv::Mat map_;
+};

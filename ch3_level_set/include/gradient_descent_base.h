@@ -12,7 +12,7 @@ class GradientDescentBase {
     virtual void update() = 0;
     virtual bool is_terminate(int current_iter, int max_iteration) const;
 
-    virtual double compute_energy() = 0;
+    virtual double compute_energy() const = 0;
     virtual void roll_back_state() = 0;
     virtual void back_up_state() = 0;
     virtual void update_step_size(bool is_energy_decent);
