@@ -96,7 +96,11 @@ void disp_image(cv::Mat& img, cv::String windowName, cv::String error_msg,
     }
 }
 
-// map a gray value image to color image
+/**
+ * @brief apply a jetmap to an image.
+ * @param image : image to be applied with jet map
+ * @return cv::Mat
+ */
 cv::Mat apply_jetmap(cv::Mat image) {
     cv::Mat result = image.clone();
     if (image.channels() == 3) {
@@ -110,7 +114,17 @@ cv::Mat apply_jetmap(cv::Mat image) {
 
     return result;
 }
+
+/**
+ * @brief draw sdf map for visualization
+ *
+ * @param sdf_map to be visulized visualization
+ * @return cv::Mat the visualzation image
+ */
 cv::Mat draw_sdf_map(const SDFMap& sdf_map) {
     assert(!sdf_map.map_.empty());
     return apply_jetmap(sdf_map.map_);
+}
+
+void draw_contour(cv::Mat img, cv::Mat contour, int delay) {
 }
