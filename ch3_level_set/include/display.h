@@ -1,6 +1,5 @@
 #pragma once
 #include "sdf_map.h"
-
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -21,5 +20,5 @@ void draw_contour(cv::Mat img, cv::Mat contour, int delay);
  * @param sdf_map
  * @return cv::Mat
  */
-cv::Mat draw_sdf_map(SDFMap sdf_map);  // todo use draw_contour function
+cv::Mat draw_sdf_map(const SDFMap& sdf_map);  // todo use draw_contour function
 cv::Mat apply_jetmap(cv::Mat image);
