@@ -19,7 +19,9 @@ class LevelSetCV : public GradientDescentBase {
    public:
     LevelSetCV();                // todo give index of the constructor
     void initialize() override;  // todo SDFMap and cf, cb
+
     void update() override;
+    // todo think about testing!!!
     void upadate_center();
     void update_level_set();
 
