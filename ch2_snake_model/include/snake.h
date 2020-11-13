@@ -22,6 +22,7 @@ class Contour {
     Contour(int max_x, int max_y, double radius, cv::Point2d center,
             int num_points);
     Contour(cv::Mat points);
+    Contour(int rows, int cols, int num_points);
     Contour(const Contour& contour);
     Contour& operator=(const Contour& contour);
 

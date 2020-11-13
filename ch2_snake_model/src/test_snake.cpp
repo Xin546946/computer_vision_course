@@ -20,8 +20,8 @@ int main(int argc, char** argv) {
     ParamGVF param_gvf(smooth_term, step_size);
     GVF gvf(grad_original_x, grad_original_y, param_gvf);
 
-    int max_iteration_gvf = 1e3;  // 2500
-    gvf.run(max_iteration_gvf);   // parameter: max_iteration
+    int max_iteration_gvf = 1000;  // 2500
+    gvf.run(max_iteration_gvf);    // parameter: max_iteration
     std::vector<cv::Mat> gvf_result = gvf.get_result_gvf();
 
     display_gvf(gvf_result[0], gvf_result[1], 0, true);
@@ -30,11 +30,12 @@ int main(int argc, char** argv) {
     // run snake
     int max_x = gvf_result[0].rows;
     int max_y = gvf_result[1].cols;
-    double radius = std::min(max_x, max_y) / 2.1f;  // 4
+    double radius = std::min(max_x, max_y) / 4.0f;  // 4
     cv::Point2d center(max_x / 2.f, max_y / 2.f);
-    int num_points = 300;  // 300
+    int num_points = 200;  // 200
 
     Contour contour(max_x, max_y, radius, center, num_points);
+    // Contour contour(max_x, max_y, num_points);
     ParamSnake param_snake(0.001, 0.06, 1.0f);  // 0.001 0.06
 
     Snake snake_model(img, gvf_result[0], gvf_result[1], contour, param_snake);

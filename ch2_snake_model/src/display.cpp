@@ -110,7 +110,7 @@ void display_contour(cv::Mat img, Contour& contour, int delay,
         if (show_ballon_force) {
             cv::Vec2d t = contour[i + 1] - contour[i];
             cv::normalize(t, t);
-            cv::Vec2d n = cv::Vec2d(t[1], -t[0]);
+            cv::Vec2d n = cv::Vec2d(-t[1], t[0]);
 
             cv::arrowedLine(img_rgb, cv::Point2d(contour[i]),
                             cv::Point2d(contour[i] + n * 20),
@@ -127,7 +127,7 @@ void display_contour(cv::Mat img, Contour& contour, int delay,
     if (show_ballon_force) {
         cv::Vec2d t = contour[0] - contour[sz - 1];
         cv::normalize(t, t);
-        cv::Vec2d n = cv::Vec2d(t[1], -t[0]);
+        cv::Vec2d n = cv::Vec2d(-t[1], t[0]);
 
         cv::arrowedLine(img_rgb, cv::Point2d(contour[sz - 1]),
                         cv::Point2d(contour[sz - 1] + n * 20),
