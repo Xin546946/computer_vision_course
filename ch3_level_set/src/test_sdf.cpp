@@ -11,6 +11,6 @@ int main(int argc, char** argv) {
     double radius = std::min(rows, cols) / 4.f;
     SDFMap sdf_map(rows, cols, center, radius);
 
-    cv::Mat draw_sdf_map = draw_sdf_map(sdf_map);
+    cv::Mat sdf_draw = draw_sdf_map(sdf_map);
     return 0;
 }
