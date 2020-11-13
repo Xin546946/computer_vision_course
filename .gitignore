@@ -1,4 +1,7 @@
 ## reference : https://www.pluralsight.com/guides/how-to-use-gitignore-file
+## **/ means ignore * means abstract of the file name, X.txt would be ignored
+##                  ** means all paths of the folder would be ignored
+
 
 **/build
 **/cmake-build-debug
@@ -8,9 +11,15 @@ tmp
 .idea
 *.xml
 
+**/*.aux
+**/*.fls
+**/*.fdb_latexmk
+**/*.log
+**/*.gz
 
 
 
 
 
 ch2_snake_model/.clang-format
+ch3_level_set/docu/test.pdf
