@@ -18,8 +18,13 @@ bool is_valid(int max_x, int max_y, double radius, cv::Point2d center) {
                              std::min(max_y - center.y, center.y));
 }
 
-ParamSnake::ParamSnake(double alpha, double beta, double step_size)
-    : alpha_(alpha), beta_(beta), step_size_(step_size) {
+ParamSnake::ParamSnake(double alpha, double beta, double step_size,
+                       double balloon_force_weight, bool add_balloon_force)
+    : alpha_(alpha),
+      beta_(beta),
+      step_size_(step_size),
+      balloon_force_weight_(balloon_force_weight),
+      add_balloon_force_(add_balloon_force) {
 }
 
 /**
@@ -182,8 +187,8 @@ void clapping(cv::Vec2d& point, double max_x, double max_y) {
 }
 
 void Snake::update() {
-    display_contour(original_img_, contour_, 0, true);
-    double balloon_force_weight = 0.5;
+    display_contour(original_img_, contour_, 1, false);
+
     cv::Mat balloon_force = cal_balloon_force();
     for (int index = 0; index < contour_.get_num_points(); index++) {
         clapping(contour_[index], gvf_x_.cols, gvf_x_.rows);
@@ -197,14 +202,27 @@ void Snake::update() {
     // std::cout << internal_force_matrix_ * param_snake_.step_size_ *
     //                  contour_.get_points()
     //           << std::endl;
-    cv::Mat new_points =
-        internal_force_matrix_ *
-        (param_snake_.step_size_ * contour_.get_points() + gvf_normalized +
-         balloon_force_weight * balloon_force);
+    // cv::Mat balloon_force_gvf_weight;
 
-    std::cout << "balon force" << balloon_force << std::endl;
+    // cv::exp(-gvf_normalized, balloon_force_gvf_weight);
+    // cv::normalize(balloon_force_gvf_weight, balloon_force_gvf_weight, -1, 1,
+    //   cv::NORM_MINMAX);
+    cv::Mat new_points;
+    if (param_snake_.add_balloon_force_) {
+        new_points =
+            internal_force_matrix_ *
+            (param_snake_.step_size_ * contour_.get_points() + gvf_normalized +
+             param_snake_.balloon_force_weight_ * balloon_force);
+    } else {
+        new_points =
+            internal_force_matrix_ *
+            (param_snake_.step_size_ * contour_.get_points() + gvf_normalized);
+    }
+
+    // std::cout << "balon force" << balloon_force << std::endl;
     // std::cout << "Internal force change: "
-    //          << internal_force_matrix_ * param_snake_.step_size_ *
+    //          << internal_force_matrix_ *
+    //          param_snake_.step_size_ *
     //                     contour_.get_points() -
     //                 contour_.get_points()
     //          << std::endl;

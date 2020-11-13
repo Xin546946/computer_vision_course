@@ -35,10 +35,13 @@ class Contour {
 };
 
 struct ParamSnake {
-    ParamSnake(double alpha, double beta, double step_size);
+    ParamSnake(double alpha, double beta, double step_size,
+               double balloon_force_weight, bool add_balloon_force);
     double alpha_;
     double beta_;
     double step_size_;
+    double balloon_force_weight_;
+    bool add_balloon_force_;
 };
 
 /**

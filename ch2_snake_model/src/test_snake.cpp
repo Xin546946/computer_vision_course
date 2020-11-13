@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
     gvf.run(max_iteration_gvf);   // parameter: max_iteration
     std::vector<cv::Mat> gvf_result = gvf.get_result_gvf();
 
-    display_gvf(gvf_result[0], gvf_result[1], 0, true);
+    display_gvf(gvf_result[0], gvf_result[1], 1, true);
     std::cout << gvf_result[0].type() << std::endl;
 
     // run snake
@@ -32,14 +32,21 @@ int main(int argc, char** argv) {
     int max_y = gvf_result[1].cols;
     double radius = std::min(max_x, max_y) / 2.1f;  // 4
     cv::Point2d center(max_x / 2.f, max_y / 2.f);
-    int num_points = 300;  // 300
+    int num_points = 200;  // 300
 
     Contour contour(max_x, max_y, radius, center, num_points);
-    ParamSnake param_snake(0.001, 0.06, 1.0f);  // 0.001 0.06
+    ParamSnake param_snake(0.001, 0.06, 1.0f, 0.25, true);  // 0.001 0.06
 
     Snake snake_model(img, gvf_result[0], gvf_result[1], contour, param_snake);
-    snake_model.run(8e3);
+    snake_model.run(600);
     Contour result_contour = snake_model.get_contour();
     display_contour(img, result_contour, 0);
+    // ParamSnake param_snake_add_balloon_force(0.001, 0.06, 0.25, 1.0f, false);
+    // Snake snake_model_improve(img, gvf_result[0], gvf_result[1],
+    // result_contour,
+    //                           param_snake_add_balloon_force);
+    // snake_model_improve.run(1e3);
+    // result_contour = snake_model_improve.get_contour();
+    // display_contour(img, result_contour, 0);
     return 0;
 }
