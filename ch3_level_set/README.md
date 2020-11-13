@@ -14,7 +14,7 @@ update()
 get_lenght()
 
 * jin
-cmakelist
+cmakelist done
 test
 ctor
 get_back_and_foreground
