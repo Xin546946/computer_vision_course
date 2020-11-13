@@ -1,6 +1,7 @@
 #include "display.h"
+#include "sdf_map.h"
 #include <opencv2/core.hpp>
-int main(char argc, char** argv) {
+int main(int argc, char** argv) {
     // define and and initialize a sdf_map object
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
     int rows = img.rows;
