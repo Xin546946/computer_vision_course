@@ -30,15 +30,15 @@ int main(int argc, char** argv) {
     // run snake
     int max_x = gvf_result[0].rows;
     int max_y = gvf_result[1].cols;
-    double radius = std::min(max_x, max_y) / 4.0f;  // 4
+    double radius = std::min(max_x, max_y) / 2.1f;  // 4
     cv::Point2d center(max_x / 2.f, max_y / 2.f);
     int num_points = 200;  // 300
 
     Contour contour(max_x, max_y, radius, center, num_points);
-    ParamSnake param_snake(0.001, 0.06, 1.0f, 0.25, true);  // 0.001 0.06
+    ParamSnake param_snake(0.001, 0.06, 1.0f, 0.15, true);  // 0.001 0.06
 
     Snake snake_model(img, gvf_result[0], gvf_result[1], contour, param_snake);
-    snake_model.run(600);
+    snake_model.run(5000);
     Contour result_contour = snake_model.get_contour();
     display_contour(img, result_contour, 0);
     // ParamSnake param_snake_add_balloon_force(0.001, 0.06, 0.25, 1.0f, false);
