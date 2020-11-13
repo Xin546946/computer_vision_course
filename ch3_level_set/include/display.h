@@ -13,7 +13,6 @@ void draw_optical_flow(cv::Mat& fx, cv::Mat& fy, cv::Mat& cflowmap, int step,
 // void display_gvf(cv::Mat fx, cv::Mat fy, int delay, bool save);
 // void display_contour(cv::Mat img, Contour& contour, int delay);
 
-void draw_contour(cv::Mat img, cv::Mat contour, int delay);
 /**
  * @brief Map image in a coloful space and draw a contour
  *
@@ -22,3 +21,6 @@ void draw_contour(cv::Mat img, cv::Mat contour, int delay);
  */
 cv::Mat draw_sdf_map(const SDFMap& sdf_map);  // todo use draw_contour function
 cv::Mat apply_jetmap(cv::Mat image);
+cv::Mat draw_contour(cv::Mat img, cv::Mat contour,
+                     cv::Scalar color = cv::Scalar(0, 0, 255),
+                     int thickness = 3);

@@ -104,13 +104,13 @@ void disp_image(cv::Mat& img, cv::String windowName, cv::String error_msg,
 cv::Mat apply_jetmap(cv::Mat image) {
     cv::Mat result = image.clone();
     if (image.channels() == 3) {
-        cv::cvtColor(result, result, CV_RGB2GRAY);
+        cv::cvtColor(result, result, CV_BGR2GRAY);
     }
 
     result.convertTo(result, CV_8UC1);
     cv::normalize(result, result, 0, 255, cv::NORM_MINMAX);
     assert(result.channels() == 1 || result.type() == CV_8UC1);
-    cv::applyColorMap(image, result, cv::COLORMAP_JET);
+    cv::applyColorMap(result, result, cv::COLORMAP_JET);
 
     return result;
 }
@@ -126,5 +126,35 @@ cv::Mat draw_sdf_map(const SDFMap& sdf_map) {
     return apply_jetmap(sdf_map.map_);
 }
 
-void draw_contour(cv::Mat img, cv::Mat contour, int delay) {
+/**
+ * @brief draw contour on the image
+ *
+ * @param img  original image
+ * @param contour N*2 mat, each row contaion a 2d point in type of cv::Point2d
+ * @return cloned image with drawed contour
+ */
+cv::Mat draw_contour(cv::Mat img, cv::Mat contour, cv::Scalar color,
+                     int thickness) {
+    assert(contour.cols == 2 && contour.rows > 2 &&
+           contour.type() == CV_64FC1 && !img.empty());
+    cv::Mat result = contour.clone();
+
+    if (result.channels() == 1) {
+        cv::cvtColor(result, result, cv::COLOR_GRAY2BGR);
+    }
+
+    if (result.type() != CV_8UC3) {
+        result.convertTo(result, CV_8UC3);
+    }
+
+    for (int i = 0; i < contour.rows - 1; i++) {
+        const cv::Vec2d& p1 = contour.at<cv::Vec2d>(i);
+        const cv::Vec2d& p2 = contour.at<cv::Vec2d>(i + 1);
+        cv::line(result, cv::Point(p1), cv::Point(p2), color, thickness);
+    }
+
+    const cv::Vec2d& p1 = contour.at<cv::Vec2d>(contour.rows);
+    const cv::Vec2d& p2 = contour.at<cv::Vec2d>(0);
+    cv::line(result, cv::Point(p1), cv::Point(p2), color, thickness);
+    return result;
 }
