@@ -20,5 +20,5 @@ void draw_contour(cv::Mat img, cv::Mat contour, int delay);
  * @param sdf_map
  * @return cv::Mat
  */
-cv::Mat draw_sdf_map(SDFMap sdf_map);  // todo use draw_contour function
+cv::Mat draw_sdf_map(const SDFMap& sdf_map);  // todo use draw_contour function
 cv::Mat apply_jetmap(cv::Mat image);

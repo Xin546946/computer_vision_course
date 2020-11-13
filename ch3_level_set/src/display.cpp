@@ -110,3 +110,7 @@ cv::Mat apply_jetmap(cv::Mat image) {
 
     return result;
 }
+cv::Mat draw_sdf_map(const SDFMap& sdf_map) {
+    assert(!sdf_map.map_.empty());
+    return apply_jetmap(sdf_map.map_);
+}
