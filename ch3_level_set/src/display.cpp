@@ -153,8 +153,9 @@ cv::Mat draw_contour(cv::Mat img, cv::Mat contour, cv::Scalar color,
         cv::line(result, cv::Point(p1), cv::Point(p2), color, thickness);
     }
 
-    const cv::Vec2d& p1 = contour.at<cv::Vec2d>(contour.rows);
+    const cv::Vec2d& p1 = contour.at<cv::Vec2d>(contour.rows - 1);
     const cv::Vec2d& p2 = contour.at<cv::Vec2d>(0);
     cv::line(result, cv::Point(p1), cv::Point(p2), color, thickness);
+
     return result;
 }
