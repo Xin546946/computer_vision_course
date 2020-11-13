@@ -7,7 +7,7 @@
 
 * wu
 draw_sdf_map done 
-draw_contour
+draw_contour done
 apply_jest_map done
 heavisiade *3 + derivative
 update()
