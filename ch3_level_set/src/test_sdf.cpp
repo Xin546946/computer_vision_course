@@ -12,7 +12,8 @@ int main(int argc, char** argv) {
     SDFMap sdf_map(rows, cols, center, radius);
 
     cv::Mat sdf_draw = draw_sdf_map(sdf_map);
-    disp_image(sdf_draw, "sdf", 0);
+    cv::Mat sdf_with_contour = sdf_map.draw_contour(sdf_draw);
+    disp_image(sdf_with_contour, "sdf", 0);
 
     return 0;
 }

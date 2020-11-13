@@ -130,15 +130,17 @@ cv::Mat draw_sdf_map(const SDFMap& sdf_map) {
  * @brief draw contour on the image
  *
  * @param img  original image
- * @param contour N*2 mat, each row contaion a 2d point in type of cv::Point2d
+ * @param contour N*2 mat, each row contaion a 2d point in type of
+ * cv::Point2d(x,y)
  * @return cloned image with drawed contour
  */
 cv::Mat draw_contour(cv::Mat img, cv::Mat contour, cv::Scalar color,
                      int thickness) {
-    assert(contour.cols == 2 && contour.rows > 2 &&
-           contour.type() == CV_64FC1 && !img.empty());
-    cv::Mat result = contour.clone();
-
+    assert(contour.type() == CV_64FC1 && !img.empty());
+    cv::Mat result = img.clone();
+    if (contour.empty()) {
+        return result;
+    }
     if (result.channels() == 1) {
         cv::cvtColor(result, result, cv::COLOR_GRAY2BGR);
     }
