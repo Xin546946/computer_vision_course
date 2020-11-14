@@ -17,10 +17,10 @@ MESSAGE ( STATUS "include path ${OpenCV_INCLUDE_DIRS}" )
 include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
+add_library(gdc_base ${CMAKE_SOURCE_DIR}/src/gradient_descent_base.cpp)
 add_library(utils ${CMAKE_SOURCE_DIR}/src/level_set_utils.cpp)
 add_library(sdf_map ${CMAKE_SOURCE_DIR}/src/sdf_map.cpp)
 add_library(display ${CMAKE_SOURCE_DIR}/src/display.cpp)
-
 
 add_executable(test_cv ${CMAKE_SOURCE_DIR}/src/test_cv.cpp)
 target_link_libraries(test_cv ${OpenCV_LIBS} utils sdf_map display)
