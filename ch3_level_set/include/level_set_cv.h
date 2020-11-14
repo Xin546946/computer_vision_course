@@ -44,4 +44,6 @@ class LevelSetCV : public GradientDescentBase {
     double grayvalue_background_;
     double grayvalue_forground_;
     cv::Mat image_;
+    double center_foreground_;
+    double center_background_;
 };
