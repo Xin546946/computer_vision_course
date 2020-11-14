@@ -65,7 +65,7 @@ void disp_image(cv::Mat& img, cv::String windowName, int delay) {
         std::cout << "Error reading image File!";
         std::cin.ignore();
     } else {
-        cv::namedWindow(windowName, 0);
+        cv::namedWindow(windowName, cv::WINDOW_AUTOSIZE);
         cv::imshow(windowName, img);
         cv::waitKey(delay);
     }
@@ -77,7 +77,7 @@ void disp_image(cv::Mat& img, cv::String windowName, cv::String error_msg) {
         std::cout << error_msg;
         std::cin.ignore();
     } else {
-        cv::namedWindow(windowName, 0);
+        cv::namedWindow(windowName, cv::WINDOW_AUTOSIZE);
         cv::imshow(windowName, img);
         cv::waitKey();
     }
