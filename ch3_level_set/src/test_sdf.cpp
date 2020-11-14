@@ -9,9 +9,9 @@ int main(int argc, char** argv) {
 
     assert(img.channels() == 1);
 
-    cv::Mat div_img = computer_div_delta_map(img);
+    // cv::Mat div_img = computer_div_delta_map(img);
 
-    disp_image(div_img, "divergence", 0);
+    // disp_image(div_img, "divergence", 0);
     int rows = img.rows;
     int cols = img.cols;
     cv::Point2d center(cols / 2.f, rows / 2.f);
