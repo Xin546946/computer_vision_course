@@ -63,6 +63,34 @@ cv::Mat compute_laplacian_map(const SDFMap& sdf_map) {
     cv::Laplacian(sdf_map.map_, result, CV_64F, 3, cv::BORDER_REPLICATE);
     return result;
 }
+
+double compute_sum_square_diff(cv::Mat img1, cv::Mat img2) {
+    cv::Mat diff = img1 - img2;
+    cv::Mat square_diff;
+    cv::pow(diff, 2.0f, square_diff);
+    return cv::sum(square_diff)[0];
+}
+
+cv::Mat compute_derivative_data_term(const SDFMap& sdf_map,
+                                     cv::Mat original_image,
+                                     double weight_foreground,
+                                     double weight_background,
+                                     double center_foreground,
+                                     double center_background, double eps) {
+    // todo homework
+    double e_foregroud = compute_sum_square_diff(
+        original_image,
+        center_foreground *
+            cv::Mat::ones(original_image.size(), original_image.type()));
+    double e_backgroud = compute_sum_square_diff(
+        original_image,
+        center_background *
+            cv::Mat::ones(original_image.size(), original_image.type()));
+
+    return -dirac(sdf_map, eps) *
+           (weight_foreground * e_foregroud - weight_background * e_backgroud);
+}
+
 cv::Mat compute_derivative_length_term(const SDFMap& sdf_map, double eps) {
     cv::Mat div = computer_div_delta_map(sdf_map);
     cv::Mat dirac_map = dirac(sdf_map, eps);
@@ -99,23 +127,4 @@ double compute_center(cv::Mat img, const SDFMap& sdf_map, double eps,
         return cv::sum(img.mul(heaviside(sdf_map, eps)))[0] /
                cv::sum(heaviside(sdf_map, eps))[0];
     }
-}
-
-cv::Mat compute_derivative_data_term(const SDFMap& sdf_map,
-                                     cv::Mat original_image,
-                                     double weight_foreground,
-                                     double weight_background,
-                                     double center_foreground,
-                                     double center_background, double eps) {
-    double sum_abs_diff_foreground = cv::sum(
-        cv::abs(original_image -
-                center_foreground * cv::Mat::ones(original_image.size(),
-                                                  original_image.type())))[0];
-    double sum_abs_diff_background = cv::sum(
-        cv::abs(original_image -
-                center_background * cv::Mat::ones(original_image.size(),
-                                                  original_image.type())))[0];
-
-    return -dirac(sdf_map, eps) * (weight_foreground * sum_abs_diff_foreground -
-                                   weight_background * sum_abs_diff_background);
 }
