@@ -1,4 +1,5 @@
 #pragma once
+#include "level_set_cv.h"
 #include "sdf_map.h"
 #include <opencv2/core.hpp>
 
@@ -27,3 +28,5 @@ cv::Mat compute_derivative_gradient_term(const SDFMap& sdf_map);
 cv::Mat compute_laplacian_map(const SDFMap& sdf_map);
 cv::Mat gaussian_kernel(int size, double sigma);
 cv::Mat compute_foreground_center();
+double compute_center(cv::Mat img, const SDFMap& sdf_map, double eps,
+                      bool is_background);
