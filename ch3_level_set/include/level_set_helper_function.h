@@ -17,4 +17,4 @@ cv::Mat complementary_heaviside(const SDFMap& sdf_map,
 
 double heaciside_derivative(double z, double eps = 1.0);
 double get_length(SDFMap sdf_map);
-cv::Mat compute_div(cv::Mat vec);
+cv::Mat computer_div_delta_map(const SDFMap& sdf_map);

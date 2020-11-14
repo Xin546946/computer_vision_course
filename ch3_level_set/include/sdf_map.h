@@ -18,6 +18,7 @@ class SDFMap {  // phi
     friend cv::Mat draw_sdf_map(const SDFMap& sdf_map);
     // todo define a heaviside function according to the std::for_each
     // todo using overload function for heaviside function
+    friend cv::Mat computer_div_delta_map(const SDFMap& sdf_map);
     void update(cv::Mat step);
 
     // void get_length();  // get the total length of all contours
