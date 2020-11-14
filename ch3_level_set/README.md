@@ -12,12 +12,12 @@ apply_jest_map done
 get_contour(); done
 heavisiade *3 + derivative
 update()
-get_lenght()
+computer_length_energy() done
 
 * jin
 cmakelist done
 test done 
 ctor done 
 get_back_and_foreground done 
-get_gradient_magnitude.....
-compure_div
+get_gradient_magnitude..... done 
+compure_div done 
