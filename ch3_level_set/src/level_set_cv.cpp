@@ -6,11 +6,14 @@
 
 ParamLevelSetCV ::ParamLevelSetCV(double forground_weight,
                                   double background_weight, double eps,
-                                  double step_size)
+                                  double step_size, double length_term_weight,
+                                  double gradient_term_weight)
     : forground_weight_(forground_weight),
       background_weight_(background_weight),
       eps_(eps),
-      step_size_(step_size) {
+      step_size_(step_size),
+      length_term_weight_(length_term_weight),
+      gradient_term_weight_(gradient_term_weight) {
 }
 
 LevelSetCV::LevelSetCV(cv::Mat image, const ParamLevelSetCV& param)
@@ -38,11 +41,11 @@ void LevelSetCV::update_level_set() {
                                 param_.background_weight_, center_foreground_,
                                 center_background_, param_.eps_);
     cv::Mat update_step_length_term =
-        param_.step_size_ * param_.gradient_term_weight *
+        param_.step_size_ * param_.gradient_term_weight_ *
         compute_derivative_gradient_term(level_set_);
 
     cv::Mat update_step_gradient_term =
-        param_.step_size_ * param_.length_term_weight *
+        param_.step_size_ * param_.length_term_weight_ *
         compute_derivative_gradient_term(level_set_);
 
     cv::Mat vis;
@@ -72,4 +75,7 @@ double LevelSetCV::compute_energy() const {
 
 std::string LevelSetCV::return_drive_class_name() const {
     return "Level Set CV Model";
+}
+
+void LevelSetCV::update() {
 }
