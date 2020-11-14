@@ -12,7 +12,6 @@ apply_jest_map done
 get_contour(); done
 heavisiade *3 + derivative
 update()
-get_lenght()
 
 * jin
 cmakelist done

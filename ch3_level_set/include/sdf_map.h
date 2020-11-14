@@ -20,7 +20,7 @@ class SDFMap {  // phi
     // todo using overload function for heaviside function
     friend cv::Mat computer_div_delta_map(const SDFMap& sdf_map);
 
-    void update(cv::Mat step);
+    void add(cv::Mat step);
 
     // void get_length();  // get the total length of all contours
 
