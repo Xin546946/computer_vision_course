@@ -38,6 +38,10 @@ double SDFMap::get_gradient_magnitude_level_set() {
     return cv::sum(0.5 * (mag_grad_map - 1.0).mul(mag_grad_map - 1.0))[0];
 }
 
+void SDFMap::add(cv::Mat step) {
+    map_ += step;
+}
+
 /**
  * @brief return a N*2 mat, each row is a point2d(x,y);
  *
