@@ -7,6 +7,8 @@ class GradientDescentBase {
     GradientDescentBase(double step_size);
     void run(int max_iteration);
 
+    virtual ~GradientDescentBase();
+
    protected:
     virtual void initialize() = 0;
     virtual void update() = 0;
