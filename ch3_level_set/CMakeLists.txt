@@ -24,7 +24,7 @@ add_library(display ${CMAKE_SOURCE_DIR}/src/display.cpp)
 
 
 add_library(lvlset_cv ${CMAKE_SOURCE_DIR}/src/level_set_cv.cpp) 
-target_link_libraries(lvlset_cv utils gdc_base sdf_map)
+target_link_libraries(lvlset_cv utils gdc_base sdf_map display)
 
 
 add_executable(test_cv ${CMAKE_SOURCE_DIR}/src/test_cv.cpp)
