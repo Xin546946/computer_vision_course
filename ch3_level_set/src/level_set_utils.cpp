@@ -81,10 +81,10 @@ cv::Mat gaussian_kernel(int size, double sigma) {
     for (int r = 0; r < size; r++) {
         for (int c = 0; c < size; c++) {
             result.at<double>(r, c) =
-                255;  // (M_1_PI * 0.5 / (sigma * sigma)) *
-                      // exp(-(pow(r - center.x, 2) + pow(c - center.y, 2)) /
-                      //     (2 * sigma * sigma));
+                (M_1_PI * 0.5 / (sigma * sigma)) *
+                exp(-(pow(r - center.x, 2) + pow(c - center.y, 2)) /
+                    (2 * sigma * sigma));
         }
     }
-    return result;
+    return result / cv::sum(result)[0];
 }

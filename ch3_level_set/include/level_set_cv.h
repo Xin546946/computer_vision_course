@@ -1,6 +1,6 @@
 #pragma once
 #include "gradient_descent_base.h"
-#include "level_set_helper_function.h"
+#include "level_set_utils.h"
 #include "sdf_map.h"
 /**
  * @brief Parameter of Level Set of CV Model
