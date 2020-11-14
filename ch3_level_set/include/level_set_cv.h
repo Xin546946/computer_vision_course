@@ -7,9 +7,10 @@
  *
  */
 struct ParamLevelSetCV {
-    ParamLevelSetCV(double forground_weight, double background);
+    ParamLevelSetCV(double forground_weight, double background, double eps);
     double forground_weight_;
     double background_weight_;
+    double eps_;  // H(z,eps)
 };
 /**
  * @brief class of Level Set CV Model
