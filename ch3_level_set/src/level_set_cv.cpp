@@ -73,11 +73,19 @@ double LevelSetCV::compute_energy() const {
     return 0;
 }
 void LevelSetCV::initialize() {
+    // initialize lvl set :   sdf already initilized in constructor
+
+    // initilize centers :
 }
 
 std::string LevelSetCV::return_drive_class_name() const {
     return "Level Set CV Model";
 }
-
+void LevelSetCV::update_center() {
+    center_foreground_ = compute_center(image_, level_set_, param_.eps_, false);
+    center_background_ = compute_center(image_, level_set_, param_.eps_, true);
+}
 void LevelSetCV::update() {
+    update_center();
+    update_level_set();
 }

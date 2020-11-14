@@ -16,6 +16,7 @@ int main(int argc, char** argv) {
         1, 1, 1, 1, 1, 1);  // fore_weight, back_weight, eps, step_size
 
     LevelSetCV level_set_cv(img, param_level_set_cv);
+    level_set_cv.run(100);
 
     return 0;
 }

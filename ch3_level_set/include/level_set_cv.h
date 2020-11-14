@@ -29,7 +29,7 @@ class LevelSetCV : public GradientDescentBase {
 
     void update() override;
     // todo think about testing!!!
-    void upadate_center();
+    void update_center();
     void update_level_set();
 
     double compute_regu_length() const;
