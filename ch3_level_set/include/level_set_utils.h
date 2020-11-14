@@ -1,4 +1,4 @@
-
+#pragma once
 #include "sdf_map.h"
 #include <opencv2/core.hpp>
 
