@@ -9,7 +9,7 @@
 draw_sdf_map done 
 draw_contour done
 apply_jest_map done
-get_contour();
+get_contour(); done
 heavisiade *3 + derivative
 update()
 get_lenght()

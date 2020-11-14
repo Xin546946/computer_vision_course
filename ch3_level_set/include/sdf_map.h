@@ -11,10 +11,8 @@ class SDFMap {  // phi
      */
     SDFMap(int rows, int cols, cv::Point2d center, double radius);
     friend cv::Mat heaviside(
-        SDFMap sdf_map,
+        const SDFMap& sdf_map,
         double eps);  // if phi>0, H(phi) = 1; if phi<0, H(phi) = 0;
-    friend cv::Mat complementary_heaviside(SDFMap sdf_map,
-                                           double eps);  // 1-Heaciside
     friend cv::Mat draw_sdf_map(const SDFMap& sdf_map);
     // todo define a heaviside function according to the std::for_each
     // todo using overload function for heaviside function
