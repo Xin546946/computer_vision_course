@@ -18,19 +18,25 @@ LevelSetCV::LevelSetCV(cv::Mat image, const ParamLevelSetCV& param)
  *
  */
 void LevelSetCV::update_level_set() {
-    cv::Mat update_step_data_term;
-    update_step_data_term =
+    cv::Mat update_step_data_term =
         param_.step_size_ * compute_derivative_data_term(
                                 level_set_, image_, param_.forground_weight_,
                                 param_.background_weight_, center_foreground_,
                                 center_background_, param_.eps_);
-    cv::Mat update_step_length_term;
-    cv::Mat update_step_gradient_term;
+    cv::Mat update_step_length_term =
+        param_.step_size_ * param_.gradient_term_weight *
+        compute_derivative_gradient_term(level_set_);
+
+    cv::Mat update_step_gradient_term =
+        param_.step_size_ * param_.length_term_weight *
+        compute_derivative_gradient_term(level_set_);
 
     cv::Mat vis;
+
     cv::hconcat(update_step_data_term, update_step_length_term, vis);
     cv::hconcat(vis, update_step_gradient_term, vis);
     cv::imshow("top: data term, mid : lenght_term, down : gradient_term", vis);
+    cv::waitKey(0);
 
     cv::Mat update_step = update_step_data_term + update_step_length_term +
                           update_step_gradient_term;

@@ -12,6 +12,8 @@ struct ParamLevelSetCV {
     double background_weight_;
     double eps_;  // H(z,eps)
     double step_size_;
+    double length_term_weight;
+    double gradient_term_weight;
 };
 /**
  * @brief class of Level Set CV Model
