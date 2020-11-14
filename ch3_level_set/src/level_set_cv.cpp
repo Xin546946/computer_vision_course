@@ -1,16 +1,30 @@
 #include "level_set_cv.h"
 #include "level_set_utils.h"
 #include "opencv2/highgui.hpp"
+#include <iostream>
 #include <opencv2/core.hpp>
+
+ParamLevelSetCV ::ParamLevelSetCV(double forground_weight,
+                                  double background_weight, double eps,
+                                  double step_size)
+    : forground_weight_(forground_weight),
+      background_weight_(background_weight),
+      eps_(eps),
+      step_size_(step_size) {
+}
+
 LevelSetCV::LevelSetCV(cv::Mat image, const ParamLevelSetCV& param)
     : GradientDescentBase(param_.step_size_),
       level_set_(image.rows, image.cols,
                  cv::Point(image.cols / 2, image.rows / 2),
                  std::min(image.rows, image.cols) / 2.5f),
+      last_level_set_(level_set_),
       param_(param),
       image_(image.clone()),
       center_background_(255.0),
-      center_foreground_(0.0) {
+      center_foreground_(0.0),
+      last_center_background_(255.0),
+      last_center_foreground_(0.0) {
 }
 
 /**
@@ -35,4 +49,21 @@ void LevelSetCV::update_level_set() {
     cv::Mat update_step = update_step_data_term + update_step_length_term +
                           update_step_gradient_term;
     level_set_.add(update_step);
+}
+
+void LevelSetCV::roll_back_state() {
+    level_set_ = last_level_set_;
+}
+void LevelSetCV::back_up_state() {
+    last_level_set_ = level_set_;
+}
+void LevelSetCV::print_terminate_info() const {
+    std::cout << "Level set iteration finished." << std::endl;
+}
+double LevelSetCV::compute_energy() const {
+    return 0;
+}
+
+std::string LevelSetCV::return_drive_class_name() const {
+    return "Level Set CV Model";
 }
