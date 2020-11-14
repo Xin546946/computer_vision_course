@@ -12,7 +12,7 @@ inline bool is_contour_y_dire(cv::Mat im, int r, int c) {
     return ((im.at<double>(r - 1, c) * im.at<double>(r + 1, c)) < 0);
 }
 
-SDFMap::SDFMap(int rows, int cols, cv::Point2d center, double radius)
+SDFMap::SDFMap(int rows, int cols, cv::Point center, double radius)
     : map_(cv::Mat::zeros(cv::Size(cols, rows), CV_64F)) {
     for (int r = 0; r < rows; r++) {
         for (int c = 0; c < cols; c++) {
