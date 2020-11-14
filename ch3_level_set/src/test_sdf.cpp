@@ -38,5 +38,18 @@ int main(int argc, char** argv) {
 
     double energy_grad_mag_map = sdf_map.get_gradient_magnitude_level_set();
     std::cout << energy_grad_mag_map << std::endl;
+
+    cv::Mat test_derivative_length_term =
+        compute_derivative_length_term(sdf_map, 1.0);
+    disp_image(test_derivative_length_term, "derivative length term", 0);
+
+    cv::Mat test_laplacian_map = compute_laplacian_map(sdf_map);
+    disp_image(test_laplacian_map, "test_laplacian_map", 0);
+
+    cv::Mat test_derivative_gradient_term =
+        compute_derivative_gradient_term(sdf_map);
+    disp_image(test_derivative_gradient_term, "test_derivative_gradient_term",
+               0);
+
     return 0;
 }

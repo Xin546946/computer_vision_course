@@ -54,7 +54,22 @@ cv::Mat dirac(const SDFMap& sdf_map, double eps) {
     return result;
 }
 
-double compute_length_energy(SDFMap sdf_map, double eps) {
+double compute_length_energy(const SDFMap& sdf_map, double eps) {
     cv::Mat heaviside_map = heaviside(sdf_map, eps);
     return cv::sum(heaviside_map)[0];
+}
+cv::Mat compute_laplacian_map(const SDFMap& sdf_map) {
+    cv::Mat result;
+    cv::Laplacian(sdf_map.map_, result, CV_64F, 3, cv::BORDER_REPLICATE);
+    return result;
+}
+cv::Mat compute_derivative_length_term(const SDFMap& sdf_map, double eps) {
+    cv::Mat div = computer_div_delta_map(sdf_map);
+    cv::Mat dirac_map = dirac(sdf_map, eps);
+    return dirac_map.mul(div);
+}
+
+cv::Mat compute_derivative_gradient_term(const SDFMap& sdf_map) {
+    cv::Mat laplacian_map_result = compute_laplacian_map(sdf_map);
+    return laplacian_map_result - computer_div_delta_map(sdf_map);
 }
