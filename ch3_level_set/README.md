@@ -4,20 +4,20 @@
 ## sdf , help funtion, display
 
 
+    
+
+
+
 
 * wu
-draw_sdf_map done 
-draw_contour done
-apply_jest_map done
-get_contour(); done
-heavisiade *3 + derivative
-update()
-computer_length_energy() done
+cv_model/update_level_set();
+    compute_data_term_derivative();
+
+cv_model/computer_energy();
+
 
 * jin
-cmakelist done
-test done 
-ctor done 
-get_back_and_foreground done 
-get_gradient_magnitude..... done 
-compure_div done 
+helper function/gaussian_kernel();
+
+cv_model/update_center(bool gaussian_kernel, int size,); // kernel, window size
+    compute_foreground_center();
