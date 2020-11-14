@@ -22,31 +22,6 @@ SDFMap::SDFMap(int rows, int cols, cv::Point2d center, double radius)
     }
 }
 
-/**
- * @brief get the contour from level set 0;
- *
- * @return cv::Mat N*2 Mat, each row contain a Point2d(x,y)
- */
-cv::Mat SDFMap::draw_contour(cv::Mat img) const {
-    cv::Mat result = img.clone();
-    if (result.channels() == 1) {
-        cv::cvtColor(result, result, CV_GRAY2BGR);
-    }
-
-    if (result.type() != CV_8UC3) {
-        result.convertTo(result, CV_8UC3);
-    }
-
-    for (int r = 1; r < result.rows - 1; r++) {
-        for (int c = 1; c < result.cols - 1; c++) {
-            if (is_contour_x_dire(map_, r, c) ||
-                is_contour_y_dire(map_, r, c)) {
-                result.at<cv::Vec3b>(r, c) = cv::Vec3b(255, 255, 255);
-            }
-        }
-    }
-    return result;
-}
 cv::Mat SDFMap::get_fore_background_label_map() const {
     cv::Mat fore_background = map_.clone();
     cv::threshold(map_, fore_background, 0, 255, cv::THRESH_BINARY_INV);
@@ -61,4 +36,29 @@ double SDFMap::get_gradient_magnitude_level_set() {
     cv::Mat mag_grad_map;
     cv::sqrt(map_dev_x.mul(map_dev_x) + map_dev_y.mul(map_dev_y), mag_grad_map);
     return cv::sum(0.5 * (mag_grad_map - 1.0).mul(mag_grad_map - 1.0))[0];
+}
+
+/**
+ * @brief return a N*2 mat, each row is a point2d(x,y);
+ *
+ * @return cv::Mat
+ */
+cv::Mat SDFMap::get_contour_points() const {
+    std::vector<cv::Vec2d> contour_vec;
+
+    for (int r = 1; r < map_.rows - 1; r++) {
+        for (int c = 1; c < map_.cols - 1; c++) {
+            if (is_contour_x_dire(map_, r, c) ||
+                is_contour_y_dire(map_, r, c)) {
+                contour_vec.emplace_back(c, r);
+            }
+        }
+    }
+
+    cv::Mat contour(cv::Size(2, contour_vec.size()), CV_64FC1);
+    for (int i = 0; i < contour_vec.size(); i++) {
+        contour.at<cv::Vec2d>(i) = contour_vec[i];
+    }
+
+    return contour;
 }

@@ -134,11 +134,10 @@ cv::Mat draw_sdf_map(const SDFMap& sdf_map) {
  * cv::Point2d(x,y)
  * @return cloned image with drawed contour
  */
-cv::Mat draw_contour(cv::Mat img, cv::Mat contour, cv::Scalar color,
-                     int thickness) {
-    assert(contour.type() == CV_64FC1 && !img.empty());
+cv::Mat draw_points(cv::Mat img, cv::Mat points, cv::Scalar color) {
+    assert(points.type() == CV_64FC1 && !img.empty());
     cv::Mat result = img.clone();
-    if (contour.empty()) {
+    if (points.empty()) {
         return result;
     }
     if (result.channels() == 1) {
@@ -149,15 +148,11 @@ cv::Mat draw_contour(cv::Mat img, cv::Mat contour, cv::Scalar color,
         result.convertTo(result, CV_8UC3);
     }
 
-    for (int i = 0; i < contour.rows - 1; i++) {
-        const cv::Vec2d& p1 = contour.at<cv::Vec2d>(i);
-        const cv::Vec2d& p2 = contour.at<cv::Vec2d>(i + 1);
-        cv::line(result, cv::Point(p1), cv::Point(p2), color, thickness);
+    for (int i = 0; i < points.rows; i++) {
+        const cv::Vec2d& p1 = points.at<cv::Vec2d>(i);
+        result.at<cv::Vec3b>(p1[1], p1[0]) =
+            cv::Vec3b(color(0), color(1), color(2));
     }
-
-    const cv::Vec2d& p1 = contour.at<cv::Vec2d>(contour.rows - 1);
-    const cv::Vec2d& p2 = contour.at<cv::Vec2d>(0);
-    cv::line(result, cv::Point(p1), cv::Point(p2), color, thickness);
 
     return result;
 }
