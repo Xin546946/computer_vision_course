@@ -17,13 +17,13 @@ MESSAGE ( STATUS "include path ${OpenCV_INCLUDE_DIRS}" )
 include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
-add_library(helper_function ${CMAKE_SOURCE_DIR}/src/level_set_helper_function.cpp)
+add_library(utils ${CMAKE_SOURCE_DIR}/src/level_set_utils.cpp)
 add_library(sdf_map ${CMAKE_SOURCE_DIR}/src/sdf_map.cpp)
 add_library(display ${CMAKE_SOURCE_DIR}/src/display.cpp)
 
 
 
 add_executable(test_sdf ${CMAKE_SOURCE_DIR}/src/test_sdf.cpp)
-target_link_libraries(test_sdf ${OpenCV_LIBS} helper_function sdf_map display)
+target_link_libraries(test_sdf ${OpenCV_LIBS} utils sdf_map display)
 
 

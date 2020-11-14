@@ -2,6 +2,9 @@
 #include "sdf_map.h"
 #include <opencv2/core.hpp>
 
+// This file is used to be called by CV Model and LBF Model for some common
+// functions
+
 /**
  * @brief  if phi>0, H(phi) = 1; if phi<0, H(phi) = 0;
  *
@@ -22,3 +25,5 @@ cv::Mat computer_div_delta_map(const SDFMap& sdf_map);
 cv::Mat compute_derivative_length_term(const SDFMap& sdf_map, double eps);
 cv::Mat compute_derivative_gradient_term(const SDFMap& sdf_map);
 cv::Mat compute_laplacian_map(const SDFMap& sdf_map);
+cv::Mat gaussian_kernel(int size, double sigma);
+cv::Mat compute_foreground_center();

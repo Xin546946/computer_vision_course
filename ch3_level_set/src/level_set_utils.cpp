@@ -1,4 +1,4 @@
-#include "level_set_helper_function.h"
+#include "level_set_utils.h"
 // #include <opencv2/core.hpp>
 #include <opencv2/imgproc.hpp>
 
@@ -72,4 +72,8 @@ cv::Mat compute_derivative_length_term(const SDFMap& sdf_map, double eps) {
 cv::Mat compute_derivative_gradient_term(const SDFMap& sdf_map) {
     cv::Mat laplacian_map_result = compute_laplacian_map(sdf_map);
     return laplacian_map_result - computer_div_delta_map(sdf_map);
+}
+
+cv::Mat gaussian_kernel(int size, double sigma) {
+    assert(size % 2 == 1);
 }

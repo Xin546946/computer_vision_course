@@ -1,5 +1,5 @@
 #include "display.h"
-#include "level_set_helper_function.h"
+#include "level_set_utils.h"
 #include "sdf_map.h"
 #include <opencv2/core.hpp>
 
