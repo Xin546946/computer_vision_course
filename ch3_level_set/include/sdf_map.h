@@ -22,8 +22,8 @@ class SDFMap {  // phi
 
     // void get_length();  // get the total length of all contours
 
+    cv::Mat get_contour_points() const;
     double get_gradient_magnitude_level_set();
-    cv::Mat draw_contour(cv::Mat img) const;
     int get_num_segment() const;  // get how many contours ***Hard***
     cv::Mat get_fore_background_label_map()
         const;  // get segment result, forground background

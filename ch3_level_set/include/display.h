@@ -21,6 +21,4 @@ void draw_optical_flow(cv::Mat& fx, cv::Mat& fy, cv::Mat& cflowmap, int step,
  */
 cv::Mat draw_sdf_map(const SDFMap& sdf_map);  // todo use draw_contour function
 cv::Mat apply_jetmap(cv::Mat image);
-cv::Mat draw_contour(cv::Mat img, cv::Mat contour,
-                     cv::Scalar color = cv::Scalar(0, 0, 255),
-                     int thickness = 3);
+cv::Mat draw_points(cv::Mat img, cv::Mat points, cv::Scalar color);
