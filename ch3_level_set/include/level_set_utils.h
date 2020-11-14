@@ -23,6 +23,12 @@ cv::Mat complementary_heaviside(const SDFMap& sdf_map,
 double compute_length_energy(const SDFMap& sdf_map);
 cv::Mat computer_div_delta_map(const SDFMap& sdf_map);
 
+cv::Mat compute_derivative_data_term(const SDFMap& sdf_map,
+                                     cv::Mat original_image,
+                                     double weight_foreground,
+                                     double weight_background,
+                                     double center_foreground,
+                                     double center_background, double eps);
 cv::Mat compute_derivative_length_term(const SDFMap& sdf_map, double eps);
 cv::Mat compute_derivative_gradient_term(const SDFMap& sdf_map);
 cv::Mat compute_laplacian_map(const SDFMap& sdf_map);

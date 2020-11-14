@@ -100,3 +100,22 @@ double compute_center(cv::Mat img, const SDFMap& sdf_map, double eps,
                cv::sum(heaviside(sdf_map, eps))[0];
     }
 }
+
+cv::Mat compute_derivative_data_term(const SDFMap& sdf_map,
+                                     cv::Mat original_image,
+                                     double weight_foreground,
+                                     double weight_background,
+                                     double center_foreground,
+                                     double center_background, double eps) {
+    double sum_abs_diff_foreground = cv::sum(
+        cv::abs(original_image -
+                center_foreground * cv::Mat::ones(original_image.size(),
+                                                  original_image.type())))[0];
+    double sum_abs_diff_background = cv::sum(
+        cv::abs(original_image -
+                center_background * cv::Mat::ones(original_image.size(),
+                                                  original_image.type())))[0];
+
+    return -dirac(sdf_map, eps) * (weight_foreground * sum_abs_diff_foreground -
+                                   weight_background * sum_abs_diff_background);
+}
