@@ -10,12 +10,11 @@
  */
 
 cv::Mat heaviside(const SDFMap& sdf_map, double eps = 1.0);
-
+cv::Mat dirac(const SDFMap& sdf_Map, double eps = 1.0);
 cv::Mat complementary_heaviside(const SDFMap& sdf_map,
                                 double eps = 1.0);  // 1-Heaciside
 // todo define a heaviside function according to the std::for_each
 // todo using overload function for heaviside function
 
-double heaviside_derivative(double z, double eps = 1.0);
 double get_length(SDFMap sdf_map);
 cv::Mat computer_div_delta_map(const SDFMap& sdf_map);

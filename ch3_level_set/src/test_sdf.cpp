@@ -33,6 +33,9 @@ int main(int argc, char** argv) {
     cv::Mat one_minues_h_phi = complementary_heaviside(sdf_map, 2.5);
     disp_image(one_minues_h_phi, "one_minus_h_phi", 0);
 
+    cv::Mat dirac_phi = dirac(sdf_map, 1.0);
+    disp_image(dirac_phi, "dirac", 0);
+
     double energy_grad_mag_map = sdf_map.get_gradient_magnitude_level_set();
     std::cout << energy_grad_mag_map << std::endl;
     return 0;
