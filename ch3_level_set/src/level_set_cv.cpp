@@ -72,6 +72,8 @@ void LevelSetCV::print_terminate_info() const {
 double LevelSetCV::compute_energy() const {
     return 0;
 }
+void LevelSetCV::initialize() {
+}
 
 std::string LevelSetCV::return_drive_class_name() const {
     return "Level Set CV Model";
