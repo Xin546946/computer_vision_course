@@ -17,7 +17,7 @@ cv_model/computer_energy();
 
 
 * jin
-helper function/gaussian_kernel();
+helper function/gaussian_kernel(); done
 
 cv_model/update_center(bool gaussian_kernel, int size,); // kernel, window size
     compute_foreground_center();
