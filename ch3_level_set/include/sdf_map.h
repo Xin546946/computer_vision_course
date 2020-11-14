@@ -15,10 +15,8 @@ class SDFMap {  // phi
         double eps);  // if phi>0, H(phi) = 1; if phi<0, H(phi) = 0;
     friend cv::Mat draw_sdf_map(const SDFMap& sdf_map);
     friend cv::Mat dirac(const SDFMap& sdf_map, double eps);
-
-    // todo define a heaviside function according to the std::for_each
-    // todo using overload function for heaviside function
     friend cv::Mat computer_div_delta_map(const SDFMap& sdf_map);
+    friend double compute_length_energy(SDFMap sdf_map);
 
     void add(cv::Mat step);
 

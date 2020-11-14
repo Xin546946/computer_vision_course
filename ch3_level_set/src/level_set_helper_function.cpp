@@ -53,3 +53,8 @@ cv::Mat dirac(const SDFMap& sdf_map, double eps) {
                    [=](double z) { return dirac(z, eps); });
     return result;
 }
+
+double compute_length_energy(SDFMap sdf_map, double eps) {
+    cv::Mat heaviside_map = heaviside(sdf_map, eps);
+    return cv::sum(heaviside_map)[0];
+}

@@ -16,5 +16,8 @@ cv::Mat complementary_heaviside(const SDFMap& sdf_map,
 // todo define a heaviside function according to the std::for_each
 // todo using overload function for heaviside function
 
-double get_length(SDFMap sdf_map);
+double compute_length_energy(SDFMap sdf_map);
 cv::Mat computer_div_delta_map(const SDFMap& sdf_map);
+
+cv::Mat compute_derivative_length_term(const SDFMap& sdf_map);
+cv::Mat compute_derivative_gradient_term(const SDFMap& sdf_map);
