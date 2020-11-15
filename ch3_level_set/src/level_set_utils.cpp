@@ -4,21 +4,20 @@
 
 cv::Mat computer_div_delta_map(const SDFMap& sdf_map) {
     cv::Mat phi = sdf_map.map_;
-    cv::Mat phi_dev_x, phi_dev_y;
-    cv::Sobel(phi, phi_dev_x, CV_64F, 1, 0, 3);
-    cv::Sobel(phi, phi_dev_y, CV_64F, 0, 1, 3);
-    cv::Mat phi_dev_xx, phi_dev_xy, phi_dev_yy;
-    cv::Sobel(phi_dev_x, phi_dev_xx, CV_64F, 1, 0, 3);
-    cv::Sobel(phi_dev_x, phi_dev_xy, CV_64F, 0, 1, 3);
-    cv::Sobel(phi_dev_y, phi_dev_yy, CV_64F, 0, 1, 3);
-    cv::Mat pow_phi_dev_x, pow_phi_dev_y, pow_phi_denominator;
-    cv::pow(phi_dev_x, 2, pow_phi_dev_x);
-    cv::pow(phi_dev_y, 2, pow_phi_dev_y);
-    cv::pow(phi_dev_x.mul(phi_dev_x) + phi_dev_y.mul(phi_dev_y), -2 / 3,
-            pow_phi_denominator);
-    return (phi_dev_xx.mul(phi_dev_y.mul(phi_dev_y)) -
-            2 * phi_dev_x.mul(phi_dev_y.mul(phi_dev_xy)) +
-            phi_dev_yy.mul(phi_dev_x.mul(phi_dev_x)))
+    cv::Mat d_phi_dx, d_phi_dy;
+    cv::Sobel(phi, d_phi_dx, CV_64F, 1, 0, 3);
+    cv::Sobel(phi, d_phi_dy, CV_64F, 0, 1, 3);
+    cv::Mat d_phi_dxx, d_phi_dxy, d_phi_dyy;
+    cv::Sobel(d_phi_dx, d_phi_dxx, CV_64F, 1, 0, 3);
+    cv::Sobel(d_phi_dx, d_phi_dxy, CV_64F, 0, 1, 3);
+    cv::Sobel(d_phi_dy, d_phi_dyy, CV_64F, 0, 1, 3);
+    cv::Mat pow_d_phi_dx, pow_d_phi_dy, pow_phi_denominator;
+    cv::pow(d_phi_dx, 2, pow_d_phi_dx);
+    cv::pow(d_phi_dy, 2, pow_d_phi_dy);
+    cv::pow(pow_d_phi_dx + pow_d_phi_dy, -3 / 2, pow_phi_denominator);
+    return (d_phi_dxx.mul(pow_d_phi_dy) -
+            2 * d_phi_dx.mul(d_phi_dy.mul(d_phi_dxy)) +
+            d_phi_dyy.mul(pow_d_phi_dx))
         .mul(pow_phi_denominator);
 }
 
