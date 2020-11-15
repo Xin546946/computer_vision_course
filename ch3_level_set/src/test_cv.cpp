@@ -7,6 +7,7 @@
 int main(int argc, char** argv) {
     // define and and initialize a sdf_map object
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
+
     int rows = img.rows;
     int cols = img.cols;
     cv::Point2d center(cols / 2.f, rows / 2.f);
