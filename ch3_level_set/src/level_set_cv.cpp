@@ -80,7 +80,15 @@ void LevelSetCV::print_terminate_info() const {
     std::cout << "Level set iteration finished." << std::endl;
 }
 double LevelSetCV::compute_energy() const {
-    return 0;
+    double data_term_energy = compute_data_term_energy(
+        level_set_, image_64f_, param_.forground_weight_,
+        param_.background_weight_, center_foreground_, center_background_,
+        param_.eps_);
+    double length_term_energy =
+        compute_length_term_energy(level_set_, param_.eps_);
+    double gradient_preserve_energy =
+        compute_gradient_preserve_energy(level_set_);
+    return data_term_energy + length_term_energy + gradient_preserve_energy;
 }
 void LevelSetCV::initialize() {
     // initialize lvl set :   sdf already initilized in constructor

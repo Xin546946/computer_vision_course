@@ -78,27 +78,27 @@ cv::Mat compute_derivative_data_term(const SDFMap& sdf_map,
                                      double center_foreground,
                                      double center_background, double eps) {
     // todo homework
-    cv::Mat e_foregroud = compute_square_diff(
+    cv::Mat e_foreground = compute_square_diff(
         original_image,
         center_foreground *
             cv::Mat::ones(original_image.size(), original_image.type()));
-    cv::Mat e_backgroud = compute_square_diff(
+    cv::Mat e_background = compute_square_diff(
         original_image,
         center_background *
             cv::Mat::ones(original_image.size(), original_image.type()));
 
     cv::Mat vis;
     cv::Mat vis_dirac = get_float_mat_vis_img(dirac(sdf_map, eps));
-    cv::Mat vis_e_foreground = get_float_mat_vis_img(e_foregroud);
-    cv::Mat vis_e_background = get_float_mat_vis_img(e_backgroud);
+    cv::Mat vis_e_foreground = get_float_mat_vis_img(e_foreground);
+    cv::Mat vis_e_background = get_float_mat_vis_img(e_background);
 
     cv::hconcat(vis_dirac, vis_e_foreground, vis);
     cv::hconcat(vis, vis_e_background, vis);
     disp_image(vis, "top: dirac, mid : e_foregroud, down: e_backgroud", 0);
 
     return -dirac(sdf_map, eps)
-                .mul((weight_foreground * e_foregroud -
-                      weight_background * e_backgroud));
+                .mul((weight_foreground * e_foreground -
+                      weight_background * e_background));
 }
 
 cv::Mat compute_derivative_length_term(const SDFMap& sdf_map, double eps) {
@@ -137,4 +137,53 @@ double compute_center(cv::Mat img, const SDFMap& sdf_map, double eps,
         return cv::sum(img.mul(complementary_heaviside(sdf_map, eps)))[0] /
                cv::sum(complementary_heaviside(sdf_map, eps))[0];
     }
+}
+
+cv::Mat compute_mat_grad_magnitude(cv::Mat mat) {
+    cv::Mat mat_dev_x, mat_dev_y;
+    cv::Sobel(mat, mat_dev_x, CV_64F, 1, 0, 3);
+    cv::Sobel(mat, mat_dev_y, CV_64F, 0, 1, 3);
+    cv::Mat mat_grad_square =
+        (mat_dev_x.mul(mat_dev_x) + mat_dev_y.mul(mat_dev_y));
+    cv::Mat mat_grad_magnitude;
+    cv::sqrt(mat_grad_square, mat_grad_magnitude);
+    return mat_grad_magnitude;
+}
+
+double compute_data_term_energy(const SDFMap& sdf_map, cv::Mat original_image,
+                                double weight_foreground,
+                                double weight_background,
+                                double center_foreground,
+                                double center_background, double eps) {
+    cv::Mat e_foreground = compute_square_diff(
+        original_image,
+        center_foreground *
+            cv::Mat::ones(original_image.size(), original_image.type()));
+    cv::Mat e_background = compute_square_diff(
+        original_image,
+        center_background *
+            cv::Mat::ones(original_image.size(), original_image.type()));
+
+    return weight_foreground *
+               cv::sum(e_foreground.mul(heaviside(sdf_map, eps)))[0] +
+           weight_background * cv::sum(e_background.mul(
+                                   complementary_heaviside(sdf_map, eps)))[0];
+}
+
+double compute_length_term_energy(const SDFMap& sdf_map, double eps) {
+    cv::Mat heaviside_map = heaviside(sdf_map, eps);
+    cv::Mat heaviside_map_grad_magnitude =
+        compute_mat_grad_magnitude(heaviside_map);
+    return cv::sum(heaviside_map_grad_magnitude)[0];
+}
+
+// todo compute mat grad magnitude should be friend of sdf_map
+double compute_gradient_preserve_energy(const SDFMap& sdf_map) {
+    cv::Mat sdf_map_grad_magnitude = compute_mat_grad_magnitude(sdf_map.map_);
+    cv::Mat sdf_map_grad_preserve =
+        sdf_map_grad_magnitude - cv::Mat::ones(sdf_map_grad_magnitude.size(),
+                                               sdf_map_grad_magnitude.type());
+    cv::Mat pow_sdf_map_grad;
+    cv::pow(sdf_map_grad_preserve, 2, pow_sdf_map_grad);
+    return cv::sum(pow_sdf_map_grad * 0.5)[0];
 }
