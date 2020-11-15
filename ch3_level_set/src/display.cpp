@@ -156,3 +156,8 @@ cv::Mat draw_points(cv::Mat img, cv::Mat points, cv::Scalar color) {
 
     return result;
 }
+cv::Mat get_float_mat_vis_img(cv::Mat input) {
+    cv::Mat output;
+    cv::normalize(input, output, 0, 1, cv::NORM_MINMAX);
+    return output;
+}

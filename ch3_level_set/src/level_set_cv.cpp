@@ -38,11 +38,11 @@ LevelSetCV::LevelSetCV(cv::Mat image, const ParamLevelSetCV& param)
  */
 void LevelSetCV::update_level_set() {
     cv::Mat update_step_data_term =
-        param_.step_size_ * compute_derivative_data_term(
-                                level_set_, image_64f_,
-                                param_.forground_weight_,
-                                param_.background_weight_, center_foreground_,
-                                center_background_, param_.eps_);
+        -param_.step_size_ * compute_derivative_data_term(
+                                 level_set_, image_64f_,
+                                 param_.forground_weight_,
+                                 param_.background_weight_, center_foreground_,
+                                 center_background_, param_.eps_);
     cv::Mat update_step_length_term =
         param_.step_size_ * param_.length_term_weight_ *
         compute_derivative_length_term(level_set_, param_.eps_);
@@ -52,9 +52,15 @@ void LevelSetCV::update_level_set() {
         compute_derivative_gradient_term(level_set_);
 
     cv::Mat vis;
+    cv::Mat vis_update_data_term = get_float_mat_vis_img(update_step_data_term);
+    cv::Mat vis_update_lenght_term =
+        get_float_mat_vis_img(update_step_length_term);
+    cv::Mat vis_update_graient_term =
+        get_float_mat_vis_img(update_step_gradient_term);
 
     cv::hconcat(update_step_data_term, update_step_length_term, vis);
     cv::hconcat(vis, update_step_gradient_term, vis);
+
     cv::imshow("top: data term, mid : lenght_term, down : gradient_term", vis);
     cv::waitKey(1);
 
@@ -95,8 +101,10 @@ std::string LevelSetCV::return_drive_class_name() const {
 void LevelSetCV::update_center() {
     center_foreground_ =
         compute_center(image_64f_, level_set_, param_.eps_, false);
+    std::cout << "center_foreground " << center_foreground_ << '\n';
     center_background_ =
         compute_center(image_64f_, level_set_, param_.eps_, true);
+    std::cout << "center_background " << center_background_ << '\n';
 }
 void LevelSetCV::update() {
     update_center();
