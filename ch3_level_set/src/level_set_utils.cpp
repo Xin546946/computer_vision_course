@@ -27,13 +27,15 @@ cv::Mat compute_div_delta_map(const SDFMap& sdf_map) {
     cv::Mat d_phi_dx, d_phi_dy;
     cv::Sobel(phi, d_phi_dx, CV_64F, 1, 0, 3);
     d_phi_dx.mul(1.0 /
-                 (phi_grad_mag + 1e-5 * cv::Mat::ones(phi.size(), phi.type())));
+                 (phi_grad_mag + 1e-8 * cv::Mat::ones(phi.size(), phi.type())));
     cv::Sobel(phi, d_phi_dy, CV_64F, 0, 1, 3);
     d_phi_dy.mul(1.0 /
-                 (phi_grad_mag + 1e-5 * cv::Mat::ones(phi.size(), phi.type())));
+                 (phi_grad_mag + 1e-8 * cv::Mat::ones(phi.size(), phi.type())));
 
     cv::Sobel(d_phi_dx, d_phi_dx, CV_64F, 1, 0, 3);
     cv::Sobel(d_phi_dy, d_phi_dy, CV_64F, 0, 1, 3);
+    // std::cout << d_phi_dy + d_phi_dx << '\n';
+    // return 3e4 * cv::Mat::ones(phi.size(), phi.type());
     return (d_phi_dx + d_phi_dy);
 }
 inline double heaviside(double z, double eps) {
@@ -108,16 +110,17 @@ cv::Mat compute_derivative_data_term(const SDFMap& sdf_map,
 
     cv::hconcat(vis_dirac, vis_e_foreground, vis);
     cv::hconcat(vis, vis_e_background, vis);
-    disp_image(vis, "top: dirac, mid : e_foregroud, down: e_backgroud", 0);
+    disp_image(vis, "top: dirac, mid : e_foregroud, down: e_backgroud", 1);
 
-    return -dirac(sdf_map, eps)
-                .mul((weight_foreground * e_foreground -
-                      weight_background * e_background));
+    return dirac(sdf_map, eps)
+        .mul((weight_foreground * e_foreground -
+              weight_background * e_background));
 }
 
 cv::Mat compute_derivative_length_term(const SDFMap& sdf_map, double eps) {
     cv::Mat div = compute_div_delta_map(sdf_map);
-    disp_image(div, "div", 0);
+    cv::Mat vis_div = get_float_mat_vis_img(div);
+    disp_image(vis_div, "div", 1);
     cv::Mat dirac_map = dirac(sdf_map, eps);
     return dirac_map.mul(div);
 }
