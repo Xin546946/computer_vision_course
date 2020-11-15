@@ -109,7 +109,7 @@ cv::Mat apply_jetmap(cv::Mat image) {
 
     result.convertTo(result, CV_8UC1);
     cv::normalize(result, result, 0, 255, cv::NORM_MINMAX);
-    assert(result.channels() == 1 || result.type() == CV_8UC1);
+
     cv::applyColorMap(result, result, cv::COLORMAP_JET);
 
     return result;
