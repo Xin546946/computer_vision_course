@@ -1,5 +1,5 @@
 #include "level_set_utils.h"
-// #include <opencv2/core.hpp>
+#include "display.h"
 #include <opencv2/imgproc.hpp>
 
 cv::Mat computer_div_delta_map(const SDFMap& sdf_map) {
@@ -86,6 +86,15 @@ cv::Mat compute_derivative_data_term(const SDFMap& sdf_map,
         original_image,
         center_background *
             cv::Mat::ones(original_image.size(), original_image.type()));
+
+    cv::Mat vis;
+    cv::Mat vis_dirac = get_float_mat_vis_img(dirac(sdf_map, eps));
+    cv::Mat vis_e_foreground = get_float_mat_vis_img(e_foregroud);
+    cv::Mat vis_e_background = get_float_mat_vis_img(e_backgroud);
+
+    cv::hconcat(vis_dirac, vis_e_foreground, vis);
+    cv::hconcat(vis, vis_e_background, vis);
+    disp_image(vis, "top: dirac, mid : e_foregroud, down: e_backgroud", 0);
 
     return -dirac(sdf_map, eps)
                 .mul((weight_foreground * e_foregroud -
