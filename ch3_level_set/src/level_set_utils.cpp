@@ -23,13 +23,18 @@ cv::Mat computer_div_delta_map(const SDFMap& sdf_map) {
 
 cv::Mat compute_div_delta_map(const SDFMap& sdf_map) {
     cv::Mat phi = sdf_map.map_;
-    cv::Mat phi_grad = compute_mat_grad_magnitude(phi);
-    cv::Mat phi_dev_x, phi_dev_y;
-    cv::Sobel(phi, phi_dev_x, CV_64F, 1, 0, 3);
-    cv::Sobel(phi_dev_x, phi_dev_x, CV_64F, 1, 0, 3);
-    cv::Sobel(phi, phi_dev_y, CV_64F, 0, 1, 3);
-    cv::Sobel(phi_dev_y, phi_dev_y, CV_64F, 0, 1, 3);
-    return (1 / phi_grad).mul(phi_dev_x + phi_dev_y);
+    cv::Mat phi_grad_mag = compute_mat_grad_magnitude(phi);
+    cv::Mat d_phi_dx, d_phi_dy;
+    cv::Sobel(phi, d_phi_dx, CV_64F, 1, 0, 3);
+    d_phi_dx.mul(1.0 /
+                 (phi_grad_mag + 1e-5 * cv::Mat::ones(phi.size(), phi.type())));
+    cv::Sobel(phi, d_phi_dy, CV_64F, 0, 1, 3);
+    d_phi_dy.mul(1.0 /
+                 (phi_grad_mag + 1e-5 * cv::Mat::ones(phi.size(), phi.type())));
+
+    cv::Sobel(d_phi_dx, d_phi_dx, CV_64F, 1, 0, 3);
+    cv::Sobel(d_phi_dy, d_phi_dy, CV_64F, 0, 1, 3);
+    return (d_phi_dx + d_phi_dy);
 }
 inline double heaviside(double z, double eps) {
     return 0.5 * (1 + M_2_PI * atan2(z, eps));
