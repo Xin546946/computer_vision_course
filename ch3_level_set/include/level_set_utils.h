@@ -44,3 +44,4 @@ double compute_data_term_energy(const SDFMap& sdf_map, cv::Mat original_image,
                                 double center_background, double eps);
 double compute_length_term_energy(const SDFMap& sdf_map, double eps);
 double compute_gradient_preserve_energy(const SDFMap& sdf_map);
+cv::Mat do_sobel_y(cv::Mat input);

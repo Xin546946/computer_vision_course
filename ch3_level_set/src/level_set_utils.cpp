@@ -204,3 +204,26 @@ double compute_gradient_preserve_energy(const SDFMap& sdf_map) {
 
     return cv::sum(sdf_map_grad_preserve * 0.5)[0];
 }
+
+cv::Mat do_sobel_y(cv::Mat input) {
+    if (input.channels() != 1) {
+        cv::cvtColor(input, input, cv::COLOR_BGR2GRAY);
+    }
+
+    if (input.type() != CV_64FC1) {
+        input.convertTo(input, CV_64FC1);
+    }
+    cv::Mat output(input.size(), input.type());
+    for (int r = 0; r < input.rows; r++) {
+        for (int c = 0; c < input.cols; c++) {
+            int r_uhs = -1;
+            r_uhs = std::min(std::max(0, r_uhs), input.rows - 1);
+            int r_dhs = 1;
+            r_dhs = std::min(std::max(0, r_dhs), input.rows - 1);
+            output.at<double>(r, c) = 0.5 * (input.at<double>(r + r_dhs, c) -
+                                             input.at<double>(r + r_uhs, c));
+        }
+    }
+
+    return output;
+}
