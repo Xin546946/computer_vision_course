@@ -24,6 +24,7 @@ LevelSetCV::LevelSetCV(cv::Mat image, const ParamLevelSetCV& param)
                  std::min(image.rows, image.cols) / 2.5f),
       last_level_set_(level_set_),
       param_(param),
+      image_3_channel(image.clone()),
       image_64f_(image.size(), CV_64FC1),
       center_background_(0.0),
       center_foreground_(255.0),
@@ -102,9 +103,24 @@ void LevelSetCV::update() {
     update_center();
     update_level_set();
 
-    cv::Mat sdf_draw = draw_sdf_map(level_set_);
-    cv::Mat sdf_with_contour = draw_points(
-        sdf_draw, level_set_.get_contour_points(), cv::Scalar(255, 255, 255));
-    cv::imshow("sdf", sdf_with_contour);
+    cv::Mat vis_sdf_draw = draw_sdf_map(level_set_);
+    cv::Mat vis_sdf_with_contour =
+        draw_points(vis_sdf_draw, level_set_.get_contour_points(),
+                    cv::Scalar(255, 255, 255));
+
+    cv::Mat vis_seg_image = image_3_channel.clone();
+    vis_seg_image = draw_points(vis_seg_image, level_set_.get_contour_points(),
+                                cv::Scalar(0, 0, 255));
+
+    cv::Mat vis_label = level_set_.get_fore_background_label_map();
+    vis_label.convertTo(vis_label, CV_8UC1);
+    cv::cvtColor(vis_label, vis_label, CV_GRAY2BGR);
+
+    cv::Mat vis;
+    cv::hconcat(vis_sdf_with_contour, vis_seg_image, vis);
+    cv::hconcat(vis, vis_label, vis);
+
+    cv::imshow("left: level set, mid: seg on original image, right : label ",
+               vis);
     cv::waitKey(1);
 }

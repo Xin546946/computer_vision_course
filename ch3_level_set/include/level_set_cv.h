@@ -50,6 +50,7 @@ class LevelSetCV : public GradientDescentBase {
     double grayvalue_background_;
     double grayvalue_forground_;
     cv::Mat image_64f_;
+    cv::Mat image_3_channel;
     double center_foreground_;
     double center_background_;
     double last_center_foreground_;

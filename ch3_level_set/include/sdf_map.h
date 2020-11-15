@@ -29,5 +29,5 @@ class SDFMap {  // phi
         const;  // get segment result, forground background
 
    private:
-    cv::Mat map_;
+    cv::Mat map_;  // cv_64F
 };
