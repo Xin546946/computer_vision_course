@@ -56,7 +56,7 @@ void LevelSetCV::update_level_set() {
     cv::hconcat(update_step_data_term, update_step_length_term, vis);
     cv::hconcat(vis, update_step_gradient_term, vis);
     cv::imshow("top: data term, mid : lenght_term, down : gradient_term", vis);
-    cv::waitKey(0);
+    cv::waitKey(1);
 
     cv::Mat update_step = update_step_data_term + update_step_length_term +
                           update_step_gradient_term;
@@ -98,5 +98,5 @@ void LevelSetCV::update() {
     cv::Mat sdf_with_contour = draw_points(
         sdf_draw, level_set_.get_contour_points(), cv::Scalar(255, 255, 255));
     cv::imshow("sdf", sdf_with_contour);
-    cv::waitKey(0);
+    cv::waitKey(1);
 }
