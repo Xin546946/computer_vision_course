@@ -5,16 +5,21 @@
 cv::Mat computer_div_delta_map(const SDFMap& sdf_map) {
     cv::Mat phi = sdf_map.map_;
     cv::Mat d_phi_dx, d_phi_dy;
-    cv::Sobel(phi, d_phi_dx, CV_64F, 1, 0, 3);
-    cv::Sobel(phi, d_phi_dy, CV_64F, 0, 1, 3);
+    cv::Sobel(phi, d_phi_dx, CV_64F, 1, 0, 3, 1.0, 0.0, cv::BORDER_REPLICATE);
+    cv::Sobel(phi, d_phi_dy, CV_64F, 0, 1, 3, 1.0, 0.0, cv::BORDER_REPLICATE);
     cv::Mat d_phi_dxx, d_phi_dxy, d_phi_dyy;
-    cv::Sobel(d_phi_dx, d_phi_dxx, CV_64F, 1, 0, 3);
-    cv::Sobel(d_phi_dx, d_phi_dxy, CV_64F, 0, 1, 3);
-    cv::Sobel(d_phi_dy, d_phi_dyy, CV_64F, 0, 1, 3);
+    cv::Sobel(d_phi_dx, d_phi_dxx, CV_64F, 1, 0, 3, 1.0, 0.0,
+              cv::BORDER_REPLICATE);
+    cv::Sobel(d_phi_dx, d_phi_dxy, CV_64F, 0, 1, 3, 1.0, 0.0,
+              cv::BORDER_REPLICATE);
+    cv::Sobel(d_phi_dy, d_phi_dyy, CV_64F, 0, 1, 3, 1.0, 0.0,
+              cv::BORDER_REPLICATE);
     cv::Mat pow_d_phi_dx, pow_d_phi_dy, pow_phi_denominator;
     cv::pow(d_phi_dx, 2, pow_d_phi_dx);
     cv::pow(d_phi_dy, 2, pow_d_phi_dy);
-    cv::pow(pow_d_phi_dx + pow_d_phi_dy, -3 / 2, pow_phi_denominator);
+    cv::pow(pow_d_phi_dx + pow_d_phi_dy +
+                1e-5 * cv::Mat::ones(phi.size(), phi.type()),
+            -3 / 2, pow_phi_denominator);
     return (d_phi_dxx.mul(pow_d_phi_dy) -
             2 * d_phi_dx.mul(d_phi_dy.mul(d_phi_dxy)) +
             d_phi_dyy.mul(pow_d_phi_dx))
