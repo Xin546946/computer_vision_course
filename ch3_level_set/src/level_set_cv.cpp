@@ -56,7 +56,7 @@ void LevelSetCV::update_level_set() {
     cv::hconcat(update_step_data_term, update_step_length_term, vis);
     cv::hconcat(vis, update_step_gradient_term, vis);
     cv::imshow("top: data term, mid : lenght_term, down : gradient_term", vis);
-    cv::waitKey(0);
+    cv::waitKey(1);
 
     cv::Mat update_step = update_step_data_term + update_step_length_term +
                           update_step_gradient_term;
@@ -73,7 +73,15 @@ void LevelSetCV::print_terminate_info() const {
     std::cout << "Level set iteration finished." << std::endl;
 }
 double LevelSetCV::compute_energy() const {
-    return 0;
+    double data_term_energy = compute_data_term_energy(
+        level_set_, image_64f_, param_.forground_weight_,
+        param_.background_weight_, center_foreground_, center_background_,
+        param_.eps_);
+    double length_term_energy =
+        compute_length_term_energy(level_set_, param_.eps_);
+    double gradient_preserve_energy =
+        compute_gradient_preserve_energy(level_set_);
+    return data_term_energy + length_term_energy + gradient_preserve_energy;
 }
 void LevelSetCV::initialize() {
     // initialize lvl set :   sdf already initilized in constructor
@@ -97,6 +105,6 @@ void LevelSetCV::update() {
     cv::Mat sdf_draw = draw_sdf_map(level_set_);
     cv::Mat sdf_with_contour = draw_points(
         sdf_draw, level_set_.get_contour_points(), cv::Scalar(255, 255, 255));
-    cv::imshow("sdf", sdf_with_contour);
-    cv::waitKey(0);
+    disp_image(sdf_with_contour, "sdf", 1);
+    // cv::waitKey(0);
 }

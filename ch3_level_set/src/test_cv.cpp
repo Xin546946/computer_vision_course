@@ -14,10 +14,10 @@ int main(int argc, char** argv) {
     SDFMap sdf_map(rows, cols, center, radius);
     ParamLevelSetCV param_level_set_cv(
         1, 1, 1.0, 1e-2, 1e-10,
-        1e-10);  // fore_weight, back_weight, eps, step_size,l_w,g_w;
+        1e-8);  // fore_weight, back_weight, eps, step_size,l_w,g_w;
 
     LevelSetCV level_set_cv(img, param_level_set_cv);
-    level_set_cv.run(1000);
+    level_set_cv.run(10000);
 
     return 0;
 }

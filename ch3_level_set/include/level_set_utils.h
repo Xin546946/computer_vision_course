@@ -36,3 +36,11 @@ cv::Mat gaussian_kernel(int size, double sigma);
 cv::Mat compute_foreground_center();
 double compute_center(cv::Mat img, const SDFMap& sdf_map, double eps,
                       bool is_background);
+cv::Mat compute_mat_grad_magnitude(cv::Mat mat);
+double compute_data_term_energy(const SDFMap& sdf_map, cv::Mat original_image,
+                                double weight_foreground,
+                                double weight_background,
+                                double center_foreground,
+                                double center_background, double eps);
+double compute_length_term_energy(const SDFMap& sdf_map, double eps);
+double compute_gradient_preserve_energy(const SDFMap& sdf_map);
