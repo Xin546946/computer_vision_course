@@ -1,4 +1,5 @@
 #include "sdf_map.h"
+#include "level_set_utils.h"
 #include <iostream>
 #include <opencv2/imgproc.hpp>
 
@@ -29,10 +30,8 @@ cv::Mat SDFMap::get_fore_background_label_map() const {
 }
 
 double SDFMap::get_gradient_magnitude_level_set() {
-    cv::Mat map_dev_x;
-    cv::Sobel(map_, map_dev_x, CV_64F, 1, 0, 3);
-    cv::Mat map_dev_y;
-    cv::Sobel(map_, map_dev_y, CV_64F, 0, 1, 3);
+    cv::Mat map_dev_x = do_sobel(map_, 0);
+    cv::Mat map_dev_y = do_sobel(map_, 1);
     cv::Mat mag_grad_map;
     cv::sqrt(map_dev_x.mul(map_dev_x) + map_dev_y.mul(map_dev_y), mag_grad_map);
     return cv::sum(0.5 * (mag_grad_map - 1.0).mul(mag_grad_map - 1.0))[0];

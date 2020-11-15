@@ -13,6 +13,7 @@
  * @return cv::Mat
  */
 
+cv::Mat do_sobel(cv::Mat im, int flag);
 cv::Mat heaviside(const SDFMap& sdf_map, double eps = 1.0);
 cv::Mat dirac(const SDFMap& sdf_map, double eps = 1.0);
 cv::Mat complementary_heaviside(const SDFMap& sdf_map,
@@ -21,7 +22,6 @@ cv::Mat complementary_heaviside(const SDFMap& sdf_map,
 // todo using overload function for heaviside function
 
 double compute_length_energy(const SDFMap& sdf_map);
-cv::Mat computer_div_delta_map(const SDFMap& sdf_map);
 
 cv::Mat compute_derivative_data_term(const SDFMap& sdf_map,
                                      cv::Mat original_image,

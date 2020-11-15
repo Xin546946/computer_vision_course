@@ -9,15 +9,13 @@ int main(int argc, char** argv) {
 
     assert(img.channels() == 1);
 
-    // cv::Mat div_img = computer_div_delta_map(img);
-
     // disp_image(div_img, "divergence", 0);
     int rows = img.rows;
     int cols = img.cols;
     cv::Point2d center(cols / 2.f, rows / 2.f);
     double radius = std::min(rows, cols) / 4.f;
     SDFMap sdf_map(rows, cols, center, radius);
-    cv::Mat div = computer_div_delta_map(sdf_map);
+    cv::Mat div = compute_div_delta_map(sdf_map);
     disp_image(div, "divergence", 0);
     cv::Mat sdf_draw = draw_sdf_map(sdf_map);
     cv::Mat sdf_with_contour = draw_points(

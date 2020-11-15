@@ -1,39 +1,57 @@
 #include "level_set_utils.h"
 #include "display.h"
 #include <opencv2/imgproc.hpp>
+/**
+ * @brief
+ *
+ * @param input
+ * @param flag  = 0 x , = 1 y
+ * @return cv::Mat
+ */
+cv::Mat do_sobel(cv::Mat input, int flag = 0) {
+    cv::Mat im = input.clone();
+    if (im.channels() != 1) {
+        cv::cvtColor(input, im, CV_BGR2GRAY);
+    }
+    if (im.type() != CV_64FC1) {
+        im.convertTo(im, CV_64FC1);
+    }
 
-cv::Mat computer_div_delta_map(const SDFMap& sdf_map) {
-    cv::Mat phi = sdf_map.map_;
-    cv::Mat d_phi_dx, d_phi_dy;
-    cv::Sobel(phi, d_phi_dx, CV_64F, 1, 0, 3);
-    cv::Sobel(phi, d_phi_dy, CV_64F, 0, 1, 3);
-    cv::Mat d_phi_dxx, d_phi_dxy, d_phi_dyy;
-    cv::Sobel(d_phi_dx, d_phi_dxx, CV_64F, 1, 0, 3);
-    cv::Sobel(d_phi_dx, d_phi_dxy, CV_64F, 0, 1, 3);
-    cv::Sobel(d_phi_dy, d_phi_dyy, CV_64F, 0, 1, 3);
-    cv::Mat pow_d_phi_dx, pow_d_phi_dy, pow_phi_denominator;
-    cv::pow(d_phi_dx, 2, pow_d_phi_dx);
-    cv::pow(d_phi_dy, 2, pow_d_phi_dy);
-    cv::pow(pow_d_phi_dx + pow_d_phi_dy, -2 / 3, pow_phi_denominator);
-    return (d_phi_dxx.mul(pow_d_phi_dy) -
-            2 * d_phi_dx.mul(d_phi_dy.mul(d_phi_dxy)) +
-            d_phi_dyy.mul(pow_d_phi_dx))
-        .mul(pow_phi_denominator);
+    cv::Mat output(im.size(), im.type());
+    for (int r = 0; r < im.rows; r++) {
+        for (int c = 0; c < im.cols; c++) {
+            int r_dhs = r + flag;
+            int c_rhs = c + (1 - flag);
+            c_rhs = std::min(std::max(0, c_rhs), im.cols - 1);
+            r_dhs = std::min(std::max(0, r_dhs), im.rows - 1);
+            int r_uhs = r - flag;
+            int c_lhs = c - (1 - flag);
+            c_lhs = std::min(std::max(0, c_lhs), im.cols - 1);
+            r_uhs = std::min(std::max(0, r_uhs), im.rows - 1);
+            output.at<double>(r, c) = 0.5 * (im.at<double>(r_dhs, c_rhs) -
+                                             im.at<double>(r_uhs, c_lhs));
+        }
+    }
+    return output;
 }
 
 cv::Mat compute_div_delta_map(const SDFMap& sdf_map) {
     cv::Mat phi = sdf_map.map_;
     cv::Mat phi_grad_mag = compute_mat_grad_magnitude(phi);
-    cv::Mat d_phi_dx, d_phi_dy;
-    cv::Sobel(phi, d_phi_dx, CV_64F, 1, 0, 3);
+    cv::Mat d_phi_dx = do_sobel(phi, 0);
+    cv::Mat d_phi_dy = do_sobel(phi, 1);
+    cv::Mat vis_dx = get_float_mat_vis_img(d_phi_dx);
+    cv::imshow("dx", vis_dx);
+    cv::waitKey(1);
+
     d_phi_dx.mul(1.0 /
                  (phi_grad_mag + 1e-8 * cv::Mat::ones(phi.size(), phi.type())));
-    cv::Sobel(phi, d_phi_dy, CV_64F, 0, 1, 3);
     d_phi_dy.mul(1.0 /
                  (phi_grad_mag + 1e-8 * cv::Mat::ones(phi.size(), phi.type())));
 
-    cv::Sobel(d_phi_dx, d_phi_dx, CV_64F, 1, 0, 3);
-    cv::Sobel(d_phi_dy, d_phi_dy, CV_64F, 0, 1, 3);
+    d_phi_dx = do_sobel(d_phi_dx, 0);
+    d_phi_dy = do_sobel(d_phi_dy, 1);
+
     // std::cout << d_phi_dy + d_phi_dx << '\n';
     // return 3e4 * cv::Mat::ones(phi.size(), phi.type());
     return (d_phi_dx + d_phi_dy);
@@ -48,6 +66,7 @@ inline double dirac(double z, double eps = 1.0) {
 
 cv::Mat heaviside(const SDFMap& sdf_map, double eps) {
     cv::Mat phi = sdf_map.map_;
+    assert(phi.channels() == 1);
     cv::Mat result(phi.size(), phi.type());
     std::transform(phi.begin<double>(), phi.end<double>(),
                    result.begin<double>(),
@@ -158,9 +177,8 @@ double compute_center(cv::Mat img, const SDFMap& sdf_map, double eps,
 }
 
 cv::Mat compute_mat_grad_magnitude(cv::Mat mat) {
-    cv::Mat mat_dev_x, mat_dev_y;
-    cv::Sobel(mat, mat_dev_x, CV_64F, 1, 0, 3);
-    cv::Sobel(mat, mat_dev_y, CV_64F, 0, 1, 3);
+    cv::Mat mat_dev_x = do_sobel(mat, 0);
+    cv::Mat mat_dev_y = do_sobel(mat, 1);
     cv::Mat mat_grad_square =
         (mat_dev_x.mul(mat_dev_x) + mat_dev_y.mul(mat_dev_y));
     cv::Mat mat_grad_magnitude;
