@@ -38,7 +38,7 @@ LevelSetCV::LevelSetCV(cv::Mat image, const ParamLevelSetCV& param)
  */
 void LevelSetCV::update_level_set() {
     cv::Mat update_step_data_term =
-        +param_.step_size_ * compute_derivative_data_term(
+        -param_.step_size_ * compute_derivative_data_term(
                                  level_set_, image_64f_,
                                  param_.forground_weight_,
                                  param_.background_weight_, center_foreground_,
