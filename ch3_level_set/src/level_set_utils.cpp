@@ -164,10 +164,10 @@ double compute_data_term_energy(const SDFMap& sdf_map, cv::Mat original_image,
         center_background *
             cv::Mat::ones(original_image.size(), original_image.type()));
 
-    return weight_foreground * cv::sum(e_foreground.mul(
-                                   complementary_heaviside(sdf_map, eps)))[0] +
-           weight_background *
-               cv::sum(e_background.mul(heaviside(sdf_map, eps)))[0];
+    return weight_foreground *
+               cv::sum(e_foreground.mul(heaviside(sdf_map, eps)))[0] +
+           weight_background * cv::sum(e_background.mul(
+                                   complementary_heaviside(sdf_map, eps)))[0];
 }
 
 double compute_length_term_energy(const SDFMap& sdf_map, double eps) {

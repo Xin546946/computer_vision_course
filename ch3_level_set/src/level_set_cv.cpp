@@ -93,7 +93,8 @@ double LevelSetCV::compute_energy() const {
     std::cout << "length term energy: " << length_term_energy << " || ";
     std::cout << "gradient preserve energy: " << gradient_preserve_energy
               << " || " << std::endl;
-    return data_term_energy + length_term_energy + gradient_preserve_energy;
+    return data_term_energy + param_.length_term_weight_ * length_term_energy +
+           param_.gradient_term_weight_ * gradient_preserve_energy;
 }
 void LevelSetCV::initialize() {
     // initialize lvl set :   sdf already initilized in constructor
