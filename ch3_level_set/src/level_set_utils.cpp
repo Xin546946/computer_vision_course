@@ -180,10 +180,9 @@ double compute_length_term_energy(const SDFMap& sdf_map, double eps) {
 // todo compute mat grad magnitude should be friend of sdf_map
 double compute_gradient_preserve_energy(const SDFMap& sdf_map) {
     cv::Mat sdf_map_grad_magnitude = compute_mat_grad_magnitude(sdf_map.map_);
-    cv::Mat sdf_map_grad_preserve =
-        sdf_map_grad_magnitude - cv::Mat::ones(sdf_map_grad_magnitude.size(),
-                                               sdf_map_grad_magnitude.type());
-    cv::Mat pow_sdf_map_grad;
-    cv::pow(sdf_map_grad_preserve, 2, pow_sdf_map_grad);
-    return cv::sum(pow_sdf_map_grad * 0.5)[0];
+    cv::Mat sdf_map_grad_preserve = compute_square_diff(
+        sdf_map_grad_magnitude, cv::Mat::ones(sdf_map_grad_magnitude.size(),
+                                              sdf_map_grad_magnitude.type()));
+
+    return cv::sum(sdf_map_grad_preserve * 0.5)[0];
 }
