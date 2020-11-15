@@ -19,6 +19,7 @@ class SDFMap {  // phi
     friend double compute_length_energy(const SDFMap& sdf_map);
     friend cv::Mat compute_laplacian_map(const SDFMap& sdf_map);
     friend double compute_gradient_preserve_energy(const SDFMap& sdf_map);
+    friend cv::Mat compute_div_delta_map(const SDFMap& sdf_map);
     // friend cv::Mat compute_mat_grad_magnitude(cv::Mat mat);
     void add(cv::Mat step);
 

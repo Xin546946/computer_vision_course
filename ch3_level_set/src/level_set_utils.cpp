@@ -5,27 +5,32 @@
 cv::Mat computer_div_delta_map(const SDFMap& sdf_map) {
     cv::Mat phi = sdf_map.map_;
     cv::Mat d_phi_dx, d_phi_dy;
-    cv::Sobel(phi, d_phi_dx, CV_64F, 1, 0, 3, 1.0, 0.0, cv::BORDER_REPLICATE);
-    cv::Sobel(phi, d_phi_dy, CV_64F, 0, 1, 3, 1.0, 0.0, cv::BORDER_REPLICATE);
+    cv::Sobel(phi, d_phi_dx, CV_64F, 1, 0, 3);
+    cv::Sobel(phi, d_phi_dy, CV_64F, 0, 1, 3);
     cv::Mat d_phi_dxx, d_phi_dxy, d_phi_dyy;
-    cv::Sobel(d_phi_dx, d_phi_dxx, CV_64F, 1, 0, 3, 1.0, 0.0,
-              cv::BORDER_REPLICATE);
-    cv::Sobel(d_phi_dx, d_phi_dxy, CV_64F, 0, 1, 3, 1.0, 0.0,
-              cv::BORDER_REPLICATE);
-    cv::Sobel(d_phi_dy, d_phi_dyy, CV_64F, 0, 1, 3, 1.0, 0.0,
-              cv::BORDER_REPLICATE);
+    cv::Sobel(d_phi_dx, d_phi_dxx, CV_64F, 1, 0, 3);
+    cv::Sobel(d_phi_dx, d_phi_dxy, CV_64F, 0, 1, 3);
+    cv::Sobel(d_phi_dy, d_phi_dyy, CV_64F, 0, 1, 3);
     cv::Mat pow_d_phi_dx, pow_d_phi_dy, pow_phi_denominator;
     cv::pow(d_phi_dx, 2, pow_d_phi_dx);
     cv::pow(d_phi_dy, 2, pow_d_phi_dy);
-    cv::pow(pow_d_phi_dx + pow_d_phi_dy +
-                1e-5 * cv::Mat::ones(phi.size(), phi.type()),
-            -3 / 2, pow_phi_denominator);
+    cv::pow(pow_d_phi_dx + pow_d_phi_dy, -2 / 3, pow_phi_denominator);
     return (d_phi_dxx.mul(pow_d_phi_dy) -
             2 * d_phi_dx.mul(d_phi_dy.mul(d_phi_dxy)) +
             d_phi_dyy.mul(pow_d_phi_dx))
         .mul(pow_phi_denominator);
 }
 
+cv::Mat compute_div_delta_map(const SDFMap& sdf_map) {
+    cv::Mat phi = sdf_map.map_;
+    cv::Mat phi_grad = compute_mat_grad_magnitude(phi);
+    cv::Mat phi_dev_x, phi_dev_y;
+    cv::Sobel(phi, phi_dev_x, CV_64F, 1, 0, 3);
+    cv::Sobel(phi_dev_x, phi_dev_x, CV_64F, 1, 0, 3);
+    cv::Sobel(phi, phi_dev_y, CV_64F, 0, 1, 3);
+    cv::Sobel(phi_dev_y, phi_dev_y, CV_64F, 0, 1, 3);
+    return (1 / phi_grad).mul(phi_dev_x + phi_dev_y);
+}
 inline double heaviside(double z, double eps) {
     return 0.5 * (1 + M_2_PI * atan2(z, eps));
 }
@@ -106,14 +111,15 @@ cv::Mat compute_derivative_data_term(const SDFMap& sdf_map,
 }
 
 cv::Mat compute_derivative_length_term(const SDFMap& sdf_map, double eps) {
-    cv::Mat div = computer_div_delta_map(sdf_map);
+    cv::Mat div = compute_div_delta_map(sdf_map);
+    disp_image(div, "div", 0);
     cv::Mat dirac_map = dirac(sdf_map, eps);
     return dirac_map.mul(div);
 }
 
 cv::Mat compute_derivative_gradient_term(const SDFMap& sdf_map) {
     cv::Mat laplacian_map_result = compute_laplacian_map(sdf_map);
-    return laplacian_map_result - computer_div_delta_map(sdf_map);
+    return laplacian_map_result - compute_div_delta_map(sdf_map);
 }
 
 cv::Mat gaussian_kernel(int size, double sigma) {
