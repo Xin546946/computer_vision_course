@@ -64,11 +64,11 @@ cv::Mat compute_laplacian_map(const SDFMap& sdf_map) {
     return result;
 }
 
-double compute_sum_square_diff(cv::Mat img1, cv::Mat img2) {
+cv::Mat compute_square_diff(cv::Mat img1, cv::Mat img2) {
     cv::Mat diff = img1 - img2;
     cv::Mat square_diff;
     cv::pow(diff, 2.0f, square_diff);
-    return cv::sum(square_diff)[0];
+    return square_diff;
 }
 
 cv::Mat compute_derivative_data_term(const SDFMap& sdf_map,
@@ -78,17 +78,18 @@ cv::Mat compute_derivative_data_term(const SDFMap& sdf_map,
                                      double center_foreground,
                                      double center_background, double eps) {
     // todo homework
-    double e_foregroud = compute_sum_square_diff(
+    cv::Mat e_foregroud = compute_square_diff(
         original_image,
         center_foreground *
             cv::Mat::ones(original_image.size(), original_image.type()));
-    double e_backgroud = compute_sum_square_diff(
+    cv::Mat e_backgroud = compute_square_diff(
         original_image,
         center_background *
             cv::Mat::ones(original_image.size(), original_image.type()));
 
-    return -dirac(sdf_map, eps) *
-           (weight_foreground * e_foregroud - weight_background * e_backgroud);
+    return -dirac(sdf_map, eps)
+                .mul((weight_foreground * e_foregroud -
+                      weight_background * e_backgroud));
 }
 
 cv::Mat compute_derivative_length_term(const SDFMap& sdf_map, double eps) {

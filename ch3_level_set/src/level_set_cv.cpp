@@ -25,10 +25,10 @@ LevelSetCV::LevelSetCV(cv::Mat image, const ParamLevelSetCV& param)
       last_level_set_(level_set_),
       param_(param),
       image_64f_(image.size(), CV_64FC1),
-      center_background_(255.0),
-      center_foreground_(0.0),
-      last_center_background_(255.0),
-      last_center_foreground_(0.0) {
+      center_background_(0.0),
+      center_foreground_(255.0),
+      last_center_background_(0.0),
+      last_center_foreground_(255.0) {
     image.convertTo(image_64f_, CV_64FC1);
 }
 
