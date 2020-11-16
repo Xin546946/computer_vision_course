@@ -20,6 +20,10 @@ class SDFMap {  // phi
     friend cv::Mat compute_laplacian_map(const SDFMap& sdf_map);
     friend double compute_gradient_preserve_energy(const SDFMap& sdf_map);
     friend cv::Mat compute_div_delta_map(const SDFMap& sdf_map);
+    friend double compute_center_in_window(int row, int col, int size,
+                                           cv::Mat gauss_kernel, cv::Mat img,
+                                           const SDFMap& sdf_map, double eps,
+                                           bool is_background);
     // friend cv::Mat compute_mat_grad_magnitude(cv::Mat mat);
     void add(cv::Mat step);
 

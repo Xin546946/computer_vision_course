@@ -61,19 +61,28 @@ inline double dirac(double z, double eps = 1.0) {
     return eps * M_1_PI / (std::pow(eps, 2.0) + std::pow(z, 2.0));
 }
 
-cv::Mat heaviside(const SDFMap& sdf_map, double eps) {
-    cv::Mat phi = sdf_map.map_;
-    assert(phi.channels() == 1);
-    cv::Mat result(phi.size(), phi.type());
-    std::transform(phi.begin<double>(), phi.end<double>(),
+cv::Mat heaviside(const cv::Mat mat, double eps) {
+    assert(mat.channels() == 1);
+    cv::Mat result(mat.size(), mat.type());
+    std::transform(mat.begin<double>(), mat.end<double>(),
                    result.begin<double>(),
                    [=](double z) { return heaviside(z, eps); });
 
     return result;
 }
 
+cv::Mat heaviside(const SDFMap& sdf_map, double eps) {
+    cv::Mat phi = sdf_map.map_;
+    return heaviside(phi, eps);
+}
+
 cv::Mat complementary_heaviside(const SDFMap& sdf_map, double eps) {
     cv::Mat h_phi = heaviside(sdf_map, eps);
+    return cv::Mat::ones(h_phi.size(), h_phi.type()) - h_phi;
+}
+
+cv::Mat complementary_heaviside(cv::Mat mat, double eps) {
+    cv::Mat h_phi = heaviside(mat, eps);
     return cv::Mat::ones(h_phi.size(), h_phi.type()) - h_phi;
 }
 
@@ -171,7 +180,14 @@ double compute_center_in_window(int row, int col, int size,
                                 const SDFMap& sdf_map, double eps,
                                 bool is_background) {
     cv::Mat roi = get_sub_image(img, row, col, size);
-    return compute_center(roi.mul(gauss_kernel), sdf_map, eps, is_background);
+    cv::Mat roi_sdf = get_sub_image(sdf_map.map_, row, col, size);
+    if (is_background == true) {
+        return img.dot(heaviside(roi_sdf, eps)) /
+               cv::sum(heaviside(roi_sdf, eps))[0];
+    } else {
+        return img.dot(complementary_heaviside(roi_sdf, eps)) /
+               cv::sum(complementary_heaviside(roi_sdf, eps))[0];
+    }
 }
 cv::Mat compute_mat_grad_magnitude(cv::Mat mat) {
     cv::Mat mat_dev_x = do_sobel(mat, 0);
