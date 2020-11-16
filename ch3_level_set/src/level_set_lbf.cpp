@@ -132,6 +132,7 @@ cv::Mat LevelSetLBF::compute_data_term_derivative_in_window(int row,
     cv::Mat e_background = compute_square_diff(
         image_64f_, center_background_ *
                         cv::Mat::ones(image_64f_.size(), image_64f_.type()));
-    return dirac(level_set_) * (param_.forground_weight_ * e_foreground -
-                                param_.background_weight_ * e_background);
+    return dirac(level_set_)
+        .mul(param_.forground_weight_ * e_foreground -
+             param_.background_weight_ * e_background);
 }

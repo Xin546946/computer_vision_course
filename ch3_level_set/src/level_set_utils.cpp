@@ -182,10 +182,10 @@ double compute_center_in_window(int row, int col, int size,
     cv::Mat roi = get_sub_image(img, row, col, size);
     cv::Mat roi_sdf = get_sub_image(sdf_map.map_, row, col, size);
     if (is_background == true) {
-        return img.dot(heaviside(roi_sdf, eps)) /
+        return roi.dot(heaviside(roi_sdf, eps)) /
                cv::sum(heaviside(roi_sdf, eps))[0];
     } else {
-        return img.dot(complementary_heaviside(roi_sdf, eps)) /
+        return roi.dot(complementary_heaviside(roi_sdf, eps)) /
                cv::sum(complementary_heaviside(roi_sdf, eps))[0];
     }
 }
