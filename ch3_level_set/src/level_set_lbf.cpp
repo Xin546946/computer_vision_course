@@ -124,5 +124,14 @@ void LevelSetLBF::update_center_in_window(int row, int col) {
 
 cv::Mat LevelSetLBF::compute_data_term_derivative_in_window(int row,
                                                             int col) const {
-    .mul(gaussian_kernel(param_.window_size_, param_.sigma_));
+    cv::Mat window_image =
+        get_sub_image(image_64f_, row, col, param_.window_size_);
+    cv::Mat e_foreground = compute_square_diff(
+        image_64f_, center_foreground_ *
+                        cv::Mat::ones(image_64f_.size(), image_64f_.type()));
+    cv::Mat e_background = compute_square_diff(
+        image_64f_, center_background_ *
+                        cv::Mat::ones(image_64f_.size(), image_64f_.type()));
+    return dirac(level_set_) * (param_.forground_weight_ * e_foreground -
+                                param_.background_weight_ * e_background);
 }

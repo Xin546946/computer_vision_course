@@ -44,4 +44,5 @@ double compute_data_term_energy(const SDFMap& sdf_map, cv::Mat original_image,
                                 double center_background, double eps);
 double compute_length_term_energy(const SDFMap& sdf_map, double eps);
 double compute_gradient_preserve_energy(const SDFMap& sdf_map);
+cv::Mat compute_square_diff(cv::Mat img1, cv::Mat img2);
 cv::Mat get_sub_image(cv::Mat image, int row, int col, int window_size);
