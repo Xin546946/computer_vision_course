@@ -36,6 +36,10 @@ cv::Mat gaussian_kernel(int size, double sigma);
 cv::Mat compute_foreground_center();
 double compute_center(cv::Mat img, const SDFMap& sdf_map, double eps,
                       bool is_background);
+double compute_center_in_window(int row, int col, int size,
+                                cv::Mat gauss_kernel, cv::Mat img,
+                                const SDFMap& sdf_map, double eps,
+                                bool is_background);
 cv::Mat compute_mat_grad_magnitude(cv::Mat mat);
 double compute_data_term_energy(const SDFMap& sdf_map, cv::Mat original_image,
                                 double weight_foreground,

@@ -29,7 +29,8 @@ LevelSetLBF::LevelSetLBF(cv::Mat image, const ParamLevelSetLBF& param)
       center_background_(0.0),
       center_foreground_(255.0),
       last_center_background_(0.0),
-      last_center_foreground_(255.0) {
+      last_center_foreground_(255.0),
+      gauss_kernel_(gaussian_kernel(param.window_size_, param.sigma_)) {
     image.convertTo(image_64f_, CV_64FC1);
 }
 
@@ -69,15 +70,6 @@ void LevelSetLBF::initialize() {
 
 std::string LevelSetLBF::return_drive_class_name() const {
     return "Level Set LBF Model";
-}
-
-void LevelSetLBF::update_center() {
-    center_foreground_ =
-        compute_center(image_64f_, level_set_, param_.eps_, false);
-    std::cout << "center_foreground " << center_foreground_ << '\n';
-    center_background_ =
-        compute_center(image_64f_, level_set_, param_.eps_, true);
-    std::cout << "center_background " << center_background_ << '\n';
 }
 
 // todo compute_data_term_derivitive_in_window(r,c)
@@ -120,6 +112,14 @@ void LevelSetLBF::update() {
 }
 
 void LevelSetLBF::update_center_in_window(int row, int col) {
+    center_foreground_ =
+        compute_center_in_window(row, col, param_.window_size_, gauss_kernel_,
+                                 image_64f_, level_set_, param_.eps_, false);
+    std::cout << "center_foreground " << center_foreground_ << '\n';
+    center_background_ =
+        compute_center_in_window(row, col, param_.window_size_, gauss_kernel_,
+                                 image_64f_, level_set_, param_.eps_, true);
+    std::cout << "center_background " << center_background_ << '\n';
 }
 
 cv::Mat LevelSetLBF::compute_data_term_derivative_in_window(int row,
