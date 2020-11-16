@@ -116,3 +116,10 @@ void LevelSetLBF::update() {
     cv::imshow("top: data term, mid : lenght_term, down : gradient_term", vis);
     cv::waitKey(1);
 }
+
+void LevelSetLBF::update_center_in_window(int row, int col) {
+}
+
+cv::Mat LevelSetLBF::compute_data_term_derivative_in_window(int row,
+                                                            int col) const {
+}
