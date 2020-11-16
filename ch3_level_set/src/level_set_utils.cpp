@@ -140,8 +140,7 @@ cv::Mat compute_derivative_length_term(const SDFMap& sdf_map, double eps) {
     cv::Mat div = compute_div_delta_map(sdf_map);
     cv::Mat vis_div = get_float_mat_vis_img(div);
     disp_image(vis_div, "div", 1);
-    cv::Mat dirac_map = dirac(sdf_map, eps);
-    return dirac_map.mul(div);
+    return dirac(sdf_map, eps).mul(div);
 }
 
 cv::Mat compute_derivative_gradient_term(const SDFMap& sdf_map) {
@@ -201,9 +200,8 @@ double compute_data_term_energy(const SDFMap& sdf_map, cv::Mat original_image,
             cv::Mat::ones(original_image.size(), original_image.type()));
 
     return weight_foreground *
-               cv::sum(e_foreground.mul(heaviside(sdf_map, eps)))[0] +
-           weight_background * cv::sum(e_background.mul(
-                                   complementary_heaviside(sdf_map, eps)))[0];
+               (e_foreground.dot(complementary_heaviside(sdf_map, eps))) +
+           weight_background * e_background.dot(heaviside(sdf_map, eps));
 }
 
 double compute_length_term_energy(const SDFMap& sdf_map, double eps) {

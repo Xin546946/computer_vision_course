@@ -63,7 +63,7 @@ void LevelSetCV::update_level_set() {
     cv::hconcat(vis, update_step_gradient_term, vis);
 
     cv::imshow("top: data term, mid : lenght_term, down : gradient_term", vis);
-    cv::waitKey(1);
+    cv::waitKey(0);
 
     cv::Mat update_step = update_step_data_term + update_step_length_term +
                           update_step_gradient_term;
