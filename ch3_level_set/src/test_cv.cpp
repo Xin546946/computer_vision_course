@@ -12,9 +12,8 @@ int main(int argc, char** argv) {
     int cols = img.cols;
     cv::Point2d center(cols / 2.f, rows / 2.f);
     double radius = std::min(rows, cols) / 2.1f;
-    SDFMap sdf_map(rows, cols, center, radius);
     ParamLevelSetCV param_level_set_cv(
-        1, 1, 2.5, 7e-2, 0,
+        1e-2, 1e-2, 1.0, 1e-2, 20,
         1.2);  // fore_weight, back_weight, eps,
                // step_size,l_w,g_w; 1.1,1.0,5e-2,15,1,2
 

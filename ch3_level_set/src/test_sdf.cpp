@@ -14,7 +14,8 @@ int main(int argc, char** argv) {
     int cols = img.cols;
     cv::Point2d center(cols / 2.f, rows / 2.f);
     double radius = std::min(rows, cols) / 4.f;
-    SDFMap sdf_map(rows, cols, center, radius);
+    // SDFMap sdf_map(rows, cols, center, radius);
+    SDFMap sdf_map(rows, cols);
     cv::Mat div = compute_div_delta_map(sdf_map);
     disp_image(div, "divergence", 0);
     cv::Mat sdf_draw = draw_sdf_map(sdf_map);

@@ -19,9 +19,9 @@ ParamLevelSetCV ::ParamLevelSetCV(double forground_weight,
 
 LevelSetCV::LevelSetCV(cv::Mat image, const ParamLevelSetCV& param)
     : GradientDescentBase(param.step_size_),
-      level_set_(image.rows, image.cols,
-                 cv::Point(image.cols / 2, image.rows / 2),
-                 std::min(image.rows, image.cols) / 2.5f),
+      level_set_(image.rows, image.cols),
+      /*                  cv::Point(image.cols / 2, image.rows / 2),
+                       std::min(image.rows, image.cols) / 2.5f) ,*/
       last_level_set_(level_set_),
       param_(param),
       image_3_channel(image.clone()),
