@@ -32,6 +32,6 @@ add_executable(test_cv ${CMAKE_SOURCE_DIR}/src/test_cv.cpp)
 target_link_libraries(test_cv ${OpenCV_LIBS} utils sdf_map display lvlset_cv gdc_base)
 add_executable(test_sdf ${CMAKE_SOURCE_DIR}/src/test_sdf.cpp)
 target_link_libraries(test_sdf ${OpenCV_LIBS} utils sdf_map display)
-add_executable(test_lbf ${CMAKE_SOURCE_DIR}/src/test_cv.cpp)
+add_executable(test_lbf ${CMAKE_SOURCE_DIR}/src/test_lbf.cpp)
 target_link_libraries(test_lbf ${OpenCV_LIBS} utils sdf_map display lvlset_cv lvlset_lbf gdc_base)
 
