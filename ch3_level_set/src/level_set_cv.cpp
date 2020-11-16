@@ -136,5 +136,5 @@ void LevelSetCV::update() {
 
     cv::imshow("left: level set, mid: seg on original image, right : label ",
                vis);
-    cv::waitKey(0);
+    cv::waitKey(1);
 }
