@@ -108,7 +108,7 @@ void LevelSetLBF::update() {
     cv::hconcat(vis, update_step_gradient_term, vis);
 
     cv::imshow("top: data term, mid : lenght_term, down : gradient_term", vis);
-    cv::waitKey(1);
+    cv::waitKey(0);
 }
 
 void LevelSetLBF::update_center_in_window(int row, int col) {
