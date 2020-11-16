@@ -25,10 +25,11 @@ for k=1:numIter
     diracPhi=Delta(phi,epsilon); 
     Hphi=Heaviside(phi, epsilon); 
     % kappa = CURVATURE(phi,'cc');
-    kappa = curvature_central(phi);
+    kappa = curvature_central(phi); % div(nabla(phi)/|nabla(phi)|)
     [C1,C2]=binaryfit(I,Hphi); 
     % updating the phi function 
-    phi=phi+timestep*(diracPhi.*(nu*kappa-lambda_1*(I-C1).^2+lambda_2*(I-C2).^2));     
+    phi=phi+timestep*(diracPhi.*(nu*kappa-lambda_1*(I-C1).^2+lambda_2*(I-C2).^2));  
+    mesh(phi);
 end 
 
 
