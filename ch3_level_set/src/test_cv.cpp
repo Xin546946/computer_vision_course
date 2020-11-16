@@ -9,9 +9,9 @@ int main(int argc, char** argv) {
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
     cv::GaussianBlur(img, img, cv::Size(3, 3), 3);
     ParamLevelSetCV param_level_set_cv(
-        1e-2, 1e-2, 1.0, 1e-2, 20,
-        1.2);  // fore_weight, back_weight, eps,
-               // step_size,l_w,g_w; 1.1,1.0,5e-2,15,1,2
+        1e-1, 1e-1, 1.5, 1e-2, 10,
+        1);  // fore_weight, back_weight, eps,
+             // step_size,l_w,g_w; 1.1,1.0,5e-2,15,1,2
 
     cv::Mat dx = do_sobel(img, 1);
 

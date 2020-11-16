@@ -27,8 +27,10 @@ for k=1:numIter
     % kappa = CURVATURE(phi,'cc');
     kappa = curvature_central(phi); % div(nabla(phi)/|nabla(phi)|)
     [C1,C2]=binaryfit(I,Hphi); 
+    % gradient preserve 1
+    grad_preserve = del2(phi) - kappa;
     % updating the phi function 
-    phi=phi+timestep*(diracPhi.*(nu*kappa-lambda_1*(I-C1).^2+lambda_2*(I-C2).^2));  
+    phi=phi+timestep*(1.5* grad_preserve + diracPhi.*(nu*kappa-lambda_1*(I-C1).^2+lambda_2*(I-C2).^2));  
     mesh(phi);
 end 
 

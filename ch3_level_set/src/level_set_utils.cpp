@@ -136,7 +136,7 @@ cv::Mat compute_derivative_length_term(const SDFMap& sdf_map, double eps) {
 
 cv::Mat compute_derivative_gradient_term(const SDFMap& sdf_map) {
     cv::Mat laplacian_map_result = compute_laplacian_map(sdf_map);
-    return laplacian_map_result - compute_div_delta_map(sdf_map);
+    return 4 * laplacian_map_result - compute_div_delta_map(sdf_map);
 }
 
 cv::Mat gaussian_kernel(int size, double sigma) {
