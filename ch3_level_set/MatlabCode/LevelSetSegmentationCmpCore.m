@@ -4,11 +4,11 @@ clear all;
 clc;
 
 methodNameList          = {'CV','LBF','CK','LLC','GO'};
-
+methodeNameList = 'LBF';
 for imgID = 1
     
     [inputIm, initialLSF] = GetImgAndInitialLSF( imgID , 1 );
-    
+       
     for methodInd = 1:5
         
         close all;
