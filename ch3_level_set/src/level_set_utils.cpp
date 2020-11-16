@@ -212,15 +212,16 @@ double compute_gradient_preserve_energy(const SDFMap& sdf_map) {
 
     return cv::sum(sdf_map_grad_preserve * 0.5)[0];
 }
-
 cv::Mat get_sub_image(cv::Mat image, int row, int col, int window_size) {
-    cv::Mat window_image =
-        cv::Mat::zeros(cv::Size(window_size, window_size), CV_64F);
-    if (row < (window_size - 1) / 2 || col < (window_size - 1) / 2) {
-    } else {
-        window_image = image(cv::Rect2d(
-            cv::Point(row - (window_size - 1) / 2, col - (window_size - 1) / 2),
-            cv::Point(row + (window_size - 1) / 2,
-                      col + (window_size - 1) / 2)))
-    }
+    cv::Rect img_rect = cv::Rect(cv::Point(0, 0), image.size());
+    cv::Rect roi =
+        cv::Rect(cv::Point(col - window_size / 2, row - window_size / 2),
+                 cv::Size(window_size, window_size));
+    cv::Rect intersection = img_rect & roi;
+
+    cv::Rect inter_roi = intersection - roi.tl();
+
+    cv::Mat sub_img = cv::Mat::zeros(roi.size(), image.type());
+    image(intersection).copyTo(sub_img(inter_roi));
+    return sub_img;
 }
