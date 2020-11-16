@@ -212,3 +212,15 @@ double compute_gradient_preserve_energy(const SDFMap& sdf_map) {
 
     return cv::sum(sdf_map_grad_preserve * 0.5)[0];
 }
+
+cv::Mat get_sub_image(cv::Mat image, int row, int col, int window_size) {
+    cv::Mat window_image =
+        cv::Mat::zeros(cv::Size(window_size, window_size), CV_64F);
+    if (row < (window_size - 1) / 2 || col < (window_size - 1) / 2) {
+    } else {
+        window_image = image(cv::Rect2d(
+            cv::Point(row - (window_size - 1) / 2, col - (window_size - 1) / 2),
+            cv::Point(row + (window_size - 1) / 2,
+                      col + (window_size - 1) / 2)))
+    }
+}

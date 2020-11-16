@@ -9,10 +9,12 @@
 ParamLevelSetLBF::ParamLevelSetLBF(double forground_weight,
                                    double background_weight, double eps,
                                    double step_size, double length_term_weight,
-                                   double gradient_term_weight, int window_size)
+                                   double gradient_term_weight, int window_size,
+                                   double sigma)
     : ParamLevelSet(forground_weight, background_weight, eps, step_size,
                     length_term_weight, gradient_term_weight),
-      window_size_(window_size) {
+      window_size_(window_size),
+      sigma_(sigma) {
 }
 
 LevelSetLBF::LevelSetLBF(cv::Mat image, const ParamLevelSetLBF& param)
@@ -122,4 +124,5 @@ void LevelSetLBF::update_center_in_window(int row, int col) {
 
 cv::Mat LevelSetLBF::compute_data_term_derivative_in_window(int row,
                                                             int col) const {
+    .mul(gaussian_kernel(param_.window_size_, param_.sigma_));
 }

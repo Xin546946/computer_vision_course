@@ -4,8 +4,10 @@
 struct ParamLevelSetLBF : public ParamLevelSet {
     ParamLevelSetLBF(double forground_weight, double background_weight,
                      double eps, double step_size, double length_term_weight,
-                     double gradient_term_weight, int window_size);
+                     double gradient_term_weight, int window_size,
+                     double sigma);
     int window_size_;
+    double sigma_;
 };
 
 class LevelSetLBF : public GradientDescentBase {
