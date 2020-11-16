@@ -6,10 +6,10 @@
  * @brief Parameter of Level Set of CV Model
  *
  */
-struct ParamLevelSetCV {
-    ParamLevelSetCV(double forground_weight, double background_weight,
-                    double eps, double step_size, double length_term_weight,
-                    double gradient_term_weight);
+struct ParamLevelSet {
+    ParamLevelSet(double forground_weight, double background_weight, double eps,
+                  double step_size, double length_term_weight,
+                  double gradient_term_weight);
     double forground_weight_;
     double background_weight_;
     double eps_;  // H(z,eps)
@@ -24,8 +24,8 @@ struct ParamLevelSetCV {
 class LevelSetCV : public GradientDescentBase {
    public:
     LevelSetCV(cv::Mat image,
-               const ParamLevelSetCV& param);  // todo give index of the const
-    void initialize() override;                // todo SDFMap and cf, cb
+               const ParamLevelSet& param);  // todo give index of the const
+    void initialize() override;              // todo SDFMap and cf, cb
 
     void update() override;
     // todo think about testing!!!
@@ -45,8 +45,8 @@ class LevelSetCV : public GradientDescentBase {
     SDFMap level_set_;
     SDFMap last_level_set_;
 
-    ParamLevelSetCV param_;  // use param in the space of Level Set, no need for
-                             // naming level set anymore
+    ParamLevelSet param_;  // use param in the space of Level Set, no need for
+                           // naming level set anymore
     double grayvalue_background_;
     double grayvalue_forground_;
     cv::Mat image_64f_;

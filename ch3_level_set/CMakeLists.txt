@@ -21,7 +21,8 @@ add_library(gdc_base ${CMAKE_SOURCE_DIR}/src/gradient_descent_base.cpp)
 add_library(utils ${CMAKE_SOURCE_DIR}/src/level_set_utils.cpp)
 add_library(sdf_map ${CMAKE_SOURCE_DIR}/src/sdf_map.cpp)
 add_library(display ${CMAKE_SOURCE_DIR}/src/display.cpp)
-
+add_library(lvlset_lbf ${CMAKE_SOURCE_DIR}/src/level_set_lbf.cpp)
+target_link_libraries(lvlset_lbf utils gdc_base sdf_map display,lvlset_cv)
 
 add_library(lvlset_cv ${CMAKE_SOURCE_DIR}/src/level_set_cv.cpp) 
 target_link_libraries(lvlset_cv utils gdc_base sdf_map display)
@@ -31,5 +32,6 @@ add_executable(test_cv ${CMAKE_SOURCE_DIR}/src/test_cv.cpp)
 target_link_libraries(test_cv ${OpenCV_LIBS} utils sdf_map display lvlset_cv gdc_base)
 add_executable(test_sdf ${CMAKE_SOURCE_DIR}/src/test_sdf.cpp)
 target_link_libraries(test_sdf ${OpenCV_LIBS} utils sdf_map display)
-
+add_executable(test_lbf ${CMAKE_SOURCE_DIR}/src/test_cv.cpp)
+target_link_libraries(test_lbf ${OpenCV_LIBS} utils sdf_map display lvlset_cv lvlset_lbf gdc_base)
 

@@ -5,10 +5,10 @@
 #include <iostream>
 #include <opencv2/core.hpp>
 
-ParamLevelSetCV ::ParamLevelSetCV(double forground_weight,
-                                  double background_weight, double eps,
-                                  double step_size, double length_term_weight,
-                                  double gradient_term_weight)
+ParamLevelSet ::ParamLevelSet(double forground_weight, double background_weight,
+                              double eps, double step_size,
+                              double length_term_weight,
+                              double gradient_term_weight)
     : forground_weight_(forground_weight),
       background_weight_(background_weight),
       eps_(eps),
@@ -17,7 +17,7 @@ ParamLevelSetCV ::ParamLevelSetCV(double forground_weight,
       gradient_term_weight_(gradient_term_weight) {
 }
 
-LevelSetCV::LevelSetCV(cv::Mat image, const ParamLevelSetCV& param)
+LevelSetCV::LevelSetCV(cv::Mat image, const ParamLevelSet& param)
     : GradientDescentBase(param.step_size_),
       level_set_(image.rows, image.cols),
       /*                  cv::Point(image.cols / 2, image.rows / 2),
