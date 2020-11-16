@@ -45,4 +45,6 @@ class LevelSetLBF : public GradientDescentBase {
     double center_background_;
     double last_center_foreground_;
     double last_center_background_;
+
+    cv::Mat gauss_kernel_;
 };

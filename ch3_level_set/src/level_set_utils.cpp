@@ -166,6 +166,13 @@ double compute_center(cv::Mat img, const SDFMap& sdf_map, double eps,
     }
 }
 
+double compute_center_in_window(int row, int col, int size,
+                                cv::Mat gauss_kernel, cv::Mat img,
+                                const SDFMap& sdf_map, double eps,
+                                bool is_background) {
+    cv::Mat roi = get_sub_image(img, row, col, size);
+    return compute_center(roi.mul(gauss_kernel), sdf_map, eps, is_background);
+}
 cv::Mat compute_mat_grad_magnitude(cv::Mat mat) {
     cv::Mat mat_dev_x = do_sobel(mat, 0);
     cv::Mat mat_dev_y = do_sobel(mat, 1);
