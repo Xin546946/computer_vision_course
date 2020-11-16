@@ -31,45 +31,6 @@ LevelSetLBF::LevelSetLBF(cv::Mat image, const ParamLevelSetLBF& param)
     image.convertTo(image_64f_, CV_64FC1);
 }
 
-/**
- * @brief update the lvl set according to the direction of gradient descent
- *
- */
-// todo update for sliding window
-void LevelSetLBF::update_level_set() {
-    cv::Mat update_step_data_term =
-        param_.step_size_ * compute_derivative_data_term(
-                                level_set_, image_64f_,
-                                param_.forground_weight_,
-                                param_.background_weight_, center_foreground_,
-                                center_background_, param_.eps_);
-    cv::Mat update_step_length_term =
-        param_.step_size_ * param_.length_term_weight_ *
-        compute_derivative_length_term(level_set_, param_.eps_);
-
-    cv::Mat update_step_gradient_term =
-        param_.step_size_ * param_.gradient_term_weight_ *
-        compute_derivative_gradient_term(level_set_);
-
-    cv::Mat vis;
-    cv::Mat vis_update_data_term = get_float_mat_vis_img(update_step_data_term);
-    cv::Mat vis_update_lenght_term =
-        get_float_mat_vis_img(update_step_length_term);
-    cv::Mat vis_update_graient_term =
-        get_float_mat_vis_img(update_step_gradient_term);
-
-    cv::hconcat(update_step_data_term, update_step_length_term, vis);
-    cv::hconcat(vis, update_step_gradient_term, vis);
-
-    cv::imshow("top: data term, mid : lenght_term, down : gradient_term", vis);
-    cv::waitKey(1);
-
-    cv::Mat update_step = update_step_data_term + update_step_length_term +
-                          update_step_gradient_term;
-    // 0.01 * dirac(level_set_, 1.0)
-    level_set_.add(update_step);
-}
-
 void LevelSetLBF::roll_back_state() {
     level_set_ = last_level_set_;
 }
@@ -141,4 +102,17 @@ void LevelSetLBF::update() {
     cv::Mat update_step = update_step_data_term + update_step_length_term +
                           update_step_gradient_term;
     level_set_.add(update_step);
+
+    cv::Mat vis;
+    cv::Mat vis_update_data_term = get_float_mat_vis_img(update_step_data_term);
+    cv::Mat vis_update_lenght_term =
+        get_float_mat_vis_img(update_step_length_term);
+    cv::Mat vis_update_graient_term =
+        get_float_mat_vis_img(update_step_gradient_term);
+
+    cv::hconcat(update_step_data_term, update_step_length_term, vis);
+    cv::hconcat(vis, update_step_gradient_term, vis);
+
+    cv::imshow("top: data term, mid : lenght_term, down : gradient_term", vis);
+    cv::waitKey(1);
 }
