@@ -24,7 +24,7 @@ SDFMap::SDFMap(int rows, int cols, cv::Point center, double radius)
 }
 SDFMap::SDFMap(int rows, int cols)
     : map_(2.0 * cv::Mat::ones(cv::Size(cols, rows), CV_64F)) {
-    double percentage = 0.3;
+    double percentage = 0.1;
     map_(cv::Rect2i(
         cv::Point(round(percentage * cols), round(percentage * rows)),
         cv::Point(cols - round(percentage * cols),

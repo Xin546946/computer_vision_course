@@ -158,10 +158,10 @@ cv::Mat gaussian_kernel(int size, double sigma) {
 double compute_center(cv::Mat img, const SDFMap& sdf_map, double eps,
                       bool is_background) {
     if (is_background == true) {
-        return cv::sum(img.mul(heaviside(sdf_map, eps)))[0] /
+        return img.dot(heaviside(sdf_map, eps)) /
                cv::sum(heaviside(sdf_map, eps))[0];
     } else {
-        return cv::sum(img.mul(complementary_heaviside(sdf_map, eps)))[0] /
+        return img.dot(complementary_heaviside(sdf_map, eps)) /
                cv::sum(complementary_heaviside(sdf_map, eps))[0];
     }
 }
