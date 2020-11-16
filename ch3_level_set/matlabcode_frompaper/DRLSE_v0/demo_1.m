@@ -12,14 +12,14 @@
 clear all;
 close all;
 
-Img=imread('gourd.bmp');
+Img=imread('bears.jpg');
 Img=double(Img(:,:,1));
 %% parameter setting
 timestep=1;  % time step
 mu=0.2/timestep;  % coefficient of the distance regularization term R(phi)
 iter_inner=5;
-iter_outer=20;
-lambda=5; % coefficient of the weighted length term L(phi)
+iter_outer=2000;
+lambda=15; % coefficient of the weighted length term L(phi)
 alfa=-3;  % coefficient of the weighted area term A(phi)
 epsilon=1.5; % papramater that specifies the width of the DiracDelta function
 
@@ -33,9 +33,10 @@ g=1./(1+f);  % edge indicator function.
 % initialize LSF as binary step function
 c0=2;
 initialLSF = c0*ones(size(Img));
+[usize,vsize] = size(Img);
 % generate the initial region R0 as two rectangles
-initialLSF(25:35,20:25)=-c0; 
-initialLSF(25:35,40:50)=-c0;
+initialLSF(0.1*usize:0.8*usize,0.1*vsize:0.8*vsize)=-c0; 
+%initialLSF(25:35,40:50)=-c0;
 phi=initialLSF;
 
 figure(1);
