@@ -10,6 +10,7 @@ class SDFMap {  // phi
      * @param radius
      */
     SDFMap(int rows, int cols, cv::Point center, double radius);
+    SDFMap(int rows, int cols);
     friend cv::Mat heaviside(
         const SDFMap& sdf_map,
         double eps);  // if phi>0, H(phi) = 1; if phi<0, H(phi) = 0;

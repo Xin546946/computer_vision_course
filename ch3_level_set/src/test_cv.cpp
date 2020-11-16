@@ -14,9 +14,9 @@ int main(int argc, char** argv) {
     double radius = std::min(rows, cols) / 2.1f;
     SDFMap sdf_map(rows, cols, center, radius);
     ParamLevelSetCV param_level_set_cv(
-        1, 1, 2.5, 6e-2, 15,
+        1, 1, 2.5, 7e-2, 0,
         1.2);  // fore_weight, back_weight, eps,
-               // step_size,l_w,g_w; 1.1,1.0,5e-2,1000,1,2
+               // step_size,l_w,g_w; 1.1,1.0,5e-2,15,1,2
 
     cv::Mat dx = do_sobel(img, 1);
     cv::Mat vis_dx = get_float_mat_vis_img(dx);

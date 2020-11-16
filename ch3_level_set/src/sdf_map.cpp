@@ -22,6 +22,9 @@ SDFMap::SDFMap(int rows, int cols, cv::Point center, double radius)
         }
     }
 }
+SDFMap::SDFMap(int rows, int cols)
+    : map_(-cv::Mat::ones(cv::Size(cols, rows), CV_64F)) {
+}
 
 cv::Mat SDFMap::get_fore_background_label_map() const {
     cv::Mat fore_background = map_.clone();
