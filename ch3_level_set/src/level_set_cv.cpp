@@ -67,6 +67,7 @@ void LevelSetCV::update_level_set() {
 
     cv::Mat update_step = update_step_data_term + update_step_length_term +
                           update_step_gradient_term;
+    // 0.01 * dirac(level_set_, 1.0)
     level_set_.add(update_step);
 }
 
@@ -136,5 +137,5 @@ void LevelSetCV::update() {
 
     cv::imshow("left: level set, mid: seg on original image, right : label ",
                vis);
-    cv::waitKey(0);
+    cv::waitKey(1);
 }
