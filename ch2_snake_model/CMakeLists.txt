@@ -35,3 +35,6 @@ target_link_libraries(test_gvf ${OpenCV_LIBS} gvf display)
 
 add_executable(test_snake ${CMAKE_SOURCE_DIR}/src/test_snake.cpp)
 target_link_libraries(test_snake ${OpenCV_LIBS} snake gvf display)
+
+add_executable(iterative_matrix_solver ${CMAKE_SOURCE_DIR}/src/iterative_matrix_solver.cpp)
+target_link_libraries(iterative_matrix_solver ${EIGEN_LIBS})
