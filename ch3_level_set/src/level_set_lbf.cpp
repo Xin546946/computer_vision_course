@@ -75,13 +75,12 @@ std::string LevelSetLBF::return_drive_class_name() const {
 // todo compute_data_term_derivitive_in_window(r,c)
 // todo  update_center_in_window(r, c);
 void LevelSetLBF::update() {
-    cv::Mat total_data_term_derivative =
-        cv::Mat::zeros(image_64f_.size(), image_64f_.type());
-    for (int r = 0; r < image_64f_.rows; r++) {
-        for (int c = 0; c < image_64f_.cols; c++) {
+    for (int r = 0; r < image_64f_.rows; r += 4) {
+        for (int c = 0; c < image_64f_.cols; c += 4) {
             update_center_in_window(r, c);
-            total_data_term_derivative +=
-                compute_data_term_derivative_in_window(r, c);
+
+            level_set_.add(param_.step_size_ *
+                           compute_data_term_derivative_in_window(r, c));
         }
     }
     cv::Mat update_step_length_term =
@@ -91,10 +90,7 @@ void LevelSetLBF::update() {
     cv::Mat update_step_gradient_term =
         param_.step_size_ * param_.gradient_term_weight_ *
         compute_derivative_gradient_term(level_set_);
-    cv::Mat update_step_data_term =
-        param_.step_size_ * total_data_term_derivative;
-    cv::Mat update_step = update_step_data_term + update_step_length_term +
-                          update_step_gradient_term;
+    cv::Mat update_step = update_step_length_term + update_step_gradient_term;
     level_set_.add(update_step);
 
     /*     cv::Mat vis;

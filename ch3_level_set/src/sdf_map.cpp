@@ -23,15 +23,15 @@ SDFMap::SDFMap(int rows, int cols, cv::Point center, double radius)
     }
 }
 SDFMap::SDFMap(int rows, int cols)
-    : map_(0.1 * cv::Mat::ones(cv::Size(cols, rows), CV_64F)) {
+    : map_(2 * cv::Mat::ones(cv::Size(cols, rows), CV_64F)) {
     double percentage = 0.2;
     map_(cv::Rect2d(
         cv::Point(round(percentage * cols), round(percentage * rows)),
         cv::Point(cols - round(percentage * cols),
                   rows - round(percentage * rows)))) =
-        -0.1 * cv::Mat::ones(cv::Size(cols - round(percentage * cols) * 2,
-                                      rows - round(percentage * rows) * 2),
-                             CV_64F);
+        -2 * cv::Mat::ones(cv::Size(cols - round(percentage * cols) * 2,
+                                    rows - round(percentage * rows) * 2),
+                           CV_64F);
 }
 
 cv::Mat SDFMap::get_fore_background_label_map() const {

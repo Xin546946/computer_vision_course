@@ -166,7 +166,7 @@ cv::Mat gaussian_kernel(int size, double sigma) {
 // todo untested function
 double compute_center(cv::Mat img, const SDFMap& sdf_map, double eps,
                       bool is_background) {
-    if (is_background == true) {
+    if (is_background) {
         return img.dot(heaviside(sdf_map, eps)) /
                cv::sum(heaviside(sdf_map, eps))[0];
     } else {
@@ -180,8 +180,10 @@ double compute_center_in_window(int row, int col, int size,
                                 const SDFMap& sdf_map, double eps,
                                 bool is_background) {
     cv::Mat roi = get_sub_image(img, row, col, size);
+    // cv::Mat vis_roi = get_float_mat_vis_img(roi);
+    // disp_image(vis_roi, "vis", 0);
     cv::Mat roi_sdf = get_sub_image(sdf_map.map_, row, col, size);
-    if (is_background == true) {
+    if (is_background) {
         return roi.dot(heaviside(roi_sdf, eps)) /
                cv::sum(heaviside(roi_sdf, eps))[0];
     } else {
@@ -242,9 +244,7 @@ cv::Mat get_sub_image(cv::Mat image, int row, int col, int window_size) {
                  cv::Size(window_size, window_size));
     cv::Rect intersection = img_rect & roi;
 
-    cv::Rect inter_roi = intersection - roi.tl();
-
-    cv::Mat sub_img = cv::Mat::zeros(roi.size(), image.type());
-    image(intersection).copyTo(sub_img(inter_roi));
+    cv::Mat sub_img = cv::Mat::zeros(intersection.size(), image.type());
+    image(intersection).copyTo(sub_img);
     return sub_img;
 }
