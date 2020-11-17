@@ -75,41 +75,6 @@ std::string LevelSetLBF::return_drive_class_name() const {
 // todo compute_data_term_derivitive_in_window(r,c)
 // todo  update_center_in_window(r, c);
 void LevelSetLBF::update() {
-    cv::Mat total_data_term_derivative =
-        cv::Mat::zeros(image_64f_.size(), image_64f_.type());
-    for (int r = 0; r < image_64f_.rows; r++) {
-        for (int c = 0; c < image_64f_.cols; c++) {
-            update_center_in_window(r, c);
-            total_data_term_derivative +=
-                compute_data_term_derivative_in_window(r, c);
-        }
-    }
-    cv::Mat update_step_length_term =
-        param_.step_size_ * param_.length_term_weight_ *
-        compute_derivative_length_term(level_set_, param_.eps_);
-
-    cv::Mat update_step_gradient_term =
-        param_.step_size_ * param_.gradient_term_weight_ *
-        compute_derivative_gradient_term(level_set_);
-    cv::Mat update_step_data_term =
-        param_.step_size_ * total_data_term_derivative;
-    cv::Mat update_step = update_step_data_term + update_step_length_term +
-                          update_step_gradient_term;
-    level_set_.add(update_step);
-
-    /*     cv::Mat vis;
-        cv::Mat vis_update_data_term =
-       get_float_mat_vis_img(update_step_data_term); cv::Mat
-       vis_update_lenght_term = get_float_mat_vis_img(update_step_length_term);
-        cv::Mat vis_update_graient_term =
-            get_float_mat_vis_img(update_step_gradient_term);
-
-        cv::hconcat(update_step_data_term, update_step_length_term, vis);
-        cv::hconcat(vis, update_step_gradient_term, vis);
-
-        cv::imshow("top: data term, mid : lenght_term, down : gradient_term",
-       vis); cv::waitKey(0) */
-    ;
     cv::Mat vis_sdf_draw = draw_sdf_map(level_set_);
     cv::Mat vis_sdf_with_contour =
         draw_points(vis_sdf_draw, level_set_.get_contour_points(),
@@ -130,6 +95,41 @@ void LevelSetLBF::update() {
     cv::imshow("left: level set, mid: seg on original image, right : label ",
                vis);
     cv::waitKey(0);
+    cv::Mat total_data_term_derivative =
+        cv::Mat::zeros(image_64f_.size(), image_64f_.type());
+    for (int r = 0; r < image_64f_.rows; r + 10) {
+        for (int c = 0; c < image_64f_.cols; c + 10) {
+            update_center_in_window(r, c);
+            total_data_term_derivative +=
+                compute_data_term_derivative_in_window(r, c);
+        }
+    }
+    cv::Mat update_step_length_term =
+        param_.step_size_ * param_.length_term_weight_ *
+        compute_derivative_length_term(level_set_, param_.eps_);
+
+    cv::Mat update_step_gradient_term =
+        param_.step_size_ * param_.gradient_term_weight_ *
+        compute_derivative_gradient_term(level_set_);
+    cv::Mat update_step_data_term =
+        param_.step_size_ * total_data_term_derivative;
+    cv::Mat update_step = update_step_data_term - update_step_length_term +
+                          update_step_gradient_term;
+    level_set_.add(update_step);
+
+    /*     cv::Mat vis;
+        cv::Mat vis_update_data_term =
+       get_float_mat_vis_img(update_step_data_term); cv::Mat
+       vis_update_lenght_term = get_float_mat_vis_img(update_step_length_term);
+        cv::Mat vis_update_graient_term =
+            get_float_mat_vis_img(update_step_gradient_term);
+
+        cv::hconcat(update_step_data_term, update_step_length_term, vis);
+        cv::hconcat(vis, update_step_gradient_term, vis);
+
+        cv::imshow("top: data term, mid : lenght_term, down : gradient_term",
+       vis); cv::waitKey(0) */
+    ;
 }
 
 void LevelSetLBF::update_center_in_window(int row, int col) {

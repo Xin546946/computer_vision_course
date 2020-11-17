@@ -246,5 +246,7 @@ cv::Mat get_sub_image(cv::Mat image, int row, int col, int window_size) {
 
     cv::Mat sub_img = cv::Mat::zeros(roi.size(), image.type());
     image(intersection).copyTo(sub_img(inter_roi));
+    // cv::Mat sub_img_vis = get_float_mat_vis_img(sub_img);
+    // disp_image(sub_img, "image vis", 0);
     return sub_img;
 }
