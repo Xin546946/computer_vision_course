@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
     cv::GaussianBlur(img, img, cv::Size(3, 3), 3);
     ParamLevelSetLBF param_level_set_lbf(
-        1e-4, 1e-4, 0.01, 1e-2, 20, 1.2, 21,
+        5e-4, 5e-4, 0.01, 1e-2, 20, 1.2, 21,
         11);  // fore_weight, back_weight, eps,
               // step_size,l_w,g_w,w_size,sigma; 1.1,1.0,5e-2,15,1,2
 

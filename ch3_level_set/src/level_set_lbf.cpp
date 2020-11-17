@@ -75,6 +75,28 @@ std::string LevelSetLBF::return_drive_class_name() const {
 // todo compute_data_term_derivitive_in_window(r,c)
 // todo  update_center_in_window(r, c);
 void LevelSetLBF::update() {
+    cv::Mat vis_sdf_draw = draw_sdf_map(level_set_);
+    cv::Mat vis_sdf_with_contour =
+        draw_points(vis_sdf_draw, level_set_.get_contour_points(),
+                    cv::Scalar(255, 255, 255));
+
+    cv::Mat vis_seg_image = image_3_channel.clone();
+    vis_seg_image = draw_points(vis_seg_image, level_set_.get_contour_points(),
+                                cv::Scalar(0, 0, 255));
+
+    cv::Mat vis_label = level_set_.get_fore_background_label_map();
+    vis_label.convertTo(vis_label, CV_8UC1);
+    cv::cvtColor(vis_label, vis_label, CV_GRAY2BGR);
+
+    cv::Mat vis;
+    cv::hconcat(vis_sdf_with_contour, vis_seg_image, vis);
+    cv::hconcat(vis, vis_label, vis);
+
+    cv::imshow("left: level set, mid: seg on original image, right : label ",
+               vis);
+    cv::waitKey(0);
+    cv::Mat total_data_term_derivative =
+        cv::Mat::zeros(image_64f_.size(), image_64f_.type());
     for (int r = 0; r < image_64f_.rows; r += 4) {
         for (int c = 0; c < image_64f_.cols; c += 4) {
             update_center_in_window(r, c);
@@ -106,26 +128,6 @@ void LevelSetLBF::update() {
         cv::imshow("top: data term, mid : lenght_term, down : gradient_term",
        vis); cv::waitKey(0) */
     ;
-    cv::Mat vis_sdf_draw = draw_sdf_map(level_set_);
-    cv::Mat vis_sdf_with_contour =
-        draw_points(vis_sdf_draw, level_set_.get_contour_points(),
-                    cv::Scalar(255, 255, 255));
-
-    cv::Mat vis_seg_image = image_3_channel.clone();
-    vis_seg_image = draw_points(vis_seg_image, level_set_.get_contour_points(),
-                                cv::Scalar(0, 0, 255));
-
-    cv::Mat vis_label = level_set_.get_fore_background_label_map();
-    vis_label.convertTo(vis_label, CV_8UC1);
-    cv::cvtColor(vis_label, vis_label, CV_GRAY2BGR);
-
-    cv::Mat vis;
-    cv::hconcat(vis_sdf_with_contour, vis_seg_image, vis);
-    cv::hconcat(vis, vis_label, vis);
-
-    cv::imshow("left: level set, mid: seg on original image, right : label ",
-               vis);
-    cv::waitKey(0);
 }
 
 void LevelSetLBF::update_center_in_window(int row, int col) {
