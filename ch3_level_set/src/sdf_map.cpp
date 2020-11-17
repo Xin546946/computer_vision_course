@@ -1,7 +1,19 @@
 #include "sdf_map.h"
+#include "display.h"
 #include "level_set_utils.h"
 #include <iostream>
 #include <opencv2/imgproc.hpp>
+
+/**
+ * @brief draw sdf map for visualization
+ *
+ * @param sdf_map to be visulized visualization
+ * @return cv::Mat the visualzation image
+ */
+cv::Mat draw_sdf_map(const SDFMap& sdf_map) {
+    assert(!sdf_map.map_.empty());
+    return apply_jetmap(sdf_map.map_);
+}
 
 inline bool is_contour_x_dire(cv::Mat im, int r, int c) {
     assert(!im.empty() && r < im.rows && r >= 0 && c < im.cols && c >= 0);

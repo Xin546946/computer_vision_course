@@ -97,8 +97,8 @@ void LevelSetLBF::update() {
     cv::waitKey(0);
     cv::Mat total_data_term_derivative =
         cv::Mat::zeros(image_64f_.size(), image_64f_.type());
-    for (int r = 0; r < image_64f_.rows; r += 4) {
-        for (int c = 0; c < image_64f_.cols; c += 4) {
+    for (int r = 0; r < image_64f_.rows; r++) {
+        for (int c = 0; c < image_64f_.cols; c++) {
             update_center_in_window(r, c);
 
             level_set_.add(param_.step_size_ *

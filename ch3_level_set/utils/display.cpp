@@ -116,17 +116,6 @@ cv::Mat apply_jetmap(cv::Mat image) {
 }
 
 /**
- * @brief draw sdf map for visualization
- *
- * @param sdf_map to be visulized visualization
- * @return cv::Mat the visualzation image
- */
-cv::Mat draw_sdf_map(const SDFMap& sdf_map) {
-    assert(!sdf_map.map_.empty());
-    return apply_jetmap(sdf_map.map_);
-}
-
-/**
  * @brief draw contour on the image
  *
  * @param img  original image

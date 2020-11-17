@@ -1,10 +1,11 @@
 #pragma once
-#include "sdf_map.h"
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <string>
+
+class SDFMap;
 
 void disp_image(cv::Mat& img, cv::String windowName);
 void disp_image(cv::Mat& img, cv::String windowName, int delay);
