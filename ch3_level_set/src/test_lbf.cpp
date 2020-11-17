@@ -8,10 +8,10 @@
 int main(int argc, char** argv) {
     // define and and initialize a sdf_map object
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
-    cv::GaussianBlur(img, img, cv::Size(3, 3), 3);
+    // cv::GaussianBlur(img, img, cv::Size(3, 3), 3);
     ParamLevelSetLBF param_level_set_lbf(
-        5e-4, 5e-4, 0.01, 1e-2, 20, 1.2, 21,
-        11);  // fore_weight, back_weight, eps,
+        2e-3, 2e-3, 2.5, 1e-3, 40, 1.2, 41,
+        21);  // fore_weight, back_weight, eps,
               // step_size,l_w,g_w,w_size,sigma; 1.1,1.0,5e-2,15,1,2
 
     cv::Mat dx = do_sobel(img, 1);
