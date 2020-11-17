@@ -14,6 +14,7 @@ void GradientDescentBase::run(int max_iteration) {
     std::cout << "init energy : " << last_energy_ << "@@@@@@" << '\n';
     int current_iter = 0;
     while (!is_terminate(current_iter, max_iteration)) {
+        std::cout << "current iteration is : " << current_iter << std::endl;
         current_iter++;
         update();
 
