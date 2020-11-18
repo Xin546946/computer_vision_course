@@ -45,8 +45,8 @@ class LevelSetLBF : public GradientDescentBase {
     cv::Mat compute_data_term_derivative_in_window(int row, int col) const;
 
    private:
-    HightMap level_set_;
-    HightMap last_level_set_;
+    HeightMap level_set_;
+    HeightMap last_level_set_;
 
     ParamLevelSetLBF param_;  // use param in the space of Level Set, no need
                               // for naming level set anymore

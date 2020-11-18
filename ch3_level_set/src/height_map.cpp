@@ -23,7 +23,7 @@ ______________________________________________________________________
  * @param sdf_map to be visulized
  * @return cv::Mat the visualzation image
  */
-cv::Mat draw_height_map(const HightMap& height_map) {
+cv::Mat draw_height_map(const HeightMap& height_map) {
     assert(!height_map.get_map().empty());
     return apply_jetmap(height_map.get_map());
 }
@@ -61,7 +61,7 @@ inline bool is_contour_y_dire(cv::Mat im, int r, int c) {
  * @param center
  * @param radius
  */
-HightMap::HightMap(int rows, int cols, cv::Point center, double radius)
+HeightMap::HeightMap(int rows, int cols, cv::Point center, double radius)
     : map_(cv::Mat::zeros(cv::Size(cols, rows), CV_64F)) {
     for (int r = 0; r < rows; r++) {
         for (int c = 0; c < cols; c++) {
@@ -76,7 +76,7 @@ HightMap::HightMap(int rows, int cols, cv::Point center, double radius)
  * @param rows
  * @param cols
  */
-HightMap::HightMap(int rows, int cols)
+HeightMap::HeightMap(int rows, int cols)
     : map_(2 * cv::Mat::ones(cv::Size(cols, rows), CV_64F)) {
     double percentage = 0.2;
     map_(cv::Rect2d(
@@ -88,13 +88,13 @@ HightMap::HightMap(int rows, int cols)
                            CV_64F);
 }
 
-cv::Mat HightMap::get_fore_background_label_map() const {
+cv::Mat HeightMap::get_fore_background_label_map() const {
     cv::Mat fore_background = map_.clone();
     cv::threshold(map_, fore_background, 0, 255, cv::THRESH_BINARY_INV);
     return fore_background;
 }
 
-double HightMap::get_gradient_magnitude_level_set() {
+double HeightMap::get_gradient_magnitude_level_set() {
     cv::Mat map_dev_x = do_sobel(map_, 0);
     cv::Mat map_dev_y = do_sobel(map_, 1);
     cv::Mat mag_grad_map;
@@ -102,11 +102,11 @@ double HightMap::get_gradient_magnitude_level_set() {
     return 0.5 * (mag_grad_map - 1.0).dot(mag_grad_map - 1.0);
 }
 
-void HightMap::add(cv::Mat step) {
+void HeightMap::add(cv::Mat step) {
     map_ += step;
 }
 
-cv::Mat HightMap::get_contour_points() const {
+cv::Mat HeightMap::get_contour_points() const {
     std::vector<cv::Vec2d> contour_vec;
 
     for (int r = 1; r < map_.rows - 1; r++) {
@@ -126,6 +126,6 @@ cv::Mat HightMap::get_contour_points() const {
     return contour;
 }
 
-cv::Mat HightMap::get_map() const {
+cv::Mat HeightMap::get_map() const {
     return map_.clone();
 }

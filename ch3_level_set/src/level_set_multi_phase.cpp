@@ -42,8 +42,8 @@ LevelSetMP::LevelSetMP(cv::Mat image, const ParamLevelSetMP& param)
     image.convertTo(image_64f_, CV_64FC1);
 }
 
-cv::Mat compute_derivative_data_term_mp1(HightMap level_set_1_,
-                                         HightMap level_set_2_,
+cv::Mat compute_derivative_data_term_mp1(HeightMap level_set_1_,
+                                         HeightMap level_set_2_,
                                          cv::Mat image_64f_,
                                          ParamLevelSetMP param_,
                                          double center_1_, double center_2_) {
@@ -63,8 +63,8 @@ cv::Mat compute_derivative_data_term_mp1(HightMap level_set_1_,
     return update_step_data_term_mp1;
 }
 
-cv::Mat compute_derivative_data_term_mp2(HightMap level_set_1_,
-                                         HightMap level_set_2_,
+cv::Mat compute_derivative_data_term_mp2(HeightMap level_set_1_,
+                                         HeightMap level_set_2_,
                                          cv::Mat image_64f_,
                                          ParamLevelSetMP param_,
 
