@@ -30,11 +30,10 @@ ParamLevelSetLBF::ParamLevelSetLBF(double forground_weight,
       sigma_(sigma) {
 }
 
-LevelSetLBF::LevelSetLBF(cv::Mat image, const ParamLevelSetLBF& param)
+LevelSetLBF::LevelSetLBF(cv::Mat image, const HeightMap& height_map,
+                         const ParamLevelSetLBF& param)
     : GradientDescentBase(param.step_size_),
       phi_(image.rows, image.cols),
-      /*                  cv::Point(image.cols / 2, image.rows / 2),
-                       std::min(image.rows, image.cols) / 2.5f) ,*/
       last_phi_(phi_),
       param_(param),
       image_3_channel(image.clone()),
