@@ -16,8 +16,7 @@
 cv::Mat do_sobel(cv::Mat im, int flag);
 cv::Mat heaviside(const SDFMap& sdf_map, double eps = 1.0);
 cv::Mat dirac(const SDFMap& sdf_map, double eps = 1.0);
-cv::Mat complementary_heaviside(const SDFMap& sdf_map,
-                                double eps = 1.0);  // 1-Heaciside
+cv::Mat complementary_heaviside(const SDFMap& sdf_map, double eps = 1.0);
 // todo define a heaviside function according to the std::for_each
 // todo using overload function for heaviside function
 
