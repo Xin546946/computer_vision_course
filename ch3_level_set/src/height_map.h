@@ -1,7 +1,7 @@
 #pragma once
 #include <opencv2/core.hpp>
 
-class HightMap {  // phi
+class HeightMap {  // phi
    public:
     /**
      * @brief Construct a new HeightMap object : sign distance function with a
@@ -12,7 +12,7 @@ class HightMap {  // phi
      * @param center
      * @param radius
      */
-    HightMap(int rows, int cols, cv::Point center, double radius);
+    HeightMap(int rows, int cols, cv::Point center, double radius);
     /**
      * @brief Construct a new HaightMap object : sign distance function with a
      * rectangular zero level set
@@ -20,7 +20,7 @@ class HightMap {  // phi
      * @param rows
      * @param cols
      */
-    HightMap(int rows, int cols);
+    HeightMap(int rows, int cols);
     /**
      * @brief Get the map object, which is a private member variable
      *

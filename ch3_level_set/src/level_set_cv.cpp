@@ -10,9 +10,9 @@ ______________________________________________________________________
 ______________________________________________________________________
 *********************************************************************
 **/
-
 #include "level_set_cv.h"
 #include "display.h"
+#include "height_map.h"
 #include "level_set_utils.h"
 #include "opencv2/highgui.hpp"
 #include <iostream>
@@ -30,10 +30,13 @@ ParamLevelSet ::ParamLevelSet(double forground_weight, double background_weight,
       gradient_term_weight_(gradient_term_weight) {
 }
 
-LevelSetCV::LevelSetCV(cv::Mat image, const ParamLevelSet& param)
+LevelSetCV::LevelSetCV(cv::Mat image, const HeightMap& height_map,
+                       const ParamLevelSet& param)
     : GradientDescentBase(param.step_size_),
-      phi_(image.rows, image.cols),
+
+      phi_(height_map),
       /*                  cv::Point(image.cols / 2, image.rows / 2),
+
                        std::min(image.rows, image.cols) / 2.5f) ,*/
       last_phi_(phi_),
       param_(param),
@@ -79,7 +82,6 @@ double LevelSetCV::compute_energy() const {
         center_foreground_, center_background_, param_.eps_);
     double length_term_energy = compute_length_term_energy(phi_, param_.eps_);
     double gradient_preserve_energy = compute_gradient_preserve_energy(phi_);
-
     std::cout << "||"
               << "data term energy: " << data_term_energy << " || "
               << "length term energy: " << length_term_energy << " || "

@@ -36,7 +36,9 @@ struct ParamLevelSet {
  */
 class LevelSetCV : public GradientDescentBase {
    public:
-    LevelSetCV(cv::Mat image, const ParamLevelSet& param);
+    LevelSetCV(cv::Mat image, const HeightMap& height_map,
+               const ParamLevelSet& param);  // todo give index of the const
+    void initialize() override;              // todo Height Map and cf, cb
 
    private:
     void update_level_set();
@@ -50,8 +52,9 @@ class LevelSetCV : public GradientDescentBase {
     double compute_energy() const override;
     std::string return_drive_class_name() const override;
 
-    HightMap phi_;
-    HightMap last_phi_;
+   private:
+    HeightMap phi_;
+    HeightMap last_phi_;
 
     ParamLevelSet param_;  // use param in the space of Level Set, no need for
                            // naming level set anymore

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "gradient_descent_base.h"
+#include "height_map.h"
 #include "level_set_utils.h"
-#include "sdf_map.h"
 /**
  * @brief Parameter of Level Set of CV Model
  *
@@ -45,10 +45,10 @@ class LevelSetMP : public GradientDescentBase {
     std::string return_drive_class_name() const;
 
    private:
-    HightMap level_set_1_;
-    HightMap level_set_2_;
-    HightMap last_level_set_1_;
-    HightMap last_level_set_2_;
+    HeightMap level_set_1_;
+    HeightMap level_set_2_;
+    HeightMap last_level_set_1_;
+    HeightMap last_level_set_2_;
     ParamLevelSetMP param_;  // use param in the space of Level Set, no need for
                              // naming level set anymore
 

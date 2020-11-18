@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
     cv::Point2d center(cols / 2.f, rows / 2.f);
     double radius = std::min(rows, cols) / 4.f;
     // HightMap height map(rows, cols, center, radius);
-    HightMap height_map(rows, cols);
+    HeightMap height_map(rows, cols);
     cv::Mat div = compute_div_delta_map(height_map);
     disp_image(div, "divergence", 0);
     cv::Mat height_map_draw = draw_height_map(height_map);

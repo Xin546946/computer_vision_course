@@ -26,49 +26,45 @@ ______________________________________________________________________
  */
 
 cv::Mat do_sobel(cv::Mat im, int flag);
-cv::Mat get_gaussian_kernel(int size, double sigma);
-
-cv::Mat heaviside(const HightMap& height_map, double eps = 1.0);
-cv::Mat dirac(const HightMap& height_map, double eps = 1.0);
-
-cv::Mat complementary_heaviside(const HightMap& height_map,
+cv::Mat heaviside(const HeightMap& height_map, double eps = 1.0);
+cv::Mat dirac(const HeightMap& height_map, double eps = 1.0);
+cv::Mat complementary_heaviside(const HeightMap& height_map,
                                 double eps = 1.0);  // 1-Heaciside
-cv::Mat compute_div_delta_map(const HightMap& height_map);
+cv::Mat compute_div_delta_map(const HeightMap& height_map);
 // todo define a heaviside function according to the std::for_each
 // todo using overload function for heaviside function
 
-double compute_length_energy(const HightMap& height_map);
+double compute_length_energy(const HeightMap& height_map);
 
-cv::Mat compute_derivative_data_term(const HightMap& height_map,
+cv::Mat compute_derivative_data_term(const HeightMap& height_map,
                                      cv::Mat original_image,
                                      double weight_foreground,
                                      double weight_background,
                                      double center_foreground,
                                      double center_background, double eps);
-cv::Mat compute_derivative_length_term(const HightMap& height_map, double eps);
-cv::Mat compute_derivative_gradient_term(const HightMap& height_map);
-
-cv::Mat compute_laplacian_map(const HightMap& height_map);
-
+cv::Mat compute_derivative_length_term(const HeightMap& height_map, double eps);
+cv::Mat compute_derivative_gradient_term(const HeightMap& height_map);
+cv::Mat compute_laplacian_map(const HeightMap& height_map);
+cv::Mat gaussian_kernel(int size, double sigma);
 cv::Mat compute_foreground_center();
-double compute_center(cv::Mat img, const HightMap& height_map, double eps,
+double compute_center(cv::Mat img, const HeightMap& height_map, double eps,
                       bool is_background);
 double compute_center_in_window(int row, int col, int size,
                                 cv::Mat gauss_kernel, cv::Mat img,
-                                const HightMap& height_map, double eps,
+                                const HeightMap& height_map, double eps,
                                 bool is_background);
 cv::Mat compute_mat_grad_magnitude(cv::Mat mat);
-double compute_data_term_energy(const HightMap& height_map,
+double compute_data_term_energy(const HeightMap& height_map,
                                 cv::Mat original_image,
                                 double weight_foreground,
                                 double weight_background,
                                 double center_foreground,
                                 double center_background, double eps);
-double compute_length_term_energy(const HightMap& height_map, double eps);
-double compute_gradient_preserve_energy(const HightMap& height_map);
+double compute_length_term_energy(const HeightMap& height_map, double eps);
+double compute_gradient_preserve_energy(const HeightMap& height_map);
 cv::Mat compute_square_diff(cv::Mat img1, cv::Mat img2);
 cv::Mat get_sub_image(cv::Mat image, int row, int col, int window_size);
-void visualize_lvl_set_segemenation(cv::Mat origin_img, const HightMap& phi,
+void visualize_lvl_set_segemenation(cv::Mat origin_img, const HeightMap& phi,
                                     int delay = 0);
 void visualize_lvl_set_update_term(cv::Mat update_step_data_term,
                                    cv::Mat update_step_length_term,
