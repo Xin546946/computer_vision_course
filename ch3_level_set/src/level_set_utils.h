@@ -63,3 +63,5 @@ double compute_length_term_energy(const HightMap& sdf_map, double eps);
 double compute_gradient_preserve_energy(const HightMap& sdf_map);
 cv::Mat compute_square_diff(cv::Mat img1, cv::Mat img2);
 cv::Mat get_sub_image(cv::Mat image, int row, int col, int window_size);
+void visualize_lvl_set_segemenation(cv::Mat origin_img, const HightMap& phi,
+                                    int delay = 0);

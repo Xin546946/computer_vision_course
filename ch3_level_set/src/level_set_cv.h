@@ -55,7 +55,7 @@ class LevelSetCV : public GradientDescentBase {
     std::string return_drive_class_name() const;
 
    private:
-    HightMap level_set_;
+    HightMap phi_;
     HightMap last_level_set_;
 
     ParamLevelSet param_;  // use param in the space of Level Set, no need for

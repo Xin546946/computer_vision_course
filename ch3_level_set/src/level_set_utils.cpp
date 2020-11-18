@@ -261,3 +261,26 @@ cv::Mat get_sub_image(cv::Mat image, int row, int col, int window_size) {
     image(intersection).copyTo(sub_img);
     return sub_img;
 }
+
+void visualize_lvl_set_segemenation(cv::Mat origin_img, const HightMap& phi,
+                                    int delay) {
+    cv::Mat vis_sdf_draw = draw_sdf_map(phi);
+    cv::Mat vis_sdf_with_contour = draw_points(
+        vis_sdf_draw, phi.get_contour_points(), cv::Scalar(255, 255, 255));
+
+    cv::Mat vis_seg_image = origin_img.clone();
+    vis_seg_image = draw_points(vis_seg_image, phi.get_contour_points(),
+                                cv::Scalar(0, 0, 255));
+
+    cv::Mat vis_label = phi.get_fore_background_label_map();
+    vis_label.convertTo(vis_label, CV_8UC1);
+    cv::cvtColor(vis_label, vis_label, CV_GRAY2BGR);
+
+    cv::Mat vis;
+    cv::hconcat(vis_sdf_with_contour, vis_seg_image, vis);
+    cv::hconcat(vis, vis_label, vis);
+
+    cv::imshow("left: phi set, mid: seg on original image, right : seg label ",
+               vis);
+    cv::waitKey(delay);
+}
