@@ -21,6 +21,7 @@ int main(int argc, char** argv) {
     // define and and initialize a height_map object
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
     // cv::GaussianBlur(img, img, cv::Size(3, 3), 3);
+    HeightMap height_map(img.rows, img.cols);
     ParamLevelSetLBF param_level_set_lbf(
         2e-3, 2e-3, 2.5, 1e-3, 40, 1.2, 21,
         11);  // fore_weight, back_weight, eps,
@@ -28,7 +29,7 @@ int main(int argc, char** argv) {
 
     cv::Mat dx = do_sobel(img, 1);
 
-    LevelSetLBF level_set_lbf(img, param_level_set_lbf);
+    LevelSetLBF level_set_lbf(img, height_map, param_level_set_lbf);
     level_set_lbf.run(1e4);
 
     return 0;
