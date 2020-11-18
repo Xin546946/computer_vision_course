@@ -203,8 +203,23 @@ double compute_gradient_preserve_energy(const HeightMap& height_map);
  */
 cv::Mat compute_mat_grad_magnitude(cv::Mat mat);
 
+/**
+ * @brief visualize the level set segementation result
+ *
+ * @param origin_img : origin image in the type of CV_8UC3
+ * @param phi: level set function phi
+ * @param delay: opencv waitkey param, set 0 if want to stop at each iteration
+ */
 void visualize_lvl_set_segemenation(cv::Mat origin_img, const HeightMap& phi,
                                     int delay = 0);
+/**
+ * @brief visualize the update step of the level set
+ *
+ * @param update_step_data_term
+ * @param update_step_length_term
+ * @param update_step_gradient_term
+ * @param delay:opencv waitkey param, set 0 if want to stop at each iteratio
+ */
 void visualize_lvl_set_update_term(cv::Mat update_step_data_term,
                                    cv::Mat update_step_length_term,
                                    cv::Mat update_step_gradient_term,

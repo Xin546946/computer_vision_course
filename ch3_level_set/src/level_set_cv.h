@@ -15,8 +15,17 @@ ______________________________________________________________________
 #include "gradient_descent_base.h"
 #include "height_map.h"
 #include "level_set_utils.h"
+
 /**
- * @brief Parameter of Level Set of CV Model
+ * @brief parameter of level set
+ *
+ *
+ *   forground_weight_ : weight of foregroud
+ *   background_weight_: weight of foregroud
+ *   eps_: epsilon of heaviside function
+ *   step_size_: step size factor of gradient decent
+ *   length_term_weight_: weight of length term
+ *   gradient_term_weight_: weight of gradient term
  *
  */
 struct ParamLevelSet {
@@ -30,17 +39,33 @@ struct ParamLevelSet {
     double length_term_weight_;
     double gradient_term_weight_;
 };
+
 /**
- * @brief class of Level Set CV Model
+ * @brief class LevelSetCV : Chan Verse model of Level Set
  *
  */
 class LevelSetCV : public GradientDescentBase {
    public:
+    /**
+     * @brief Construct a new Level Set CV object
+     *
+     * @param image: a gray scale image in type of CV_8U
+     * @param height_map: the function(hight map) phi
+     * @param param: parameter of levelset cv
+     */
     LevelSetCV(cv::Mat image, const HeightMap& height_map,
-               const ParamLevelSet& param);  // todo give index of the const
+               const ParamLevelSet& param);
 
    private:
+    /**
+     * @brief update the phi function
+     *
+     */
     void update_level_set();
+    /**
+     * @brief update the gray value center of foreground and background
+     *
+     */
     void update_center();
 
     void update() override;
@@ -54,13 +79,10 @@ class LevelSetCV : public GradientDescentBase {
     HeightMap phi_;
     HeightMap last_phi_;
 
-    ParamLevelSet param_;  // use param in the space of Level Set, no need for
-                           // naming level set anymore
-    double grayvalue_background_;
-    double grayvalue_forground_;
+    ParamLevelSet param_;
 
-    cv::Mat image_64f_;
-    cv::Mat image_3_channel;
+    cv::Mat image_64f_;       // original image in the type of CV_64F
+    cv::Mat image_3_channel;  // original image in gray scale but with 3 channel
 
     double center_foreground_;
     double last_center_foreground_;
