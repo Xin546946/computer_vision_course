@@ -89,6 +89,7 @@ std::string LevelSetLBF::return_drive_class_name() const {
 // todo  update_center_in_window(r, c);
 void LevelSetLBF::update() {
     visualize_lvl_set_segemenation(image_3_channel, phi_, 1);
+
     cv::Mat total_data_term_derivative =
         cv::Mat::zeros(image_64f_.size(), image_64f_.type());
     for (int r = 0; r < image_64f_.rows; r++) {

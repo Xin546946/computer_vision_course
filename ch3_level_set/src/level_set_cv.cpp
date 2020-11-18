@@ -64,34 +64,15 @@ void LevelSetCV::update_level_set() {
                                         param_.gradient_term_weight_ *
                                         compute_derivative_gradient_term(phi_);
 
-    cv::Mat vis;
-    cv::Mat vis_update_data_term = get_float_mat_vis_img(update_step_data_term);
-    cv::Mat vis_update_lenght_term =
-        get_float_mat_vis_img(update_step_length_term);
-    cv::Mat vis_update_graient_term =
-        get_float_mat_vis_img(update_step_gradient_term);
-
-    cv::hconcat(update_step_data_term, update_step_length_term, vis);
-    cv::hconcat(vis, update_step_gradient_term, vis);
-
-    cv::imshow("top: data term, mid : lenght_term, down : gradient_term", vis);
-    cv::waitKey(1);
-
     cv::Mat update_step = update_step_data_term + update_step_length_term +
                           update_step_gradient_term;
-    // 0.01 * dirac(level_set_, 1.0)
     phi_.add(update_step);
+
+    visualize_lvl_set_update_term(update_step_data_term,
+                                  update_step_length_term,
+                                  update_step_gradient_term, 1);
 }
 
-void LevelSetCV::roll_back_state() {
-    phi_ = last_level_set_;
-}
-void LevelSetCV::back_up_state() {
-    last_level_set_ = phi_;
-}
-void LevelSetCV::print_terminate_info() const {
-    std::cout << "Level set iteration finished." << std::endl;
-}
 double LevelSetCV::compute_energy() const {
     double data_term_energy = compute_data_term_energy(
         phi_, image_64f_, param_.forground_weight_, param_.background_weight_,
@@ -106,23 +87,36 @@ double LevelSetCV::compute_energy() const {
     return data_term_energy + param_.length_term_weight_ * length_term_energy +
            param_.gradient_term_weight_ * gradient_preserve_energy;
 }
-void LevelSetCV::initialize() {
-    // initialize lvl set :   sdf already initilized in constructor
 
-    // initilize centers :
-}
-
-std::string LevelSetCV::return_drive_class_name() const {
-    return "Level Set CV Model";
-}
 void LevelSetCV::update_center() {
     center_foreground_ = compute_center(image_64f_, phi_, param_.eps_, false);
     std::cout << "center_foreground " << center_foreground_ << '\n';
     center_background_ = compute_center(image_64f_, phi_, param_.eps_, true);
     std::cout << "center_background " << center_background_ << '\n';
 }
+
 void LevelSetCV::update() {
     visualize_lvl_set_segemenation(image_3_channel, phi_, 1);
     update_center();
     update_level_set();
+}
+
+void LevelSetCV::initialize() {
+    // initialize lvl set :
+    // sdf already initialized in constructor
+    // initilize centers :
+    // centers already initalized in constructor
+}
+
+std::string LevelSetCV::return_drive_class_name() const {
+    return "Level Set CV Model";
+}
+void LevelSetCV::roll_back_state() {
+    phi_ = last_level_set_;
+}
+void LevelSetCV::back_up_state() {
+    last_level_set_ = phi_;
+}
+void LevelSetCV::print_terminate_info() const {
+    std::cout << "Level set iteration finished." << std::endl;
 }

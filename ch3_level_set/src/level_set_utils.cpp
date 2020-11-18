@@ -284,3 +284,24 @@ void visualize_lvl_set_segemenation(cv::Mat origin_img, const HightMap& phi,
                vis);
     cv::waitKey(delay);
 }
+
+void visualize_lvl_set_update_term(cv::Mat update_step_data_term,
+                                   cv::Mat update_step_length_term,
+                                   cv::Mat update_step_gradient_term,
+                                   int delay) {
+    cv::Mat vis;
+    cv::Mat vis_update_data_term = get_float_mat_vis_img(update_step_data_term);
+    cv::Mat vis_update_lenght_term =
+        get_float_mat_vis_img(update_step_length_term);
+    cv::Mat vis_update_graient_term =
+        get_float_mat_vis_img(update_step_gradient_term);
+
+    cv::hconcat(update_step_data_term, update_step_length_term, vis);
+    cv::hconcat(vis, update_step_gradient_term, vis);
+
+    cv::imshow(
+        "left : data term update , mid : lenght term update , right : gradient "
+        "term update",
+        vis);
+    cv::waitKey(delay);
+}
