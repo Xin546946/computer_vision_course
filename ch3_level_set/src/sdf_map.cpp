@@ -1,3 +1,16 @@
+/**
+______________________________________________________________________
+*********************************************************************
+* @brief  This file is developed for the course of ShenLan XueYuan:
+* Fundamental implementations of Computer Vision
+* all rights preserved
+* @author Xin Jin, Zhaoran Wu
+* @contact: xinjin1109@gmail.com, zhaoran.wu1@gmail.com
+*
+______________________________________________________________________
+*********************************************************************
+**/
+
 #include "sdf_map.h"
 #include "display.h"
 #include "level_set_utils.h"
@@ -52,7 +65,7 @@ cv::Mat SDFMap::get_fore_background_label_map() const {
     return fore_background;
 }
 
-double SDFMap::get_gradient_magnitude_level_set() {
+double SDFMap::get_gradient_magnitude_level_set() const {
     cv::Mat map_dev_x = do_sobel(map_, 0);
     cv::Mat map_dev_y = do_sobel(map_, 1);
     cv::Mat mag_grad_map;
