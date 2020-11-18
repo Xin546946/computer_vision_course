@@ -35,7 +35,7 @@ LevelSetLBF::LevelSetLBF(cv::Mat image, const ParamLevelSetLBF& param)
       phi_(image.rows, image.cols),
       /*                  cv::Point(image.cols / 2, image.rows / 2),
                        std::min(image.rows, image.cols) / 2.5f) ,*/
-      last_level_set_(phi_),
+      last_phi_(phi_),
       param_(param),
       image_3_channel(image.clone()),
       image_64f_(image.size(), CV_64FC1),
@@ -48,10 +48,10 @@ LevelSetLBF::LevelSetLBF(cv::Mat image, const ParamLevelSetLBF& param)
 }
 
 void LevelSetLBF::roll_back_state() {
-    phi_ = last_level_set_;
+    phi_ = last_phi_;
 }
 void LevelSetLBF::back_up_state() {
-    last_level_set_ = phi_;
+    last_phi_ = phi_;
 }
 void LevelSetLBF::print_terminate_info() const {
     std::cout << "Level set iteration finished." << std::endl;

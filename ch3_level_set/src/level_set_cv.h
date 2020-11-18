@@ -56,7 +56,7 @@ class LevelSetCV : public GradientDescentBase {
 
    private:
     HightMap phi_;
-    HightMap last_level_set_;
+    HightMap last_phi_;
 
     ParamLevelSet param_;  // use param in the space of Level Set, no need for
                            // naming level set anymore
