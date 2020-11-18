@@ -45,60 +45,27 @@ LevelSetLBF::LevelSetLBF(cv::Mat image, const HeightMap& height_map,
       gauss_kernel_(get_gaussian_kernel(param.window_size_, param.sigma_)) {
     image.convertTo(image_64f_, CV_64FC1);
 }
-
-void LevelSetLBF::roll_back_state() {
-    phi_ = last_phi_;
-}
-void LevelSetLBF::back_up_state() {
-    last_phi_ = phi_;
-}
-void LevelSetLBF::print_terminate_info() const {
-    std::cout << "Level set iteration finished." << std::endl;
 }
 
-// todo for slding window
 double LevelSetLBF::compute_energy() const {
-    double data_term_energy = compute_data_term_energy(
-        phi_, image_64f_, param_.forground_weight_, param_.background_weight_,
-        center_foreground_, center_background_, param_.eps_);
-    double length_term_energy = compute_length_term_energy(phi_, param_.eps_);
-    double gradient_preserve_energy = compute_gradient_preserve_energy(phi_);
-
-    std::cout << "||"
-              << "data term energy: " << data_term_energy << " || ";
-    std::cout << "length term energy: " << length_term_energy << " || ";
-    std::cout << "gradient preserve energy: " << gradient_preserve_energy
-              << " || " << std::endl;
-
-    return data_term_energy + param_.length_term_weight_ * length_term_energy +
-           param_.gradient_term_weight_ * gradient_preserve_energy;
+    double result;
+    // todo implement energy of LBF Model
+    return result;
 }
 void LevelSetLBF::initialize() {
-    // initialize lvl set :   height map already initilized in constructor
+    // initialize lvl set :
+    // height map already initilized in constructor
 
     // initilize centers :
     // centers already initalized in constructor
 }
 
-std::string LevelSetLBF::return_drive_class_name() const {
-    return "Level Set LBF Model";
-}
-
-// todo compute_data_term_derivitive_in_window(r,c)
-// todo  update_center_in_window(r, c);
 void LevelSetLBF::update() {
     visualize_lvl_set_segemenation(image_3_channel, phi_, 1);
 
     cv::Mat total_data_term_derivative =
         cv::Mat::zeros(image_64f_.size(), image_64f_.type());
-    for (int r = 0; r < image_64f_.rows; r++) {
-        for (int c = 0; c < image_64f_.cols; c++) {
-            update_center_in_window(r, c);
-
-            phi_.add(param_.step_size_ *
-                     compute_data_term_derivative_in_window(r, c));
-        }
-    }
+    // todo implement the rest of update function of LBF Model
     cv::Mat update_step_length_term =
         param_.step_size_ * param_.length_term_weight_ *
         compute_derivative_length_term(phi_, param_.eps_);
@@ -134,3 +101,16 @@ cv::Mat LevelSetLBF::compute_data_term_derivative_in_window(int row,
     return dirac(phi_).mul(param_.forground_weight_ * e_foreground -
                            param_.background_weight_ * e_background);
 }
+
+std::string LevelSetLBF::return_drive_class_name() const {
+    return "Level Set LBF Model";
+}
+
+void LevelSetLBF::roll_back_state() {
+    phi_ = last_phi_;
+}
+void LevelSetLBF::back_up_state() {
+    last_phi_ = phi_;
+}
+void LevelSetLBF::print_terminate_info() const {
+    std::cout << "Level set iteration finished." << std::endl;

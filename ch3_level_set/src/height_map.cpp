@@ -53,29 +53,13 @@ inline bool is_contour_y_dire(cv::Mat im, int r, int c) {
     assert(!im.empty() && r < im.rows && r >= 0 && c < im.cols && c >= 0);
     return ((im.at<double>(r - 1, c) * im.at<double>(r + 1, c)) < 0);
 }
-/**
- * @brief Construct a new HeightMap::HeightMap object, which is a SDF
- *
- * @param rows
- * @param cols
- * @param center
- * @param radius
- */
+
 HeightMap::HeightMap(int rows, int cols, cv::Point center, double radius)
     : map_(cv::Mat::zeros(cv::Size(cols, rows), CV_64F)) {
-    for (int r = 0; r < rows; r++) {
-        for (int c = 0; c < cols; c++) {
-            map_.at<double>(r, c) =
-                std::sqrt(pow(r - center.y, 2) + pow(c - center.x, 2)) - radius;
-        }
-    }
+    // todo implement the sign distance function, which background is plus sign,
+    // todo  foreground is minus sign
 }
-/**
- * @brief Construct a new HeightMap::HeightMap object
- *
- * @param rows
- * @param cols
- */
+
 HeightMap::HeightMap(int rows, int cols)
     : map_(2 * cv::Mat::ones(cv::Size(cols, rows), CV_64F)) {
     double percentage = 0.2;
@@ -109,14 +93,8 @@ void HeightMap::add(cv::Mat step) {
 cv::Mat HeightMap::get_contour_points() const {
     std::vector<cv::Vec2d> contour_vec;
 
-    for (int r = 1; r < map_.rows - 1; r++) {
-        for (int c = 1; c < map_.cols - 1; c++) {
-            if (is_contour_x_dire(map_, r, c) ||
-                is_contour_y_dire(map_, r, c)) {
-                contour_vec.emplace_back(c, r);
-            }
-        }
-    }
+    // todo get the contour points on the zero level set
+    // Hints: if the point is contour, put it in the contour_vec
 
     cv::Mat contour(cv::Size(2, contour_vec.size()), CV_64FC1);
     for (int i = 0; i < contour_vec.size(); i++) {

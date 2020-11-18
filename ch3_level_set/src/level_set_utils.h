@@ -19,7 +19,7 @@ ______________________________________________________________________
  * @brief Do sobel filter to detect horizontal or vertical edges
  *
  * @param im
- * @param flag
+ * @param flag flag = 0, do sobel x, flag = 1, do sobel y
  * @return cv::Mat
  */
 cv::Mat do_sobel(cv::Mat im, int flag);

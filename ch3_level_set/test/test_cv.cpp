@@ -25,7 +25,6 @@ int main(int argc, char** argv) {
         1.2);  // fore_weight, back_weight, eps,
                // step_size,l_w,g_w; 1.1,1.0,5e-2,15,1,2
 
-    cv::Mat dx = do_sobel(img, 1);
     HeightMap height_map(img.rows, img.cols);
     LevelSetCV level_set_cv(img, height_map, param_level_set_cv);
     level_set_cv.run(1e4);

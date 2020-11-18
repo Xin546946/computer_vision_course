@@ -13,13 +13,7 @@ ______________________________________________________________________
 #include "level_set_utils.h"
 #include "display.h"
 #include <opencv2/imgproc.hpp>
-/**
- * @brief
- *
- * @param input
- * @param flag  = 0 x , = 1 y
- * @return cv::Mat
- */
+
 cv::Mat do_sobel(cv::Mat input, int flag = 0) {
     cv::Mat im = input.clone();
     if (im.channels() != 1) {
@@ -47,6 +41,34 @@ cv::Mat do_sobel(cv::Mat input, int flag = 0) {
     return output;
 }
 
+cv::Mat get_gaussian_kernel(int size, double sigma) {
+    assert(size % 2 == 1);
+    cv::Point center((size - 1) / 2, (size - 1) / 2);
+    cv::Mat result = cv::Mat::zeros(cv::Size(size, size), CV_64F);
+    for (int r = 0; r < size; r++) {
+        for (int c = 0; c < size; c++) {
+            result.at<double>(r, c) =
+                (M_1_PI * 0.5 / (sigma * sigma)) *
+                exp(-(pow(r - center.x, 2) + pow(c - center.y, 2)) /
+                    (2 * sigma * sigma));
+        }
+    }
+    return result / cv::sum(result)[0];
+}
+
+cv::Mat compute_laplacian_map(const HeightMap& sdf_map) {
+    cv::Mat result;
+    cv::Laplacian(sdf_map.get_map(), result, CV_64F, 3, cv::BORDER_REPLICATE);
+    return result;
+}
+
+cv::Mat compute_square_diff(cv::Mat img1, cv::Mat img2) {
+    cv::Mat diff = img1 - img2;
+    cv::Mat square_diff;
+    cv::pow(diff, 2.0f, square_diff);
+    return square_diff;
+}
+
 cv::Mat compute_div_delta_map(const HeightMap& sdf_map) {
     cv::Mat phi = sdf_map.get_map();
     cv::Mat phi_grad_mag = compute_mat_grad_magnitude(phi);
@@ -71,20 +93,12 @@ inline double heaviside(double z, double eps) {
 inline double dirac(double z, double eps = 1.0) {
     return eps * M_1_PI / (std::pow(eps, 2.0) + std::pow(z, 2.0));
 }
-
-cv::Mat heaviside(const cv::Mat mat, double eps) {
-    assert(mat.channels() == 1);
-    cv::Mat result(mat.size(), mat.type());
-    std::transform(mat.begin<double>(), mat.end<double>(),
-                   result.begin<double>(),
-                   [=](double z) { return heaviside(z, eps); });
-
-    return result;
 }
 
 cv::Mat heaviside(const HeightMap& sdf_map, double eps) {
-    cv::Mat phi = sdf_map.get_map();
-    return heaviside(phi, eps);
+    cv::Mat result;
+    // todo implement heaviside function w.r.t phi
+    return result;
 }
 
 cv::Mat complementary_heaviside(const HeightMap& sdf_map, double eps) {
@@ -98,25 +112,9 @@ cv::Mat complementary_heaviside(cv::Mat mat, double eps) {
 }
 
 cv::Mat dirac(const HeightMap& sdf_map, double eps) {
-    cv::Mat phi = sdf_map.get_map();
-    cv::Mat result(phi.size(), phi.type());
-    std::transform(phi.begin<double>(), phi.end<double>(),
-                   result.begin<double>(),
-                   [=](double z) { return dirac(z, eps); });
-    return result;
-}
-
-cv::Mat compute_laplacian_map(const HeightMap& sdf_map) {
     cv::Mat result;
-    cv::Laplacian(sdf_map.get_map(), result, CV_64F, 3, cv::BORDER_REPLICATE);
+    // todo implement dirac function w.r.t. phi
     return result;
-}
-
-cv::Mat compute_square_diff(cv::Mat img1, cv::Mat img2) {
-    cv::Mat diff = img1 - img2;
-    cv::Mat square_diff;
-    cv::pow(diff, 2.0f, square_diff);
-    return square_diff;
 }
 
 cv::Mat compute_derivative_data_term(const HeightMap& sdf_map,
@@ -125,14 +123,8 @@ cv::Mat compute_derivative_data_term(const HeightMap& sdf_map,
                                      double weight_background,
                                      double center_foreground,
                                      double center_background, double eps) {
-    cv::Mat e_foreground = compute_square_diff(
-        original_image,
-        center_foreground *
-            cv::Mat::ones(original_image.size(), original_image.type()));
-    cv::Mat e_background = compute_square_diff(
-        original_image,
-        center_background *
-            cv::Mat::ones(original_image.size(), original_image.type()));
+    cv::Mat result, e_foreground, e_background;
+    // todo implement update of data term see slide page 21
 
     cv::Mat vis;
     cv::Mat vis_dirac = get_float_mat_vis_img(dirac(sdf_map, eps));
@@ -143,34 +135,20 @@ cv::Mat compute_derivative_data_term(const HeightMap& sdf_map,
     cv::hconcat(vis, vis_e_background, vis);
     disp_image(vis, "top: dirac, mid : e_foregroud, down: e_backgroud", 1);
 
-    return dirac(sdf_map, eps)
-        .mul((weight_foreground * e_foreground -
-              weight_background * e_background));
+    return result;
 }
 
 cv::Mat compute_derivative_length_term(const HeightMap& sdf_map, double eps) {
-    cv::Mat div = compute_div_delta_map(sdf_map);
-    return dirac(sdf_map, eps).mul(div);
+    cv::Mat result;
+    // todo implement update of length term see slide page 21
+    return result;
 }
 
 cv::Mat compute_derivative_gradient_term(const HeightMap& sdf_map) {
-    cv::Mat laplacian_map_result = compute_laplacian_map(sdf_map);
-    return 4 * laplacian_map_result - compute_div_delta_map(sdf_map);
-}
-
-cv::Mat get_gaussian_kernel(int size, double sigma) {
-    assert(size % 2 == 1);
-    cv::Point center((size - 1) / 2, (size - 1) / 2);
-    cv::Mat result = cv::Mat::zeros(cv::Size(size, size), CV_64F);
-    for (int r = 0; r < size; r++) {
-        for (int c = 0; c < size; c++) {
-            result.at<double>(r, c) =
-                (M_1_PI * 0.5 / (sigma * sigma)) *
-                exp(-(pow(r - center.x, 2) + pow(c - center.y, 2)) /
-                    (2 * sigma * sigma));
-        }
-    }
-    return result / cv::sum(result)[0];
+    cv::Mat result;
+    // todo implement update of gradient preserve term, the gradient of sdf
+    // todo should be closed to one
+    return result;
 }
 
 double compute_center(cv::Mat img, const HeightMap& height_map, double eps,
@@ -217,37 +195,21 @@ double compute_data_term_energy(const HeightMap& height_map,
                                 double weight_background,
                                 double center_foreground,
                                 double center_background, double eps) {
-    cv::Mat e_foreground = compute_square_diff(
-        original_image,
-        center_foreground *
-            cv::Mat::ones(original_image.size(), original_image.type()));
-    cv::Mat e_background = compute_square_diff(
-        original_image,
-        center_background *
-            cv::Mat::ones(original_image.size(), original_image.type()));
-
-    return weight_foreground *
-               (e_foreground.dot(complementary_heaviside(height_map, eps))) +
-           weight_background * e_background.dot(heaviside(height_map, eps));
+    double result;
+    // todo implement data term energy see slide page 19
+    return result;
 }
 
 double compute_length_term_energy(const HeightMap& height_map, double eps) {
-    cv::Mat heaviside_map = heaviside(height_map, eps);
-    cv::Mat heaviside_map_grad_magnitude =
-        compute_mat_grad_magnitude(heaviside_map);
-
-    return cv::sum(heaviside_map_grad_magnitude)[0];
+    double result;
+    // todo implement length term energy see slide page 19
+    return result;
 }
 
 double compute_gradient_preserve_energy(const HeightMap& height_map) {
-    cv::Mat height_map_grad_magnitude =
-        compute_mat_grad_magnitude(height_map.get_map());
-    cv::Mat height_map_grad_preserve =
-        compute_square_diff(height_map_grad_magnitude,
-                            cv::Mat::ones(height_map_grad_magnitude.size(),
-                                          height_map_grad_magnitude.type()));
-
-    return cv::sum(height_map_grad_preserve * 0.5)[0];
+    double result;
+    // todo implement gradient preserve energy see slide page 19
+    return result;
 }
 cv::Mat get_sub_image(cv::Mat image, int row, int col, int window_size) {
     cv::Rect img_rect = cv::Rect(cv::Point(0, 0), image.size());

@@ -29,8 +29,7 @@ int main(int argc, char** argv) {
     double radius = std::min(rows, cols) / 4.f;
     // HightMap height map(rows, cols, center, radius);
     HeightMap height_map(rows, cols);
-    cv::Mat div = compute_div_delta_map(height_map);
-    disp_image(div, "divergence", 0);
+
     cv::Mat height_map_draw = draw_height_map(height_map);
     cv::Mat height_map_with_contour =
         draw_points(height_map_draw, height_map.get_contour_points(),
@@ -39,30 +38,6 @@ int main(int argc, char** argv) {
 
     cv::Mat fore_back_ground = height_map.get_fore_background_label_map();
     disp_image(fore_back_ground, "fore- and background", 0);
-
-    cv::Mat h_phi = heaviside(height_map, 50);
-    disp_image(h_phi, "h_phi", 0);
-
-    cv::Mat one_minues_h_phi = complementary_heaviside(height_map, 50);
-    disp_image(one_minues_h_phi, "one_minus_h_phi", 0);
-
-    cv::Mat dirac_phi = dirac(height_map, 50.0);
-    disp_image(dirac_phi, "dirac", 0);
-
-    double energy_grad_mag_map = height_map.get_gradient_magnitude_level_set();
-    std::cout << energy_grad_mag_map << std::endl;
-
-    cv::Mat test_derivative_length_term =
-        compute_derivative_length_term(height_map, 50.0);
-    disp_image(test_derivative_length_term, "derivative length term", 0);
-
-    cv::Mat test_laplacian_map = compute_laplacian_map(height_map);
-    disp_image(test_laplacian_map, "test_laplacian_map", 0);
-
-    cv::Mat test_derivative_gradient_term =
-        compute_derivative_gradient_term(height_map);
-    disp_image(test_derivative_gradient_term, "test_derivative_gradient_term",
-               0);
 
     return 0;
 }

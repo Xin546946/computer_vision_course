@@ -23,11 +23,4 @@ target_link_libraries(test_height_map
     utils
 )
 
-#add_executable(test_multi_phase test_multi_phase.cpp)
-#target_link_libraries(test_multi_phase 
-#    ${OpenCV_LIBS}
-#    lvlset
-#    heightmap
-#    utils
-#)
 

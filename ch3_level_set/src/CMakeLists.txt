@@ -10,7 +10,7 @@ add_library(lvlset
     level_set_utils.cpp
     level_set_cv.cpp
     level_set_lbf.cpp
-#    level_set_multi_phase.cpp
+
 )
 target_link_libraries(lvlset 
     ${OpenCV_LIBS} 
