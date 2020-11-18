@@ -1,12 +1,12 @@
 #include "display.h"
+#include "height_map.h"
 #include "level_set_multi_phase.h"
 #include "level_set_utils.h"
-#include "sdf_map.h"
 #include <opencv2/core.hpp>
 #include <opencv2/core/types.hpp>
 
 int main(int argc, char** argv) {
-    // define and and initialize a sdf_map object
+    // define and and initialize a height_map object
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
     cv::GaussianBlur(img, img, cv::Size(3, 3), 3);
     ParamLevelSetMP param_level_set_mp(

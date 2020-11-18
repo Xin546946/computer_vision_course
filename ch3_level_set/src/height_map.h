@@ -4,7 +4,7 @@
 class HightMap {  // phi
    public:
     /**
-     * @brief Construct a new SDFMap object : sign distance function with a
+     * @brief Construct a new HeightMap object : sign distance function with a
      * circular zero level set
      *
      * @param rows
@@ -14,7 +14,7 @@ class HightMap {  // phi
      */
     HightMap(int rows, int cols, cv::Point center, double radius);
     /**
-     * @brief Construct a new SDFMap object : sign distance function with a
+     * @brief Construct a new HaightMap object : sign distance function with a
      * rectangular zero level set
      *
      * @param rows

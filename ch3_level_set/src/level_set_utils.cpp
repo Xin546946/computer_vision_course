@@ -176,31 +176,32 @@ cv::Mat gaussian_kernel(int size, double sigma) {
 }
 
 // todo untested function
-double compute_center(cv::Mat img, const HightMap& sdf_map, double eps,
+double compute_center(cv::Mat img, const HightMap& height_map, double eps,
                       bool is_background) {
     if (is_background) {
-        return img.dot(heaviside(sdf_map, eps)) /
-               cv::sum(heaviside(sdf_map, eps))[0];
+        return img.dot(heaviside(height_map, eps)) /
+               cv::sum(heaviside(height_map, eps))[0];
     } else {
-        return img.dot(complementary_heaviside(sdf_map, eps)) /
-               cv::sum(complementary_heaviside(sdf_map, eps))[0];
+        return img.dot(complementary_heaviside(height_map, eps)) /
+               cv::sum(complementary_heaviside(height_map, eps))[0];
     }
 }
 
 double compute_center_in_window(int row, int col, int size,
                                 cv::Mat gauss_kernel, cv::Mat img,
-                                const HightMap& sdf_map, double eps,
+                                const HightMap& height_map, double eps,
                                 bool is_background) {
     cv::Mat roi = get_sub_image(img, row, col, size);
     // cv::Mat vis_roi = get_float_mat_vis_img(roi);
     // disp_image(vis_roi, "vis", 0);
-    cv::Mat roi_sdf = get_sub_image(sdf_map.get_map(), row, col, size);
+    cv::Mat roi_height_map =
+        get_sub_image(height_map.get_map(), row, col, size);
     if (is_background) {
-        return roi.dot(heaviside(roi_sdf, eps)) /
-               cv::sum(heaviside(roi_sdf, eps))[0];
+        return roi.dot(heaviside(roi_height_map, eps)) /
+               cv::sum(heaviside(roi_height_map, eps))[0];
     } else {
-        return roi.dot(complementary_heaviside(roi_sdf, eps)) /
-               cv::sum(complementary_heaviside(roi_sdf, eps))[0];
+        return roi.dot(complementary_heaviside(roi_height_map, eps)) /
+               cv::sum(complementary_heaviside(roi_height_map, eps))[0];
     }
 }
 cv::Mat compute_mat_grad_magnitude(cv::Mat mat) {
@@ -213,7 +214,8 @@ cv::Mat compute_mat_grad_magnitude(cv::Mat mat) {
     return mat_grad_magnitude;
 }
 
-double compute_data_term_energy(const HightMap& sdf_map, cv::Mat original_image,
+double compute_data_term_energy(const HightMap& height_map,
+                                cv::Mat original_image,
                                 double weight_foreground,
                                 double weight_background,
                                 double center_foreground,
@@ -228,27 +230,28 @@ double compute_data_term_energy(const HightMap& sdf_map, cv::Mat original_image,
             cv::Mat::ones(original_image.size(), original_image.type()));
 
     return weight_foreground *
-               (e_foreground.dot(complementary_heaviside(sdf_map, eps))) +
-           weight_background * e_background.dot(heaviside(sdf_map, eps));
+               (e_foreground.dot(complementary_heaviside(height_map, eps))) +
+           weight_background * e_background.dot(heaviside(height_map, eps));
 }
 
-double compute_length_term_energy(const HightMap& sdf_map, double eps) {
-    cv::Mat heaviside_map = heaviside(sdf_map, eps);
+double compute_length_term_energy(const HightMap& height_map, double eps) {
+    cv::Mat heaviside_map = heaviside(height_map, eps);
     cv::Mat heaviside_map_grad_magnitude =
         compute_mat_grad_magnitude(heaviside_map);
 
     return cv::sum(heaviside_map_grad_magnitude)[0];
 }
 
-// todo compute mat grad magnitude should be friend of sdf_map
-double compute_gradient_preserve_energy(const HightMap& sdf_map) {
-    cv::Mat sdf_map_grad_magnitude =
-        compute_mat_grad_magnitude(sdf_map.get_map());
-    cv::Mat sdf_map_grad_preserve = compute_square_diff(
-        sdf_map_grad_magnitude, cv::Mat::ones(sdf_map_grad_magnitude.size(),
-                                              sdf_map_grad_magnitude.type()));
+// todo compute mat grad magnitude should be friend of height_map
+double compute_gradient_preserve_energy(const HightMap& height_map) {
+    cv::Mat height_map_grad_magnitude =
+        compute_mat_grad_magnitude(height_map.get_map());
+    cv::Mat height_map_grad_preserve =
+        compute_square_diff(height_map_grad_magnitude,
+                            cv::Mat::ones(height_map_grad_magnitude.size(),
+                                          height_map_grad_magnitude.type()));
 
-    return cv::sum(sdf_map_grad_preserve * 0.5)[0];
+    return cv::sum(height_map_grad_preserve * 0.5)[0];
 }
 cv::Mat get_sub_image(cv::Mat image, int row, int col, int window_size) {
     cv::Rect img_rect = cv::Rect(cv::Point(0, 0), image.size());

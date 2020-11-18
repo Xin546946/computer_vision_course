@@ -38,7 +38,7 @@ class LevelSetCV : public GradientDescentBase {
    public:
     LevelSetCV(cv::Mat image,
                const ParamLevelSet& param);  // todo give index of the const
-    void initialize() override;              // todo SDFMap and cf, cb
+    void initialize() override;              // todo Height Map and cf, cb
 
     void update() override;
     // todo think about testing!!!
@@ -46,7 +46,7 @@ class LevelSetCV : public GradientDescentBase {
     void update_level_set();
 
     double compute_regu_length() const;
-    double compute_regu_sdf_gradient() const;
+    double compute_regu_height_map_gradient() const;
 
     void roll_back_state() override;
     void back_up_state() override;

@@ -23,9 +23,9 @@ ______________________________________________________________________
  * @param sdf_map to be visulized
  * @return cv::Mat the visualzation image
  */
-cv::Mat draw_sdf_map(const HightMap& sdf_map) {
-    assert(!sdf_map.get_map().empty());
-    return apply_jetmap(sdf_map.get_map());
+cv::Mat draw_height_map(const HightMap& height_map) {
+    assert(!height_map.get_map().empty());
+    return apply_jetmap(height_map.get_map());
 }
 /**
  * @brief : tell if the point is on the contour w.r.t. x direction

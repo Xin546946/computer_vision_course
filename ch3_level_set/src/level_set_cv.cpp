@@ -131,9 +131,9 @@ void LevelSetCV::update() {
     update_center();
     update_level_set();
 
-    cv::Mat vis_sdf_draw = draw_sdf_map(level_set_);
+    cv::Mat vis_height_map_draw = draw_height_map(level_set_);
     cv::Mat vis_sdf_with_contour =
-        draw_points(vis_sdf_draw, level_set_.get_contour_points(),
+        draw_points(vis_height_map_draw, level_set_.get_contour_points(),
                     cv::Scalar(255, 255, 255));
 
     cv::Mat vis_seg_image = image_3_channel.clone();

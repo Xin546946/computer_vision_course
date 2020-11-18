@@ -76,7 +76,7 @@ double LevelSetLBF::compute_energy() const {
            param_.gradient_term_weight_ * gradient_preserve_energy;
 }
 void LevelSetLBF::initialize() {
-    // initialize lvl set :   sdf already initilized in constructor
+    // initialize lvl set :   height map already initilized in constructor
 
     // initilize centers :
 }
@@ -88,9 +88,9 @@ std::string LevelSetLBF::return_drive_class_name() const {
 // todo compute_data_term_derivitive_in_window(r,c)
 // todo  update_center_in_window(r, c);
 void LevelSetLBF::update() {
-    cv::Mat vis_sdf_draw = draw_sdf_map(level_set_);
-    cv::Mat vis_sdf_with_contour =
-        draw_points(vis_sdf_draw, level_set_.get_contour_points(),
+    cv::Mat vis_height_map_draw = draw_height_map(level_set_);
+    cv::Mat vis_height_map_with_contour =
+        draw_points(vis_height_map_draw, level_set_.get_contour_points(),
                     cv::Scalar(255, 255, 255));
 
     cv::Mat vis_seg_image = image_3_channel.clone();
@@ -102,7 +102,7 @@ void LevelSetLBF::update() {
     cv::cvtColor(vis_label, vis_label, CV_GRAY2BGR);
 
     cv::Mat vis;
-    cv::hconcat(vis_sdf_with_contour, vis_seg_image, vis);
+    cv::hconcat(vis_height_map_with_contour, vis_seg_image, vis);
     cv::hconcat(vis, vis_label, vis);
 
     cv::imshow("left: level set, mid: seg on original image, right : label ",
