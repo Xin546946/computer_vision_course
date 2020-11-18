@@ -54,7 +54,7 @@ inline bool is_contour_y_dire(cv::Mat im, int r, int c) {
     return ((im.at<double>(r - 1, c) * im.at<double>(r + 1, c)) < 0);
 }
 /**
- * @brief Construct a new SDFMap::SDFMap object
+ * @brief Construct a new HeightMap::HeightMap object, which is a SDF
  *
  * @param rows
  * @param cols
@@ -71,7 +71,7 @@ HightMap::HightMap(int rows, int cols, cv::Point center, double radius)
     }
 }
 /**
- * @brief Construct a new SDFMap::SDFMap object
+ * @brief Construct a new HeightMap::HeightMap object
  *
  * @param rows
  * @param cols
@@ -88,22 +88,12 @@ HightMap::HightMap(int rows, int cols)
                            CV_64F);
 }
 
-/**
- * @brief : get segment result, forground background
- *
- * @return cv::Mat
- */
 cv::Mat HightMap::get_fore_background_label_map() const {
     cv::Mat fore_background = map_.clone();
     cv::threshold(map_, fore_background, 0, 255, cv::THRESH_BINARY_INV);
     return fore_background;
 }
 
-/**
- * @brief : // get |grad(phi)|
- *
- * @return double
- */
 double HightMap::get_gradient_magnitude_level_set() {
     cv::Mat map_dev_x = do_sobel(map_, 0);
     cv::Mat map_dev_y = do_sobel(map_, 1);
@@ -112,20 +102,10 @@ double HightMap::get_gradient_magnitude_level_set() {
     return 0.5 * (mag_grad_map - 1.0).dot(mag_grad_map - 1.0);
 }
 
-/**
- * @brief
- *
- * @param step
- */
 void HightMap::add(cv::Mat step) {
     map_ += step;
 }
 
-/**
- * @brief return a N*2 mat, each row is a point2d(x,y);
- *
- * @return cv::Mat
- */
 cv::Mat HightMap::get_contour_points() const {
     std::vector<cv::Vec2d> contour_vec;
 
