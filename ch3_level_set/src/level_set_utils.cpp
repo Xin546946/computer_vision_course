@@ -61,10 +61,9 @@ cv::Mat compute_div_delta_map(const HeightMap& sdf_map) {
     d_phi_dx = do_sobel(d_phi_dx, 0);
     d_phi_dy = do_sobel(d_phi_dy, 1);
 
-    // std::cout << d_phi_dy + d_phi_dx << '\n';
-    // return 3e4 * cv::Mat::ones(phi.size(), phi.type());
     return (d_phi_dx + d_phi_dy);
 }
+
 inline double heaviside(double z, double eps) {
     return 0.5 * (1 + M_2_PI * atan2(z, eps));
 }
@@ -126,7 +125,6 @@ cv::Mat compute_derivative_data_term(const HeightMap& sdf_map,
                                      double weight_background,
                                      double center_foreground,
                                      double center_background, double eps) {
-    // todo homework
     cv::Mat e_foreground = compute_square_diff(
         original_image,
         center_foreground *
@@ -242,7 +240,6 @@ double compute_length_term_energy(const HeightMap& height_map, double eps) {
     return cv::sum(heaviside_map_grad_magnitude)[0];
 }
 
-// todo compute mat grad magnitude should be friend of height_map
 double compute_gradient_preserve_energy(const HeightMap& height_map) {
     cv::Mat height_map_grad_magnitude =
         compute_mat_grad_magnitude(height_map.get_map());
