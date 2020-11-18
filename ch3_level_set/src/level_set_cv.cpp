@@ -79,11 +79,13 @@ double LevelSetCV::compute_energy() const {
         center_foreground_, center_background_, param_.eps_);
     double length_term_energy = compute_length_term_energy(phi_, param_.eps_);
     double gradient_preserve_energy = compute_gradient_preserve_energy(phi_);
+
     std::cout << "||"
-              << "data term energy: " << data_term_energy << " || ";
-    std::cout << "length term energy: " << length_term_energy << " || ";
-    std::cout << "gradient preserve energy: " << gradient_preserve_energy
+              << "data term energy: " << data_term_energy << " || "
+              << "length term energy: " << length_term_energy << " || "
+              << "gradient preserve energy: " << gradient_preserve_energy
               << " || " << std::endl;
+
     return data_term_energy + param_.length_term_weight_ * length_term_energy +
            param_.gradient_term_weight_ * gradient_preserve_energy;
 }

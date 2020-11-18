@@ -25,7 +25,7 @@ struct ParamLevelSet {
                   double gradient_term_weight);
     double forground_weight_;
     double background_weight_;
-    double eps_;  // H(z,eps)
+    double eps_;
     double step_size_;
     double length_term_weight_;
     double gradient_term_weight_;
@@ -36,25 +36,20 @@ struct ParamLevelSet {
  */
 class LevelSetCV : public GradientDescentBase {
    public:
-    LevelSetCV(cv::Mat image,
-               const ParamLevelSet& param);  // todo give index of the const
-    void initialize() override;              // todo Height Map and cf, cb
+    LevelSetCV(cv::Mat image, const ParamLevelSet& param);
+
+   private:
+    void update_level_set();
+    void update_center();
 
     void update() override;
-    // todo think about testing!!!
-    void update_center();
-    void update_level_set();
-
-    double compute_regu_length() const;
-    double compute_regu_height_map_gradient() const;
-
+    void initialize() override;
     void roll_back_state() override;
     void back_up_state() override;
     void print_terminate_info() const override;
     double compute_energy() const override;
-    std::string return_drive_class_name() const;
+    std::string return_drive_class_name() const override;
 
-   private:
     HightMap phi_;
     HightMap last_phi_;
 
@@ -62,10 +57,13 @@ class LevelSetCV : public GradientDescentBase {
                            // naming level set anymore
     double grayvalue_background_;
     double grayvalue_forground_;
+
     cv::Mat image_64f_;
     cv::Mat image_3_channel;
+
     double center_foreground_;
-    double center_background_;
     double last_center_foreground_;
+
+    double center_background_;
     double last_center_background_;
 };

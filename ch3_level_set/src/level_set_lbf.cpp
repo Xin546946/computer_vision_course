@@ -43,7 +43,7 @@ LevelSetLBF::LevelSetLBF(cv::Mat image, const ParamLevelSetLBF& param)
       center_foreground_(255.0),
       last_center_background_(0.0),
       last_center_foreground_(255.0),
-      gauss_kernel_(gaussian_kernel(param.window_size_, param.sigma_)) {
+      gauss_kernel_(get_gaussian_kernel(param.window_size_, param.sigma_)) {
     image.convertTo(image_64f_, CV_64FC1);
 }
 

@@ -160,7 +160,7 @@ cv::Mat compute_derivative_gradient_term(const HightMap& sdf_map) {
     return 4 * laplacian_map_result - compute_div_delta_map(sdf_map);
 }
 
-cv::Mat gaussian_kernel(int size, double sigma) {
+cv::Mat get_gaussian_kernel(int size, double sigma) {
     assert(size % 2 == 1);
     cv::Point center((size - 1) / 2, (size - 1) / 2);
     cv::Mat result = cv::Mat::zeros(cv::Size(size, size), CV_64F);

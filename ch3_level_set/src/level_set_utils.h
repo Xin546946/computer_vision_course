@@ -26,8 +26,11 @@ ______________________________________________________________________
  */
 
 cv::Mat do_sobel(cv::Mat im, int flag);
+cv::Mat get_gaussian_kernel(int size, double sigma);
+
 cv::Mat heaviside(const HightMap& height_map, double eps = 1.0);
 cv::Mat dirac(const HightMap& height_map, double eps = 1.0);
+
 cv::Mat complementary_heaviside(const HightMap& height_map,
                                 double eps = 1.0);  // 1-Heaciside
 cv::Mat compute_div_delta_map(const HightMap& height_map);
@@ -44,8 +47,9 @@ cv::Mat compute_derivative_data_term(const HightMap& height_map,
                                      double center_background, double eps);
 cv::Mat compute_derivative_length_term(const HightMap& height_map, double eps);
 cv::Mat compute_derivative_gradient_term(const HightMap& height_map);
+
 cv::Mat compute_laplacian_map(const HightMap& height_map);
-cv::Mat gaussian_kernel(int size, double sigma);
+
 cv::Mat compute_foreground_center();
 double compute_center(cv::Mat img, const HightMap& height_map, double eps,
                       bool is_background);
