@@ -38,7 +38,6 @@ class LevelSetCV : public GradientDescentBase {
    public:
     LevelSetCV(cv::Mat image, const HeightMap& height_map,
                const ParamLevelSet& param);  // todo give index of the const
-    void initialize() override;              // todo Height Map and cf, cb
 
    private:
     void update_level_set();

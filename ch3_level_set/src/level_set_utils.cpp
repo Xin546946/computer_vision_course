@@ -265,7 +265,7 @@ cv::Mat get_sub_image(cv::Mat image, int row, int col, int window_size) {
     return sub_img;
 }
 
-void visualize_lvl_set_segemenation(cv::Mat origin_img, const HightMap& phi,
+void visualize_lvl_set_segemenation(cv::Mat origin_img, const HeightMap& phi,
                                     int delay) {
     cv::Mat vis_sdf_draw = draw_height_map(phi);
     cv::Mat vis_sdf_with_contour = draw_points(

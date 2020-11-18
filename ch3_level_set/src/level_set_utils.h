@@ -45,7 +45,7 @@ cv::Mat compute_derivative_data_term(const HeightMap& height_map,
 cv::Mat compute_derivative_length_term(const HeightMap& height_map, double eps);
 cv::Mat compute_derivative_gradient_term(const HeightMap& height_map);
 cv::Mat compute_laplacian_map(const HeightMap& height_map);
-cv::Mat gaussian_kernel(int size, double sigma);
+cv::Mat get_gaussian_kernel(int size, double sigma);
 cv::Mat compute_foreground_center();
 double compute_center(cv::Mat img, const HeightMap& height_map, double eps,
                       bool is_background);

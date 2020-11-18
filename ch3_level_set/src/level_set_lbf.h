@@ -42,8 +42,8 @@ class LevelSetLBF : public GradientDescentBase {
     std::string return_drive_class_name() const override;
 
    private:
-    HeightMap level_set_;
-    HeightMap last_level_set_;
+    HeightMap phi_;
+    HeightMap last_phi_;
 
     ParamLevelSetLBF param_;  // use param in the space of Level Set, no need
                               // for naming level set anymore
