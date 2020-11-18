@@ -173,7 +173,6 @@ cv::Mat get_gaussian_kernel(int size, double sigma) {
     return result / cv::sum(result)[0];
 }
 
-// todo untested function
 double compute_center(cv::Mat img, const HeightMap& height_map, double eps,
                       bool is_background) {
     if (is_background) {

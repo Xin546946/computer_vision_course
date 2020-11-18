@@ -51,7 +51,6 @@ class LevelSetCV : public GradientDescentBase {
     double compute_energy() const override;
     std::string return_drive_class_name() const override;
 
-   private:
     HeightMap phi_;
     HeightMap last_phi_;
 
