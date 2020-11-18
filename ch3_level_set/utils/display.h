@@ -5,7 +5,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <string>
 
-class SDFMap;
+class HightMap;
 
 void disp_image(cv::Mat& img, cv::String windowName);
 void disp_image(cv::Mat& img, cv::String windowName, int delay);
@@ -20,7 +20,8 @@ void draw_optical_flow(cv::Mat& fx, cv::Mat& fy, cv::Mat& cflowmap, int step,
  * @param sdf_map
  * @return cv::Mat
  */
-cv::Mat draw_sdf_map(const SDFMap& sdf_map);  // todo use draw_contour function
+cv::Mat draw_sdf_map(
+    const HightMap& sdf_map);  // todo use draw_contour function
 cv::Mat apply_jetmap(cv::Mat image);
 cv::Mat draw_points(cv::Mat img, cv::Mat points, cv::Scalar color);
 /**

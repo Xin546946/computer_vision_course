@@ -1,7 +1,7 @@
 #include "display.h"
+#include "height_map.h"
 #include "level_set_lbf.h"
 #include "level_set_utils.h"
-#include "sdf_map.h"
 #include <opencv2/core.hpp>
 #include <opencv2/core/types.hpp>
 

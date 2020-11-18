@@ -1,4 +1,4 @@
-#include "sdf_map.h"
+#include "height_map.h"
 #include "display.h"
 #include "level_set_utils.h"
 #include <iostream>
@@ -7,25 +7,48 @@
 /**
  * @brief draw sdf map for visualization
  *
- * @param sdf_map to be visulized visualization
+ * @param sdf_map to be visulized
  * @return cv::Mat the visualzation image
  */
-cv::Mat draw_sdf_map(const SDFMap& sdf_map) {
-    assert(!sdf_map.map_.empty());
-    return apply_jetmap(sdf_map.map_);
+cv::Mat draw_sdf_map(const HightMap& sdf_map) {
+    assert(!sdf_map.get_map().empty());
+    return apply_jetmap(sdf_map.get_map());
 }
-
+/**
+ * @brief : tell if the point is on the contour w.r.t. x direction
+ *
+ * @param im : input image
+ * @param r : row
+ * @param c : col
+ * @return true
+ * @return false
+ */
 inline bool is_contour_x_dire(cv::Mat im, int r, int c) {
     assert(!im.empty() && r < im.rows && r >= 0 && c < im.cols && c >= 0);
     return ((im.at<double>(r, c - 1) * im.at<double>(r, c + 1)) < 0);
 }
-
+/**
+ * @brief : tell if the point is on the contour w.r.t. x direction
+ *
+ * @param im : input image
+ * @param r : row
+ * @param c : col
+ * @return true
+ * @return false
+ */
 inline bool is_contour_y_dire(cv::Mat im, int r, int c) {
     assert(!im.empty() && r < im.rows && r >= 0 && c < im.cols && c >= 0);
     return ((im.at<double>(r - 1, c) * im.at<double>(r + 1, c)) < 0);
 }
-
-SDFMap::SDFMap(int rows, int cols, cv::Point center, double radius)
+/**
+ * @brief Construct a new SDFMap::SDFMap object
+ *
+ * @param rows
+ * @param cols
+ * @param center
+ * @param radius
+ */
+HightMap::HightMap(int rows, int cols, cv::Point center, double radius)
     : map_(cv::Mat::zeros(cv::Size(cols, rows), CV_64F)) {
     for (int r = 0; r < rows; r++) {
         for (int c = 0; c < cols; c++) {
@@ -34,7 +57,13 @@ SDFMap::SDFMap(int rows, int cols, cv::Point center, double radius)
         }
     }
 }
-SDFMap::SDFMap(int rows, int cols)
+/**
+ * @brief Construct a new SDFMap::SDFMap object
+ *
+ * @param rows
+ * @param cols
+ */
+HightMap::HightMap(int rows, int cols)
     : map_(2 * cv::Mat::ones(cv::Size(cols, rows), CV_64F)) {
     double percentage = 0.2;
     map_(cv::Rect2d(
@@ -46,21 +75,36 @@ SDFMap::SDFMap(int rows, int cols)
                            CV_64F);
 }
 
-cv::Mat SDFMap::get_fore_background_label_map() const {
+/**
+ * @brief : get segment result, forground background
+ *
+ * @return cv::Mat
+ */
+cv::Mat HightMap::get_fore_background_label_map() const {
     cv::Mat fore_background = map_.clone();
     cv::threshold(map_, fore_background, 0, 255, cv::THRESH_BINARY_INV);
     return fore_background;
 }
 
-double SDFMap::get_gradient_magnitude_level_set() {
+/**
+ * @brief : // get |grad(phi)|
+ *
+ * @return double
+ */
+double HightMap::get_gradient_magnitude_level_set() {
     cv::Mat map_dev_x = do_sobel(map_, 0);
     cv::Mat map_dev_y = do_sobel(map_, 1);
     cv::Mat mag_grad_map;
     cv::sqrt(map_dev_x.mul(map_dev_x) + map_dev_y.mul(map_dev_y), mag_grad_map);
-    return cv::sum(0.5 * (mag_grad_map - 1.0).mul(mag_grad_map - 1.0))[0];
+    return 0.5 * (mag_grad_map - 1.0).dot(mag_grad_map - 1.0);
 }
 
-void SDFMap::add(cv::Mat step) {
+/**
+ * @brief
+ *
+ * @param step
+ */
+void HightMap::add(cv::Mat step) {
     map_ += step;
 }
 
@@ -69,7 +113,7 @@ void SDFMap::add(cv::Mat step) {
  *
  * @return cv::Mat
  */
-cv::Mat SDFMap::get_contour_points() const {
+cv::Mat HightMap::get_contour_points() const {
     std::vector<cv::Vec2d> contour_vec;
 
     for (int r = 1; r < map_.rows - 1; r++) {
@@ -87,4 +131,8 @@ cv::Mat SDFMap::get_contour_points() const {
     }
 
     return contour;
+}
+
+cv::Mat HightMap::get_map() const {
+    return map_.clone();
 }
