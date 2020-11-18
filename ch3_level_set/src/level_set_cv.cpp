@@ -35,9 +35,6 @@ LevelSetCV::LevelSetCV(cv::Mat image, const HeightMap& height_map,
     : GradientDescentBase(param.step_size_),
 
       phi_(height_map),
-      /*                  cv::Point(image.cols / 2, image.rows / 2),
-
-                       std::min(image.rows, image.cols) / 2.5f) ,*/
       last_phi_(phi_),
       param_(param),
       image_3_channel(image.clone()),
@@ -49,10 +46,6 @@ LevelSetCV::LevelSetCV(cv::Mat image, const HeightMap& height_map,
     image.convertTo(image_64f_, CV_64FC1);
 }
 
-/**
- * @brief update the lvl set according to the direction of gradient descent
- *
- */
 void LevelSetCV::update_level_set() {
     cv::Mat update_step_data_term =
         param_.step_size_ * compute_derivative_data_term(
@@ -82,6 +75,7 @@ double LevelSetCV::compute_energy() const {
         center_foreground_, center_background_, param_.eps_);
     double length_term_energy = compute_length_term_energy(phi_, param_.eps_);
     double gradient_preserve_energy = compute_gradient_preserve_energy(phi_);
+
     std::cout << "||"
               << "data term energy: " << data_term_energy << " || "
               << "length term energy: " << length_term_energy << " || "

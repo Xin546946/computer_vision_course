@@ -14,6 +14,13 @@ ______________________________________________________________________
 #include "gradient_descent_base.h"
 #include "level_set_cv.h"
 
+/**
+ * @brief parameter of level set lbf model
+ *
+ * window_size_ : size of the local window
+ * sigma_ : sigma to control the form of gaussian kernel
+ *
+ */
 struct ParamLevelSetLBF : public ParamLevelSet {
     ParamLevelSetLBF(double forground_weight, double background_weight,
                      double eps, double step_size, double length_term_weight,
@@ -25,13 +32,24 @@ struct ParamLevelSetLBF : public ParamLevelSet {
 
 class LevelSetLBF : public GradientDescentBase {
    public:
+    /**
+     * @brief Construct a new Level Set LBF object
+     *
+     * @param image: a gray scale image in type of CV_8U
+     * @param height_map: the function(hight map) phi
+     * @param param: parameter of levelset lbf
+     */
     LevelSetLBF(cv::Mat image, const HeightMap& height_map,
                 const ParamLevelSetLBF& param);
 
    private:
     void update_center();
     void update_level_set();
+    /**
+     * @brief updae the window with center at position (col,row)
+     */
     void update_center_in_window(int row, int col);
+
     cv::Mat compute_data_term_derivative_in_window(int row, int col) const;
 
     void update() override;
@@ -46,10 +64,7 @@ class LevelSetLBF : public GradientDescentBase {
     HeightMap phi_;
     HeightMap last_phi_;
 
-    ParamLevelSetLBF param_;  // use param in the space of Level Set, no need
-                              // for naming level set anymore
-    double grayvalue_background_;
-    double grayvalue_forground_;
+    ParamLevelSetLBF param_;
 
     cv::Mat image_64f_;
     cv::Mat image_3_channel;
