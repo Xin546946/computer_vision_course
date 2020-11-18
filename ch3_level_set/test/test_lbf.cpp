@@ -1,5 +1,17 @@
 #include "display.h"
 #include "height_map.h"
+/**
+______________________________________________________________________
+*********************************************************************
+* @brief  This file is developed for the course of ShenLan XueYuan:
+* Fundamental implementations of Computer Vision
+* all rights preserved
+* @author Xin Jin, Zhaoran Wu
+* @contact: xinjin1109@gmail.com, zhaoran.wu1@gmail.com
+*
+______________________________________________________________________
+*********************************************************************
+**/
 #include "level_set_lbf.h"
 #include "level_set_utils.h"
 #include <opencv2/core.hpp>
