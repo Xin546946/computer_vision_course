@@ -154,7 +154,7 @@ void LevelSetMP::update() {
     update_center();
     update_level_set_mp();
 
-    cv::Mat vis_sdf_draw = draw_sdf_map(level_set_1_);
+    cv::Mat vis_sdf_draw = draw_height_map(level_set_1_);
     cv::Mat vis_sdf_with_contour =
         draw_points(vis_sdf_draw, level_set_1_.get_contour_points(),
                     cv::Scalar(255, 255, 255));
