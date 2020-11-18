@@ -75,8 +75,8 @@ double LevelSetLBF::compute_energy() const {
            param_.gradient_term_weight_ * gradient_preserve_energy;
 }
 void LevelSetLBF::initialize() {
-    // initialize lvl set :
-    // sdf already initialized in constructor
+    // initialize lvl set :   height map already initilized in constructor
+
     // initilize centers :
     // centers already initalized in constructor
 }

@@ -26,7 +26,7 @@ struct ParamLevelSetLBF : public ParamLevelSet {
 class LevelSetLBF : public GradientDescentBase {
    public:
     LevelSetLBF(cv::Mat image, const ParamLevelSetLBF& param);
-    void initialize() override;  // todo SDFMap and cf, cb
+    void initialize() override;  // todo HeightMap and cf, cb
 
     void update() override;
     // todo think about testing!!!
@@ -34,7 +34,7 @@ class LevelSetLBF : public GradientDescentBase {
     void update_level_set();  // todo write a
 
     double compute_regu_length() const;
-    double compute_regu_sdf_gradient() const;
+    double compute_regu_height_map_gradient() const;
 
     void roll_back_state() override;
     void back_up_state() override;
