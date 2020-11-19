@@ -27,8 +27,8 @@ int main(int argc, char** argv) {
     int cols = img.cols;
     cv::Point2d center(cols / 2.f, rows / 2.f);
     double radius = std::min(rows, cols) / 4.f;
-    // HightMap height map(rows, cols, center, radius);
-    HeightMap height_map(rows, cols);
+    HeightMap height_map(rows, cols, center, radius);
+    // HeightMap height_map(rows, cols);
 
     cv::Mat height_map_draw = draw_height_map(height_map);
     cv::Mat height_map_with_contour =
