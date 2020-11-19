@@ -218,7 +218,7 @@ void visualize_lvl_set_segemenation(cv::Mat origin_img, const HeightMap& phi,
  * @param update_step_data_term
  * @param update_step_length_term
  * @param update_step_gradient_term
- * @param delay:opencv waitkey param, set 0 if want to stop at each iteratio
+ * @param delay:opencv waitkey param, set 0 if want to stop at each iteration
  */
 void visualize_lvl_set_update_term(cv::Mat update_step_data_term,
                                    cv::Mat update_step_length_term,

@@ -22,15 +22,15 @@ function phi = EVOL_CV(I, phi0, nu, lambda_1, lambda_2, timestep, epsilon, numIt
 phi=phi0; 
 for k=1:numIter 
     phi=NeumannBoundCond(phi); 
-    diracPhi=Delta(phi,epsilon); 
-    Hphi=Heaviside(phi, epsilon); 
+    diracPhi=Delta(phi,eps); 
+    Hphi=Heaviside(phi, eps); 
     % kappa = CURVATURE(phi,'cc');
     kappa = curvature_central(phi); % div(nabla(phi)/|nabla(phi)|)
     [C1,C2]=binaryfit(I,Hphi); 
     % gradient preserve 1
     grad_preserve = del2(phi) - kappa;
     % updating the phi function 
-    phi=phi+timestep*(1.5* grad_preserve + diracPhi.*(nu*kappa-lambda_1*(I-C1).^2+lambda_2*(I-C2).^2));  
+    phi=phi+timestep*(0* grad_preserve + diracPhi.*(nu*kappa-lambda_1*(I-C1).^2+lambda_2*(I-C2).^2));  
     mesh(phi);
 end 
 

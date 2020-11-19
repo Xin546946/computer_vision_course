@@ -50,8 +50,8 @@ cv::Mat do_sobel(cv::Mat input, int flag = 0) {
 cv::Mat compute_div_delta_map(const HeightMap& sdf_map) {
     cv::Mat phi = sdf_map.get_map();
     cv::Mat phi_grad_mag = compute_mat_grad_magnitude(phi);
-    cv::Mat d_phi_dx = -do_sobel(phi, 0);
-    cv::Mat d_phi_dy = -do_sobel(phi, 1);
+    cv::Mat d_phi_dx = do_sobel(phi, 0);
+    cv::Mat d_phi_dy = do_sobel(phi, 1);
 
     d_phi_dx.mul(1.0 /
                  (phi_grad_mag + 1e-8 * cv::Mat::ones(phi.size(), phi.type())));
