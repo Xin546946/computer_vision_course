@@ -52,6 +52,14 @@ cv::Mat compute_laplacian_map(const HeightMap& height_map);
 cv::Mat get_sub_image(cv::Mat image, int row, int col, int window_size);
 
 /**
+ * @brief Compute |grad(Matrix)| for the use of regularization energy term
+ *
+ * @param mat
+ * @return cv::Mat
+ */
+cv::Mat compute_mat_grad_magnitude(cv::Mat mat);
+
+/**
  * @brief  Heaviside function H(z) = 0.5(1+2/pi*arctan(z/eps)) for each element
  * of height_map.get_map()
  *
@@ -194,14 +202,6 @@ double compute_length_term_energy(const HeightMap& height_map, double eps);
  * @return double
  */
 double compute_gradient_preserve_energy(const HeightMap& height_map);
-
-/**
- * @brief Compute |grad(Matrix)| for the use of regularization energy term
- *
- * @param mat
- * @return cv::Mat
- */
-cv::Mat compute_mat_grad_magnitude(cv::Mat mat);
 
 /**
  * @brief visualize the level set segementation result
