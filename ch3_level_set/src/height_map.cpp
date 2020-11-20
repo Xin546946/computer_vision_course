@@ -27,32 +27,6 @@ cv::Mat draw_height_map(const HeightMap& height_map) {
     assert(!height_map.get_map().empty());
     return apply_jetmap(height_map.get_map());
 }
-/**
- * @brief : tell if the point is on the contour w.r.t. x direction
- *
- * @param im : input image
- * @param r : row
- * @param c : col
- * @return true
- * @return false
- */
-inline bool is_contour_x_dire(cv::Mat im, int r, int c) {
-    assert(!im.empty() && r < im.rows && r >= 0 && c < im.cols && c >= 0);
-    return ((im.at<double>(r, c - 1) * im.at<double>(r, c + 1)) < 0);
-}
-/**
- * @brief : tell if the point is on the contour w.r.t. x direction
- *
- * @param im : input image
- * @param r : row
- * @param c : col
- * @return true
- * @return false
- */
-inline bool is_contour_y_dire(cv::Mat im, int r, int c) {
-    assert(!im.empty() && r < im.rows && r >= 0 && c < im.cols && c >= 0);
-    return ((im.at<double>(r - 1, c) * im.at<double>(r + 1, c)) < 0);
-}
 
 HeightMap::HeightMap(int rows, int cols, cv::Point center, double radius)
     : map_(cv::Mat::zeros(cv::Size(cols, rows), CV_64F)) {
