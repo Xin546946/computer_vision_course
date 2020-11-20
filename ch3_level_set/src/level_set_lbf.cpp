@@ -45,7 +45,6 @@ LevelSetLBF::LevelSetLBF(cv::Mat image, const HeightMap& height_map,
       gauss_kernel_(get_gaussian_kernel(param.window_size_, param.sigma_)) {
     image.convertTo(image_64f_, CV_64FC1);
 }
-}
 
 double LevelSetLBF::compute_energy() const {
     double result;
@@ -114,3 +113,4 @@ void LevelSetLBF::back_up_state() {
 }
 void LevelSetLBF::print_terminate_info() const {
     std::cout << "Level set iteration finished." << std::endl;
+}

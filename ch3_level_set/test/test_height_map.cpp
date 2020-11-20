@@ -20,15 +20,12 @@ int main(int argc, char** argv) {
     // define and and initialize a height map_map object
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
 
-    assert(img.channels() == 1);
-
-    // disp_image(div_img, "divergence", 0);
     int rows = img.rows;
     int cols = img.cols;
     cv::Point2d center(cols / 2.f, rows / 2.f);
     double radius = std::min(rows, cols) / 4.f;
-    // HightMap height map(rows, cols, center, radius);
-    HeightMap height_map(rows, cols);
+    HeightMap height_map(rows, cols, center, radius);
+    // HeightMap height_map(rows, cols);
 
     cv::Mat height_map_draw = draw_height_map(height_map);
     cv::Mat height_map_with_contour =

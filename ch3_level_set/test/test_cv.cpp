@@ -20,10 +20,7 @@ int main(int argc, char** argv) {
     // define and and initialize a height_map object
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_GRAYSCALE);
     cv::GaussianBlur(img, img, cv::Size(3, 3), 3);
-    ParamLevelSet param_level_set_cv(
-        5e-2, 5e-2, 1.0, 2e-2, 20,
-        1.2);  // fore_weight, back_weight, eps,
-               // step_size,l_w,g_w; 1.1,1.0,5e-2,15,1,2
+    ParamLevelSet param_level_set_cv(5e-2, 5e-2, 1.0, 2e-2, 20, 1.2);
 
     HeightMap height_map(img.rows, img.cols);
     LevelSetCV level_set_cv(img, height_map, param_level_set_cv);

@@ -93,12 +93,15 @@ inline double heaviside(double z, double eps) {
 inline double dirac(double z, double eps = 1.0) {
     return eps * M_1_PI / (std::pow(eps, 2.0) + std::pow(z, 2.0));
 }
-}
 
-cv::Mat heaviside(const HeightMap& sdf_map, double eps) {
+cv::Mat heaviside(cv::Mat map, double eps) {
     cv::Mat result;
     // todo implement heaviside function w.r.t phi
     return result;
+}
+
+cv::Mat heaviside(const HeightMap& sdf_map, double eps) {
+    return heaviside(sdf_map.get_map(), eps);
 }
 
 cv::Mat complementary_heaviside(const HeightMap& sdf_map, double eps) {
