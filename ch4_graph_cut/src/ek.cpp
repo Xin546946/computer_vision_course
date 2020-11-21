@@ -7,6 +7,10 @@ int Edge::get_residual() {
     return cap_ - flow_;
 }
 
+bool Edge::is_full() {
+    return get_residual() <= 0;
+}
+
 Node::Node(int id) : id_(id) {
 }
 
@@ -21,7 +25,8 @@ void EKSolver::add_edge(int parent_id, int child_id, int cap) {
     nodes_[parent_id].children_.emplace_back(&nodes_[child_id], Edge(cap));
 }
 
-// int get_max_flow(){}
+int get_max_flow() {
+}
 
 Node* EKSolver::get_graph() {
     return &nodes_[src_id_];

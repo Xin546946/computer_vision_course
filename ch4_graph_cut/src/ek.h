@@ -6,6 +6,7 @@ struct Edge {
     int cap_;
     int flow_;
     int get_residual();
+    bool is_full();
 };
 /**
  * @brief Create a Node, whose children are corresponding nodes and weight
