@@ -1,5 +1,5 @@
 #pragma once
 #include "ek.h"
 
-void BFS(Node* root);
-void DFS(Node* root);
+void DFS(Node* root, std::vector<bool>& visited);
+void BFS(Node* root, std::vector<bool>& visited);

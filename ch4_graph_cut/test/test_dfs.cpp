@@ -1,7 +1,5 @@
 #include "ek.h"
-#include <iostream>
-#include <vector>
-
+#include "graph_search.h"
 int main(int argc, char** argv) {
     int n = 11;     // n is the number of nodes including the src and the sink
     int s = n - 2;  // We define node 9 as source
@@ -33,7 +31,9 @@ int main(int argc, char** argv) {
     solver.add_edge(7, t, 15);
     solver.add_edge(8, t, 25);
 
-    // std::cout << "Maximum Flow is: " << solver.get_max_flow() << std::endl;
+    Node* root = solver.get_graph();
+    std::vector<bool> visited(n, false);
+    DFS(root, visited);
 
     return 0;
 }

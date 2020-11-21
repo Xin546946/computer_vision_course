@@ -15,6 +15,7 @@ class EKSolver {
     EKSolver(int num_nodes, int src_id, int sink_id);
     void add_edge(int parent_id, int child_id, int edge_weight);
     int get_max_flow() const;
+    Node* get_graph();
 
    private:
     int src_id_;

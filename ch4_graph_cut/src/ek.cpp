@@ -15,3 +15,7 @@ void EKSolver::add_edge(int parent_id, int child_id, int edge_weight) {
 }
 
 // int get_max_flow(){}
+
+Node* EKSolver::get_graph() {
+    return &nodes_[src_id_];
+}
