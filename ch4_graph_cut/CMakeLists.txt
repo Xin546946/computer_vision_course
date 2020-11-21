@@ -17,9 +17,10 @@ MESSAGE ( STATUS "include path ${OpenCV_INCLUDE_DIRS}" )
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/src)
-include_directories(${CMAKE_SOURCE_DIR}/utils)
 
-add_subdirectory(utils)
+#include_directories(${CMAKE_SOURCE_DIR}/utils)
+
+#add_subdirectory(utils)
 add_subdirectory(src)
 add_subdirectory(test)
 
