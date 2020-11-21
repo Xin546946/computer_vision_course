@@ -1,3 +1,4 @@
+
 #pragma once
 #include <vector>
 
@@ -15,6 +16,7 @@ struct Edge {
 struct Node {
     Node(int id);
     std::vector<std::pair<Node*, Edge>> children_;
+    std::pair<Node*, Edge*> parent_;
     int id_;
 };
 
@@ -22,7 +24,7 @@ class EKSolver {
    public:
     EKSolver(int num_nodes, int src_id, int sink_id);
     void add_edge(int parent_id, int child_id, int edge_weight);
-    int get_max_flow() const;
+    int compute_max_flow();
     Node* get_graph();
 
    private:

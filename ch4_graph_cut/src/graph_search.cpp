@@ -36,3 +36,82 @@ void BFS(Node* root) {
         }
     }
 }
+
+std::vector<std::pair<Node*, Edge*>> BFS_get_path(Node* root, int id_target,
+                                                  int id_src) {
+    std::unordered_set<Node*> visited;
+    std::vector<std::pair<Node*, Edge*>> path;
+
+    std::queue<Node*> Q;
+
+    visited.insert(root);
+    Q.push(root);
+    std::cout << "--------------- one sweep--------------- " << '\n';
+    while (!Q.empty()) {
+        Node* curr = Q.front();
+
+        if (curr->id_ == id_target) {
+            while (curr->id_ != id_src) {
+                path.emplace_back(curr, curr->parent_.second);
+                std::cout << "curr id :" << curr->id_
+                          << "flow :" << curr->parent_.second->flow_ << '\n';
+                curr = curr->parent_.first;
+            }
+            /*             std::cout << "curr id :" << curr->id_
+                                  << "flow :" << curr->parent_.second->flow_ <<
+               '\n' */
+        }
+
+        Q.pop();
+
+        for (auto& elem : curr->children_) {
+            if (visited.find(elem.first) == visited.end() &&
+                !elem.second.is_full()) {
+                visited.insert(elem.first);
+                Q.push(elem.first);
+                elem.first->parent_ =
+                    std::pair<Node*, Edge*>(curr, &elem.second);
+            }
+        }
+    }
+    return path;
+}
+
+/**
+ * @brief
+ *  travese a graph and
+ *  return all the flow to node with id target
+ *
+ * @param root
+ * @param id
+ */
+int BFS(Node* root, int id_target) {
+    int result = 0;
+    std::unordered_set<Node*> visited;
+
+    std::queue<Node*> Q;
+    visited.insert(root);
+    Q.push(root);
+
+    while (!Q.empty()) {
+        Node* curr = Q.front();
+        Q.pop();
+
+        for (auto& elem : curr->children_) {
+            if (visited.find(elem.first) == visited.end()) {
+                if (elem.first->id_ != id_target) {
+                    visited.insert(elem.first);
+                }
+                Q.push(elem.first);
+                if (elem.first->id_ == id_target) {
+                    std::cout << '\n'
+                              << "node id : " << curr->id_
+                              << "parent id :" << curr->parent_.first->id_
+                              << "flow :" << elem.second.flow_ << '\n';
+                    result += elem.second.flow_;
+                }
+            }
+        }
+    }
+    return result;
+}

@@ -32,8 +32,8 @@ int main(int argc, char** argv) {
     solver.add_edge(6, t, 5);
     solver.add_edge(7, t, 15);
     solver.add_edge(8, t, 25);
-
-    // std::cout << "Maximum Flow is: " << solver.get_max_flow() << std::endl;
+    int max_flow = solver.compute_max_flow();
+    std::cout << "Maximum Flow is: " << max_flow << std::endl;
 
     return 0;
 }

@@ -1,5 +1,6 @@
 #include "ek.h"
 #include "graph_search.h"
+#include <iostream>
 int main(int argc, char** argv) {
     int n = 11;     // n is the number of nodes including the src and the sink
     int s = n - 2;  // We define node 9 as source
@@ -34,7 +35,8 @@ int main(int argc, char** argv) {
     Node* root = solver.get_graph();
     std::vector<bool> visited(n, false);
     // DFS(root, visited);
-    BFS(root);
+    // BFS(root);
+    std::cout << "result flow: " << BFS(root, t) << '\n';
 
     return 0;
 }
