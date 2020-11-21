@@ -1,6 +1,7 @@
 #include "graph_search.h"
 #include <iostream>
 #include <queue>
+#include <unordered_set>
 
 void DFS(Node* root, std::vector<bool>& visited) {
     if (!root) return;
@@ -15,24 +16,23 @@ void DFS(Node* root, std::vector<bool>& visited) {
     }
 }
 
-void BFS(Node* root, std::vector<bool>& visited) {
-    if (!root || visited[root->id_]) return;
-
-    std::cout << root->id_ << '\n';
-    visited[root->id_] = true;
+void BFS(Node* root) {
+    std::unordered_set<Node*> visited;
 
     std::queue<Node*> Q;
+    visited.insert(root);
     Q.push(root);
 
     while (!Q.empty()) {
         Node* curr = Q.front();
         Q.pop();
+        std::cout << curr->id_ << '\n';
 
-        for (auto& elem : root->children_) {
-            if (!visited[elem.first->id_]) {
+        for (auto& elem : curr->children_) {
+            if (visited.find(elem.first) == visited.end()) {
+                visited.insert(elem.first);
                 Q.push(elem.first);
             }
         }
-        BFS(curr, visited);
     }
 }

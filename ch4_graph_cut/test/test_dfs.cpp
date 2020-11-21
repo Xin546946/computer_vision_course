@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
     Node* root = solver.get_graph();
     std::vector<bool> visited(n, false);
     // DFS(root, visited);
-    BFS(root, visited);
+    BFS(root);
 
     return 0;
 }
