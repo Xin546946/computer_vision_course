@@ -2,13 +2,13 @@
 #include <iostream>
 
 void DFS(Node* root, std::vector<bool>& visited) {
+    std::cout << root->id_ << '\n';
     visited[root->id_] = true;
 
     if (!root) return;
 
     for (auto& elem : root->children_) {  // (*root).children_
-        if (!elem.first->id_) {
-            std::cout << elem.first->id_ << '\n';
+        if (!visited[elem.first->id_]) {
             DFS(elem.first, visited);
         }
     }
