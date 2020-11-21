@@ -1,12 +1,19 @@
 #pragma once
 #include <vector>
+
+struct Edge {
+    Edge(int cap);
+    int cap_;
+    int flow_;
+    int get_residual();
+};
 /**
  * @brief Create a Node, whose children are corresponding nodes and weight
  *
  */
 struct Node {
     Node(int id);
-    std::vector<std::pair<Node*, int>> children_;
+    std::vector<std::pair<Node*, Edge>> children_;
     int id_;
 };
 
