@@ -5,8 +5,8 @@
 template <typename TypeEdge>
 class NodeBase {
    public:
-    NodeBase() = default;
     NodeBase(int id);
+    int get_id() const;
     void add_neighbour(NodeBase* target_node, const TypeEdge& edge);
     std::vector<std::pair<NodeBase*, TypeEdge>> get_neighbours() const;
 
@@ -35,19 +35,15 @@ class Graph {
     std::vector<TypeNode> nodes_;
 };
 
-template <typename TypeEdge>
-std::vector<std::pair<NodeBase<TypeEdge>*, TypeEdge>>
-NodeBase<TypeEdge>::get_neighbours() const {
-    return neighbours_;
-}
-
-template <typename TypeEdge>
-NodeBase<TypeEdge>::NodeBase(int id) : id_(id) {
-}
+/*--------------------------------------------------------
+#####################implementation: Graph #####################
+---------------------------------------------------------*/
 
 template <typename TypeNode, typename TypeEdge>
-Graph<TypeNode, TypeEdge>::Graph(int num_nodes)
-    : nodes_(std::vector<TypeNode>(num_nodes)) {
+Graph<TypeNode, TypeEdge>::Graph(int num_nodes) {
+    for (int i = 0; i < num_nodes; i++) {
+        nodes_.emplace_back(i);
+    }
 }
 
 template <typename TypeNode, typename TypeEdge>
@@ -68,13 +64,30 @@ void Graph<TypeNode, TypeEdge>::add_unary_edge(int id_src, int id_target,
     nodes_[id_src].add_neighbour(&nodes_[id_target], edge);
 }
 
+template <typename TypeNode, typename TypeEdge>
+TypeNode* Graph<TypeNode, TypeEdge>::get_root() {
+    return &nodes_[0];
+}
+
+/*--------------------------------------------------------
+#####################implementation: NodeBase #####################
+---------------------------------------------------------*/
+
+template <typename TypeEdge>
+int NodeBase<TypeEdge>::get_id() const {
+    return id_;
+}
+template <typename TypeEdge>
+NodeBase<TypeEdge>::NodeBase(int id) : id_(id) {
+}
 template <typename TypeEdge>
 void NodeBase<TypeEdge>::add_neighbour(NodeBase* target_node,
                                        const TypeEdge& edge) {
     neighbours_.emplace_back(target_node, edge);
 }
 
-template <typename TypeNode, typename TypeEdge>
-TypeNode* Graph<TypeNode, TypeEdge>::get_root() {
-    return &nodes_[0];
+template <typename TypeEdge>
+std::vector<std::pair<NodeBase<TypeEdge>*, TypeEdge>>
+NodeBase<TypeEdge>::get_neighbours() const {
+    return neighbours_;
 }
