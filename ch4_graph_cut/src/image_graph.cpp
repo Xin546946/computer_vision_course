@@ -33,4 +33,3 @@ ImageGraph::ImageGraph(cv::Mat img)
             }
         }
     }
-}
