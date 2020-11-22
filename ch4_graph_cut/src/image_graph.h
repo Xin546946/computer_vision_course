@@ -3,7 +3,14 @@
 #include <opencv2/core.hpp>
 // class Node {};
 
-// class Edge {};
+class Edge : public EdgeBase {
+   public:
+    Edge(double weight);
+
+   private:
+    double cap_;
+    double flow_;
+};
 
 class ImageGraph : public Graph<Node, Edge> {
    public:
