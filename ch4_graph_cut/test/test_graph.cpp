@@ -1,4 +1,5 @@
 #include "graph.h"
+#include "graph_search.h"
 #include <iostream>
 
 class WeightedEdge : EdgeBase {
@@ -35,7 +36,7 @@ int main(int argc, char** argv) {
     graph.add_unary_edge(7, t, WeightedEdge(15));
     graph.add_unary_edge(8, t, WeightedEdge(25));
 
-    // DFS(graph.get_root());
+    DFS(graph.get_root());
 
     return 0;
 }

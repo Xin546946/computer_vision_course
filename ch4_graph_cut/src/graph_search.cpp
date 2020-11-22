@@ -115,17 +115,3 @@ int BFS(Node* root, int id_target) {
     }
     return result;
 }
-
-template <typename TypeNode>
-void DFS(TypeNode* root) {
-    if (!root) return;
-
-    std::unordered_set<TypeNode*> visited;
-    visited.insert(root);
-
-    for (auto& elem : root->children) {
-        if (visited.find(elem.first) == visited.end()) {
-            DFS(elem.first, visited);
-        }
-    }
-}

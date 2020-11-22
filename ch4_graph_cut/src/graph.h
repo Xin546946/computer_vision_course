@@ -8,9 +8,10 @@ class NodeBase {
     NodeBase() = default;
     NodeBase(int id);
     void add_neighbour(NodeBase* target_node, const TypeEdge& edge);
+    std::vector<std::pair<NodeBase*, TypeEdge>> get_neighbours() const;
 
    private:
-    std::vector<std::pair<NodeBase*, TypeEdge>> neighbour_;
+    std::vector<std::pair<NodeBase*, TypeEdge>> neighbours_;
     int id_;
 };
 
@@ -28,11 +29,17 @@ class Graph {
     void add_binary_edge(int id_node1, int id_node2,
                          const TypeEdge& edge_weight);
     void add_unary_edge(int id_src, int id_target, const TypeEdge& edge_weight);
-    void get_root();
+    TypeNode* get_root();
 
    private:
     std::vector<TypeNode> nodes_;
 };
+
+template <typename TypeEdge>
+std::vector<std::pair<NodeBase<TypeEdge>*, TypeEdge>>
+NodeBase<TypeEdge>::get_neighbours() const {
+    return neighbours_;
+}
 
 template <typename TypeEdge>
 NodeBase<TypeEdge>::NodeBase(int id) : id_(id) {
@@ -64,5 +71,10 @@ void Graph<TypeNode, TypeEdge>::add_unary_edge(int id_src, int id_target,
 template <typename TypeEdge>
 void NodeBase<TypeEdge>::add_neighbour(NodeBase* target_node,
                                        const TypeEdge& edge) {
-    neighbour_.emplace_back(target_node, edge);
+    neighbours_.emplace_back(target_node, edge);
+}
+
+template <typename TypeNode, typename TypeEdge>
+TypeNode* Graph<TypeNode, TypeEdge>::get_root() {
+    return &nodes_[0];
 }
