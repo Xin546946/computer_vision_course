@@ -34,9 +34,9 @@ int main(int argc, char** argv) {
 
     Node* root = solver.get_graph();
     std::vector<bool> visited(n, false);
-    // DFS(root, visited);
+    DFS(root, visited);
     // BFS(root);
-    std::cout << "result flow: " << BFS(root, t) << '\n';
+    // std::cout << "result flow: " << BFS(root, t) << '\n';
 
     return 0;
 }
