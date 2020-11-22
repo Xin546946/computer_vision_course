@@ -13,12 +13,14 @@ class NodeBase {
     std::vector<std::pair<NodeBase*, TypeEdge>> neighbour_;
     int id_;
 };
+
 class EdgeBase {
    public:
     EdgeBase() = default;
 
    private:
 };
+
 template <typename TypeNode, typename TypeEdge>
 class Graph {
    public:
