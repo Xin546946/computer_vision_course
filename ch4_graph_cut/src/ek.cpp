@@ -15,7 +15,6 @@ bool Edge::is_full() {
 
 Node::Node(int id) : id_(id) {
 }
-
 EKSolver::EKSolver(int num_nodes, int src_id, int sink_id)
     : src_id_(src_id), sink_id_(sink_id) {
     for (int id = 0; id < num_nodes; id++) {
