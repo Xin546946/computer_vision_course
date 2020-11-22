@@ -17,4 +17,13 @@ target_link_libraries(test_graph
     graph
 )
 
+add_executable(test_image_graph test_image_graph.cpp)
+target_link_libraries(test_image_graph
+    graph_search
+    ek
+    graph
+    image_graph
+)
+
+
 

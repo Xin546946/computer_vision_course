@@ -7,19 +7,22 @@ class NodeBase {
    public:
     NodeBase(int id);
     int get_id() const;
-    void add_neighbour(NodeBase* target_node, const TypeEdge& edge);
+
     std::vector<std::pair<NodeBase*, TypeEdge>> get_neighbours() const;
 
-   private:
+   protected:
     std::vector<std::pair<NodeBase*, TypeEdge>> neighbours_;
     int id_;
+
+   private:
+    void add_neighbour(NodeBase* target_node, const TypeEdge& edge);
 };
 
 class EdgeBase {
    public:
     EdgeBase() = default;
 
-   private:
+   protected:
 };
 
 template <typename TypeNode, typename TypeEdge>
@@ -31,7 +34,7 @@ class Graph {
     void add_unary_edge(int id_src, int id_target, const TypeEdge& edge_weight);
     TypeNode* get_root();
 
-   private:
+   protected:
     std::vector<TypeNode> nodes_;
 };
 
@@ -72,14 +75,15 @@ TypeNode* Graph<TypeNode, TypeEdge>::get_root() {
 /*--------------------------------------------------------
 #####################implementation: NodeBase #####################
 ---------------------------------------------------------*/
+template <typename TypeEdge>
+NodeBase<TypeEdge>::NodeBase(int id) : id_(id) {
+}
 
 template <typename TypeEdge>
 int NodeBase<TypeEdge>::get_id() const {
     return id_;
 }
-template <typename TypeEdge>
-NodeBase<TypeEdge>::NodeBase(int id) : id_(id) {
-}
+
 template <typename TypeEdge>
 void NodeBase<TypeEdge>::add_neighbour(NodeBase* target_node,
                                        const TypeEdge& edge) {
