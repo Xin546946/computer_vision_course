@@ -2,8 +2,8 @@
 #pragma once
 #include <vector>
 
-struct Edge {
-    Edge(int cap);
+struct EdgeEK {
+    EdgeEK(int cap);
     int cap_;
     int flow_;
     int get_residual();
@@ -13,10 +13,10 @@ struct Edge {
  * @brief Create a Node, whose children are corresponding nodes and weight
  *
  */
-struct Node {
-    Node(int id);
-    std::vector<std::pair<Node*, Edge>> children_;
-    std::pair<Node*, Edge*> parent_;
+struct NodeEK {
+    NodeEK(int id);
+    std::vector<std::pair<NodeEK*, EdgeEK>> children_;
+    std::pair<NodeEK*, EdgeEK*> parent_;
     int id_;
 };
 
@@ -25,12 +25,12 @@ class EKSolver {
     EKSolver(int num_nodes, int src_id, int sink_id);
     void add_edge(int parent_id, int child_id, int edge_weight);
     int compute_max_flow();
-    Node* get_graph();
+    NodeEK* get_graph();
 
    private:
     int src_id_;
     int sink_id_;
-    std::vector<Node> nodes_;
+    std::vector<NodeEK> nodes_;
     // Node src;
     // Node sink;
 };

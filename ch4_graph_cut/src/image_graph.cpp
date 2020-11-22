@@ -33,3 +33,5 @@ ImageGraph::ImageGraph(cv::Mat img)
             }
         }
     }
+}
+Edge::Edge(double weight) : EdgeBase(), cap_(weight), flow_(0.0){};

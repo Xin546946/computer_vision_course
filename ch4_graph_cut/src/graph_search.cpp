@@ -3,7 +3,7 @@
 #include <queue>
 #include <unordered_set>
 
-void DFS(Node* root, std::vector<bool>& visited) {
+void DFS(NodeEK* root, std::vector<bool>& visited) {
     if (!root) return;
 
     std::cout << root->id_ << '\n';
@@ -16,15 +16,15 @@ void DFS(Node* root, std::vector<bool>& visited) {
     }
 }
 
-void BFS(Node* root) {
-    std::unordered_set<Node*> visited;
+void BFS(NodeEK* root) {
+    std::unordered_set<NodeEK*> visited;
 
-    std::queue<Node*> Q;
+    std::queue<NodeEK*> Q;
     visited.insert(root);
     Q.push(root);
 
     while (!Q.empty()) {
-        Node* curr = Q.front();
+        NodeEK* curr = Q.front();
         Q.pop();
         std::cout << curr->id_ << '\n';
 
@@ -37,18 +37,19 @@ void BFS(Node* root) {
     }
 }
 
-std::vector<std::pair<Node*, Edge*>> BFS_get_path(Node* root, int id_target,
-                                                  int id_src) {
-    std::unordered_set<Node*> visited;
-    std::vector<std::pair<Node*, Edge*>> path;
+std::vector<std::pair<NodeEK*, EdgeEK*>> BFS_get_path(NodeEK* root,
+                                                      int id_target,
+                                                      int id_src) {
+    std::unordered_set<NodeEK*> visited;
+    std::vector<std::pair<NodeEK*, EdgeEK*>> path;
 
-    std::queue<Node*> Q;
+    std::queue<NodeEK*> Q;
 
     visited.insert(root);
     Q.push(root);
     std::cout << "--------------- one sweep--------------- " << '\n';
     while (!Q.empty()) {
-        Node* curr = Q.front();
+        NodeEK* curr = Q.front();
 
         if (curr->id_ == id_target) {
             while (curr->id_ != id_src) {
@@ -70,7 +71,7 @@ std::vector<std::pair<Node*, Edge*>> BFS_get_path(Node* root, int id_target,
                 visited.insert(elem.first);
                 Q.push(elem.first);
                 elem.first->parent_ =
-                    std::pair<Node*, Edge*>(curr, &elem.second);
+                    std::pair<NodeEK*, EdgeEK*>(curr, &elem.second);
             }
         }
     }
@@ -85,16 +86,16 @@ std::vector<std::pair<Node*, Edge*>> BFS_get_path(Node* root, int id_target,
  * @param root
  * @param id
  */
-int BFS(Node* root, int id_target) {
+int BFS(NodeEK* root, int id_target) {
     int result = 0;
-    std::unordered_set<Node*> visited;
+    std::unordered_set<NodeEK*> visited;
 
-    std::queue<Node*> Q;
+    std::queue<NodeEK*> Q;
     visited.insert(root);
     Q.push(root);
 
     while (!Q.empty()) {
-        Node* curr = Q.front();
+        NodeEK* curr = Q.front();
         Q.pop();
 
         for (auto& elem : curr->children_) {

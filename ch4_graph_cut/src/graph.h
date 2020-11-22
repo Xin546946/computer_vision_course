@@ -8,14 +8,13 @@ class NodeBase {
     NodeBase(int id);
     int get_id() const;
 
-    std::vector<std::pair<NodeBase*, TypeEdge>> get_neighbours() const;
+    std::vector<std::pair<NodeBase<TypeEdge>*, TypeEdge>> get_neighbours()
+        const;
+    void add_neighbour(NodeBase<TypeEdge>* target_node, const TypeEdge& edge);
 
    protected:
-    std::vector<std::pair<NodeBase*, TypeEdge>> neighbours_;
+    std::vector<std::pair<NodeBase<TypeEdge>*, TypeEdge>> neighbours_;
     int id_;
-
-   private:
-    void add_neighbour(NodeBase* target_node, const TypeEdge& edge);
 };
 
 class EdgeBase {
@@ -85,7 +84,7 @@ int NodeBase<TypeEdge>::get_id() const {
 }
 
 template <typename TypeEdge>
-void NodeBase<TypeEdge>::add_neighbour(NodeBase* target_node,
+void NodeBase<TypeEdge>::add_neighbour(NodeBase<TypeEdge>* target_node,
                                        const TypeEdge& edge) {
     neighbours_.emplace_back(target_node, edge);
 }

@@ -2,18 +2,18 @@
 #include "graph_search.h"
 #include <iostream>
 #include <limits>
-Edge::Edge(int cap) : cap_(cap), flow_(0) {
+EdgeEK::EdgeEK(int cap) : cap_(cap), flow_(0) {
 }
 
-int Edge::get_residual() {
+int EdgeEK::get_residual() {
     return cap_ - flow_;
 }
 
-bool Edge::is_full() {
+bool EdgeEK::is_full() {
     return get_residual() <= 0;
 }
 
-Node::Node(int id) : id_(id) {
+NodeEK::NodeEK(int id) : id_(id) {
 }
 EKSolver::EKSolver(int num_nodes, int src_id, int sink_id)
     : src_id_(src_id), sink_id_(sink_id) {
@@ -24,13 +24,13 @@ EKSolver::EKSolver(int num_nodes, int src_id, int sink_id)
 
 void EKSolver::add_edge(int parent_id, int child_id, int cap) {
     std::cout << "cap :" << cap << '\n';
-    nodes_[parent_id].children_.emplace_back(&nodes_[child_id], Edge(cap));
+    nodes_[parent_id].children_.emplace_back(&nodes_[child_id], EdgeEK(cap));
 }
 
 int EKSolver::compute_max_flow() {
     while (true) {
         // step 1 : do bfs
-        std::vector<std::pair<Node*, Edge*>> path =
+        std::vector<std::pair<NodeEK*, EdgeEK*>> path =
             BFS_get_path(get_graph(), sink_id_, src_id_);
         // step2 :check terminnation
         if (path.empty() || path.front().first->id_ != sink_id_) {
@@ -54,6 +54,6 @@ int EKSolver::compute_max_flow() {
     return BFS(get_graph(), sink_id_);
 }
 
-Node* EKSolver::get_graph() {
+NodeEK* EKSolver::get_graph() {
     return &nodes_[src_id_];
 }
