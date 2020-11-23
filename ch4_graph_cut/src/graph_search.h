@@ -1,11 +1,15 @@
 #pragma once
 #include "ek.h"
+#include "graph.h"
+#include "image_graph.h"
 #include <iostream>
+#include <opencv2/core/core.hpp>
 #include <queue>
 #include <unordered_set>
 
 void DFS(NodeEK* root, std::vector<bool>& visited);
 void BFS(NodeEK* root);
+void BFS(Node* root, int row, int col);
 int BFS(NodeEK* root, int id_target);
 std::vector<std::pair<NodeEK*, EdgeEK*>> BFS_get_path(NodeEK* root,
                                                       int id_target,

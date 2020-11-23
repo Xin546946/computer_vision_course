@@ -1,10 +1,6 @@
 #include "image_graph.h"
 #include <vector>
 
-inline int pos_to_id(int row, int col, int step) {
-    return row * step + col + 1;
-}
-
 static const int dire[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
 
 ImageGraph::ImageGraph(cv::Mat img)

@@ -16,5 +16,6 @@ int main(int argc, char** argv) {
     // std::unordered_set<Node*> visited;
     // DFS(graph.get_root(), visited);
     BFS(graph.get_root());
+    // BFS(graph.get_root(), img.rows, img.cols);
     return 0;
 }

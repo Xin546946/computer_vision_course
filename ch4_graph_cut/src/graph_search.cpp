@@ -1,5 +1,6 @@
 #include "graph_search.h"
 #include <iostream>
+#include <opencv2/highgui/highgui.hpp>
 #include <queue>
 #include <unordered_set>
 
@@ -115,4 +116,32 @@ int BFS(NodeEK* root, int id_target) {
         }
     }
     return result;
+}
+
+void BFS(Node* root, int rows, int cols) {
+    std::unordered_set<Node*> visited;
+    cv::Mat vis = cv::Mat::zeros(cv::Size(cols, rows), CV_8UC1);
+
+    std::queue<Node*> Q;
+
+    visited.insert(root);
+    Q.push(root);
+
+    while (!Q.empty()) {
+        Node* curr = Q.front();
+        Q.pop();
+        // std::cout << "Node id: " << curr->get_id() << '\n';
+        std::pair<int, int> pos = id_to_pos(curr->get_id(), rows);
+
+        vis.at<uchar>(pos.first, pos.second) = 255;
+
+        for (auto& elem : curr->get_neighbours()) {
+            if (visited.find(elem.first) == visited.end()) {
+                visited.insert(elem.first);
+                Q.push(elem.first);
+            }
+        }
+        cv::imshow("vis", vis);
+        cv::waitKey(1);
+    }
 }

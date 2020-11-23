@@ -1,4 +1,5 @@
 add_library(graph_search graph_search.cpp)
+target_link_libraries(graph_search ${OpenCV_LIBS})
 
 add_library(ek ek.cpp)
 target_link_libraries(ek graph_search)
