@@ -1,6 +1,7 @@
 #pragma once
 #include "ek.h"
 #include <iostream>
+#include <queue>
 #include <unordered_set>
 
 void DFS(NodeEK* root, std::vector<bool>& visited);
@@ -13,6 +14,9 @@ template <typename TypeNode>
 void DFS(TypeNode* root, std::unordered_set<TypeNode*>& visited);
 
 template <typename TypeNode>
+void DFS(TypeNode* root);
+
+template <typename TypeNode>
 void DFS(TypeNode* root, std::unordered_set<TypeNode*>& visited) {
     if (!root) return;
 
@@ -22,6 +26,29 @@ void DFS(TypeNode* root, std::unordered_set<TypeNode*>& visited) {
     for (auto& elem : root->get_neighbours()) {
         if (visited.find(elem.first) == visited.end()) {
             DFS(elem.first, visited);
+        }
+    }
+}
+
+template <typename TypeNode>
+void BFS(TypeNode* root) {
+    std::unordered_set<TypeNode*> visited;
+
+    std::queue<TypeNode*> Q;
+
+    visited.insert(root);
+    Q.push(root);
+
+    while (!Q.empty()) {
+        TypeNode* curr = Q.front();
+        Q.pop();
+        // std::cout << "Node id: " << curr->get_id() << '\n';
+
+        for (auto& elem : curr->get_neighbours()) {
+            if (visited.find(elem.first) == visited.end()) {
+                visited.insert(elem.first);
+                Q.push(elem.first);
+            }
         }
     }
 }

@@ -13,8 +13,8 @@ int main(int argc, char** argv) {
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_COLOR);
 
     ImageGraph graph(img);
-    std::unordered_set<Node*> visited;
-    DFS(graph.get_root(), visited);
-
+    // std::unordered_set<Node*> visited;
+    // DFS(graph.get_root(), visited);
+    BFS(graph.get_root());
     return 0;
 }
