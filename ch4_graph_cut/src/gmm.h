@@ -39,7 +39,6 @@ class GMM : public EMBase {
     cv::Mat img_;
 
     std::vector<double> w_gaussian_model_;
-
     std::vector<Gaussian3D> gaussian3d_model_;
     std::vector<cv::Mat> posterior_;
 };

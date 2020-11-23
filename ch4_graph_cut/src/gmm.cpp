@@ -9,7 +9,8 @@ static std::mt19937 rng(rd());
 std::set<int> get_random_index(int max_idx, int n);
 
 GMM::GMM(cv::Mat img, int num_gaussian)
-    : img_(img),
+    : EMBase(),
+      img_(img),
       num_gaussian_(num_gaussian),
       w_gaussian_model_(num_gaussian, 1.0 / num_gaussian),
       miu_(num_gaussian, (1, 1, 1)),
