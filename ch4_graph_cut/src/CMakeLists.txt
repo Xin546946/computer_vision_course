@@ -7,4 +7,11 @@ target_link_libraries(ek graph_search)
 add_library(graph graph.cpp)
 # target_link_libraries(graph graph_search)
 add_library(image_graph image_graph.cpp)
-target_link_libraries(image_graph graph ${OpenCV_LIBS})
+target_link_libraries(image_graph graph distribution ${OpenCV_LIBS})
+
+add_library(distribution distribution.cpp)
+target_link_libraries(distribution gmm ${OpenCV_LIBS})
+
+add_library(em em.cpp)
+
+add_library(gmm gmm.cpp)

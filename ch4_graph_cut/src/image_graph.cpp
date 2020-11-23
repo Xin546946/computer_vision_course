@@ -1,4 +1,5 @@
 #include "image_graph.h"
+#include "distribution.h"
 #include <vector>
 
 static const int dire[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
@@ -21,11 +22,11 @@ ImageGraph::ImageGraph(cv::Mat img)
                     c_curr >= img.cols) {
                     continue;
                 }
-                add_unary_edge(pos_to_id(r, c, img.rows),
-                               pos_to_id(r_curr, c_curr, img.rows),
-                               Edge(dist.compute_weight(
-                                   img.at<cv::Vec3f>(r, c),
-                                   img.at<cv::Vec3f>(r_curr, c_curr))));
+                add_unary_edge(
+                    pos_to_id(r, c, img.rows),
+                    pos_to_id(r_curr, c_curr, img.rows),
+                    Edge(compute_weight(img.at<cv::Vec3f>(r, c),
+                                        img.at<cv::Vec3f>(r_curr, c_curr))));
             }
         }
     }
