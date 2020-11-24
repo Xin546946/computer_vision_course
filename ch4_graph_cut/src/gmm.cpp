@@ -97,8 +97,8 @@ void GMM::update_e_step() {
         cv::divide(posterior_[i], sum, posterior_[i]);
         sum_posterior += w_gaussian_model_[i] * cv::sum(posterior_[i])[0];
     }
-    std::cerr << "sum_posterior :" << sum_posterior / (img_.rows * img_.cols)
-              << '\n';
+    // std::cerr << "sum_posterior :" << sum_posterior / (img_.rows * img_.cols)
+    //           << '\n';
 }
 
 void GMM::update_m_step() {

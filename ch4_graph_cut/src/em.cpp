@@ -8,6 +8,7 @@
 void EMBase::run(int max_iteration) {
     initialize();
     for (int i = 0; i < max_iteration; i++) {
+        std::cout << "current iteration : " << i << '\n';
         update_e_step();
         update_m_step();
     }

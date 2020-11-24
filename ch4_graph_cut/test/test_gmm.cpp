@@ -11,8 +11,16 @@ int main(int argc, char** argv) {
     gmm.run(20);
 
     // // test each point w.r.t. the GMM
-    // cv::Mat prob = gmm.get_prob(img);
-    // disp_image(prob, "clustering result w.r.t. the total model", 0);
+    cv::Mat prob1 = gmm.get_sub_prob(img, 0);
+    cv::Mat prob_vis_1 = get_float_mat_vis_img(prob1, 3);
+    // cv::cvtColor(prob_vis_1, prob_vis_1, CV_GRAY2RGB);
+    cv::Mat prob2 = gmm.get_sub_prob(img, 1);
+    cv::Mat prob_vis_2 = get_float_mat_vis_img(prob2, 3);
+    // cv::cvtColor(prob_vis_2, prob_vis_2, CV_GRAY2RGB);
+    cv::Mat vis;
+    cv::vconcat(img, prob_vis_1, vis);
+    cv::vconcat(vis, prob_vis_2, vis);
+    disp_image(vis, "clustering resut", 0);
 
     // // test each point w.r.t. the first model
     // cv::Mat sub_prob1 = get_sub_prob(img, 0);
