@@ -31,3 +31,4 @@ cv::Mat draw_points(cv::Mat img, cv::Mat points, cv::Scalar color);
  * @return cv::Mat
  */
 cv::Mat get_float_mat_vis_img(cv::Mat);
+void display_and_click_to_print_pixel_value_8UC3(cv::Mat img);

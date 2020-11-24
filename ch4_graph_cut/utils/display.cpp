@@ -150,3 +150,20 @@ cv::Mat get_float_mat_vis_img(cv::Mat input) {
     cv::normalize(input, output, 0, 1, cv::NORM_MINMAX);
     return output;
 }
+
+// callback for opencv api
+void click_to_print_pixel(int event, int x, int y, int flags, void* img_ptr) {
+    if (event == cv::EVENT_LBUTTONDOWN) {
+        std::cout << "x = " << x << ", y = " << y << ", value : "
+                  << reinterpret_cast<cv::Mat*>(img_ptr)->at<cv::Vec3b>(y, x)
+                  << std::endl;
+    }
+}
+
+void display_and_click_to_print_pixel_value_8UC3(cv::Mat img) {
+    cv::namedWindow("click to print pixel");
+    cv::setMouseCallback("click to print pixel", click_to_print_pixel,
+                         (void*)&img);  // pass the address
+    cv::imshow("click to print pixel", img);
+    cv::waitKey(0);
+}
