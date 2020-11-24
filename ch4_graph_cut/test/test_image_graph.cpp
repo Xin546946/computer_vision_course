@@ -3,6 +3,7 @@
 #include <iostream>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include <unordered_set>
 
 int main(int argc, char** argv) {
@@ -11,7 +12,7 @@ int main(int argc, char** argv) {
     //               255, 255, 0, 255, 255, 255);
     // std::cout << img << '\n';
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_COLOR);
-
+    cv::resize(img, img, cv::Size(40, 40));
     ImageGraph graph(img);
     // std::unordered_set<Node*> visited;
     // DFS(graph.get_root(), visited);

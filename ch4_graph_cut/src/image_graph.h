@@ -31,8 +31,9 @@ class ImageGraph : public Graph<Node, Edge> {
     } dist;
 };
 
+// todo ignore src version
 inline int pos_to_id(int row, int col, int step) {
-    return row * step + col + 1;
+    return row * step + col;
 }
 /**
  * @brief return {row col}
@@ -42,5 +43,5 @@ inline int pos_to_id(int row, int col, int step) {
  * @return std::pair<int, int>
  */
 inline std::pair<int, int> id_to_pos(int id, int step) {
-    return {(id - 1) / step, (id - 1) % step};
+    return {id / step, id % step};
 }
