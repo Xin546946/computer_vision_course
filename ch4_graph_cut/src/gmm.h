@@ -12,7 +12,7 @@ class Gaussian3D {
     Gaussian3D() = default;
     Gaussian3D(const cv::Matx31d& miu, const cv::Matx33d& sigma);
 
-    double compute_gaussian_data(const cv::Matx31d& data);
+    double compute_gaussian_pdf(const cv::Matx31d& data);
     cv::Mat compute_gaussian_map(cv::Mat img);
     cv::Matx31d get_miu() const;
     cv::Matx33d get_sigma() const;
@@ -26,9 +26,11 @@ class Gaussian3D {
 class GMM : public EMBase {
    public:
     GMM(cv::Mat img, int num_gaussian_model);
+    GMM(cv::Mat img, const std::vector<cv::Point>& scribble,
+        int num_gaussian_model);
 
     // cv::Mat get_prob(cv::Mat img);
-    cv::Mat get_sub_prob(cv::Mat img, int id_model);
+    cv::Mat get_sub_prob(int id_model);
 
    private:
     void initialize() override;
@@ -39,11 +41,10 @@ class GMM : public EMBase {
     void update_sigma(int id_model, double Nk);
     void update_weight(int id_model, double Nk);
 
-    cv::Mat img_;
+    cv::Mat img_;      // img is original image, whose size is m*n
+    cv::Mat samples_;  // samples is a long vector, whose size is mn*1
 
     std::vector<double> w_gaussian_model_;
-
     std::vector<Gaussian3D> gaussian3d_model_;
-
     std::vector<cv::Mat> posterior_;
 };

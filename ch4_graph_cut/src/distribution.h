@@ -19,8 +19,8 @@ class Distribution {
         std::vector<cv::Point> background);  // todo fit the model using gmm
     cv::Mat foreground_probability_map_;     // todo they need to be initialized
     cv::Mat background_probability_map_;     // todo
-    std::array<std::array<double, 3>, 2> miu_;
-    std::array<std::array<double, 3>, 2> sigma_;
+    // std::array<std::array<double, 3>, 2> miu_;
+    // std::array<std::array<double, 3>, 2> sigma_;
 };
 
 /*--------------------------------------------------------
