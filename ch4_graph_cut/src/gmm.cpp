@@ -152,5 +152,16 @@ void GMM::update_weight(int id_model, double Nk) {
 }
 
 cv::Mat GMM::get_sub_prob(int id_model) {
-    return posterior_[id_model].reshape(1, img_.rows);
+    cv::Mat result;
+    if (samples_.rows < img_.cols * img_.rows) {
+        cv::Mat img_samples = img_.reshape(1, img_.cols * img_.rows);
+        result = gaussian3d_model_[id_model]
+                     .compute_gaussian_map(img_samples)
+                     .reshape(1, img_.rows);
+
+    } else {
+        result = posterior_[id_model].reshape(1, img_.rows);
+    }
+
+    return result;
 }
