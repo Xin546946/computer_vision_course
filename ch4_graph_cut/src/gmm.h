@@ -10,6 +10,7 @@
 class Gaussian3D {
    public:
     //! change Mat3d to Mat due to inv and matrix operations
+    Gaussian3D() = default;
     Gaussian3D(const cv::Matx31d& miu, const cv::Matx33d& sigma);
 
     double compute_gaussian_data(const cv::Matx31d& data);
@@ -40,6 +41,8 @@ class GMM : public EMBase {
     cv::Mat img_;
 
     std::vector<double> w_gaussian_model_;
+
     std::vector<Gaussian3D> gaussian3d_model_;
+
     std::vector<cv::Mat> posterior_;
 };

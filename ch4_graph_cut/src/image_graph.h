@@ -38,7 +38,7 @@ inline int pos_to_id(int row, int col, int step) {
  * @brief return {row col}
  *
  * @param id
- * @param step
+ * @param step : img cols
  * @return std::pair<int, int>
  */
 inline std::pair<int, int> id_to_pos(int id, int step) {

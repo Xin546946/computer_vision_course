@@ -46,20 +46,16 @@ cv::Matx33d Gaussian3D::get_sigma() const {
 GMM::GMM(cv::Mat img, int num_gaussian)
     : EMBase(),
       img_(img),
-      num_gaussian_(num_gaussian),
       w_gaussian_model_(num_gaussian, 1.0 / num_gaussian),
-      miu_(num_gaussian, (1, 1, 1)),
-      sigma_(num_gaussian, cv::Mat::eye(cv::Size(3, 3), img.type())),
-      posterior_(num_gaussian, cv::Mat::zeros(cv::Size(3, 3), img.type())) {
+      posterior_(num_gaussian, cv::Mat::zeros(cv::Size(3, 3), img.type())),
+      gaussian3d_model_(num_gaussian) {
     std::set<int> random_idx =
         get_random_index(img.rows * img.cols - 1, num_gaussian);
-    int i_gaussian = 0;
-    for (auto index : random_idx) {
-        for (int channel = 0; channel < img.channels(); channel++) {
-            miu_[i_gaussian][channel] =
-                img.at<cv::Vec3b>(index % img.rows, index / img.rows)[channel];
-            i_gaussian++;
-        }
+    for (auto it = random_idx.begin(); it != random_idx.end(); it++) {
+        cv::Matx33d sigma = cv::Matx33d::eye();
+        cv::Matx31d miu = img.at<cv::Vec3b>(*it % img.cols, *it / img.cols);
+        gaussian3d_model_[std::distance(random_idx.begin(), it)] =
+            Gaussian3D(miu, sigma);
     }
 }
 

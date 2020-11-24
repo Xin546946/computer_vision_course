@@ -131,7 +131,7 @@ void BFS(Node* root, int rows, int cols) {
         Node* curr = Q.front();
         Q.pop();
         // std::cout << "Node id: " << curr->get_id() << '\n';
-        std::pair<int, int> pos = id_to_pos(curr->get_id(), rows);
+        std::pair<int, int> pos = id_to_pos(curr->get_id(), cols);
 
         vis.at<uchar>(pos.first, pos.second) = 255;
 
