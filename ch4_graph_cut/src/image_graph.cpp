@@ -2,6 +2,12 @@
 #include "distribution.h"
 #include <vector>
 
+inline double compute_weight(const cv::Vec3f& color1, const cv::Vec3f& color2,
+                             double sigma) {
+    return std::exp(1 / (2 * sigma * sigma) *
+                    std::pow(cv::norm(color1 - color2, cv::NORM_L2), 2));
+}
+
 static const int dire[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
 
 ImageGraph::ImageGraph(cv::Mat img)
@@ -22,11 +28,11 @@ ImageGraph::ImageGraph(cv::Mat img)
                     c_curr >= img.cols) {
                     continue;
                 }
-                add_unary_edge(
-                    pos_to_id(r, c, img.cols),
-                    pos_to_id(r_curr, c_curr, img.cols),
-                    Edge(compute_weight(img.at<cv::Vec3f>(r, c),
-                                        img.at<cv::Vec3f>(r_curr, c_curr))));
+                add_unary_edge(pos_to_id(r, c, img.cols),
+                               pos_to_id(r_curr, c_curr, img.cols),
+                               Edge(compute_weight(
+                                   img.at<cv::Vec3f>(r, c),
+                                   img.at<cv::Vec3f>(r_curr, c_curr), 10)));
             }
         }
     }

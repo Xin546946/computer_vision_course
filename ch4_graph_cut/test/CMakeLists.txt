@@ -25,17 +25,19 @@ target_link_libraries(test_image_graph
     image_graph
 )
 
-add_executable(test_distribution test_distribution.cpp)
-target_link_libraries(test_distribution
-    utils
-    ${OpenCV_LIBS}
-    distribution
-)
+##add_executable(test_distribution test_distribution.cpp)
+##target_link_libraries(test_distribution
+##    utils
+##    ${OpenCV_LIBS}
+##    distribution
+##)
 
 add_executable(test_gmm test_gmm.cpp)
 target_link_libraries(test_gmm
     utils
     ${OpenCV_LIBS}
+    gmm
+    em
     #distribution
 )
 

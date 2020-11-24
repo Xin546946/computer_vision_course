@@ -26,8 +26,10 @@ class Distribution {
 /*--------------------------------------------------------
 #####################implementation: inline #####################
 ---------------------------------------------------------*/
-inline double compute_weight(const cv::Vec3f& color1, const cv::Vec3f& color2,
-                             double sigma) {
-    return std::exp(1 / (2 * sigma * sigma) *
-                    std::pow(cv::norm(color1 - color2, cv::NORM_L2), 2));
-}
+// todo
+// inline double compute_weight(const cv::Vec3f& color1, const cv::Vec3f&
+// color2,
+//                             double sigma) {
+//    return std::exp(1 / (2 * sigma * sigma) *
+//                    std::pow(cv::norm(color1 - color2, cv::NORM_L2), 2));
+//}

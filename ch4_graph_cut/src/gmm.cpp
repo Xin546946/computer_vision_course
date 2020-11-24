@@ -114,7 +114,7 @@ void GMM::update_sigma(int id_model, double Nk) {
     cv::Matx33d new_sigma = cv::Matx33d::zeros();
     for (int r = 0; r < img_.rows; r++) {
         for (int c = 0; c < img_.cols; c++) {
-            cv::Matx31d resi = img_.at<cv::Matx31d>(r, c) -
+            cv::Matx31d resi = cv::Matx31d(img_.at<cv::Vec3b>(r, c)) -
                                gaussian3d_model_[id_model].get_miu();
             new_sigma +=
                 posterior_[id_model].at<double>(r, c) * resi * resi.t();
