@@ -30,4 +30,4 @@ cv::Mat draw_points(cv::Mat img, cv::Mat points, cv::Scalar color);
  *
  * @return cv::Mat
  */
-cv::Mat get_float_mat_vis_img(cv::Mat, int channels = -1);
+cv::Mat get_float_mat_vis_img(cv::Mat);
