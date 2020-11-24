@@ -145,15 +145,8 @@ cv::Mat draw_points(cv::Mat img, cv::Mat points, cv::Scalar color) {
 
     return result;
 }
-cv::Mat get_float_mat_vis_img(cv::Mat input, int channels) {
+cv::Mat get_float_mat_vis_img(cv::Mat input) {
     cv::Mat output;
     cv::normalize(input, output, 0, 1, cv::NORM_MINMAX);
-    if (channels == 1 && output.channels() == 3) {
-        cv::cvtColor(output, output, CV_RGB2GRAY);
-    } else if (channels == 3 && output.channels() == 1) {
-        cv::cvtColor(output, output, CV_GRAY2RGB);
-    } else {
-        std::cerr << "This image can not be converted" << '\n';
-    }
     return output;
 }
