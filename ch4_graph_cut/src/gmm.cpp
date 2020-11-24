@@ -6,8 +6,43 @@
 //! distribution need to change a interface, vector to cv::Mat
 static std::random_device rd;
 static std::mt19937 rng(rd());
+
 std::set<int> get_random_index(int max_idx, int n);
 
+/*--------------------------------------------------------
+#####################implementation: Gaussian3D #####################
+---------------------------------------------------------*/
+Gaussian3D::Gaussian3D(const cv::Matx31d& miu, const cv::Matx33d& sigma)
+    : miu_(miu), sigma_(sigma) {
+}
+
+double Gaussian3D::compute_gaussian_data(const cv::Matx31d& data) {
+    double coeff = cv::pow(M_1_PI * 0.5, 3 / 2) / cv::determinant(sigma_);
+    cv::Mat tmp;
+    cv::exp(-0.5 * (data - miu_).t() * sigma_.inv() * (data - miu_), tmp);
+    return coeff * tmp.at<double>(0, 0);
+}
+
+cv::Mat Gaussian3D::compute_gaussian_map(cv::Mat img) {
+    cv::Mat result = cv::Mat::zeros(cv::Size(img.cols, img.rows), CV_64F);
+    for (int r = 0; r < img.rows; r++) {
+        for (int c = 0; r < img.cols; c++) {
+            result.at<double>(r, c) =
+                compute_gaussian_data(img.at<cv::Vec3b>(r, c));
+        }
+    }
+    return result;
+}
+cv::Matx31d Gaussian3D::get_miu() const {
+    return miu_;
+}
+
+cv::Matx33d Gaussian3D::get_sigma() const {
+    return sigma_;
+}
+/*--------------------------------------------------------
+#####################implementation: GMM #####################
+---------------------------------------------------------*/
 GMM::GMM(cv::Mat img, int num_gaussian)
     : EMBase(),
       img_(img),

@@ -9,16 +9,17 @@
 
 class Gaussian3D {
    public:
-    Gaussian3D(const cv::Vec3f& miu, const cv::Mat3d& sigma);
+    //! change Mat3d to Mat due to inv and matrix operations
+    Gaussian3D(const cv::Matx31d& miu, const cv::Matx33d& sigma);
 
-    double compute_gaussian_data(const cv::Vec3f& data);
+    double compute_gaussian_data(const cv::Matx31d& data);
     cv::Mat compute_gaussian_map(cv::Mat img);
-    cv::Vec3f get_miu() const;
-    cv::Mat3d get_sigma() const;
+    cv::Matx31d get_miu() const;
+    cv::Matx33d get_sigma() const;
 
    private:
-    cv::Vec3f miu_;
-    cv::Mat3d sigma_;
+    cv::Matx31d miu_;
+    cv::Matx33d sigma_;
 };
 class GMM : public EMBase {
    public:
