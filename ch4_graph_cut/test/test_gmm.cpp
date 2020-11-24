@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_COLOR);
 
     GMM gmm(img, 2);  // input: image, num_model
-    gmm.run(1);
+    gmm.run(20);
 
     // // test each point w.r.t. the GMM
     cv::Mat prob1 = gmm.get_sub_prob(img, 0);

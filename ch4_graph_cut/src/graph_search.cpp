@@ -131,9 +131,10 @@ void BFS(Node* root, int rows, int cols) {
         Node* curr = Q.front();
         Q.pop();
         // std::cout << "Node id: " << curr->get_id() << '\n';
-        std::pair<int, int> pos = id_to_pos(curr->get_id(), cols);
-
-        vis.at<uchar>(pos.first, pos.second) = 255;
+        if (curr->get_id() != rows * cols + 1) {
+            std::pair<int, int> pos = id_to_pos(curr->get_id(), cols);
+            vis.at<uchar>(pos.first, pos.second) = 255;
+        }
 
         for (auto& elem : curr->get_neighbours()) {
             if (visited.find(elem.first) == visited.end()) {

@@ -42,5 +42,5 @@ inline int pos_to_id(int row, int col, int step) {
  * @return std::pair<int, int>
  */
 inline std::pair<int, int> id_to_pos(int id, int step) {
-    return {(id - 1) % step, (id - 1) / step};
+    return {(id - 1) / step, (id - 1) % step};
 }
