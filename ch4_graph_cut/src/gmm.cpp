@@ -18,7 +18,8 @@ Gaussian3D::Gaussian3D(const cv::Matx31d& miu, const cv::Matx33d& sigma)
 }
 
 double Gaussian3D::compute_gaussian_data(const cv::Matx31d& data) {
-    double coeff = cv::pow(M_1_PI * 0.5, 3 / 2) / cv::determinant(sigma_);
+    double coeff =
+        cv::pow(M_1_PI * 0.5, 3 / 2) / std::sqrt(cv::determinant(sigma_));
     auto tmp = -0.5 * (data - miu_).t() * sigma_.inv() * (data - miu_);
     return coeff * exp(tmp(0));
 }
@@ -77,7 +78,7 @@ void GMM::initialize() {
         get_random_index(img_.rows * img_.cols - 1, gaussian3d_model_.size());
     for (auto it = random_idx.begin(); it != random_idx.end(); it++) {
         cv::Matx31d miu = img_.at<cv::Vec3b>(*it / img_.cols, *it % img_.cols);
-        cv::Matx33d sigma_square = 150 * 150 * cv::Matx33d::eye();
+        cv::Matx33d sigma_square = 300 * 300 * cv::Matx33d::eye();
         gaussian3d_model_[std::distance(random_idx.begin(), it)].set_miu(miu);
         gaussian3d_model_[std::distance(random_idx.begin(), it)].set_sigma(
             sigma_square);
@@ -91,10 +92,13 @@ void GMM::update_e_step() {
         sum += w_gaussian_model_[i] * posterior_[i];
     }
 
+    double sum_posterior = 0.0;
     for (int i = 0; i < gaussian3d_model_.size(); i++) {
         cv::divide(posterior_[i], sum, posterior_[i]);
-        std::cerr << "sum :" << cv::sum(posterior_[i])[0];
+        sum_posterior += w_gaussian_model_[i] * cv::sum(posterior_[i])[0];
     }
+    std::cerr << "sum_posterior :" << sum_posterior / (img_.rows * img_.cols)
+              << '\n';
 }
 
 void GMM::update_m_step() {
@@ -111,11 +115,11 @@ void GMM::update_miu(int id_model, double Nk) {
     for (int r = 0; r < img_.rows; r++) {
         for (int c = 0; c < img_.cols; c++) {
             new_miu += posterior_[id_model].at<double>(r, c) *
-                       img_.at<cv::Matx31d>(r, c);
+                       img_.at<cv::Vec3b>(r, c);
         }
     }
 
-    gaussian3d_model_[id_model].set_miu(new_miu);
+    gaussian3d_model_[id_model].set_miu(new_miu.mul(1 / (Nk + 1e-10)));
 }
 
 void GMM::update_sigma(int id_model, double Nk) {
