@@ -1,5 +1,6 @@
 
 #include "display.h"
+#include "opencv_utils.h"
 
 void draw_optical_flow(cv::Mat& fx, cv::Mat& fy, cv::Mat& cflowmap, int step,
                        double scaleFactor, cv::Scalar& color) {
@@ -153,7 +154,8 @@ cv::Mat get_float_mat_vis_img(cv::Mat input) {
 
 // callback for opencv api
 void click_to_print_pixel(int event, int x, int y, int flags, void* img_ptr) {
-    if (flags == cv::EVENT_FLAG_LBUTTON && event == cv::EVENT_MOUSEMOVE) {
+    if ((flags & (0x1)) && event == cv::EVENT_MOUSEMOVE &&
+        is_in_img(*reinterpret_cast<cv::Mat*>(img_ptr), y, x)) {
         std::cout << "x = " << x << ", y = " << y << ", value : "
                   << reinterpret_cast<cv::Mat*>(img_ptr)->at<cv::Vec3b>(y, x)
                   << std::endl;
