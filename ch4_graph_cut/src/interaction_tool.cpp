@@ -32,7 +32,7 @@ std::array<std::vector<cv::Point>, 2> drag_to_get_fore_and_background_scrible(
         "please drag to collect foreground, then press any key to continue";
     CallbackItem item_foregroud(img, win_name, color_foreground);
     // collect foregound scribles;
-    cv::namedWindow(win_name);
+    cv::namedWindow(win_name, cv::WINDOW_AUTOSIZE);
     cv::setMouseCallback(win_name, drag_to_collect_pixel,
                          (void*)&item_foregroud);
     cv::imshow(win_name, img);
@@ -43,7 +43,7 @@ std::array<std::vector<cv::Point>, 2> drag_to_get_fore_and_background_scrible(
     win_name = "please drag to collect background";
     CallbackItem item_backgroud(item_foregroud.img_, win_name,
                                 color_background);
-    cv::namedWindow(win_name);
+    cv::namedWindow(win_name, cv::WINDOW_AUTOSIZE);
     cv::setMouseCallback(win_name, drag_to_collect_pixel,
                          (void*)&item_backgroud);
     cv::imshow(win_name, img);
