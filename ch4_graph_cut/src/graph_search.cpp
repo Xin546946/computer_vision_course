@@ -133,8 +133,8 @@ void BFS(Node* root, int rows, int cols) {
         // std::cout << "Node id: " << curr->get_id() << '\n';
         if (curr->get_id() != rows * cols + 1 && curr->get_id() != 0) {
             std::pair<int, int> pos = id_to_pos(curr->get_id() - 1, cols);
-            std::cerr << "pose : " << pos.first << ", " << pos.second
-                      << " rows :" << rows << " cols : " << cols << '\n';
+            // std::cerr << "pose : " << pos.first << ", " << pos.second
+            //          << " rows :" << rows << " cols : " << cols << '\n';
             vis.at<uchar>(pos.first, pos.second) = 255;
         }
 
@@ -144,7 +144,7 @@ void BFS(Node* root, int rows, int cols) {
                 Q.push(elem.first);
             }
         }
-        cv::imshow("vis", vis);
-        cv::waitKey(1);
+        // cv::imshow("vis", vis);
+        // cv::waitKey(1);
     }
 }

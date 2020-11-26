@@ -3,7 +3,11 @@
 #include <array>
 #include <opencv2/core/core.hpp>
 #include <vector>
-double compute_weight(const cv::Vec3f& color1, const cv::Vec3f& color2);
+inline double compute_weight(const cv::Vec3f& color1, const cv::Vec3f& color2,
+                             double sigma_square_inv = 2.5e-5) {
+    cv::Vec3f diff = color2 - color1;
+    return exp(-0.5 * sigma_square_inv * (diff.dot(diff)));
+}
 
 class Distribution {
    public:

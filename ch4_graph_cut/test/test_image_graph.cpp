@@ -1,5 +1,6 @@
 #include "graph_search.h"
 #include "image_graph.h"
+#include "interaction_tool.h"
 #include <iostream>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -12,8 +13,10 @@ int main(int argc, char** argv) {
     //               255, 255, 0, 255, 255, 255);
     // std::cout << img << '\n';
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_COLOR);
-    cv::resize(img, img, cv::Size(40, 40));
-    ImageGraph graph(img);
+
+    const auto& points = drag_to_get_fore_and_background_scrible(img);
+
+    ImageGraph graph(img, points[0], points[1]);
     // std::unordered_set<Node*> visited;
     // DFS(graph.get_root(), visited);
     // BFS(graph.get_root());

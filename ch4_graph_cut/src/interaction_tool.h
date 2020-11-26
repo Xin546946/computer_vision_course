@@ -12,3 +12,10 @@ struct CallbackItem {
 
 std::array<std::vector<cv::Point>, 2> drag_to_get_fore_and_background_scrible(
     cv::Mat img);
+
+class ScribbleInteractionTool {
+   public:
+    ScribbleInteractionTool();
+
+   private:
+};

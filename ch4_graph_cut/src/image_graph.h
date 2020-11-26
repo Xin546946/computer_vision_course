@@ -1,4 +1,5 @@
 #pragma once
+#include "distribution.h"
 #include "graph.h"
 #include <opencv2/core.hpp>
 
@@ -14,21 +15,12 @@ class Edge : public EdgeBase {
 typedef NodeBase<Edge> Node;
 class ImageGraph : public Graph<Node, Edge> {
    public:
-    ImageGraph(cv::Mat img);
+    ImageGraph(cv::Mat img, const std::vector<cv::Point>& points_foreground,
+               const std::vector<cv::Point>& points_background);
 
    private:
     cv::Mat img_;
-
-    struct Dist {
-        Dist() = default;
-        double get_weight(int r, int c, int flag) {
-            return 0.0f;
-        }
-
-        double compute_weight(cv ::Vec3f, cv::Vec3f) {
-            return 0.0f;
-        }
-    } dist;
+    Distribution dist_;
 };
 
 // todo ignore src version
