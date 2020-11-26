@@ -8,15 +8,8 @@ void drag_to_collect_pixel(int event, int x, int y, int flags, void* ptr) {
     CallbackItem* item_ptr = reinterpret_cast<CallbackItem*>(ptr);
     if ((flags & cv::EVENT_FLAG_LBUTTON) && event == cv::EVENT_MOUSEMOVE &&
         is_in_img(item_ptr->img_, y, x)) {
-        for (int r = -1; r < 2; r++) {
-            for (int c = -1; c < 2; c++) {
-                int x_curr = x + c;
-                int y_curr = y + r;
-                item_ptr->points_.emplace_back(x_curr, y_curr);
-                cv::circle(item_ptr->img_, cv::Point(x_curr, y_curr), 0,
-                           item_ptr->color_, 2);
-            }
-        }
+        item_ptr->points_.emplace_back(x, y);
+        cv::circle(item_ptr->img_, cv::Point(x, y), 2, item_ptr->color_, 2);
 
         cv::imshow(item_ptr->win_name_, item_ptr->img_);
         cv::waitKey(1);
