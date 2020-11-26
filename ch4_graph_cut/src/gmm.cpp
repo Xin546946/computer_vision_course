@@ -24,7 +24,7 @@ double Gaussian3D::compute_gaussian_pdf(const cv::Matx31d& sample) {
     return coeff * exp(tmp(0));
 }
 
-cv::Mat Gaussian3D::computer_gaussian_pdf_map(cv::Mat samples) {
+cv::Mat Gaussian3D::compute_gaussian_pdf_map(cv::Mat samples) {
     cv::Mat result = cv::Mat::zeros(cv::Size(1, samples.rows), CV_64F);
     for (int i = 0; i < samples.rows; i++) {
         result.at<double>(i) = compute_gaussian_pdf(samples.at<cv::Vec3d>(i));
@@ -102,8 +102,7 @@ void GMM::initialize() {
 void GMM::update_e_step() {
     cv::Mat sum = cv::Mat::zeros(posterior_[0].size(), posterior_[0].type());
     for (int i = 0; i < gaussian3d_model_.size(); i++) {
-        posterior_[i] =
-            gaussian3d_model_[i].computer_gaussian_pdf_map(samples_);
+        posterior_[i] = gaussian3d_model_[i].compute_gaussian_pdf_map(samples_);
         sum += w_gaussian_model_[i] * posterior_[i];
     }
 
@@ -157,7 +156,7 @@ cv::Mat GMM::get_posterior(int id_model) {
     if (samples_.rows < img_.cols * img_.rows) {
         cv::Mat img_samples = img_.reshape(1, img_.cols * img_.rows);
         result = gaussian3d_model_[id_model]
-                     .computer_gaussian_pdf_map(img_samples)
+                     .compute_gaussian_pdf_map(img_samples)
                      .reshape(1, img_.rows);
 
     } else {
@@ -171,7 +170,7 @@ cv::Mat GMM::get_prob() {
     cv::Mat result = cv::Mat::zeros(img_.size(), CV_64FC1);
     for (int i = 0; i < gaussian3d_model_.size(); i++) {
         result += w_gaussian_model_[i] *
-                  gaussian3d_model_[i].computer_gaussian_pdf_map(img_);
+                  gaussian3d_model_[i].compute_gaussian_pdf_map(img_);
     }
     return result;
 }

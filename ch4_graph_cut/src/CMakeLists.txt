@@ -15,6 +15,7 @@ target_link_libraries(distribution gmm ${OpenCV_LIBS})
 add_library(em em.cpp)
 
 add_library(gmm gmm.cpp)
+target_link_libraries(gmm em)
 
 add_library(interaction_tool interaction_tool.cpp)
 target_link_libraries(interaction_tool ${OpenCV_LIBS} utils)

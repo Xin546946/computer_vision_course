@@ -10,13 +10,14 @@ class Distribution {
     Distribution(cv::Mat img, std::vector<cv::Point> foreground,
                  std::vector<cv::Point> background);
     // 0 is foreground, 1 is background
-    cv::Mat get_probability_map(int flag) const;
+    cv::Mat get_probability_map(int flag);
 
    private:
-    double compute_weight(int row, int col, int flag) const;
+    // double compute_weight(int row, int col, int flag) const;
 
     std::array<GMM, 2> gmms_;
     double lamda_;
+    cv::Mat img_;
 };
 
 /*--------------------------------------------------------
