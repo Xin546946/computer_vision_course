@@ -32,9 +32,9 @@ class GMM : public EMBase {
 
     // cv::Mat get_prob(cv::Mat img);
 
-   private:
     cv::Mat get_sub_prob(int id_model);
 
+   private:
     void initialize() override;
     void update_e_step() override;
     void update_m_step() override;
