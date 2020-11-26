@@ -9,8 +9,9 @@
 int main(int argc, char** argv) {
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_COLOR);
 
-    drag_to_get_fore_and_background_scrible(img);
-
+    const auto& points = drag_to_get_fore_and_background_scrible(img);
+    std::cout << points[0] << '\n';
+    std::cout << points[1] << '\n';
     // Distribution distribution(img, foreground, background);
     // // test all fore- and background weight
     // for (int r = 0; r < img.rows; r++) {
