@@ -14,6 +14,7 @@ class Gaussian3D {
 
     double compute_gaussian_pdf(const cv::Matx31d& data);
     cv::Mat compute_gaussian_map(cv::Mat img);
+
     cv::Matx31d get_miu() const;
     cv::Matx33d get_sigma() const;
     void set_miu(const cv::Matx31d& miu);
@@ -30,9 +31,10 @@ class GMM : public EMBase {
         int num_gaussian_model);
 
     // cv::Mat get_prob(cv::Mat img);
-    cv::Mat get_sub_prob(int id_model);
 
    private:
+    cv::Mat get_sub_prob(int id_model);
+
     void initialize() override;
     void update_e_step() override;
     void update_m_step() override;
