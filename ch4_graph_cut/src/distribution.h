@@ -11,16 +11,12 @@ class Distribution {
                  std::vector<cv::Point> background);
     // 0 is foreground, 1 is background
     cv::Mat get_probability_map(int flag) const;
-    double get_weight(int row, int col, int flag) const;
 
    private:
-    void fit_distribution(
-        cv::Mat img, std::vector<cv::Point> foreground,
-        std::vector<cv::Point> background);  // todo fit the model using gmm
-    cv::Mat foreground_probability_map_;     // todo they need to be initialized
-    cv::Mat background_probability_map_;     // todo
-    // std::array<std::array<double, 3>, 2> miu_;
-    // std::array<std::array<double, 3>, 2> sigma_;
+    double compute_weight(int row, int col, int flag) const;
+
+    std::array<GMM, 2> gmms_;
+    double lamda_;
 };
 
 /*--------------------------------------------------------

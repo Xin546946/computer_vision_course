@@ -10,26 +10,25 @@ int main(int argc, char** argv) {
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_COLOR);
 
     const auto& points = drag_to_get_fore_and_background_scrible(img);
-    std::cout << points[0] << '\n';
-    std::cout << points[1] << '\n';
-    // Distribution distribution(img, foreground, background);
-    // // test all fore- and background weight
-    // for (int r = 0; r < img.rows; r++) {
-    //     for (int c = 0; c < img.cols; c++) {
-    //         double fore_weight = distribution.get_weight(
-    //             r, c, 0);  // foreground_,background_ private variable;
-    //         double back_weight = distribution.get_weight(r, c, 1);
-    //         std::cout << "foreground weight at (" << r << ", " << c << ")"
-    //                   << " is " << fore_weight << '\n';
-    //         std::cout << "background weight at (" << r << ", " << c << ")"
-    //                   << " is " << back_weight << '\n';
-    //     }
-    // }
-    // // get probability map
-    // cv::Mat fore_img = distribution.get_probability_map(0);
-    // cv::Mat back_img = distribution.get_probability_map(1);
-    // // visualize the probability map
-    // get_float_mat_vis_img(fore_img);
-    // get_float_mat_vis_img(back_img);
+
+    Distribution distribution(img, points[0], points[1]);
+    // test all fore- and background weight
+    for (int r = 0; r < img.rows; r++) {
+        for (int c = 0; c < img.cols; c++) {
+            double fore_weight = distribution.get_weight(
+                r, c, 0);  // foreground_,background_ private variable;
+            double back_weight = distribution.get_weight(r, c, 1);
+            std::cout << "foreground weight at (" << r << ", " << c << ")"
+                      << " is " << fore_weight << '\n';
+            std::cout << "background weight at (" << r << ", " << c << ")"
+                      << " is " << back_weight << '\n';
+        }
+    }
+    // get probability map
+    cv::Mat fore_img = distribution.get_probability_map(0);
+    cv::Mat back_img = distribution.get_probability_map(1);
+    // visualize the probability map
+    get_float_mat_vis_img(fore_img);
+    get_float_mat_vis_img(back_img);
     return 0;
 }
