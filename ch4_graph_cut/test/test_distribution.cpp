@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
     cv::Mat fore_img = distribution.get_probability_map(0);
     cv::Mat back_img = distribution.get_probability_map(1);
     // visualize the probability map
-    get_float_mat_vis_img(fore_img);
-    get_float_mat_vis_img(back_img);
+    display_float_mat_img(fore_img, 0, "fore");
+    display_float_mat_img(back_img, 0, "back");
     return 0;
 }

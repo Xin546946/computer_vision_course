@@ -12,14 +12,17 @@ class Gaussian3D {
     Gaussian3D() = default;
     Gaussian3D(const cv::Matx31d& miu, const cv::Matx33d& sigma);
 
-    double compute_gaussian_pdf(const cv::Matx31d& data);
     cv::Mat compute_gaussian_pdf_map(cv::Mat img);
+
     cv::Matx31d get_miu() const;
     cv::Matx33d get_sigma() const;
     void set_miu(const cv::Matx31d& miu);
     void set_sigma(const cv::Matx33d& sigma);
+    cv::Mat compute_dataset_gaussian_pdf_map(cv::Mat samples);
 
    private:
+    double compute_gaussian_pdf(const cv::Matx31d& data);
+
     cv::Matx31d miu_;
     cv::Matx33d sigma_;
 };

@@ -1,4 +1,5 @@
 #include "gmm.h"
+#include "display.h"
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <random>
@@ -24,10 +25,20 @@ double Gaussian3D::compute_gaussian_pdf(const cv::Matx31d& sample) {
     return coeff * exp(tmp(0));
 }
 
-cv::Mat Gaussian3D::compute_gaussian_pdf_map(cv::Mat samples) {
+cv::Mat Gaussian3D::compute_dataset_gaussian_pdf_map(cv::Mat samples) {
     cv::Mat result = cv::Mat::zeros(cv::Size(1, samples.rows), CV_64F);
     for (int i = 0; i < samples.rows; i++) {
         result.at<double>(i) = compute_gaussian_pdf(samples.at<cv::Vec3d>(i));
+    }
+    return result;
+}
+cv::Mat Gaussian3D::compute_gaussian_pdf_map(cv::Mat img) {
+    cv::Mat result = cv::Mat::zeros(img.size(), CV_64FC1);
+    for (int r = 0; r < img.rows; r++) {
+        for (int c = 0; c < img.cols; c++) {
+            result.at<double>(r, c) =
+                compute_gaussian_pdf(img.at<cv::Vec3b>(r, c));
+        }
     }
     return result;
 }
@@ -59,18 +70,6 @@ GMM::GMM(cv::Mat img, int num_gaussian)
       posterior_(num_gaussian,
                  cv::Mat::zeros(cv::Size(1, img.rows * img.cols), CV_64FC1)) {
     samples_.convertTo(samples_, CV_64FC1);
-
-    std::set<int> random_idx =
-        get_random_index(img_.rows * img_.cols - 1, gaussian3d_model_.size());
-
-    for (auto it = random_idx.begin(); it != random_idx.end(); it++) {
-        cv::Matx31d miu = samples_.at<cv::Vec3d>(*it);
-        cv::Matx33d sigma_square = 250 * 250 * cv::Matx33d::eye();
-
-        gaussian3d_model_[std::distance(random_idx.begin(), it)].set_miu(miu);
-        gaussian3d_model_[std::distance(random_idx.begin(), it)].set_sigma(
-            sigma_square);
-    }
 }
 
 GMM::GMM(cv::Mat img, const std::vector<cv::Point>& scribble, int num_gaussian)
@@ -81,8 +80,8 @@ GMM::GMM(cv::Mat img, const std::vector<cv::Point>& scribble, int num_gaussian)
       gaussian3d_model_(num_gaussian),
       posterior_(num_gaussian,
                  cv::Mat::zeros(cv::Size(1, scribble.size()), CV_64FC1)) {
-    for (int idx = 0; idx < scribble.size(); idx++) {
-        samples_.at<cv::Vec3d>(idx) = img_.at<cv::Vec3b>(scribble[idx]);
+    for (int i = 0; i < scribble.size(); i++) {
+        samples_.at<cv::Vec3d>(i) = img_.at<cv::Vec3b>(scribble[i]);
     }
 }
 
@@ -96,13 +95,24 @@ std::set<int> get_random_index(int max_idx, int n) {
 }
 
 void GMM::initialize() {
-    // already initialized in the ctor
+    std::set<int> random_idx =
+        get_random_index(samples_.rows - 1, gaussian3d_model_.size());
+
+    for (auto it = random_idx.begin(); it != random_idx.end(); it++) {
+        cv::Matx31d miu = samples_.at<cv::Vec3d>(*it);
+        cv::Matx33d sigma_square = 250 * 250 * cv::Matx33d::eye();
+
+        gaussian3d_model_[std::distance(random_idx.begin(), it)].set_miu(miu);
+        gaussian3d_model_[std::distance(random_idx.begin(), it)].set_sigma(
+            sigma_square);
+    }
 }
 
 void GMM::update_e_step() {
     cv::Mat sum = cv::Mat::zeros(posterior_[0].size(), posterior_[0].type());
     for (int i = 0; i < gaussian3d_model_.size(); i++) {
-        posterior_[i] = gaussian3d_model_[i].compute_gaussian_pdf_map(samples_);
+        posterior_[i] =
+            gaussian3d_model_[i].compute_dataset_gaussian_pdf_map(samples_);
         sum += w_gaussian_model_[i] * posterior_[i];
     }
 
@@ -143,7 +153,7 @@ void GMM::update_sigma(int id_model, double Nk) {
         new_sigma += posterior_[id_model].at<double>(i) * resi * resi.t();
     }
     new_sigma *= (1 / Nk + 1e-10);
-    assert(cv::determinant(new_sigma) > 1e-5);
+    assert(cv::determinant(new_sigma) > 1e-10);
     gaussian3d_model_[id_model].set_sigma(new_sigma);
 }
 
@@ -156,7 +166,7 @@ cv::Mat GMM::get_posterior(int id_model) {
     if (samples_.rows < img_.cols * img_.rows) {
         cv::Mat img_samples = img_.reshape(1, img_.cols * img_.rows);
         result = gaussian3d_model_[id_model]
-                     .compute_gaussian_pdf_map(img_samples)
+                     .compute_dataset_gaussian_pdf_map(img_samples)
                      .reshape(1, img_.rows);
 
     } else {

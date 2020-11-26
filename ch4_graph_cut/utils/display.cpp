@@ -169,3 +169,8 @@ void display_and_drag_to_print_pixel_value_8UC3(cv::Mat img) {
     cv::imshow("click to print pixel", img);
     cv::waitKey(0);
 }
+
+void display_float_mat_img(cv::Mat img, int delay, std::string win_name) {
+    cv::Mat vis = get_float_mat_vis_img(img);
+    disp_image(vis, win_name, delay);
+}

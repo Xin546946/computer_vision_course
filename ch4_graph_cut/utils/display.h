@@ -32,3 +32,5 @@ cv::Mat draw_points(cv::Mat img, cv::Mat points, cv::Scalar color);
  */
 cv::Mat get_float_mat_vis_img(cv::Mat);
 void display_and_drag_to_print_pixel_value_8UC3(cv::Mat img);
+
+void display_float_mat_img(cv::Mat img, int delay, std::string win_name = " ");
