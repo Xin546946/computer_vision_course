@@ -153,7 +153,7 @@ cv::Mat get_float_mat_vis_img(cv::Mat input) {
 
 // callback for opencv api
 void click_to_print_pixel(int event, int x, int y, int flags, void* img_ptr) {
-    if (event == cv::EVENT_LBUTTONDOWN) {
+    if (flags == cv::EVENT_FLAG_LBUTTON && event == cv::EVENT_MOUSEMOVE) {
         std::cout << "x = " << x << ", y = " << y << ", value : "
                   << reinterpret_cast<cv::Mat*>(img_ptr)->at<cv::Vec3b>(y, x)
                   << std::endl;
