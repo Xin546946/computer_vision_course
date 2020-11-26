@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
     cv::vconcat(prob_vis_1, prob_vis_2, vis);
     // disp_image(vis, "result", 0);
     cv::imshow("gauss", vis);
-    display_and_click_to_print_pixel_value_8UC3(img);
+    display_and_drag_to_print_pixel_value_8UC3(img);
     // // test each point w.r.t. the first model
     // cv::Mat sub_prob1 = get_sub_prob(img, 0);
     // disp_image(sub_prob1, "clustering result w.r.t. the total model", 0);
