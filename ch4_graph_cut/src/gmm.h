@@ -26,6 +26,9 @@ class Gaussian3D {
     cv::Matx31d miu_;
     cv::Matx33d sigma_;
 };
+
+enum class GMM_MODE { IMAGE_MODE = 1, SCRIBBLE_MODE = 2 };
+
 class GMM : public EMBase {
    public:
     GMM(cv::Mat img, int num_gaussian_model);
@@ -51,4 +54,6 @@ class GMM : public EMBase {
     std::vector<double> w_gaussian_model_;
     std::vector<Gaussian3D> gaussian3d_model_;
     std::vector<cv::Mat> posterior_;
+
+    GMM_MODE mode_;
 };

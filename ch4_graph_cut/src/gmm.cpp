@@ -70,6 +70,7 @@ GMM::GMM(cv::Mat img, int num_gaussian)
       posterior_(num_gaussian,
                  cv::Mat::zeros(cv::Size(1, img.rows * img.cols), CV_64FC1)) {
     samples_.convertTo(samples_, CV_64FC1);
+    mode_ = GMM_MODE::IMAGE_MODE;
 }
 
 GMM::GMM(cv::Mat img, const std::vector<cv::Point>& scribble, int num_gaussian)
@@ -83,6 +84,7 @@ GMM::GMM(cv::Mat img, const std::vector<cv::Point>& scribble, int num_gaussian)
     for (int i = 0; i < scribble.size(); i++) {
         samples_.at<cv::Vec3d>(i) = img_.at<cv::Vec3b>(scribble[i]);
     }
+    mode_ = GMM_MODE::SCRIBBLE_MODE;
 }
 
 std::set<int> get_random_index(int max_idx, int n) {
@@ -163,7 +165,7 @@ void GMM::update_weight(int id_model, double Nk) {
 
 cv::Mat GMM::get_posterior(int id_model) {
     cv::Mat result;
-    if (samples_.rows < img_.cols * img_.rows) {
+    if (mode_ == GMM_MODE::SCRIBBLE_MODE) {
         cv::Mat img_samples = img_.reshape(1, img_.cols * img_.rows);
         result = gaussian3d_model_[id_model]
                      .compute_dataset_gaussian_pdf_map(img_samples)

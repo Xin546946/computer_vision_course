@@ -44,3 +44,7 @@ std::array<std::vector<cv::Point>, 2> drag_to_get_fore_and_background_scrible(
 
     return {item_foregroud.points_, item_backgroud.points_};
 }
+
+ScribbleInteractionTool::ScribbleInteractionTool(cv::Mat img)
+    : marked_points_(drag_to_get_fore_and_background_scrible(img)) {
+}

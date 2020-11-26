@@ -13,9 +13,13 @@ struct CallbackItem {
 std::array<std::vector<cv::Point>, 2> drag_to_get_fore_and_background_scrible(
     cv::Mat img);
 
-class ScribbleInteractionTool {
-   public:
-    ScribbleInteractionTool();
-
-   private:
+struct ScribbleInteractionTool {
+    std::vector<cv::Point> get_points_foreground() {
+        return marked_points_[0];
+    };
+    std::vector<cv::Point> get_points_background() {
+        return marked_points_[1];
+    };
+    ScribbleInteractionTool(cv::Mat img);
+    std::array<std::vector<cv::Point>, 2> marked_points_;
 };
