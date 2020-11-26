@@ -15,10 +15,10 @@ int main(int argc, char** argv) {
     gmm.run(10);
 
     // // test each point w.r.t. the GMM
-    cv::Mat prob1 = gmm.get_sub_prob(0);
+    cv::Mat prob1 = gmm.get_posterior(0);
     cv::Mat prob_vis_1 = get_float_mat_vis_img(prob1);
     // cv::cvtColor(prob_vis_1, prob_vis_1, CV_GRAY2RGB);
-    cv::Mat prob2 = gmm.get_sub_prob(1);
+    cv::Mat prob2 = gmm.get_posterior(1);
     cv::Mat prob_vis_2 = get_float_mat_vis_img(prob2);
     // cv::cvtColor(prob_vis_2, prob_vis_2, CV_GRAY2RGB);
     // cv::vconcat(img, prob_vis_1, vis);

@@ -33,6 +33,11 @@ class GMM : public EMBase {
     cv::Mat get_posterior(int id_model);
     cv::Mat get_prob();
 
+   private:
+    void initialize();
+    void update_e_step();
+    void update_m_step();
+
     void update_miu(int id_model, double Nk);
     void update_sigma(int id_model, double Nk);
     void update_weight(int id_model, double Nk);
