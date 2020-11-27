@@ -10,8 +10,8 @@ int main(int argc, char** argv) {
 
     GraphCut gc(img);
     gc.run();
-    cv::Mat fore_img = gc.get_segmenation(SegType::FOREGROUND);
-    cv::Mat back_img = gc.get_segmenation(SegType::BACKGROUND);
+    // cv::Mat fore_img = gc.get_segmenation(SegType::FOREGROUND);
+    // cv::Mat back_img = gc.get_segmenation(SegType::BACKGROUND);
 
     return 0;
 }

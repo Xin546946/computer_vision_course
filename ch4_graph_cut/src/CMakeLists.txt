@@ -19,3 +19,6 @@ target_link_libraries(gmm em)
 
 add_library(interaction_tool interaction_tool.cpp)
 target_link_libraries(interaction_tool ${OpenCV_LIBS} utils)
+
+add_library(graph_cut graph_cut.cpp)
+target_link_libraries(graph_cut interaction_tool image_graph)

@@ -49,6 +49,7 @@ target_link_libraries(test_graph_cut
    ${OpenCV_LIBS}
    image_graph
    interaction_tool
+   graph_cut
 )
 
 

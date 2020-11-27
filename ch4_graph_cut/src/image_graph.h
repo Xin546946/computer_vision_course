@@ -3,11 +3,10 @@
 #include "graph.h"
 #include <opencv2/core.hpp>
 
-class Edge : public EdgeBase {
-   public:
+struct Edge : public EdgeBase {
     Edge(double weight);
-
-   private:
+    double get_residual() const;
+    bool is_full();
     double cap_;
     double flow_;
 };
@@ -17,6 +16,10 @@ class ImageGraph : public Graph<Node, Edge> {
    public:
     ImageGraph(cv::Mat img, const std::vector<cv::Point>& points_foreground,
                const std::vector<cv::Point>& points_background);
+    // typedef Node Node;
+    // typedef Edge Edge;
+    const int src_id_;
+    const int sink_id_;
 
    private:
     cv::Mat img_;

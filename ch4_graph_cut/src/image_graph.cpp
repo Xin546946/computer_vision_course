@@ -9,6 +9,8 @@ ImageGraph::ImageGraph(cv::Mat img,
                        const std::vector<cv::Point>& points_foreground,
                        const std::vector<cv::Point>& points_background)
     : Graph(img.rows * img.cols + 2),
+      src_id_(0),
+      sink_id_(img.rows * img.cols + 1),
       img_(img),
       dist_(img, points_foreground, points_background) {
     cv::Mat w_fore = dist_.get_probability_map(0);
@@ -66,4 +68,17 @@ ImageGraph::ImageGraph(cv::Mat img,
     }
 }
 
+/*--------------------------------------------------------
+#####################implementation: Edge #####################
+---------------------------------------------------------*/
 Edge::Edge(double weight) : EdgeBase(), cap_(weight), flow_(0.0){};
+
+//! remove assert after testing
+double Edge::get_residual() const {
+    return cap_ - flow_;
+}
+
+bool Edge::is_full() {
+    assert(get_residual() >= -1e-10);
+    return std::abs(get_residual()) <= 1e-10;
+}
