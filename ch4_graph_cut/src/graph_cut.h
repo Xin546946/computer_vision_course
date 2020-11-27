@@ -2,7 +2,7 @@
 #include "interaction_tool.h"
 #include <stack>
 
-enum class SegType { FOREGROUND = 1, BACKGOUND = 2 };
+enum class SegType { FOREGROUND = 1, BACKGROUND = 2 };
 class GraphCut {
    public:
     GraphCut(cv::Mat img);
@@ -15,14 +15,15 @@ class GraphCut {
     void segmention_bfs();
     ScribbleInteractionTool interaction_tool_;
     ImageGraph graph_;
+
     cv::Mat img_;
+    cv::Mat mask_foreground_;
 };
 
 class AugmentingPath {
    public:
     AugmentingPath(int target_id);
     bool empty();
-    bool find_sink();
     std::pair<Node*, Edge*> pop();
     void push(std::pair<Node*, Edge*> edge);
     void update_residual();
@@ -30,6 +31,5 @@ class AugmentingPath {
    private:
     std::stack<std::pair<Node*, Edge*>> path_;
     double min_residual_;
-    bool find_sink_;
     int target_id_;
 };

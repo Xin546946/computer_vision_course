@@ -8,24 +8,29 @@ GraphCut::GraphCut(cv::Mat img)
     : interaction_tool_(img),
       graph_(img, interaction_tool_.get_points_foreground(),
              interaction_tool_.get_points_background()),
-      img_(img) {
+      img_(img),
+      mask_foreground_(cv::Mat::zeros(img.size(), img.type())) {
 }
 /*--------------------------------------------------------
 #####################implementation: Graph Cut #####################
 ---------------------------------------------------------*/
 void GraphCut::run() {
     compute_max_flow();
-    // segmention_bfs();
+    segmention_bfs();
 }
 cv::Mat GraphCut::get_segmentation(SegType type) const {
     cv::Mat result;
     switch (type) {
-        case SegType::FOREGROUND:
-            /* code */
+        case SegType::FOREGROUND: {
+            return mask_foreground_ & img_;
             break;
-        case SegType::BACKGOUND:
-            /* code */
+        }
+        case SegType::BACKGROUND: {
+            cv::Mat mask_background;
+            cv::bitwise_not(mask_foreground_, mask_background);
+            return mask_background & img_;
             break;
+        }
 
         default:
             break;
@@ -39,7 +44,7 @@ void GraphCut::compute_max_flow() {
         // std::stack<std::pair<Node*, Edge*>>
         AugmentingPath path = BFS_get_path(graph_.get_root(), graph_.sink_id_);
         // step 2 :check terminnation
-        if (path.empty() || !path.find_sink()) {  // todo remove the find sink
+        if (path.empty()) {  // todo remove the find sink
             break;
         }
         // step 3 :update flow
@@ -47,22 +52,40 @@ void GraphCut::compute_max_flow() {
     }
 }
 
+void GraphCut::segmention_bfs() {
+    std::unordered_set<Node*> visited;
+
+    std::queue<Node*> Q;
+
+    visited.insert(graph_.get_root());
+    Q.push(graph_.get_root());
+
+    while (!Q.empty()) {
+        Node* curr = Q.front();
+        Q.pop();
+        auto pos = id_to_pos(curr->id_ - 1, img_.cols);
+        mask_foreground_.at<cv::Vec3b>(pos.second, pos.first) = {255, 255, 255};
+
+        for (auto& elem : curr->neighbours_) {
+            if (visited.find(elem.first) == visited.end() &&
+                elem.second.get_residual() > -1e-10) {
+                visited.insert(elem.first);
+                Q.push(elem.first);
+            }
+        }
+    }
+}
 /*--------------------------------------------------------
 #####################implementation: Argument Path #####################
 ---------------------------------------------------------*/
 AugmentingPath::AugmentingPath(int target_id)
     : min_residual_(std::numeric_limits<double>::max()),
       target_id_(target_id),
-      path_(std::stack<std::pair<Node*, Edge*>>()),
-      find_sink_(false) {
+      path_(std::stack<std::pair<Node*, Edge*>>()) {
 }
 
 bool AugmentingPath::empty() {
     return path_.empty();
-}
-
-bool AugmentingPath::find_sink() {
-    return find_sink_;
 }
 
 std::pair<Node*, Edge*> AugmentingPath::pop() {
@@ -75,7 +98,6 @@ void AugmentingPath::push(std::pair<Node*, Edge*> edge) {
     path_.push(edge);
     // todo compare this min stack with the original min calculation using loop
     min_residual_ = std::min(edge.second->get_residual(), min_residual_);
-    find_sink_ = (edge.first->id_ == target_id_);
 }
 
 void AugmentingPath::update_residual() {
@@ -96,7 +118,7 @@ AugmentingPath BFS_get_path(Node* root, int id_target) {
 
     visited.insert(root);
     Q.push(root);
-    std::cout << "--------------- one sweep--------------- " << '\n';
+    // std::cout << "--------------- one sweep--------------- " << '\n';
     while (!Q.empty()) {
         Node* curr = Q.front();
 
@@ -104,7 +126,8 @@ AugmentingPath BFS_get_path(Node* root, int id_target) {
             while (curr->id_ != root->id_) {
                 path.push(std::pair<Node*, Edge*>(curr, curr->prev_.second));
                 std::cout << "curr id :" << curr->id_
-                          << "flow :" << curr->prev_.second->flow_ << '\n';
+                          << "flow :" << curr->prev_.second->flow_
+                          << "cap :" << curr->prev_.second->cap_ << '\n';
                 curr = curr->prev_.first;
             }
             /*             std::cout << "curr id :" << curr->id_

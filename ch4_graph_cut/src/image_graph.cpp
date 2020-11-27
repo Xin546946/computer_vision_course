@@ -79,6 +79,9 @@ double Edge::get_residual() const {
 }
 
 bool Edge::is_full() {
-    assert(get_residual() >= -1e-10);
+    // if (get_residual() <= -1e-10) {
+    //    std::cerr << "residual " << get_residual();
+    //    assert(get_residual() >= -1e-10);
+    //}
     return std::abs(get_residual()) <= 1e-10;
 }
