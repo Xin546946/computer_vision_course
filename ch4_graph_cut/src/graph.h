@@ -3,18 +3,20 @@
 #include <vector>
 
 template <typename TypeEdge>
-class NodeBase {
-   public:
+struct NodeBase {
     NodeBase(int id);
-    int get_id() const;
-
-    std::vector<std::pair<NodeBase<TypeEdge>*, TypeEdge>> get_neighbours()
-        const;
+    int id_;
+    std::vector<std::pair<NodeBase<TypeEdge>*, TypeEdge>> neighbours_;
     void add_neighbour(NodeBase<TypeEdge>* target_node, const TypeEdge& edge);
 
-   protected:
-    std::vector<std::pair<NodeBase<TypeEdge>*, TypeEdge>> neighbours_;
-    int id_;
+    void back_up_prev(NodeBase<TypeEdge>*, TypeEdge*);
+    std::pair<NodeBase<TypeEdge>*, TypeEdge*> prev_;
+
+    //    protected:
+    //     std::pair<NodeBase<TypeEdge>*, TypeEdge*> get_prev() const;
+
+    // std::vector<std::pair<NodeBase<TypeEdge>*, TypeEdge>> get_neighbours()
+    // const;
 };
 
 class EdgeBase {
@@ -75,13 +77,13 @@ TypeNode* Graph<TypeNode, TypeEdge>::get_root() {
 #####################implementation: NodeBase #####################
 ---------------------------------------------------------*/
 template <typename TypeEdge>
-NodeBase<TypeEdge>::NodeBase(int id) : id_(id) {
+NodeBase<TypeEdge>::NodeBase(int id) : id_(id), prev_{nullptr, nullptr} {
 }
 
-template <typename TypeEdge>
-int NodeBase<TypeEdge>::get_id() const {
-    return id_;
-}
+// template <typename TypeEdge>
+// int NodeBase<TypeEdge>::id_ const {
+//     return id_;
+// }
 
 template <typename TypeEdge>
 void NodeBase<TypeEdge>::add_neighbour(NodeBase<TypeEdge>* target_node,
@@ -89,8 +91,21 @@ void NodeBase<TypeEdge>::add_neighbour(NodeBase<TypeEdge>* target_node,
     neighbours_.emplace_back(target_node, edge);
 }
 
+// template <typename TypeEdge>
+// std::vector<std::pair<NodeBase<TypeEdge>*, TypeEdge>>
+// NodeBase<TypeEdge>::get_neighbours() const {
+//     return neighbours_;
+// }
+
+// template <typename TypeEdge>
+// std::pair<NodeBase<TypeEdge>*, TypeEdge*> NodeBase<TypeEdge>::get_prev()
+// const {
+//     return prev_;
+// }
+
 template <typename TypeEdge>
-std::vector<std::pair<NodeBase<TypeEdge>*, TypeEdge>>
-NodeBase<TypeEdge>::get_neighbours() const {
-    return neighbours_;
+void NodeBase<TypeEdge>::back_up_prev(NodeBase<TypeEdge>* prev_node,
+                                      TypeEdge* edge) {
+    prev_.first = prev_node;
+    prev_.second = edge;
 }

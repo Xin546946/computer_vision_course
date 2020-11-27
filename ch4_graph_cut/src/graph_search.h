@@ -24,10 +24,10 @@ template <typename TypeNode>
 void DFS(TypeNode* root, std::unordered_set<TypeNode*>& visited) {
     if (!root) return;
 
-    std::cout << "Node id: " << root->get_id() << '\n';
+    std::cout << "Node id: " << root->id_ << '\n';
     visited.insert(root);
 
-    for (auto& elem : root->get_neighbours()) {
+    for (auto& elem : root->neighbours_) {
         if (visited.find(elem.first) == visited.end()) {
             DFS(elem.first, visited);
         }
@@ -46,9 +46,9 @@ void BFS(TypeNode* root) {
     while (!Q.empty()) {
         TypeNode* curr = Q.front();
         Q.pop();
-        // std::cout << "Node id: " << curr->get_id() << '\n';
+        // std::cout << "Node id: " << curr->id_ << '\n';
 
-        for (auto& elem : curr->get_neighbours()) {
+        for (auto& elem : curr->neighbours_) {
             if (visited.find(elem.first) == visited.end()) {
                 visited.insert(elem.first);
                 Q.push(elem.first);
