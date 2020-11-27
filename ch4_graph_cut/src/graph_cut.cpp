@@ -15,7 +15,10 @@ GraphCut::GraphCut(cv::Mat img)
 #####################implementation: Graph Cut #####################
 ---------------------------------------------------------*/
 void GraphCut::run() {
+    std::cout
+        << " computing max flow through the graph , please waiting ......\n";
     compute_max_flow();
+    std::cout << " running segementation ......\n";
     segmention_bfs();
 }
 cv::Mat GraphCut::get_segmentation(SegType type) const {
@@ -64,11 +67,15 @@ void GraphCut::segmention_bfs() {
         Node* curr = Q.front();
         Q.pop();
         auto pos = id_to_pos(curr->id_ - 1, img_.cols);
-        mask_foreground_.at<cv::Vec3b>(pos.second, pos.first) = {255, 255, 255};
+        mask_foreground_.at<cv::Vec3b>(pos.first, pos.second) = {255, 255, 255};
 
         for (auto& elem : curr->neighbours_) {
             if (visited.find(elem.first) == visited.end() &&
-                elem.second.get_residual() > -1e-10) {
+                std::abs(elem.second.get_residual()) > 1e-20) {
+                std::cout << "edge between : ( " << curr->id_ << " ) and ( "
+                          << curr->prev_.first->id_ << " ) ---> "
+                          << " residual :" << curr->prev_.second->get_residual()
+                          << '\n';
                 visited.insert(elem.first);
                 Q.push(elem.first);
             }
@@ -125,14 +132,15 @@ AugmentingPath BFS_get_path(Node* root, int id_target) {
         if (curr->id_ == id_target) {
             while (curr->id_ != root->id_) {
                 path.push(std::pair<Node*, Edge*>(curr, curr->prev_.second));
-                std::cout << "curr id :" << curr->id_
+                std::cout << "edge between : ( " << curr->id_ << " ) and ( "
+                          << curr->prev_.first->id_ << " ) ---> "
                           << "flow :" << curr->prev_.second->flow_
-                          << "cap :" << curr->prev_.second->cap_ << '\n';
+                          << ", cap :" << curr->prev_.second->cap_
+                          << ", residual :"
+                          << curr->prev_.second->get_residual() << '\n';
                 curr = curr->prev_.first;
             }
-            /*             std::cout << "curr id :" << curr->id_
-                                  << "flow :" << curr->parent_.second->flow_ <<
-               '\n' */
+            std::cout << '\n';
         }
 
         Q.pop();
@@ -142,7 +150,7 @@ AugmentingPath BFS_get_path(Node* root, int id_target) {
                 !elem.second.is_full()) {
                 visited.insert(elem.first);
                 Q.push(elem.first);
-                elem.first->prev_ = std::pair<Node*, Edge*>(curr, &elem.second);
+                elem.first->back_up_prev(curr, &elem.second);
             }
         }
     }

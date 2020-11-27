@@ -18,11 +18,11 @@ ImageGraph::ImageGraph(cv::Mat img,
 
     for (int r = 0; r < img.rows; r++) {
         for (int c = 0; c < img.cols; c++) {
-            int id = pos_to_id(r, c, img.cols);
+            int id = pos_to_id(r, c, img.cols) + 1;
             // build edges from img to s
-            add_unary_edge(0, id + 1, Edge(w_fore.at<double>(r, c)));
+            add_unary_edge(0, id, Edge(w_fore.at<double>(r, c)));
             // build edges from img to t
-            add_unary_edge(id + 1, img.rows * img.cols + 1,
+            add_unary_edge(id, img.rows * img.cols + 1,
                            Edge(w_back.at<double>(r, c)));
             // build edges through different pixels
             for (int i = 0; i < 4; i++) {
@@ -31,10 +31,10 @@ ImageGraph::ImageGraph(cv::Mat img,
                 if (!is_in_img(img, r_curr, c_curr)) {
                     continue;
                 }
-                add_unary_edge(id + 1, pos_to_id(r_curr, c_curr, img.cols) + 1,
-                               Edge(compute_weight(
-                                   img.at<cv::Vec3f>(r, c),
-                                   img.at<cv::Vec3f>(r_curr, c_curr), 10)));
+                add_unary_edge(
+                    id, pos_to_id(r_curr, c_curr, img.cols) + 1,
+                    Edge(compute_weight(img.at<cv::Vec3b>(r, c),
+                                        img.at<cv::Vec3b>(r_curr, c_curr))));
             }
         }
     }
@@ -50,7 +50,7 @@ ImageGraph::ImageGraph(cv::Mat img,
     for (int i = 0; i < points_background.size(); i++) {
         int id =
             pos_to_id(points_background[i].y, points_background[i].x, img.cols);
-        src_neighbors[i].second = Edge(0);
+        src_neighbors[i].second = Edge(0.0);
     }
     // change weights of scribles with target
     for (int i = 0; i < points_foreground.size(); i++) {
@@ -79,9 +79,6 @@ double Edge::get_residual() const {
 }
 
 bool Edge::is_full() {
-    // if (get_residual() <= -1e-10) {
-    //    std::cerr << "residual " << get_residual();
-    //    assert(get_residual() >= -1e-10);
-    //}
-    return std::abs(get_residual()) <= 1e-10;
+    assert(get_residual() >= -1e-10);
+    return std::abs(get_residual()) <= 1e-20;
 }

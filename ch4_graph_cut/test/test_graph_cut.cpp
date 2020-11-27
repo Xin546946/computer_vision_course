@@ -7,7 +7,7 @@
 
 int main(int argc, char** argv) {
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_COLOR);
-    cv::resize(img, img, cv::Size(100, 100));
+    cv::resize(img, img, cv::Size(150, 150));
     GraphCut gc(img);
     gc.run();
     cv::Mat fore_img = gc.get_segmentation(SegType::FOREGROUND);
