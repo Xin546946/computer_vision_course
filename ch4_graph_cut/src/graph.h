@@ -11,12 +11,6 @@ struct NodeBase {
 
     void back_up_prev(NodeBase<TypeEdge>*, TypeEdge*);
     std::pair<NodeBase<TypeEdge>*, TypeEdge*> prev_;
-
-    //    protected:
-    //     std::pair<NodeBase<TypeEdge>*, TypeEdge*> get_prev() const;
-
-    // std::vector<std::pair<NodeBase<TypeEdge>*, TypeEdge>> get_neighbours()
-    // const;
 };
 
 class EdgeBase {
@@ -80,28 +74,11 @@ template <typename TypeEdge>
 NodeBase<TypeEdge>::NodeBase(int id) : id_(id), prev_{nullptr, nullptr} {
 }
 
-// template <typename TypeEdge>
-// int NodeBase<TypeEdge>::id_ const {
-//     return id_;
-// }
-
 template <typename TypeEdge>
 void NodeBase<TypeEdge>::add_neighbour(NodeBase<TypeEdge>* target_node,
                                        const TypeEdge& edge) {
     neighbours_.emplace_back(target_node, edge);
 }
-
-// template <typename TypeEdge>
-// std::vector<std::pair<NodeBase<TypeEdge>*, TypeEdge>>
-// NodeBase<TypeEdge>::get_neighbours() const {
-//     return neighbours_;
-// }
-
-// template <typename TypeEdge>
-// std::pair<NodeBase<TypeEdge>*, TypeEdge*> NodeBase<TypeEdge>::get_prev()
-// const {
-//     return prev_;
-// }
 
 template <typename TypeEdge>
 void NodeBase<TypeEdge>::back_up_prev(NodeBase<TypeEdge>* prev_node,
