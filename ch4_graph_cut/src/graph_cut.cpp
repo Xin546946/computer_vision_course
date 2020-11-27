@@ -72,10 +72,6 @@ void GraphCut::segmention_bfs() {
         for (auto& elem : curr->neighbours_) {
             if (visited.find(elem.first) == visited.end() &&
                 std::abs(elem.second.get_residual()) > 1e-20) {
-                std::cout << "edge between : ( " << curr->id_ << " ) and ( "
-                          << curr->prev_.first->id_ << " ) ---> "
-                          << " residual :" << curr->prev_.second->get_residual()
-                          << '\n';
                 visited.insert(elem.first);
                 Q.push(elem.first);
             }
