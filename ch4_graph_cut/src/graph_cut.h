@@ -29,7 +29,8 @@ class AugmentingPath {
     void update_residual();
 
    private:
-    std::stack<std::pair<Node*, Edge*>> path_;
+    std::stack<std::pair<Node*, Edge*>>
+        path_;  // todo1 : do not need to save whole path, save target only
     double min_residual_;
     int target_id_;
 };

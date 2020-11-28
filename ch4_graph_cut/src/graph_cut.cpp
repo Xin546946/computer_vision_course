@@ -1,4 +1,5 @@
 #include "graph_cut.h"
+#include "tictoc.h"
 #include <queue>
 #include <unordered_set>
 
@@ -45,7 +46,9 @@ void GraphCut::compute_max_flow() {
     while (true) {
         // step 1 : do bfs
         // std::stack<std::pair<Node*, Edge*>>
+        tictoc::tic();
         AugmentingPath path = BFS_get_path(graph_.get_root(), graph_.sink_id_);
+        std::cout << " BFS_get_path : " << tictoc::toc() / 1e3 << " ms\n";
         // step 2 :check terminnation
         if (path.empty()) {  // todo remove the find sink
             break;
@@ -96,7 +99,7 @@ std::pair<Node*, Edge*> AugmentingPath::pop() {
     path_.pop();
     return edge;
 }
-
+// todo1 :1 inline, 2 remove pair 3, change min
 void AugmentingPath::push(std::pair<Node*, Edge*> edge) {
     path_.push(edge);
     // todo compare this min stack with the original min calculation using loop
@@ -114,7 +117,7 @@ void AugmentingPath::update_residual() {
 ---------------------------------------------------------*/
 
 AugmentingPath BFS_get_path(Node* root, int id_target) {
-    std::unordered_set<Node*> visited;
+    std::unordered_set<Node*> visited;  // todo1 : change to cv::Mat
     AugmentingPath path(id_target);
 
     std::queue<Node*> Q;
@@ -137,6 +140,7 @@ AugmentingPath BFS_get_path(Node* root, int id_target) {
                 curr = curr->prev_.first;
             }
             std::cout << '\n';
+            break;
         }
 
         Q.pop();
@@ -144,9 +148,20 @@ AugmentingPath BFS_get_path(Node* root, int id_target) {
         for (auto& elem : curr->neighbours_) {
             if (visited.find(elem.first) == visited.end() &&
                 !elem.second.is_full()) {
+                // add curr elem to Q
                 visited.insert(elem.first);
                 Q.push(elem.first);
                 elem.first->back_up_prev(curr, &elem.second);
+
+                // check if target is accessable
+                auto& edge_to_t = elem.first->neighbours_[0];
+                if (!edge_to_t.second.is_full()) {
+                    visited.insert(edge_to_t.first);
+                    Q.push(edge_to_t.first);
+                    edge_to_t.first->back_up_prev(elem.first,
+                                                  &edge_to_t.second);
+                    break;
+                }
             }
         }
     }
