@@ -72,13 +72,3 @@ ImageGraph::ImageGraph(cv::Mat img,
 #####################implementation: Edge #####################
 ---------------------------------------------------------*/
 Edge::Edge(double weight) : EdgeBase(), cap_(weight), flow_(0.0){};
-
-//! remove assert after testing
-double Edge::get_residual() const {
-    return cap_ - flow_;
-}
-
-bool Edge::is_full() {
-    assert(get_residual() >= -1e-10);
-    return std::abs(get_residual()) <= 1e-20;
-}

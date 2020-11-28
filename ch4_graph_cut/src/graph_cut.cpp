@@ -99,12 +99,6 @@ std::pair<Node*, Edge*> AugmentingPath::pop() {
     path_.pop();
     return edge;
 }
-// todo1 :1 inline, 2 remove pair 3, change min
-void AugmentingPath::push(std::pair<Node*, Edge*> edge) {
-    path_.push(edge);
-    // todo compare this min stack with the original min calculation using loop
-    min_residual_ = std::min(edge.second->get_residual(), min_residual_);
-}
 
 void AugmentingPath::update_residual() {
     while (!path_.empty()) {

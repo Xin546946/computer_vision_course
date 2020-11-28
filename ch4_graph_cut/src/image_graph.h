@@ -40,3 +40,17 @@ inline int pos_to_id(int row, int col, int step) {
 inline std::pair<int, int> id_to_pos(int id, int step) {
     return {id / step, id % step};
 }
+
+/*--------------------------------------------------------
+#####################implementation: Edge #####################
+---------------------------------------------------------*/
+
+//! remove assert after testing
+inline double Edge::get_residual() const {
+    return cap_ - flow_;
+}
+
+inline bool Edge::is_full() {
+    assert(get_residual() >= -1e-10);
+    return std::abs(get_residual()) <= 1e-20;
+}
