@@ -41,31 +41,37 @@ ImageGraph::ImageGraph(cv::Mat img,
 
     // change wieghts of scribles with src
     auto src_neighbors = nodes_[0].neighbours_;
+    std::vector<std::pair<NodeBase<Edge>*, Edge>> vec_neighbours(
+        src_neighbors.begin(), src_neighbors.end());
+
     for (int i = 0; i < points_foreground.size(); i++) {
         int id =
             pos_to_id(points_foreground[i].y, points_foreground[i].x, img.cols);
-        src_neighbors[i].second.cap_ = 1e10;
+        vec_neighbours[i].second.cap_ = 1e10;
     }
 
     for (int i = 0; i < points_background.size(); i++) {
         int id =
             pos_to_id(points_background[i].y, points_background[i].x, img.cols);
-        src_neighbors[i].second.cap_ = 0.0;
+        vec_neighbours[i].second.cap_ = 0.0;
     }
     // change weights of scribles with target
     for (int i = 0; i < points_foreground.size(); i++) {
         int id = pos_to_id(points_foreground[i].y, points_foreground[i].x,
                            img.cols) +
                  1;
-        nodes_[id].neighbours_[0].second.cap_ = 0.0;
+        nodes_[id].neighbours_.front().second.cap_ = 0.0;
     }
 
     for (int i = 0; i < points_background.size(); i++) {
         int id = pos_to_id(points_background[i].y, points_background[i].x,
                            img.cols) +
                  1;
-        nodes_[id].neighbours_[0].second.cap_ = 1e10;
+        nodes_[id].neighbours_.front().second.cap_ = 1e10;
     }
+
+    std::move(vec_neighbours.begin(), vec_neighbours.end(),
+              src_neighbors.begin());
 }
 
 /*--------------------------------------------------------

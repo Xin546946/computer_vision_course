@@ -46,22 +46,19 @@ cv::Mat GraphCut::get_segmentation(SegType type) const {
 void GraphCut::preprocessing() {
     auto& root_neigh = graph_.get_root()->neighbours_;
 
-    for (int r = 0; r < img_.rows; r++) {
-        for (int c = 0; c < img_.cols; c++) {
-            int id = pos_to_id(r, c, img_.cols);
-            auto& edge_from_src = root_neigh[id].second;
-            auto& edge_to_sink = root_neigh[id].first->neighbours_[0].second;
+    for (auto it = root_neigh.begin(); it != root_neigh.end();) {
+        auto& edge_from_src = it->second;
+        auto& edge_to_sink = it->first->neighbours_.front().second;
+        double cap_edge_from_src = edge_from_src.cap_;
+        double cap_edge_to_sink = edge_to_sink.cap_;
 
-            double cap_edge_from_src = edge_from_src.cap_;
-            double cap_edge_to_sink = edge_to_sink.cap_;
-
-            if (cap_edge_from_src > cap_edge_to_sink) {
-                edge_to_sink.flow_ = cap_edge_to_sink;
-                edge_from_src.flow_ = cap_edge_to_sink;
-            } else {
-                edge_from_src.flow_ = cap_edge_from_src;
-                edge_to_sink.flow_ = cap_edge_from_src;
-            }
+        if (cap_edge_from_src > cap_edge_to_sink) {
+            it->first->neighbours_.erase(it->first->neighbours_.begin());
+            edge_from_src.flow_ = cap_edge_to_sink;
+            it++;
+        } else {
+            it = root_neigh.erase(it);
+            edge_to_sink.flow_ = cap_edge_from_src;
         }
     }
 }
@@ -171,7 +168,7 @@ AugmentingPath BFS_get_path(Node* root, int id_target) {
                 elem.first->back_up_prev(curr, &elem.second);
 
                 // check if target is accessable
-                auto& edge_to_t = elem.first->neighbours_[0];
+                auto& edge_to_t = elem.first->neighbours_.front();
                 if (!edge_to_t.second.is_full()) {
                     visited.insert(edge_to_t.first);
                     Q.push(edge_to_t.first);

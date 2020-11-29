@@ -7,7 +7,7 @@ template <typename TypeEdge>
 struct NodeBase {
     NodeBase(int id);
     int id_;
-    std::vector<std::pair<NodeBase<TypeEdge>*, TypeEdge>> neighbours_;
+    std::list<std::pair<NodeBase<TypeEdge>*, TypeEdge>> neighbours_;
     void add_neighbour(NodeBase<TypeEdge>* target_node, const TypeEdge& edge);
 
     void back_up_prev(NodeBase<TypeEdge>*, TypeEdge*);
