@@ -16,6 +16,8 @@ class ImageGraph : public Graph<Node, Edge> {
    public:
     ImageGraph(cv::Mat img, const std::vector<cv::Point>& points_foreground,
                const std::vector<cv::Point>& points_background);
+
+    // todo add ~ImageGraph();
     // typedef Node Node;
     // typedef Edge Edge;
     const int src_id_;

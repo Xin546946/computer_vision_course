@@ -4,7 +4,7 @@
 Distribution::Distribution(cv::Mat img, std::vector<cv::Point> foreground,
                            std::vector<cv::Point> background)
     : gmms_{GMM(img, foreground, 2), GMM(img, background, 2)},
-      lamda_(100),
+      lamda_(5.0),
       img_(img.clone()) {
     for (int i = 0; i < gmms_.size(); i++) {
         gmms_[i].run(20);
