@@ -16,7 +16,7 @@ GraphCut::GraphCut(cv::Mat img)
 #####################implementation: Graph Cut #####################
 ---------------------------------------------------------*/
 void GraphCut::run() {
-    preprocessing();
+    // preprocessing();
     std::cout
         << " computing max flow through the graph , please waiting ......\n";
     compute_max_flow();
@@ -141,7 +141,7 @@ AugmentingPath BFS_get_path(Node* root, int id_target) {
     // std::cout << "--------------- one sweep--------------- " << '\n';
     while (!Q.empty()) {
         Node* curr = Q.front();
-
+        std::cout << " curr id :" << curr->id_ << '\n';
         if (curr->id_ == id_target) {
             while (curr->id_ != root->id_) {
                 path.push(std::pair<Node*, Edge*>(curr, curr->prev_.second));
@@ -160,7 +160,7 @@ AugmentingPath BFS_get_path(Node* root, int id_target) {
         Q.pop();
 
         for (auto& elem : curr->neighbours_) {
-            if (!elem.second.is_full() &&
+            if ((!elem.second.is_full()) &&
                 visited.find(elem.first) == visited.end()) {
                 // add curr elem to Q
                 visited.insert(elem.first);
@@ -169,7 +169,8 @@ AugmentingPath BFS_get_path(Node* root, int id_target) {
 
                 // check if target is accessable
                 auto& edge_to_t = elem.first->neighbours_.front();
-                if (!edge_to_t.second.is_full()) {
+                if (!edge_to_t.second.is_full() &&
+                    visited.find(edge_to_t.first) == visited.end()) {
                     visited.insert(edge_to_t.first);
                     Q.push(edge_to_t.first);
                     edge_to_t.first->back_up_prev(elem.first,
