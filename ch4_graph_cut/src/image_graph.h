@@ -51,6 +51,6 @@ inline double Edge::get_residual() const {
 }
 
 inline bool Edge::is_full() {
-    assert(get_residual() >= -1e-10);
+    // assert(get_residual() >= -1e-10);
     return std::abs(get_residual()) <= 1e-20;
 }

@@ -140,8 +140,8 @@ AugmentingPath BFS_get_path(Node* root, int id_target) {
         Q.pop();
 
         for (auto& elem : curr->neighbours_) {
-            if (visited.find(elem.first) == visited.end() &&
-                !elem.second.is_full()) {
+            if (!elem.second.is_full() &&
+                visited.find(elem.first) == visited.end()) {
                 // add curr elem to Q
                 visited.insert(elem.first);
                 Q.push(elem.first);
