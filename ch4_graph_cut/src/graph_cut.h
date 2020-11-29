@@ -26,13 +26,17 @@ class AugmentingPath {
     AugmentingPath(int target_id);
     bool empty();
     std::pair<Node*, Edge*> pop();
-    void push(const std::pair<Node*, Edge*>& edge);
+    void push(std::list<std::pair<Node*, Edge*>>* min_neigh_list,
+              std::list<std::pair<Node*, Edge*>>::iterator min_iter);
     void update_residual();
 
    private:
     std::stack<std::pair<Node*, Edge*>>
         path_;  // todo1 : do not need to save whole path, save target only
     double min_residual_;
+    std::list<std::pair<Node*, Edge*>>* min_neigh_list_;
+    std::list<std::pair<Node*, Edge*>>::iterator min_iter_;
+
     int target_id_;
 };
 
@@ -41,8 +45,15 @@ class AugmentingPath {
 ---------------------------------------------------------*/
 
 // todo1 :1 inline, 2 remove pair 3, change min
-inline void AugmentingPath::push(const std::pair<Node*, Edge*>& edge) {
-    path_.push(edge);
+void AugmentingPath::push(
+    std::list<std::pair<Node*, Edge*>>* min_neigh_list,
+    std::list<std::pair<Node*, Edge*>>::iterator min_iter) {
+    path_.push(*min_iter);
     // todo compare this min stack with the original min calculation using loop
-    min_residual_ = std::min(edge.second->get_residual(), min_residual_);
+    double residual = min_iter->second->get_residual();
+    if (residual < min_residual_) {
+        min_residual_ = residual;
+        min_neigh_list_ = min_neigh_list;
+        min_iter_ = min_iter;
+    }
 }

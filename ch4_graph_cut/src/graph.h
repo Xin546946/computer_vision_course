@@ -7,8 +7,8 @@ template <typename TypeEdge>
 struct NodeBase {
     NodeBase(int id);
     int id_;
-    std::list<std::pair<NodeBase<TypeEdge>*, TypeEdge>> neighbours_;
-    void add_neighbour(NodeBase<TypeEdge>* target_node, const TypeEdge& edge);
+    std::list<std::pair<NodeBase<TypeEdge>*, TypeEdge*>> neighbours_;
+    void add_neighbour(NodeBase<TypeEdge>* target_node, TypeEdge* edge);
 
     void back_up_prev(NodeBase<TypeEdge>*, TypeEdge*);
     std::pair<NodeBase<TypeEdge>*, TypeEdge*> prev_;
@@ -25,9 +25,8 @@ template <typename TypeNode, typename TypeEdge>
 class Graph {
    public:
     Graph(int num_nodes);
-    void add_binary_edge(int id_node1, int id_node2,
-                         const TypeEdge& edge_weight);
-    void add_unary_edge(int id_src, int id_target, const TypeEdge& edge_weight);
+    void add_binary_edge(int id_node1, int id_node2, TypeEdge* edge_weight);
+    void add_unary_edge(int id_src, int id_target, TypeEdge* edge_weight);
     TypeNode* get_root();
 
    protected:
@@ -47,7 +46,7 @@ Graph<TypeNode, TypeEdge>::Graph(int num_nodes) {
 
 template <typename TypeNode, typename TypeEdge>
 void Graph<TypeNode, TypeEdge>::add_binary_edge(int id_node1, int id_node2,
-                                                const TypeEdge& edge) {
+                                                TypeEdge* edge) {
     if (id_node1 < nodes_.size() && id_node2 < nodes_.size()) {
         nodes_[id_node1].add_neighbour(&nodes_[id_node2], edge);
         nodes_[id_node2].add_neighbour(&nodes_[id_node1], edge);
@@ -59,7 +58,7 @@ void Graph<TypeNode, TypeEdge>::add_binary_edge(int id_node1, int id_node2,
 
 template <typename TypeNode, typename TypeEdge>
 void Graph<TypeNode, TypeEdge>::add_unary_edge(int id_src, int id_target,
-                                               const TypeEdge& edge) {
+                                               TypeEdge* edge) {
     nodes_[id_src].add_neighbour(&nodes_[id_target], edge);
 }
 
@@ -77,7 +76,7 @@ NodeBase<TypeEdge>::NodeBase(int id) : id_(id), prev_{nullptr, nullptr} {
 
 template <typename TypeEdge>
 void NodeBase<TypeEdge>::add_neighbour(NodeBase<TypeEdge>* target_node,
-                                       const TypeEdge& edge) {
+                                       TypeEdge* edge) {
     neighbours_.emplace_back(target_node, edge);
 }
 

@@ -49,16 +49,16 @@ void GraphCut::preprocessing() {
     for (auto it = root_neigh.begin(); it != root_neigh.end();) {
         auto& edge_from_src = it->second;
         auto& edge_to_sink = it->first->neighbours_.front().second;
-        double cap_edge_from_src = edge_from_src.cap_;
-        double cap_edge_to_sink = edge_to_sink.cap_;
+        double cap_edge_from_src = edge_from_src->cap_;
+        double cap_edge_to_sink = edge_to_sink->cap_;
 
         if (cap_edge_from_src > cap_edge_to_sink) {
             it->first->neighbours_.erase(it->first->neighbours_.begin());
-            edge_from_src.flow_ = cap_edge_to_sink;
+            edge_from_src->flow_ = cap_edge_to_sink;
             it++;
         } else {
             it = root_neigh.erase(it);
-            edge_to_sink.flow_ = cap_edge_from_src;
+            edge_to_sink->flow_ = cap_edge_from_src;
         }
     }
 }
@@ -94,7 +94,7 @@ void GraphCut::segmention_bfs() {
 
         for (auto& elem : curr->neighbours_) {
             if (visited.find(elem.first) == visited.end() &&
-                std::abs(elem.second.get_residual()) > 1e-20) {
+                std::abs(elem.second->get_residual()) > 1e-20) {
                 visited.insert(elem.first);
                 Q.push(elem.first);
             }
@@ -124,6 +124,8 @@ void AugmentingPath::update_residual() {
     while (!path_.empty()) {
         this->pop().second->flow_ += min_residual_;
     }
+
+    min_neigh_list_->erase(min_iter_);
 }
 
 /*--------------------------------------------------------
@@ -160,21 +162,20 @@ AugmentingPath BFS_get_path(Node* root, int id_target) {
         Q.pop();
 
         for (auto& elem : curr->neighbours_) {
-            if ((!elem.second.is_full()) &&
+            if ((!elem.second->is_full()) &&
                 visited.find(elem.first) == visited.end()) {
                 // add curr elem to Q
                 visited.insert(elem.first);
                 Q.push(elem.first);
-                elem.first->back_up_prev(curr, &elem.second);
+                elem.first->back_up_prev(curr, elem.second);
 
                 // check if target is accessable
                 auto& edge_to_t = elem.first->neighbours_.front();
-                if (!edge_to_t.second.is_full() &&
+                if (!edge_to_t.second->is_full() &&
                     visited.find(edge_to_t.first) == visited.end()) {
                     visited.insert(edge_to_t.first);
                     Q.push(edge_to_t.first);
-                    edge_to_t.first->back_up_prev(elem.first,
-                                                  &edge_to_t.second);
+                    edge_to_t.first->back_up_prev(elem.first, edge_to_t.second);
                     break;
                 }
             }
