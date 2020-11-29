@@ -78,14 +78,14 @@ NodeBase<TypeEdge>::NodeBase(int id) : id_(id), prev_{nullptr, nullptr} {
 }
 
 template <typename TypeEdge>
-void NodeBase<TypeEdge>::add_neighbour(NodeBase<TypeEdge>* target_node,
-                                       TypeEdge* edge) {
+inline void NodeBase<TypeEdge>::add_neighbour(NodeBase<TypeEdge>* target_node,
+                                              TypeEdge* edge) {
     neighbours_.emplace_back(target_node, edge);
 }
 
 template <typename TypeEdge>
-void NodeBase<TypeEdge>::back_up_prev(NodeBase<TypeEdge>* prev_node,
-                                      TypeEdge* edge) {
+inline void NodeBase<TypeEdge>::back_up_prev(NodeBase<TypeEdge>* prev_node,
+                                             TypeEdge* edge) {
     prev_.first = prev_node;
     prev_.second = edge;
 }

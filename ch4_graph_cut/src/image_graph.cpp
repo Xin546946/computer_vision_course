@@ -20,6 +20,7 @@ ImageGraph::ImageGraph(cv::Mat img,
         for (int c = 0; c < img.cols; c++) {
             int id = pos_to_id(r, c, img.cols) + 1;
             // build edges from img to s
+            auto p = new Edge(w_fore.at<double>(r, c));
             add_unary_edge(0, id, new Edge(w_fore.at<double>(r, c)));
             // build edges from img to t
             add_unary_edge(id, img.rows * img.cols + 1,
@@ -40,21 +41,23 @@ ImageGraph::ImageGraph(cv::Mat img,
     }
 
     // change wieghts of scribles with src
-    auto src_neighbors = nodes_[0].neighbours_;
+    auto& src_neighbors = nodes_[0].neighbours_;
     std::vector<std::pair<NodeBase<Edge>*, Edge*>> vec_neighbours(
         src_neighbors.begin(), src_neighbors.end());
 
     for (int i = 0; i < points_foreground.size(); i++) {
         int id =
             pos_to_id(points_foreground[i].y, points_foreground[i].x, img.cols);
-        vec_neighbours[i].second->cap_ = 1e10;
+        vec_neighbours[id].second->cap_ = 1e10;
     }
 
     for (int i = 0; i < points_background.size(); i++) {
         int id =
             pos_to_id(points_background[i].y, points_background[i].x, img.cols);
-        vec_neighbours[i].second->cap_ = 0.0;
+        vec_neighbours[id].second->cap_ = 0.0;
     }
+    std::move(vec_neighbours.begin(), vec_neighbours.end(),
+              src_neighbors.begin());
     // change weights of scribles with target
     for (int i = 0; i < points_foreground.size(); i++) {
         int id = pos_to_id(points_foreground[i].y, points_foreground[i].x,
@@ -69,12 +72,10 @@ ImageGraph::ImageGraph(cv::Mat img,
                  1;
         nodes_[id].neighbours_.front().second->cap_ = 1e10;
     }
-
-    std::move(vec_neighbours.begin(), vec_neighbours.end(),
-              src_neighbors.begin());
 }
 
 /*--------------------------------------------------------
 #####################implementation: Edge #####################
 ---------------------------------------------------------*/
-Edge::Edge(double weight) : EdgeBase(), cap_(weight), flow_(0.0){};
+Edge::Edge(double weight) : EdgeBase(), cap_(weight), flow_(0.0) {
+}
