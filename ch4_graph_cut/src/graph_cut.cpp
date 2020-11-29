@@ -16,6 +16,7 @@ GraphCut::GraphCut(cv::Mat img)
 #####################implementation: Graph Cut #####################
 ---------------------------------------------------------*/
 void GraphCut::run() {
+    preprocessing();
     std::cout
         << " computing max flow through the graph , please waiting ......\n";
     compute_max_flow();
@@ -42,6 +43,28 @@ cv::Mat GraphCut::get_segmentation(SegType type) const {
     return result;
 }
 
+void GraphCut::preprocessing() {
+    auto& root_neigh = graph_.get_root()->neighbours_;
+
+    for (int r = 0; r < img_.rows; r++) {
+        for (int c = 0; c < img_.cols; c++) {
+            int id = pos_to_id(r, c, img_.cols);
+            auto& edge_from_src = root_neigh[id].second;
+            auto& edge_to_sink = root_neigh[id].first->neighbours_[0].second;
+
+            double cap_edge_from_src = edge_from_src.cap_;
+            double cap_edge_to_sink = edge_to_sink.cap_;
+
+            if (cap_edge_from_src > cap_edge_to_sink) {
+                edge_to_sink.flow_ = cap_edge_to_sink;
+                edge_from_src.flow_ = cap_edge_to_sink;
+            } else {
+                edge_from_src.flow_ = cap_edge_from_src;
+                edge_to_sink.flow_ = cap_edge_from_src;
+            }
+        }
+    }
+}
 void GraphCut::compute_max_flow() {
     while (true) {
         // step 1 : do bfs

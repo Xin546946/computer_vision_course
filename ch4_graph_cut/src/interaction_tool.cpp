@@ -9,7 +9,7 @@ void drag_to_collect_pixel(int event, int x, int y, int flags, void* ptr) {
     if ((flags & cv::EVENT_FLAG_LBUTTON) && event == cv::EVENT_MOUSEMOVE &&
         is_in_img(item_ptr->img_, y, x)) {
         item_ptr->points_.emplace_back(x, y);
-        cv::circle(item_ptr->img_, cv::Point(x, y), 0, item_ptr->color_, 1);
+        cv::circle(item_ptr->img_, cv::Point(x, y), 1, item_ptr->color_, 2);
 
         cv::imshow(item_ptr->win_name_, item_ptr->img_);
         cv::waitKey(1);

@@ -44,27 +44,27 @@ ImageGraph::ImageGraph(cv::Mat img,
     for (int i = 0; i < points_foreground.size(); i++) {
         int id =
             pos_to_id(points_foreground[i].y, points_foreground[i].x, img.cols);
-        src_neighbors[i].second = Edge(1e10);
+        src_neighbors[i].second.cap_ = 1e10;
     }
 
     for (int i = 0; i < points_background.size(); i++) {
         int id =
             pos_to_id(points_background[i].y, points_background[i].x, img.cols);
-        src_neighbors[i].second = Edge(0.0);
+        src_neighbors[i].second.cap_ = 0.0;
     }
     // change weights of scribles with target
     for (int i = 0; i < points_foreground.size(); i++) {
         int id = pos_to_id(points_foreground[i].y, points_foreground[i].x,
                            img.cols) +
                  1;
-        nodes_[id].neighbours_[0].second = Edge(0.0);
+        nodes_[id].neighbours_[0].second.cap_ = 0.0;
     }
 
     for (int i = 0; i < points_background.size(); i++) {
         int id = pos_to_id(points_background[i].y, points_background[i].x,
                            img.cols) +
                  1;
-        nodes_[id].neighbours_[0].second = Edge(1e10);
+        nodes_[id].neighbours_[0].second.cap_ = 1e10;
     }
 }
 

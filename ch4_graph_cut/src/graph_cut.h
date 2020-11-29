@@ -13,6 +13,7 @@ class GraphCut {
    private:
     void compute_max_flow();
     void segmention_bfs();
+    void preprocessing();
     ScribbleInteractionTool interaction_tool_;
     ImageGraph graph_;
 
