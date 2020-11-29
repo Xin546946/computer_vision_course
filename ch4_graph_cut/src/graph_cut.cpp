@@ -146,7 +146,8 @@ AugmentingPath BFS_get_path(Node* root, int id_target) {
         std::cout << " curr id :" << curr->id_ << '\n';
         if (curr->id_ == id_target) {
             while (curr->id_ != root->id_) {
-                path.push(std::pair<Node*, Edge*>(curr, curr->prev_.second));
+                // path.push(std::pair<Node*, Edge*>(curr, curr->prev_.second));
+                path.push(&(curr->prev_.first->neighbours_), );
                 std::cout << "edge between : ( " << curr->id_ << " ) and ( "
                           << curr->prev_.first->id_ << " ) ---> "
                           << "flow :" << curr->prev_.second->flow_
@@ -161,21 +162,22 @@ AugmentingPath BFS_get_path(Node* root, int id_target) {
 
         Q.pop();
 
-        for (auto& elem : curr->neighbours_) {
-            if ((!elem.second->is_full()) &&
-                visited.find(elem.first) == visited.end()) {
+        for (auto it = curr->neighbours_.begin(); it != curr->neighbours_.end();
+             it++) {
+            if ((!it->second->is_full()) &&
+                visited.find(it->first) == visited.end()) {
                 // add curr elem to Q
-                visited.insert(elem.first);
-                Q.push(elem.first);
-                elem.first->back_up_prev(curr, elem.second);
+                visited.insert(it->first);
+                Q.push(it->first);
+                it->first->back_up_prev(curr, it->second);
 
                 // check if target is accessable
-                auto& edge_to_t = elem.first->neighbours_.front();
+                auto& edge_to_t = it->first->neighbours_.front();
                 if (!edge_to_t.second->is_full() &&
                     visited.find(edge_to_t.first) == visited.end()) {
                     visited.insert(edge_to_t.first);
                     Q.push(edge_to_t.first);
-                    edge_to_t.first->back_up_prev(elem.first, edge_to_t.second);
+                    edge_to_t.first->back_up_prev(it->first, edge_to_t.second);
                     break;
                 }
             }
