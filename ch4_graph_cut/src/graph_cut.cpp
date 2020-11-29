@@ -16,7 +16,7 @@ GraphCut::GraphCut(cv::Mat img)
 #####################implementation: Graph Cut #####################
 ---------------------------------------------------------*/
 void GraphCut::run() {
-    // preprocessing();
+    preprocessing();
     std::cout
         << " computing max flow through the graph , please waiting ......\n";
     compute_max_flow();
@@ -143,11 +143,10 @@ AugmentingPath BFS_get_path(Node* root, int id_target) {
     // std::cout << "--------------- one sweep--------------- " << '\n';
     while (!Q.empty()) {
         Node* curr = Q.front();
-        std::cout << " curr id :" << curr->id_ << '\n';
         if (curr->id_ == id_target) {
             while (curr->id_ != root->id_) {
                 // path.push(std::pair<Node*, Edge*>(curr, curr->prev_.second));
-                path.push(&(curr->prev_.first->neighbours_), );
+                path.push(&(curr->prev_.first->neighbours_), curr->prev_it);
                 std::cout << "edge between : ( " << curr->id_ << " ) and ( "
                           << curr->prev_.first->id_ << " ) ---> "
                           << "flow :" << curr->prev_.second->flow_
@@ -170,14 +169,21 @@ AugmentingPath BFS_get_path(Node* root, int id_target) {
                 visited.insert(it->first);
                 Q.push(it->first);
                 it->first->back_up_prev(curr, it->second);
+                it->first->prev_it = it;
 
                 // check if target is accessable
                 auto& edge_to_t = it->first->neighbours_.front();
+                if (!it->first->neighbours_.empty() &&
+                    edge_to_t.first->id_ != id_target) {
+                    continue;
+                }
+
                 if (!edge_to_t.second->is_full() &&
                     visited.find(edge_to_t.first) == visited.end()) {
                     visited.insert(edge_to_t.first);
                     Q.push(edge_to_t.first);
                     edge_to_t.first->back_up_prev(it->first, edge_to_t.second);
+                    edge_to_t.first->prev_it = it->first->neighbours_.begin();
                     break;
                 }
             }

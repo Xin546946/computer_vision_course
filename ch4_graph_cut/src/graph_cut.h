@@ -45,7 +45,7 @@ class AugmentingPath {
 ---------------------------------------------------------*/
 
 // todo1 :1 inline, 2 remove pair 3, change min
-void AugmentingPath::push(
+inline void AugmentingPath::push(
     std::list<std::pair<Node*, Edge*>>* min_neigh_list,
     std::list<std::pair<Node*, Edge*>>::iterator min_iter) {
     path_.push(*min_iter);

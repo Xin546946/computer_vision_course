@@ -8,10 +8,13 @@ struct NodeBase {
     NodeBase(int id);
     int id_;
     std::list<std::pair<NodeBase<TypeEdge>*, TypeEdge*>> neighbours_;
+
     void add_neighbour(NodeBase<TypeEdge>* target_node, TypeEdge* edge);
 
     void back_up_prev(NodeBase<TypeEdge>*, TypeEdge*);
     std::pair<NodeBase<TypeEdge>*, TypeEdge*> prev_;
+    typename std::list<std::pair<NodeBase<TypeEdge>*, TypeEdge*>>::iterator
+        prev_it;
 };
 
 class EdgeBase {
