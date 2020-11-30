@@ -104,8 +104,7 @@ class AugmentingPath {
     void update_residual();
 
    private:
-    std::stack<std::pair<Node*, Edge*>>
-        path_;  // todo1 : do not need to save whole path, save target only
+    std::stack<std::pair<Node*, Edge*>> path_;
     double min_residual_;
 
     int target_id_;
@@ -114,9 +113,7 @@ class AugmentingPath {
 /*--------------------------------------------------------
 #####################implementation: AugmentingPath #####################
 ---------------------------------------------------------*/
-// todo1 :1 inline, 2 remove pair 3, change min
 inline void AugmentingPath::push(const std::pair<Node*, Edge*>& edge) {
     path_.push(edge);
-    // todo compare this min stack with the original min calculation using loop
     min_residual_ = std::min(edge.second->get_residual(), min_residual_);
 }

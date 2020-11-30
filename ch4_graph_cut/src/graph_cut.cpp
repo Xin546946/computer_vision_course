@@ -63,7 +63,7 @@ void GraphCut::compute_max_flow() {
         AugmentingPath path = BFS_get_path(graph_.get_root(), graph_.sink_id_);
         std::cout << " BFS_get_path : " << tictoc::toc() / 1e3 << " ms\n";
         // step 2 :check terminnation
-        if (path.empty()) {  // todo remove the find sink
+        if (path.empty()) {
             break;
         }
         // step 3 :update flow

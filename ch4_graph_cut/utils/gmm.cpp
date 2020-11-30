@@ -66,7 +66,6 @@ void Gaussian3D::set_miu(const cv::Matx31d& miu) {
     miu_ = miu;
 }
 
-// todo change name --> sigma square
 void Gaussian3D::set_sigma(const cv::Matx33d& sigma) {
     sigma_ = sigma;
 }
@@ -161,7 +160,6 @@ void GMM::update_miu(int id_model, double Nk) {
 void GMM::update_sigma(int id_model, double Nk) {
     cv::Matx33d new_sigma = cv::Matx33d::zeros();
     for (int i = 0; i < samples_.rows; i++) {
-        // todo test remove Matx31d
         cv::Matx31d resi = cv::Matx31d(samples_.at<cv::Vec3d>(i)) -
                            gaussian3d_model_[id_model].get_miu();
         new_sigma += posterior_[id_model].at<double>(i) * resi * resi.t();
