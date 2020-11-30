@@ -133,51 +133,7 @@ AugmentingPath BFS_get_path(Node* root, int id_target) {
     Q.push(root);
     // std::cout << "--------------- one sweep--------------- " << '\n';
     while (!Q.empty()) {
-        Node* curr = Q.front();
-        if (curr->id_ == id_target) {
-            while (curr->id_ != root->id_) {
-                // path.push(std::pair<Node*, Edge*>(curr, curr->prev_.second));
-                path.push(std::pair<Node*, Edge*>(curr, curr->prev_.second));
-                std::cout << "edge between : ( " << curr->id_ << " ) and ( "
-                          << curr->prev_.first->id_ << " ) ---> "
-                          << "flow :" << curr->prev_.second->flow_
-                          << ", cap :" << curr->prev_.second->cap_
-                          << ", residual :"
-                          << curr->prev_.second->get_residual() << '\n';
-                curr = curr->prev_.first;
-            }
-            std::cout << '\n';
-            break;
-        }
-
-        Q.pop();
-        // find a path from src to target and save the path and iterator
-        for (auto it = curr->neighbours_.begin(); it != curr->neighbours_.end();
-             it++) {
-            if ((!it->second->is_full()) &&
-                visited.find(it->first) == visited.end()) {
-                // add curr elem to Q
-                visited.insert(it->first);
-                Q.push(it->first);
-                it->first->back_up_prev(curr, it->second);
-
-                // check if target is accessable
-                auto& edge_to_t = it->first->neighbours_.front();
-                if (!it->first->neighbours_.empty() &&
-                    edge_to_t.first->id_ != id_target) {
-                    continue;
-                }
-
-                if (!edge_to_t.second->is_full() &&
-                    visited.find(edge_to_t.first) == visited.end()) {
-                    visited.insert(edge_to_t.first);
-                    Q.push(edge_to_t.first);
-                    edge_to_t.first->back_up_prev(it->first, edge_to_t.second);
-
-                    break;
-                }
-            }
-        }
+        // todo  complete the rest part of get_path function using bfs
     }
     return path;
 }
