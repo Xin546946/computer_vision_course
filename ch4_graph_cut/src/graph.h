@@ -13,8 +13,6 @@ struct NodeBase {
 
     void back_up_prev(NodeBase<TypeEdge>*, TypeEdge*);
     std::pair<NodeBase<TypeEdge>*, TypeEdge*> prev_;
-    typename std::list<std::pair<NodeBase<TypeEdge>*, TypeEdge*>>::iterator
-        prev_it;
 };
 
 class EdgeBase {

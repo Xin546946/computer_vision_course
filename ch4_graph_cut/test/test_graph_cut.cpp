@@ -8,7 +8,7 @@
 
 int main(int argc, char** argv) {
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_COLOR);
-    // cv::resize(img, img, cv::Size(150, 150));
+    cv::resize(img, img, cv::Size(100, 100));
     GraphCut gc(img);
     tictoc::tic();
     gc.run();
