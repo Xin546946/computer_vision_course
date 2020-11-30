@@ -145,7 +145,7 @@ void AugmentingPath::update_residual() {
 ---------------------------------------------------------*/
 
 AugmentingPath BFS_get_path(Node* root, int id_target) {
-    std::unordered_set<Node*> visited;  // todo1 : change to cv::Mat
+    std::unordered_set<Node*> visited;
     AugmentingPath path(id_target);
 
     std::queue<Node*> Q;
@@ -172,7 +172,7 @@ AugmentingPath BFS_get_path(Node* root, int id_target) {
         }
 
         Q.pop();
-
+        // find a path from src to target and save the path and iterator
         for (auto it = curr->neighbours_.begin(); it != curr->neighbours_.end();
              it++) {
             if ((!it->second->is_full()) &&
