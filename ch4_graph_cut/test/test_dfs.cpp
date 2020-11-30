@@ -32,7 +32,7 @@ int main(int argc, char** argv) {
     solver.add_edge(7, t, 15);
     solver.add_edge(8, t, 25);
 
-    NodeEK* root = solver.get_graph();
+    NodeEK* root = solver.get_root();
     std::vector<bool> visited(n, false);
     DFS(root, visited);
     // BFS(root);
