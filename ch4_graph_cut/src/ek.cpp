@@ -1,7 +1,22 @@
+/**
+______________________________________________________________________
+*********************************************************************
+* @brief This file is developed for the course of ShenLan XueYuan:
+* Fundamental implementations of Computer Vision
+* all rights preserved
+* @author Xin Jin, Zhaoran Wu
+* @contact: xinjin1109@gmail.com, zhaoran.wu1@gmail.com
+*
+______________________________________________________________________
+*********************************************************************
+**/
 #include "ek.h"
 #include "graph_search.h"
 #include <iostream>
 #include <limits>
+/*--------------------------------------------------------
+#####################implementation: Edge EK #####################
+---------------------------------------------------------*/
 EdgeEK::EdgeEK(int cap) : cap_(cap), flow_(0) {
 }
 
@@ -12,9 +27,15 @@ int EdgeEK::get_residual() {
 bool EdgeEK::is_full() {
     return get_residual() <= 0;
 }
-
+/*--------------------------------------------------------
+#####################implementation: NodeEK #####################
+---------------------------------------------------------*/
 NodeEK::NodeEK(int id) : id_(id) {
 }
+
+/*--------------------------------------------------------
+#####################implementation: EKSolver #####################
+---------------------------------------------------------*/
 EKSolver::EKSolver(int num_nodes, int src_id, int sink_id)
     : src_id_(src_id), sink_id_(sink_id) {
     for (int id = 0; id < num_nodes; id++) {
@@ -31,7 +52,7 @@ int EKSolver::compute_max_flow() {
     while (true) {
         // step 1 : do bfs
         std::vector<std::pair<NodeEK*, EdgeEK*>> path =
-            BFS_get_path(get_graph(), sink_id_, src_id_);
+            BFS_get_path(get_root(), sink_id_, src_id_);
         // step2 :check terminnation
         if (path.empty() || path.front().first->id_ != sink_id_) {
             break;
@@ -51,9 +72,9 @@ int EKSolver::compute_max_flow() {
         }
     }
 
-    return BFS(get_graph(), sink_id_);
+    return BFS(get_root(), sink_id_);
 }
 
-NodeEK* EKSolver::get_graph() {
+NodeEK* EKSolver::get_root() {
     return &nodes_[src_id_];
 }
