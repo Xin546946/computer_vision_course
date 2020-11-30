@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
     // std::cout << img << '\n';
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_COLOR);
 
-    const auto& points = drag_to_get_fore_and_background_scrible(img);
+    const auto& points = drag_to_get_fore_and_background_scribbles(img);
 
     ImageGraph graph(img, points[0], points[1]);
     // std::unordered_set<Node*> visited;

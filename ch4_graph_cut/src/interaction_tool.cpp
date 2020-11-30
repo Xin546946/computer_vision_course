@@ -16,7 +16,7 @@ void drag_to_collect_pixel(int event, int x, int y, int flags, void* ptr) {
     }
 }
 
-std::array<std::vector<cv::Point>, 2> drag_to_get_fore_and_background_scrible(
+std::array<std::vector<cv::Point>, 2> drag_to_get_fore_and_background_scribbles(
     cv::Mat img_origin) {
     cv::Mat img = img_origin.clone();
 
@@ -46,5 +46,5 @@ std::array<std::vector<cv::Point>, 2> drag_to_get_fore_and_background_scrible(
 }
 
 ScribbleInteractionTool::ScribbleInteractionTool(cv::Mat img)
-    : marked_points_(drag_to_get_fore_and_background_scrible(img)) {
+    : marked_points_(drag_to_get_fore_and_background_scribbles(img)) {
 }
