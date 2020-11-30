@@ -11,9 +11,8 @@ Distribution::Distribution(cv::Mat img, std::vector<cv::Point> foreground,
     }
 }
 
-// todo change the name : flag
-cv::Mat Distribution::get_probability_map(int flag) {
+cv::Mat Distribution::get_probability_map(int id) {
     cv::Mat log_prob = cv::Mat::zeros(img_.size(), CV_64FC1);
-    cv::log(gmms_[1 - flag].get_prob(), log_prob);
+    cv::log(gmms_[1 - id].get_prob(), log_prob);
     return -lamda_ * log_prob;
 }
