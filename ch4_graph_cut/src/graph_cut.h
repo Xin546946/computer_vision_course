@@ -52,11 +52,6 @@ class GraphCut {
      *
      */
     void segmention_bfs();
-    /**
-     * @brief calculate the residual for the first round
-     *
-     */
-    void preprocessing();
 
     ScribbleInteractionTool interaction_tool_;
     ImageGraph graph_;
