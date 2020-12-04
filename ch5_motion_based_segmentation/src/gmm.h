@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <queue>
 #include <vector>
 
@@ -26,11 +27,13 @@ struct GaussianModel {
     GaussianParam param_;
 };
 
+bool operator<(const gmm::GaussianParam& lhs, const gmm::GaussianParam& rhs);
+
 struct ModelParam {
     std::vector<GaussianParam> param_;
     void sort();
-    std::ostream& operator<<(std::ostream& os, const gmm::ModelParam& model_param);
 };
+std::ostream& operator<<(std::ostream& os, const gmm::ModelParam& model_param);
 
 class GMM {
    public:
