@@ -68,7 +68,4 @@ void gmm::GMM::update_gmm() {
 }
 
 void gmm::GMM::update_weight(double sample) {
-    for (auto it = model_param_.param_.begin(); it != model_param_.param_.end(); it++) {
-        *it.weight_ = (1 - config_param_.alpha_) * it * weight_ + config_param_.alpha_*
-    }
 }
