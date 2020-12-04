@@ -5,7 +5,7 @@
 
 class MotionSeg {
    public:
-    MotionSeg() = default;
+    MotionSeg(int rows, int cols, int num_gaussian, const gmm::ConfigParam& config);
     void process(const std::vector<cv::Mat>& video);
 
    private:

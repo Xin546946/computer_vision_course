@@ -26,6 +26,7 @@ double compute_gaussian_pdf(GaussianParam param, double sample);
 bool operator<(const gmm::GaussianParam& lhs, const gmm::GaussianParam& rhs);
 
 struct ModelParam {
+    ModelParam() = default;
     std::vector<GaussianParam> param_;
     void sort();
 };
@@ -43,7 +44,7 @@ class GMM {
     void replace_model(double sample);
     void update_gmm(double sample);
     int num_gaussians_;
-    ConfigParam config_param_;
+    ConfigParam config_param_;  // todo make this static
     ModelParam model_param_;
 };
 }  // namespace gmm

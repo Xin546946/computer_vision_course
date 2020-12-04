@@ -11,7 +11,14 @@ int main(int argc, char** argv) {
         video.push_back(img);
     }
 
-    MotionSeg ms;
+    double a = 1.5;
+    double alpha = 0.01;
+    double fore_threshold = 0.25;
+
+    gmm::ConfigParam config_param(a, alpha, fore_threshold);
+
+    int num_gausian = 3;
+    MotionSeg ms(video[0].rows, video[0].cols, num_gausian, config_param);
     ms.process(video);
 
     return 0;
