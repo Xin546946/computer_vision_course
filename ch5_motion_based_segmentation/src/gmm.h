@@ -19,14 +19,11 @@ struct ConfigParam {
     double fore_threshold_;
 };
 
+bool operator<(const GaussianParam& lhs, const GaussianParam& rhs) {
+    return (lhs.weight_ / lhs.var_) < (rhs.weight_ / rhs.var_);
+}
 struct ModelParam {
-    bool cmp(const GaussianParam& lhs, const GaussianParam& rhs) {
-        return (lhs.weight_ / lhs.var_) < (rhs.weight_ / rhs.var_);
-    };
-
-    std::priority_queue<GaussianParam, std::vector<GaussianParam>,
-                        decltype(cmp)>
-        model_param;
+    std::priority_queue<GaussianParam> model_param;
 };
 
 class GMM {
