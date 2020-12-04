@@ -10,7 +10,8 @@ int main(int argc, char** argv) {
         video.push_back(img);
     }
 
-    //
+    MotionSeg ms;
+    ms.process(video);
 
     return 0;
 }

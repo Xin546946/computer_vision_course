@@ -3,7 +3,8 @@ target_link_libraries(test_incremental_gmm
     gmm
 )
 
-add_executable(test_motion_based_segmentaion test_motion_based_segmentaion.cpp)
-target_link_libraries(test_motion_based_segmentaion 
+add_executable(test_motion_seg test_motion_seg.cpp)
+target_link_libraries(test_motion_seg 
     mb_seg
+    ${OpenCV_LIBS}
 )
