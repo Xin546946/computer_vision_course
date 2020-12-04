@@ -28,6 +28,8 @@ double compute_gaussian_pdf(gmm::GaussianParam param, double sample) {
 /*--------------------------------------------------------
 #####################implementation: ModelParam #####################
 ---------------------------------------------------------*/
+ModelParam::ModelParam(int num_gaussian) : param_(num_gaussian) {
+}
 bool operator<(const GaussianParam& lhs, const GaussianParam& rhs) {
     return (lhs.weight_ / lhs.var_) < (rhs.weight_ / rhs.var_);
 }
@@ -47,17 +49,23 @@ std::ostream& operator<<(std::ostream& os, const ModelParam& model_param) {
 /*--------------------------------------------------------
 #####################implementation: GMM #####################
 ---------------------------------------------------------*/
-GMM::GMM(int num_gaussians, ConfigParam config_param) : num_gaussians_(num_gaussians), config_param_(config_param) {
+GMM::GMM(int num_gaussians, ConfigParam config_param)
+    : num_gaussians_(num_gaussians), config_param_(config_param), model_param_(num_gaussians) {
 }
 
 ModelParam GMM::get_model_param() const {
     return this->model_param_;
 }
 void GMM::add_sample(double sample) {
-    if (!is_in_gmm(sample)) {
-        replace_model(sample);
+    if (status_ == GMMStatus::NOT_INILIALIZED) {
+        this->model_param_.param_[0] = GaussianParam(sample, 30, 1);
+        status_ = GMMStatus::INITIALIZED;
     } else {
-        update_gmm(sample);
+        if (!is_in_gmm(sample)) {
+            replace_model(sample);
+        } else {
+            update_gmm(sample);
+        }
     }
 }
 

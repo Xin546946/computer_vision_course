@@ -18,7 +18,7 @@ struct GaussianParam {
     GaussianParam(double mean, double var, double weight);
     double mean_ = 0;
     double var_ = 50;
-    double weight_ = 1;
+    double weight_ = 0;
 };
 
 double compute_gaussian_pdf(GaussianParam param, double sample);
@@ -26,11 +26,13 @@ double compute_gaussian_pdf(GaussianParam param, double sample);
 bool operator<(const gmm::GaussianParam& lhs, const gmm::GaussianParam& rhs);
 
 struct ModelParam {
-    ModelParam() = default;
+    ModelParam(int num_gaussian);
     std::vector<GaussianParam> param_;
     void sort();
 };
 std::ostream& operator<<(std::ostream& os, const gmm::ModelParam& model_param);
+
+enum class GMMStatus { NOT_INILIALIZED = 1, INITIALIZED = 2 };
 
 class GMM {
    public:
@@ -46,5 +48,6 @@ class GMM {
     int num_gaussians_;
     ConfigParam config_param_;  // todo make this static
     ModelParam model_param_;
+    GMMStatus status_ = gmm::GMMStatus::NOT_INILIALIZED;
 };
 }  // namespace gmm

@@ -10,8 +10,6 @@ void test_fit_model(std::vector<double>& means, std::vector<double>& vars, std::
 std::vector<double> generate_gmm_data(int num_want, const std::vector<double>& means, const std::vector<double>& vars,
                                       const std::vector<double>& weights);
 int main(int argc, char** argv) {
-    int num_want = 10;
-
     // test0
     std::vector<double> means{3, 8, 10};
     std::vector<double> vars{4, 3, 4};
@@ -39,7 +37,7 @@ int main(int argc, char** argv) {
 void test_fit_model(std::vector<double>& means, std::vector<double>& vars, std::vector<double>& weights, double a,
                     double alpha, double fore_threshold) {
     // generate gmm samples
-    int num_want = 100;
+    int num_want = 1000;
     std::vector<double> samples = generate_gmm_data(num_want, means, vars, weights);
     // declare gmm
 
