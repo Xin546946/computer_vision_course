@@ -6,7 +6,8 @@
 
 struct GaussianParam {
     double mean_;
-    cv::Matx33d var_;
+    double var_;
+    double weight_;
 };
 
 namespace gmm {
@@ -19,8 +20,13 @@ struct ConfigParam {
 };
 
 struct ModelParam {
-    std::priority_queue<GaussianParam> model_param;
-    std::vector<double> weight_;
+    bool cmp(const GaussianParam& lhs, const GaussianParam& rhs) {
+        return (lhs.weight_ / lhs.var_) < (rhs.weight_ / rhs.var_);
+    };
+
+    std::priority_queue<GaussianParam, std::vector<GaussianParam>,
+                        decltype(cmp)>
+        model_param;
 };
 
 class GMM {
