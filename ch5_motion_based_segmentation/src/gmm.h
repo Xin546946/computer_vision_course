@@ -13,24 +13,22 @@ struct ConfigParam {
 };
 
 struct GaussianParam {
+    GaussianParam() = default;
     GaussianParam(double mean, double var, double weight);
     double mean_ = 0;
     double var_ = 50;
     double weight_ = 1;
 };
 
-struct Gaussian {
-    Gaussian(GaussianParam param);
-    void compute_gaussian_pdf() const;
+struct GaussianModel {
+    GaussianModel(GaussianParam param);
+    double compute_gaussian_pdf(double sample) const;
+    GaussianParam param_;
 };
 
-bool operator<(const GaussianParam& lhs, const GaussianParam& rhs) {
-    return (lhs.weight_ / lhs.var_) > (rhs.weight_ / rhs.var_);
-}
 struct ModelParam {
-    std::priority_queue<GaussianParam> param_;
-
-    int get_size() const;
+    std::vector<GaussianParam> param_;
+    void sort();
 };
 
 class GMM {
@@ -38,7 +36,7 @@ class GMM {
     GMM(int num_gaussian, ConfigParam config_param);
     void add_sample(double sample);
     ModelParam get_model_param() const;
-    bool is_foreground() const;
+    bool is_last_sample_foreground() const;
 
    private:
     bool is_in_gmm(double sample);
@@ -51,5 +49,6 @@ class GMM {
     int num_gaussians_;
     ConfigParam config_param_;
     ModelParam model_param_;
+    GaussianModel model_;
 };
 }  // namespace gmm
