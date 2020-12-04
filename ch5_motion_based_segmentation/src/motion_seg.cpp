@@ -1,12 +1,14 @@
 #include "motion_seg.h"
 #include "display.h"
 #include "opencv_utils.h"
+MotionSeg::MotionSeg(int rows, int cols, int num_gaussian, const gmm::ConfigParam& config)
+    : gmm_map(rows * cols, gmm::GMM(num_gaussian, config)) {
+}
 void MotionSeg::process(const std::vector<cv::Mat>& videos) {
     assert(!videos.empty());
 
     const int cols = videos[0].cols;
     const int rows = videos[0].rows;
-    gmm_map.resize(cols * rows);
 
     for (int i = 0; i < videos.size(); i++) {
         cv::Mat img_64;

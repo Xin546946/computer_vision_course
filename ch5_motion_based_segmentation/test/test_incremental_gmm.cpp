@@ -19,16 +19,16 @@ int main(int argc, char** argv) {
     test_fit_model(means, vars, weights);
     //
     //    // test1 fundamental test
-    std::vector<double> means{10, 0, 0};
-    std::vector<double> vars{1, 10000, 10000};
-    std::vector<double> weights{1, 0.0, 0.0};
-    test_fit_model(means, vars, weights);
+    std::vector<double> means1{10, 0, 0};
+    std::vector<double> vars1{1, 10000, 10000};
+    std::vector<double> weights1{1, 0.0, 0.0};
+    test_fit_model(means1, vars1, weights1);
 
     //    // test2
-    std::vector<double> means{10, 10, 0};
-    std::vector<double> vars{4, 3, 10000};
-    std::vector<double> weights{0.5, 0.5, 0.0};
-    test_fit_model(means, vars, weights);
+    std::vector<double> means2{10, 10, 0};
+    std::vector<double> vars2{4, 3, 10000};
+    std::vector<double> weights2{0.5, 0.5, 0.0};
+    test_fit_model(means2, vars2, weights2);
     return 0;
 }
 

@@ -19,14 +19,14 @@ gmm::GaussianParam::GaussianParam(double mean, double var, double weight) : mean
 #####################implementation: compute_gaussian_pdf #####################
 ---------------------------------------------------------*/
 
-double compute_gaussian_pdf(gmm::GaussianParam param, double sample) {
+double gmm::compute_gaussian_pdf(gmm::GaussianParam param, double sample) {
     return (1 / (sqrt(2 * M_PI) * param.var_)) * exp(-0.5 * pow((sample - param.mean_) / param.var_, 2));
 }
 
 /*--------------------------------------------------------
 #####################implementation: ModelParam #####################
 ---------------------------------------------------------*/
-bool operator<(const gmm::GaussianParam& lhs, const gmm::GaussianParam& rhs) {
+bool gmm::operator<(const gmm::GaussianParam& lhs, const gmm::GaussianParam& rhs) {
     return (lhs.weight_ / lhs.var_) < (rhs.weight_ / rhs.var_);
 }
 
@@ -34,7 +34,7 @@ void gmm::ModelParam::sort() {
     std::sort(this->param_.begin(), this->param_.end());
 }
 
-std::ostream& operator<<(std::ostream& os, const gmm::ModelParam& model_param) {
+std::ostream& gmm::operator<<(std::ostream& os, const gmm::ModelParam& model_param) {
     for (int i = 0; i < model_param.param_.size(); i++) {
         const gmm::GaussianParam& param = model_param.param_[i];
         std::cout << "model id : " << i << " mean : " << param.mean_ << " var : " << param.var_
@@ -49,6 +49,9 @@ gmm::GMM::GMM(int num_gaussians, ConfigParam config_param)
     : num_gaussians_(num_gaussians), config_param_(config_param) {
 }
 
+gmm::ModelParam gmm::GMM::get_model_param() const {
+    return this->model_param_;
+}
 void gmm::GMM::add_sample(double sample) {
     if (!is_in_gmm(sample)) {
         replace_model(sample);
@@ -70,7 +73,7 @@ void gmm::GMM::replace_model(double sample) {
 
 void gmm::GMM::update_gmm(double sample) {
     for (int i = 0; i < num_gaussians_; i++) {
-        double sample_pdf = compute_gaussian_pdf(model_param_.param_[i], sample);
+        double sample_pdf = gmm::compute_gaussian_pdf(model_param_.param_[i], sample);
         model_param_.param_[i].weight_ =
             (1 - config_param_.alpha_) * model_param_.param_[i].weight_ + config_param_.alpha_ * sample_pdf;
         double ro = config_param_.alpha_ * sample_pdf;
