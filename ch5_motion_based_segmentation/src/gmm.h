@@ -21,11 +21,7 @@ struct GaussianParam {
     double weight_ = 1;
 };
 
-struct GaussianModel {
-    GaussianModel(GaussianParam param);
-    double compute_gaussian_pdf(double sample) const;
-    GaussianParam param_;
-};
+double compute_gaussian_pdf(GaussianParam param, double sample);
 
 bool operator<(const gmm::GaussianParam& lhs, const gmm::GaussianParam& rhs);
 
@@ -49,6 +45,5 @@ class GMM {
     int num_gaussians_;
     ConfigParam config_param_;
     ModelParam model_param_;
-    GaussianModel model_;
 };
 }  // namespace gmm
