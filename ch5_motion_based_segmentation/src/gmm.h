@@ -26,10 +26,10 @@ struct GaussianModel {
     GaussianParam param_;
 };
 
-std::ostream& operator<<(std::ostream& os, const gmm::ModelParam& model_param);
 struct ModelParam {
     std::vector<GaussianParam> param_;
     void sort();
+    std::ostream& operator<<(std::ostream& os, const gmm::ModelParam& model_param);
 };
 
 class GMM {
