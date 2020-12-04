@@ -43,10 +43,6 @@ class GMM {
     bool is_in_gmm(double sample);
     void replace_model(double sample);
     void update_gmm(double sample);
-    void update_mean();
-    void update_var();
-    void update_weight(double sample);
-    double compute_ro();
     int num_gaussians_;
     ConfigParam config_param_;
     ModelParam model_param_;
