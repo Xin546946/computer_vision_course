@@ -79,3 +79,15 @@ void gmm::GMM::update_gmm(double sample) {
                                       ro * pow(sample - model_param_.param_[i].mean_, 2);
     }
 }
+
+bool gmm::GMM::is_last_sample_foreground() const {
+    double B = 0.0;
+    for (int i = 0; i < num_gaussians_; i++) {
+        if (B < config_param_.fore_threshold_) {
+            B += model_param_.param_[i].weight_;
+        } else {
+            return true;
+        }
+        return false;
+    }
+}
