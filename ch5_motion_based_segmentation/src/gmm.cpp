@@ -30,3 +30,11 @@ void gmm::GMM::add_sample(double sample) {
 
 bool gmm::GMM::is_in_gmm(double sample) {
 }
+
+bool operator<(const GaussianParam& lhs, const GaussianParam& rhs) {
+    return (lhs.weight_ / lhs.var_) < (rhs.weight_ / rhs.var_);
+}
+
+void gmm::ModelParam::sort() {
+    std::sort(this->model_param.begin(), this->model_param.end());
+}

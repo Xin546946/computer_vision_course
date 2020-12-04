@@ -1,10 +1,13 @@
 #pragma once
 
-#include <gmm.h>
+#include "gmm.h"
+#include <opencv2/core/core.hpp>
+
 class MotionSeg {
    public:
-    MotionSeg();
+    MotionSeg() = default;
+    void process(const std::vector<cv::Mat>& video);
 
    private:
-    GMM
+    std::vector<gmm::GMM> gmm_map;
 };
