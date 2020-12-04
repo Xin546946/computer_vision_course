@@ -55,13 +55,13 @@ void gmm::GMM::add_sample(double sample) {
     if (!is_in_gmm(sample)) {
         replace_model(sample);
     } else {
-        update_gmm();
+        update_gmm(sample);
     }
 }
 
 bool gmm::GMM::is_in_gmm(double sample) {
     model_param_.sort();
-    return abs(sample - model_param_.param_[0].mean_) < config_param_.a_ * model_param_.param_.top().var_;
+    return abs(sample - model_param_.param_[0].mean_) < config_param_.a_ * model_param_.param_[0].var_;
 }
 
 void gmm::GMM::replace_model(double sample) {
