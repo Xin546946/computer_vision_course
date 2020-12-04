@@ -42,7 +42,7 @@ class GMM {
    private:
     bool is_in_gmm(double sample);
     void replace_model(double sample);
-    void update_gmm();
+    void update_gmm(double sample);
     void update_mean();
     void update_var();
     void update_weight(double sample);

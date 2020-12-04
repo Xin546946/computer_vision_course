@@ -60,7 +60,8 @@ void gmm::GMM::add_sample(double sample) {
 }
 
 bool gmm::GMM::is_in_gmm(double sample) {
-    return abs(sample - model_param_.param_.top().mean_) < config_param_.a_ * model_param_.param_.top().var_;
+    model_param_.sort();
+    return abs(sample - model_param_.param_[0].mean_) < config_param_.a_ * model_param_.param_.top().var_;
 }
 
 void gmm::GMM::replace_model(double sample) {
@@ -69,12 +70,14 @@ void gmm::GMM::replace_model(double sample) {
     model_param_.param_[0].var_ = 50;
 }
 
-void gmm::GMM::update_gmm() {
-    update_weight();
-    double ro = compute_ro();
-    update_mean();
-    update_var();
-}
-
-void gmm::GMM::update_weight(double sample) {
+void gmm::GMM::update_gmm(double sample) {
+    for (int i = 0; i < num_gaussians_; i++) {
+        double sample_pdf = model_.compute_gaussian_pdf(sample);
+        model_param_.param_[i].weight_ =
+            (1 - config_param_.alpha_) * model_param_.param_[i].weight_ + config_param_.alpha_ * sample_pdf;
+        double ro = config_param_.alpha_ * sample_pdf;
+        model_param_.param_[i].mean_ = (1 - config_param_.alpha_) * model_param_.param_[i].mean_ + ro * sample;
+        model_param_.param_[i].var_ = (1 - config_param_.alpha_) * model_param_.param_[i].var_ +
+                                      ro * pow(sample - model_param_.param_[i].mean_, 2);
+    }
 }
