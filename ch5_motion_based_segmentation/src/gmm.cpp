@@ -1,6 +1,7 @@
 #include "gmm.h"
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 /*--------------------------------------------------------
 #####################implementation: ConfigParam #####################
 ---------------------------------------------------------*/
@@ -33,6 +34,14 @@ bool operator<(const gmm::GaussianParam& lhs, const gmm::GaussianParam& rhs) {
 
 void gmm::ModelParam::sort() {
     std::sort(this->param_.begin(), this->param_.end());
+}
+
+std::ostream& operator<<(std::ostream& os, const gmm::ModelParam& model_param) {
+    for (int i = 0; i < model_param.param_.size(); i++) {
+        const gmm::GaussianParam& param = model_param.param_[i];
+        std::cout << "model id : " << i << " mean : " << param.mean_ << " var : " << param.var_
+                  << " weight : " << param.weight_ << '\n';
+    }
 }
 
 /*--------------------------------------------------------
