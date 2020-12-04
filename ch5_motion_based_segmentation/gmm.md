@@ -1,13 +1,18 @@
 ## 5. GMM
 
 ~~~pseudocode
-1. initialize GMM model(num_model, {mean},{var},{w})
-2. for each frame of video:
-3.	   for each pixel:
-4. 		   if is_in_GMM():
-5.				update_GMM();
-6.			update_param();
-7.		get_foreground();
+1. initialize GMM parameter with first frame 
+2. for each frame of video:{
+3.	   for each pixel:{
+4. 		   if !is_in_gmm():{
+5.				replace_model();
+			}
+6.			else:{
+7.				update_gmm();
+			}
+		}
+8.		get_foreground();
+	}
 ~~~
 
 
