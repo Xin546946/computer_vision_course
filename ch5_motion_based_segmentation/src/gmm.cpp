@@ -38,6 +38,12 @@ void ModelParam::sort() {
     std::sort(this->param_.begin(), this->param_.end());
 }
 
+void ModelParam::normalize_weight() {
+    double sum = param_.for (int i = 0; i < param_.size(); i++) {
+        sum += param_
+    }
+}
+
 std::ostream& operator<<(std::ostream& os, const ModelParam& model_param) {
     for (int i = 0; i < model_param.param_.size(); i++) {
         const gmm::GaussianParam& param = model_param.param_[i];
@@ -56,40 +62,44 @@ GMM::GMM(int num_gaussians, ConfigParam config_param)
 ModelParam GMM::get_model_param() const {
     return this->model_param_;
 }
+
 void GMM::add_sample(double sample) {
-    if (status_ == GMMStatus::NOT_INILIALIZED) {
-        this->model_param_.param_[0] = GaussianParam(sample, 30, 1);
-        status_ = GMMStatus::INITIALIZED;
+    int id = get_gm_id(sample);
+    if (id == -1) {
+        std::cout << "Current sample " << sample << "is not in the gaussian model" << '\n';
+        replace_model(sample);
     } else {
-        if (!is_in_gmm(sample)) {
-            replace_model(sample);
-        } else {
-            update_gmm(sample);
-        }
+        std::cout << "Current sample " << sample << "is in the " << id << "-th gaussian model" << '\n';
+        update_gmm(sample, id);
     }
 }
 
-bool GMM::is_in_gmm(double sample) {
-    model_param_.sort();
-    return abs(sample - model_param_.param_[0].mean_) < config_param_.a_ * model_param_.param_[0].var_;
+int GMM::get_gm_id(double sample) {
+    model_param_.sort();  // weight/sigma from smaller to bigger
+    for (int id = 0; id < num_gaussians_; id++) {
+        bool in_model = abs(sample - model_param_.param_[id].mean_) < config_param_.a_ * model_param_.param_[id].var_;
+        if (in_model) {
+            return id;
+        }
+    }
+    return -1;
 }
-
 void GMM::replace_model(double sample) {
     model_param_.sort();
     model_param_.param_[0].mean_ = sample;
     model_param_.param_[0].var_ = 50;
+    model_param_.param_[0].weight_ = 0.1;
+    model_param_.normalize_weight();
 }
 
-void GMM::update_gmm(double sample) {
-    for (int i = 0; i < num_gaussians_; i++) {
-        double sample_pdf = gmm::compute_gaussian_pdf(model_param_.param_[i], sample);
-        model_param_.param_[i].weight_ =
-            (1 - config_param_.alpha_) * model_param_.param_[i].weight_ + config_param_.alpha_ * sample_pdf;
-        double ro = config_param_.alpha_ * sample_pdf;
-        model_param_.param_[i].mean_ = (1 - config_param_.alpha_) * model_param_.param_[i].mean_ + ro * sample;
-        model_param_.param_[i].var_ = (1 - config_param_.alpha_) * model_param_.param_[i].var_ +
-                                      ro * pow(sample - model_param_.param_[i].mean_, 2);
-    }
+void GMM::update_gmm(double sample, int id) {
+    model_param_.param_[id].weight_ =
+        (1 - config_param_.alpha_) * model_param_.param_[id].weight_ + config_param_.alpha_;
+    double ro = config_param_.alpha_ / model_param_.param_[id].weight_;
+    model_param_.param_[id].mean_ = (1 - ro) * model_param_.param_[id].mean_ + ro * sample;
+    model_param_.param_[id].var_ =
+        (1 - ro) * model_param_.param_[id].var_ + ro * pow(sample - model_param_.param_[id].mean_, 2);
+    model_param_.normalize_weight();
 }
 
 bool GMM::is_last_sample_foreground() const {

@@ -16,8 +16,8 @@ struct ConfigParam {
 struct GaussianParam {
     GaussianParam() = default;
     GaussianParam(double mean, double var, double weight);
-    double mean_ = 0;
-    double var_ = 50;
+    double mean_ = -100;
+    double var_ = 1e-5;
     double weight_ = 0;
 };
 
@@ -29,10 +29,9 @@ struct ModelParam {
     ModelParam(int num_gaussian);
     std::vector<GaussianParam> param_;
     void sort();
+    void normalize_weight();
 };
 std::ostream& operator<<(std::ostream& os, const gmm::ModelParam& model_param);
-
-enum class GMMStatus { NOT_INILIALIZED = 1, INITIALIZED = 2 };
 
 class GMM {
    public:
@@ -42,12 +41,11 @@ class GMM {
     bool is_last_sample_foreground() const;
 
    private:
-    bool is_in_gmm(double sample);
+    int get_gm_id(double sample);
     void replace_model(double sample);
-    void update_gmm(double sample);
+    void update_gmm(double sample, int id);
     int num_gaussians_;
     ConfigParam config_param_;  // todo make this static
     ModelParam model_param_;
-    GMMStatus status_ = gmm::GMMStatus::NOT_INILIALIZED;
 };
 }  // namespace gmm
