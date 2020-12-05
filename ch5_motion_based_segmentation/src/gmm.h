@@ -36,18 +36,21 @@ std::ostream& operator<<(std::ostream& os, const gmm::ModelParam& model_param);
 
 class GMM {
    public:
-    GMM(int num_gaussian, ConfigParam config_param);
+    GMM();
     void add_sample(double sample);
     ModelParam get_model_param() const;
     bool is_in_foreground(double sample);
+
+    static int num_gaussians_;
+    static ConfigParam config_param_;
 
    private:
     bool is_in_model(double sample, int id_model) const;
     int get_gm_id(double sample);
     void replace_model(double sample);
     void update_gmm(double sample, int id);
-    int num_gaussians_;
-    ConfigParam config_param_;  // todo make this static
+
     ModelParam model_param_;
 };
+
 }  // namespace gmm

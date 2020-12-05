@@ -1,8 +1,9 @@
 #include "motion_seg.h"
 #include "display.h"
 #include "opencv_utils.h"
-MotionSeg::MotionSeg(int rows, int cols, int num_gaussian, const gmm::ConfigParam& config)
-    : gmm_map(rows * cols, gmm::GMM(num_gaussian, config)) {
+MotionSeg::MotionSeg(int rows, int cols, int num_gaussian, const gmm::ConfigParam& config) : gmm_map(rows * cols) {
+    gmm::GMM::config_param_ = config;
+    gmm::GMM::num_gaussians_ = num_gaussian;
 }
 void MotionSeg::process(const std::vector<cv::Mat>& videos) {
     assert(!videos.empty());

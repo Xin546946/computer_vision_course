@@ -31,7 +31,7 @@ void test_fit_model(std::vector<double>& means, std::vector<double>& vars, std::
     // declare gmm
 
     gmm::ConfigParam config_param(a, alpha, fore_threshold);
-    gmm::GMM gmm(3, config_param);
+    gmm::GMM gmm;
 
     for (const auto& sample : samples) {
         gmm.add_sample(sample);

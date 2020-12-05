@@ -68,8 +68,7 @@ std::ostream& operator<<(std::ostream& os, const ModelParam& model_param) {
 /*--------------------------------------------------------
 #####################implementation: GMM #####################
 ---------------------------------------------------------*/
-GMM::GMM(int num_gaussians, ConfigParam config_param)
-    : num_gaussians_(num_gaussians), config_param_(config_param), model_param_(num_gaussians) {
+GMM::GMM() : model_param_(num_gaussians_) {
 }
 
 ModelParam GMM::get_model_param() const {
@@ -101,7 +100,7 @@ int GMM::get_gm_id(double sample) {
 void GMM::replace_model(double sample) {
     model_param_.param_.back().mean_ = sample;
     model_param_.param_.back().var_ = 20;
-    model_param_.param_.back().weight_ = 0.1;
+    model_param_.param_.back().weight_ = 0.05;
     model_param_.normalize_weight();
 }
 
@@ -132,5 +131,8 @@ bool GMM::is_in_foreground(double sample) {
 
     return true;
 }
+
+int GMM::num_gaussians_ = 2;
+ConfigParam GMM::config_param_(2.5, 0.01, 0.5);
 
 }  // namespace gmm

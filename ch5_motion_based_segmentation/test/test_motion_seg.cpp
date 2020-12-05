@@ -13,12 +13,12 @@ int main(int argc, char** argv) {
     }
 
     double sigma_scale = 2.5;
-    double update_rate = 0.01;
-    double backgroud_ratio = 0.5;
+    double update_rate = 0.005;
+    double backgroud_ratio = 0.7;
 
     gmm::ConfigParam config_param(sigma_scale, update_rate, backgroud_ratio);
 
-    int num_gausian = 3;
+    int num_gausian = 4;
     MotionSeg ms(video[0].rows, video[0].cols, num_gausian, config_param);
     ms.process(video);
 
