@@ -20,6 +20,17 @@ MotionSeg::MotionSeg(int rows, int cols, int num_gaussian, const gmm::ConfigPara
                   [=](gmm::GMM& model) { model.model_param().param_.resize(num_gaussian); });
 }
 
+void post_processing(cv::Mat img) {
+    // int sz = 1;
+    // cv::Mat element =
+    //    cv::getStructuringElement(cv::MorphShapes::MORPH_RECT, cv::Size(2 * sz + 1, 2 * sz + 1), cv::Point(sz, sz));
+    // cv::morphologyEx(img, img, cv::MorphTypes::MORPH_OPEN, element);
+    cv::medianBlur(img, img, 3);
+    int sz = 3;
+    cv::Mat element =
+        cv::getStructuringElement(cv::MorphShapes::MORPH_RECT, cv::Size(2 * sz + 1, 2 * sz + 1), cv::Point(sz, sz));
+    cv::morphologyEx(img, img, cv::MorphTypes::MORPH_CLOSE, element);
+}
 void MotionSeg::process(const std::vector<cv::Mat>& videos) {
     assert(!videos.empty());
 
@@ -42,7 +53,7 @@ void MotionSeg::process(const std::vector<cv::Mat>& videos) {
                 }
             }
         }
-
+        post_processing(vis_fore_seg);
         cv::hconcat(videos[i], vis_fore_seg, vis_fore_seg);
 
         cv::imshow("left: original video, right : segmentation ", vis_fore_seg);

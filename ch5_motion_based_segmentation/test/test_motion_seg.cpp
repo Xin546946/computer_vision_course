@@ -19,18 +19,18 @@ ______________________________________________________________________
 
 int main(int argc, char** argv) {
     std::vector<cv::Mat> video;
-    for (int id = 1; id < 220; id++) {
-        cv::Mat img = cv::imread(argv[1] + std::to_string(id) + ".bmp", cv::IMREAD_GRAYSCALE);
+    // for (int id = 1; id < 220; id++) {
+    //    cv::Mat img = cv::imread(argv[1] + std::to_string(id) + ".bmp", cv::IMREAD_GRAYSCALE);
+    //    video.push_back(img);
+    //}
+    for (int id = 1; id < 104; id++) {
+        cv::Mat img = cv::imread(argv[1] + std::to_string(id) + ".jpg", cv::IMREAD_GRAYSCALE);
         video.push_back(img);
     }
-    // for (int id = 1; id < 104; id++) {
-    //     cv::Mat img = cv::imread(argv[1] + std::to_string(id) + ".jpg", cv::IMREAD_GRAYSCALE);
-    //     video.push_back(img);
-    // }
 
-    double a = 2.5;
+    double a = 2.0;
     double alpha = 0.005;
-    double T = 0.7;
+    double T = 0.6;
 
     gmm::ConfigParam config_param(a, alpha, T);
 
