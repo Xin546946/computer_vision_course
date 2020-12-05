@@ -8,8 +8,7 @@ namespace gmm {
 /*--------------------------------------------------------
 #####################implementation: ConfigParam #####################
 ---------------------------------------------------------*/
-ConfigParam::ConfigParam(double a, double alpha, double fore_threshold)
-    : a_(a), alpha_(alpha), fore_threshold_(fore_threshold) {
+ConfigParam::ConfigParam(double a, double alpha, double T) : a_(a), alpha_(alpha), T_(T) {
 }
 
 /*--------------------------------------------------------
@@ -125,7 +124,7 @@ bool GMM::is_in_foreground(double sample) {
     model_param_.sort_with_weight();
     double sum_weight = 0.0;
     int id = 0;
-    while (sum_weight < config_param_.fore_threshold_) {
+    while (sum_weight < config_param_.T_) {
         sum_weight += model_param_.param_[id].weight_;
         id++;
     }

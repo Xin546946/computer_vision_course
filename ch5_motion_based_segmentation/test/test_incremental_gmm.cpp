@@ -17,7 +17,7 @@ ______________________________________________________________________
 #include <random>
 #include <vector>
 void test_fit_model(std::vector<double>& means, std::vector<double>& vars, std::vector<double>& weights, double a = 1.5,
-                    double alpha = 0.7, double fore_threshold = 0.25);
+                    double alpha = 0.7, double T = 0.25);
 
 std::vector<double> generate_gmm_data(int num_want, const std::vector<double>& means, const std::vector<double>& vars,
                                       const std::vector<double>& weights);
@@ -36,13 +36,13 @@ int main(int argc, char** argv) {
 ---------------------------------------------------------*/
 
 void test_fit_model(std::vector<double>& means, std::vector<double>& vars, std::vector<double>& weights, double a,
-                    double alpha, double fore_threshold) {
+                    double alpha, double T) {
     // generate gmm samples
     int num_want = 1000;
     std::vector<double> samples = generate_gmm_data(num_want, means, vars, weights);
     // declare gmm
 
-    gmm::ConfigParam config_param(a, alpha, fore_threshold);
+    gmm::ConfigParam config_param(a, alpha, T);
     gmm::GMM gmm;
 
     for (const auto& sample : samples) {
