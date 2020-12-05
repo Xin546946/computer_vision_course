@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <numeric>
 namespace gmm {
 
 /*--------------------------------------------------------
@@ -30,18 +31,29 @@ double compute_gaussian_pdf(gmm::GaussianParam param, double sample) {
 ---------------------------------------------------------*/
 ModelParam::ModelParam(int num_gaussian) : param_(num_gaussian) {
 }
-bool operator<(const GaussianParam& lhs, const GaussianParam& rhs) {
+bool cmp_priority(const GaussianParam& lhs, const GaussianParam& rhs) {
     return (lhs.weight_ / lhs.var_) < (rhs.weight_ / rhs.var_);
 }
 
-void ModelParam::sort() {
-    std::sort(this->param_.begin(), this->param_.end());
+bool cmp_weight(const GaussianParam& lhs, const GaussianParam& rhs) {
+    return lhs.weight_ > rhs.weight_;
+}
+
+void ModelParam::sort_with_priority() {
+    std::sort(this->param_.begin(), this->param_.end(), cmp_priority);
+}
+void ModelParam::sort_with_weight() {
+    std::sort(this->param_.begin(), this->param_.end(), cmp_weight);
 }
 
 void ModelParam::normalize_weight() {
-    double sum = param_.for (int i = 0; i < param_.size(); i++) {
-        sum += param_
+    double sum_weight = 0.0;
+
+    for (int i = 0; i < param_.size(); i++) {
+        sum_weight += param_[i].weight_;
     }
+
+    std::for_each(param_.begin(), param_.end(), [=](GaussianParam& param) { param.weight_ /= sum_weight; });
 }
 
 std::ostream& operator<<(std::ostream& os, const ModelParam& model_param) {
@@ -64,20 +76,22 @@ ModelParam GMM::get_model_param() const {
 }
 
 void GMM::add_sample(double sample) {
+    model_param_.sort_with_priority();
     int id = get_gm_id(sample);
     if (id == -1) {
-        std::cout << "Current sample " << sample << "is not in the gaussian model" << '\n';
+        // std::cout << "Current sample " << sample << "is not in the gaussian model" << '\n';
         replace_model(sample);
     } else {
-        std::cout << "Current sample " << sample << "is in the " << id << "-th gaussian model" << '\n';
+        // std::cout << "Current sample " << sample << "is in the " << id << "-th gaussian model" << '\n';
         update_gmm(sample, id);
     }
 }
-
+bool GMM::is_in_model(double sample, int id_model) const {
+    return abs(sample - model_param_.param_[id_model].mean_) < config_param_.a_ * model_param_.param_[id_model].var_;
+}
 int GMM::get_gm_id(double sample) {
-    model_param_.sort();  // weight/sigma from smaller to bigger
     for (int id = 0; id < num_gaussians_; id++) {
-        bool in_model = abs(sample - model_param_.param_[id].mean_) < config_param_.a_ * model_param_.param_[id].var_;
+        bool in_model = is_in_model(sample, id);
         if (in_model) {
             return id;
         }
@@ -85,7 +99,6 @@ int GMM::get_gm_id(double sample) {
     return -1;
 }
 void GMM::replace_model(double sample) {
-    model_param_.sort();
     model_param_.param_[0].mean_ = sample;
     model_param_.param_[0].var_ = 50;
     model_param_.param_[0].weight_ = 0.1;
@@ -97,21 +110,27 @@ void GMM::update_gmm(double sample, int id) {
         (1 - config_param_.alpha_) * model_param_.param_[id].weight_ + config_param_.alpha_;
     double ro = config_param_.alpha_ / model_param_.param_[id].weight_;
     model_param_.param_[id].mean_ = (1 - ro) * model_param_.param_[id].mean_ + ro * sample;
-    model_param_.param_[id].var_ =
-        (1 - ro) * model_param_.param_[id].var_ + ro * pow(sample - model_param_.param_[id].mean_, 2);
+    model_param_.param_[id].var_ = std::sqrt((1 - ro) * std::pow(model_param_.param_[id].var_, 2.0) +
+                                             ro * std::pow(sample - model_param_.param_[id].mean_, 2.0));
     model_param_.normalize_weight();
 }
 
-bool GMM::is_last_sample_foreground() const {
-    double B = 0.0;
-    for (int i = 0; i < num_gaussians_; i++) {
-        if (B < config_param_.fore_threshold_) {
-            B += model_param_.param_[i].weight_;
-        } else {
-            return true;
-        }
-        return false;
+bool GMM::is_in_foreground(double sample) {
+    model_param_.sort_with_weight();
+    double sum_weight = 0.0;
+    double id = 0;
+    while (sum_weight < config_param_.fore_threshold_) {
+        sum_weight += model_param_.param_[id].weight_;
+        id++;
     }
+
+    for (int i = 0; i <= id; i++) {
+        if (is_in_model(sample, i)) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 }  // namespace gmm

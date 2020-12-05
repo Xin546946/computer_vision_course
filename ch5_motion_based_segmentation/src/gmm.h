@@ -28,7 +28,8 @@ bool operator<(const gmm::GaussianParam& lhs, const gmm::GaussianParam& rhs);
 struct ModelParam {
     ModelParam(int num_gaussian);
     std::vector<GaussianParam> param_;
-    void sort();
+    void sort_with_priority();  // bigger at end
+    void sort_with_weight();    // bigger at front
     void normalize_weight();
 };
 std::ostream& operator<<(std::ostream& os, const gmm::ModelParam& model_param);
@@ -38,9 +39,10 @@ class GMM {
     GMM(int num_gaussian, ConfigParam config_param);
     void add_sample(double sample);
     ModelParam get_model_param() const;
-    bool is_last_sample_foreground() const;
+    bool is_in_foreground(double sample);
 
    private:
+    bool is_in_model(double sample, int id_model) const;
     int get_gm_id(double sample);
     void replace_model(double sample);
     void update_gmm(double sample, int id);
