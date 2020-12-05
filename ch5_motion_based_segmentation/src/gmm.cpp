@@ -95,47 +95,18 @@ bool GMM::is_in_model(double sample, int id_model) const {
            config_param_.a_ * model_param_.param_[id_model].var_;
 }
 int GMM::get_gm_id(double sample) {
-    for (int id = 0; id < num_gaussians_; id++) {
-        bool in_model = is_in_model(sample, id);
-        if (in_model) {
-            return id;
-        }
-    }
-    return -1;
+    // todo please complete this function, get gaussian model id of the given sample
 }
 void GMM::replace_model(double sample) {
-    model_param_.param_.back().mean_ = sample;
-    model_param_.param_.back().var_ = 20;
-    model_param_.param_.back().weight_ = 0.05;
-    model_param_.normalize_weight();
+    // todo please complete this function, remove a gaussian with lowest priority and add sample as a "gaussian model"
 }
 
 void GMM::update_gmm(double sample, int id) {
-    model_param_.param_[id].weight_ =
-        (1 - config_param_.alpha_) * model_param_.param_[id].weight_ + config_param_.alpha_;
-    double ro = config_param_.alpha_ / model_param_.param_[id].weight_;
-    model_param_.param_[id].mean_ = (1 - ro) * model_param_.param_[id].mean_ + ro * sample;
-    model_param_.param_[id].var_ = std::sqrt((1 - ro) * std::pow(model_param_.param_[id].var_, 2.0) +
-                                             ro * std::pow(sample - model_param_.param_[id].mean_, 2.0));
-    model_param_.normalize_weight();
+    // todo please complete update gmm function
 }
 
 bool GMM::is_in_foreground(double sample) {
-    model_param_.sort_with_weight();
-    double sum_weight = 0.0;
-    int id = 0;
-    while (sum_weight < config_param_.T_) {
-        sum_weight += model_param_.param_[id].weight_;
-        id++;
-    }
-
-    for (int i = 0; i < id; i++) {
-        if (is_in_model(sample, i)) {
-            return false;
-        }
-    }
-
-    return true;
+    // todo please complete this function, if the sample is in the foreground
 }
 
 int GMM::num_gaussians_ = 2;
