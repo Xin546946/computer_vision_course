@@ -1,3 +1,15 @@
+/**
+______________________________________________________________________
+*********************************************************************
+* @brief  This file is developed for the course of ShenLan XueYuan:
+* Fundamental implementations of Computer Vision
+* all rights preserved
+* @author Xin Jin, Zhaoran Wu
+* @contact: xinjin1109@gmail.com, zhaoran.wu1@gmail.com
+*
+______________________________________________________________________
+*********************************************************************
+**/
 #include "motion_seg.h"
 #include <iostream>
 #include <opencv2/core/core.hpp>
@@ -12,11 +24,11 @@ int main(int argc, char** argv) {
         video.push_back(img);
     }
 
-    double sigma_scale = 2.5;
-    double update_rate = 0.005;
-    double backgroud_ratio = 0.7;
+    double a = 2.5;
+    double alpha = 0.005;
+    double T = 0.7;
 
-    gmm::ConfigParam config_param(sigma_scale, update_rate, backgroud_ratio);
+    gmm::ConfigParam config_param(a, alpha, T);
 
     int num_gausian = 4;
     MotionSeg ms(video[0].rows, video[0].cols, num_gausian, config_param);

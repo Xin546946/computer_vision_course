@@ -1,3 +1,15 @@
+/**
+______________________________________________________________________
+*********************************************************************
+* @brief  This file is developed for the course of ShenLan XueYuan:
+* Fundamental implementations of Computer Vision
+* all rights preserved
+* @author Xin Jin, Zhaoran Wu
+* @contact: xinjin1109@gmail.com, zhaoran.wu1@gmail.com
+*
+______________________________________________________________________
+*********************************************************************
+**/
 #include "motion_seg.h"
 #include "display.h"
 #include "opencv_utils.h"
@@ -5,6 +17,7 @@ MotionSeg::MotionSeg(int rows, int cols, int num_gaussian, const gmm::ConfigPara
     gmm::GMM::config_param_ = config;
     gmm::GMM::num_gaussians_ = num_gaussian;
 }
+
 void MotionSeg::process(const std::vector<cv::Mat>& videos) {
     assert(!videos.empty());
 
