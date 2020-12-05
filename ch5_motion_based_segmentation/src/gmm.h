@@ -16,9 +16,9 @@ struct ConfigParam {
 struct GaussianParam {
     GaussianParam() = default;
     GaussianParam(double mean, double var, double weight);
-    double mean_ = -100;
+    double mean_ = -100.0;
     double var_ = 1e-5;
-    double weight_ = 0;
+    double weight_ = 0.0;
 };
 
 double compute_gaussian_pdf(GaussianParam param, double sample);
