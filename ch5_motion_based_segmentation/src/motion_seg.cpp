@@ -14,8 +14,10 @@ ______________________________________________________________________
 #include "display.h"
 #include "opencv_utils.h"
 MotionSeg::MotionSeg(int rows, int cols, int num_gaussian, const gmm::ConfigParam& config) : gmm_map(rows * cols) {
-    gmm::GMM::config_param_ = config;
-    gmm::GMM::num_gaussians_ = num_gaussian;
+    gmm::GMM::set_config(config);
+    gmm::GMM::set_num_gaussian(num_gaussian);
+    std::for_each(gmm_map.begin(), gmm_map.end(),
+                  [=](gmm::GMM& model) { model.model_param().param_.resize(num_gaussian); });
 }
 
 void MotionSeg::process(const std::vector<cv::Mat>& videos) {

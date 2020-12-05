@@ -71,7 +71,14 @@ std::ostream& operator<<(std::ostream& os, const ModelParam& model_param) {
 GMM::GMM() : model_param_(num_gaussians_) {
 }
 
-ModelParam GMM::get_model_param() const {
+void GMM::set_config(const ConfigParam& config) {
+    config_param_ = config;
+}
+void GMM::set_num_gaussian(int num) {
+    num_gaussians_ = num;
+}
+
+ModelParam& GMM::model_param() {
     return this->model_param_;
 }
 

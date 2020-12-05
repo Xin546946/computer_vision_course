@@ -38,13 +38,14 @@ class GMM {
    public:
     GMM();
     void add_sample(double sample);
-    ModelParam get_model_param() const;
+    ModelParam& model_param();
     bool is_in_foreground(double sample);
-
-    static int num_gaussians_;
-    static ConfigParam config_param_;
+    static void set_config(const ConfigParam& config);
+    static void set_num_gaussian(int num);
 
    private:
+    static ConfigParam config_param_;
+    static int num_gaussians_;
     bool is_in_model(double sample, int id_model) const;
     int get_gm_id(double sample);
     void replace_model(double sample);

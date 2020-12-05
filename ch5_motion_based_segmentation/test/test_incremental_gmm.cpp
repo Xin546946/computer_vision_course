@@ -48,7 +48,7 @@ void test_fit_model(std::vector<double>& means, std::vector<double>& vars, std::
     for (const auto& sample : samples) {
         gmm.add_sample(sample);
     }
-    gmm::ModelParam model_param = gmm.get_model_param();
+    gmm::ModelParam model_param = gmm.model_param();
     std::cout << model_param << std::endl;
 }
 
