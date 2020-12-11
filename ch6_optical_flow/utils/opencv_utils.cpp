@@ -31,3 +31,13 @@ cv::Point2i template_matching(cv::Mat img, cv::Mat temp) {
     cv::minMaxLoc(result, &val_min, &val_max, &center_min, &center_max, cv::Mat());
     return center_max;
 }
+
+cv::Mat get_sub_image(cv::Mat image, int x, int y, int width, int height) {
+    cv::Rect img_rect = cv::Rect(cv::Point(0, 0), image.size());
+    cv::Rect roi = cv::Rect(cv::Point(x - width / 2, y - height / 2), cv::Size(width, height));
+    cv::Rect intersection = img_rect & roi;
+
+    cv::Mat sub_img = cv::Mat::zeros(intersection.size(), image.type());
+    image(intersection).copyTo(sub_img);
+    return sub_img;
+}
