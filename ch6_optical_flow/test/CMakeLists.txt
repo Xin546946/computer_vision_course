@@ -1,0 +1,2 @@
+add_executable(test_record_dataset test_record_dataset.cpp)
+target_link_libraries(test_record_dataset ${OpenCV_LIBS})
