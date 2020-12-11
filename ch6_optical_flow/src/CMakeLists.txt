@@ -3,3 +3,4 @@ target_link_libraries(feature_points_manager ${OpenCV_LIBS})
 
 add_library(optical_flow_tracker optical_flow_tracker.cpp)
 target_link_libraries(optical_flow_tracker ${OpenCV_LIBS})
+
