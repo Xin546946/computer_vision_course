@@ -36,3 +36,12 @@ for image : video{  // from the second image
 - [ ] test_optical_flow_tracker()
 - [ ] window class
 
+
+
+
+
+
+
+csdn optical_flow: https://blog.csdn.net/codedoctor/article/details/79175683
+
+opencv optical flow: https://docs.opencv.org/3.4/d4/dee/tutorial_optical_flow.html
