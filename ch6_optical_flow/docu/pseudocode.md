@@ -29,10 +29,10 @@ for image : video{  // from the second image
 
 ### 1. Plan 
 
-- [ ] 获取template的小图
-- [ ] template matching 窗口初始化
+- [x] 获取template的小图
+- [x] template matching 窗口初始化
 - [ ] OpticalFlowTracker()
 - [ ] FeaturePointsManager()
-- [ ] test_optical_flow_tracker()
-- [ ] window class
+- [x] test_optical_flow_tracker()
+- [x] window class
 
