@@ -23,10 +23,10 @@ int main(int argc, char** argv) {
     cv::imshow("img", vis_bbox);
     cv::waitKey(0);
 
-    /*     BoundingBox bbox_init(center.x, center.y, temp.cols, temp.rows);
+    BoundingBox bbox_init(center.x, center.y, temp.cols, temp.rows);
 
-        OpticalFlowTracker tracker;
-        tracker.process(video, bbox_init); */
+    OpticalFlowTracker tracker;
+    tracker.process(bbox_init, video);
 
     return 0;
 }
