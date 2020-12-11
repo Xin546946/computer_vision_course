@@ -27,15 +27,12 @@ for image : video{  // from the second image
 }
 ~~~
 
+### 1. Plan 
 
-
-class Optical Flow Tracker
-
-*  class Optical Flow
-
-* class Feature Points Manager
-
-* class Window // well abstracted
-
-
+- [ ] 获取template的小图
+- [ ] template matching 窗口初始化
+- [ ] OpticalFlowTracker()
+- [ ] FeaturePointsManager()
+- [ ] test_optical_flow_tracker()
+- [ ] window class
 
