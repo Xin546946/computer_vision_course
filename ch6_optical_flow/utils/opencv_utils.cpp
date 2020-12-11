@@ -26,6 +26,7 @@ cv::Point2i template_matching(cv::Mat img, cv::Mat temp) {
     assert(!img.empty() && !temp.empty());
     cv::Mat result;
     cv::matchTemplate(img, temp, result, cv::TM_CCORR_NORMED);
+
     double val_min, val_max;
     cv::Point center_min, center_max;
     cv::minMaxLoc(result, &val_min, &val_max, &center_min, &center_max, cv::Mat());
@@ -40,4 +41,13 @@ cv::Mat get_sub_image(cv::Mat image, int x, int y, int width, int height) {
     cv::Mat sub_img = cv::Mat::zeros(intersection.size(), image.type());
     image(intersection).copyTo(sub_img);
     return sub_img;
+}
+
+cv::Mat get_bounding_box_vis_image(cv::Mat image, int x, int y, int width, int height) {
+    cv::Mat vis_bbox = image.clone();
+    assert(image.type() == CV_8UC1);
+
+    cv::cvtColor(vis_bbox, vis_bbox, CV_GRAY2BGR);
+    cv::rectangle(vis_bbox, cv::Rect2i(x, y, width, height), cv::Scalar(0, 0, 255));
+    return vis_bbox;
 }

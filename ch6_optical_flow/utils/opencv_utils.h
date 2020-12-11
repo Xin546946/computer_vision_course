@@ -30,6 +30,8 @@ cv::Point2i template_matching(cv::Mat img, cv::Mat temp);
  * @param y : y of window center
  * @param width : widht of the window
  * @param height : height of the window
- * @return cv::Mat : sub image
+ * @return cv::Mat : sub im
  */
 cv::Mat get_sub_image(cv::Mat image, int x, int y, int width, int height);
+
+cv::Mat get_bounding_box_vis_image(cv::Mat image, int x, int y, int width, int height);
