@@ -16,10 +16,10 @@ int main(int argc, char** argv) {
     cv::Mat temp = cv::imread(argv[2], cv::IMREAD_GRAYSCALE);
     cv::Point2i center = template_matching(video[0], temp);
 
-    BoundingBox bbox_init(center.x, center.y, template.cols, template.row);
+    BoundingBox bbox_init(center.x, center.y, temp.cols, temp.rows);
 
-    OpticalFlowTracker tracker(win_init);
-    tracker.process(video);
+    OpticalFlowTracker tracker;
+    tracker.process(video, bbox_init);
 
     return 0;
 }
