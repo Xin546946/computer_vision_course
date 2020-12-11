@@ -35,3 +35,19 @@ cv::Point2i template_matching(cv::Mat img, cv::Mat temp);
 cv::Mat get_sub_image(cv::Mat image, int x, int y, int width, int height);
 
 cv::Mat get_bounding_box_vis_image(cv::Mat image, int x, int y, int width, int height);
+
+// todo
+/**
+ * @brief put val to a cv::Mat with up-left(x,y), and window size(widht, height)
+ *
+ * @tparam T
+ * @param val
+ * @param input_mat
+ * @param x_ul
+ * @param y_ul
+ * @param width
+ * @param height
+ * @return cv::Mat
+ */
+template <typename T>
+cv::Mat put_val(T val, cv::Mat input_mat, int x_ul, int y_ul, int width, int height);
