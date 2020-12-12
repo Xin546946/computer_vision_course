@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
     cv::cvtColor(img_prev, img_gray_prev, CV_RGB2GRAY);
 
     std::vector<cv::Point2f> feature_points_prev;
-    cv::goodFeaturesToTrack(img_gray_prev, feature_points_prev, 50, 0.01, 10, cv::Mat());
+    cv::goodFeaturesToTrack(img_gray_prev, feature_points_prev, 200, 0.01, 10, cv::Mat());
     for (cv::Point2f point : feature_points_prev) {
         cv::circle(img_prev, point, 1, cv::Scalar(0, 0, 255), 1, 8, 0);
     }

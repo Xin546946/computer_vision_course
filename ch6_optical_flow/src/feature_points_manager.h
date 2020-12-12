@@ -7,10 +7,8 @@ class FeaturePointsManager {
     FeaturePointsManager();
 
     void initialize(cv::Mat img, BoundingBox initial_bbox);
-
     void set_current_img(cv::Mat img);
-
-    void set_tracking_results(const std::vector<cv::Point2f>& corners, const std::vector<uchar>& status);
+    void set_tracking_results(const std::vector<cv::Point2f>& tracked_feature_points, const std::vector<uchar>& status);
     std::vector<cv::Point2f> get_feature_points() const {
         return feature_points_;
     };

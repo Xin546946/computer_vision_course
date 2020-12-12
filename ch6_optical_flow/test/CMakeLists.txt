@@ -12,3 +12,7 @@ ${OpenCV_LIBS}
 utils
 )
 
+add_executable(test_of_opencv test_optical_flow.cpp)
+target_link_libraries(test_of_opencv
+${OpenCV_LIBS}
+)
