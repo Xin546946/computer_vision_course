@@ -22,7 +22,8 @@ void OpticalFlowTracker::process(BoundingBox initial_bbox, const std::vector<cv:
     // feature_points_manager_.set_tracking_results(prev_corners);
 
     for (int i = 1; i < videos.size(); i++) {
-        feature_points_manager_.set_current_img(videos[i]);
+        //! 先跟踪, 再补点
+        feature_points_manager_.extract_new_feature_points(videos[i]);
         std::vector<cv::Point2f> prev_feature_points = feature_points_manager_.get_feature_points();
 
         std::vector<cv::Point2f> curr_feature_points;

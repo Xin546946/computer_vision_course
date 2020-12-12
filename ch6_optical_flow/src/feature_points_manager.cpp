@@ -15,20 +15,27 @@ std::vector<cv::Point2f>& FeaturePointsManager::operator+=(const std::vector<cv:
 
 void FeaturePointsManager::initialize(cv::Mat img, BoundingBox initial_bbox) {
     set_bounding_box(initial_bbox);
-    set_current_img(img);
+    extract_new_feature_points(img);
 }
 
-void FeaturePointsManager::set_current_img(cv::Mat img) {
+void FeaturePointsManager::extract_new_feature_points(cv::Mat img) {
     cv::Mat mask = compute_curr_mask(img);
+
+    //! 分两步, 还是一步?
     extract_feature_points(img, mask);
     process_num_feature_points();
 }
 
 void FeaturePointsManager::extract_feature_points(cv::Mat img, cv::Mat mask) {
-    cv::goodFeaturesToTrack(img, feature_points_, 200, 0.01, 10, mask);
+    //! 新提取的特征点不应该直接覆盖,而是加上
+    vector<Point2f> fps;
+    cv::goodFeaturesToTrack(img, fps, 200, 0.01, 10, mask);
+    feature_points_ += fps;
 }
 
 cv::Mat FeaturePointsManager::compute_curr_mask(cv::Mat img) {
+    //! image 参数的意义?
+    //! 已经存在的特征点没有参与其中
     cv::Mat mask = cv::Mat::zeros(img.size(), img.type());
     cv::Rect mask_rect = cv::Rect(cv::Point(0, 0), mask.size());
     cv::Rect bbox_rect = cv::Rect(bbox_.top_left(), cv::Size(bbox_.width(), bbox_.height()));
@@ -37,6 +44,7 @@ cv::Mat FeaturePointsManager::compute_curr_mask(cv::Mat img) {
     return mask;
 }
 
+//! 这个函数的意义?
 cv::Mat FeaturePointsManager::compute_curr_mask(cv::Mat img, BoundingBox bbox) {
     cv::Mat mask = cv::Mat::zeros(img.size(), img.type());
     cv::Rect mask_rect = cv::Rect(cv::Point(0, 0), mask.size());
@@ -52,7 +60,7 @@ void FeaturePointsManager::process_num_feature_points() {
     while (!is_enough() && iter < max_iter) {
         iter++;
         // todo overload +=
-        feature_points_ += get_feature_points();
+        feature_points_ += get_feature_points();  //! ??????
     }
     if (!is_enough()) {
         // todo
