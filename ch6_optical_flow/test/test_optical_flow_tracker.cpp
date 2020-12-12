@@ -14,7 +14,7 @@ int main(int argc, char** argv) {
         video.push_back(img);
     }
 
-    // detect object in the firse image with template
+    // detect object in the first image with template
     cv::Mat temp = cv::imread(argv[2], cv::IMREAD_GRAYSCALE);
     cv::Point2i center = template_matching(video[0], temp);
 

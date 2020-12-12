@@ -15,14 +15,14 @@ void OpticalFlowTracker::process(BoundingBox initial_bbox, const std::vector<cv:
     // cv::Rect intersection = mask_rect & bbox_rect;
     // mask(intersection) = cv::Mat::ones(cv::Size(initial_bbox.width(), initial_bbox.height()), videos[0].type());
 
-    feature_points_manager_.initialize(initial_bbox);
+    feature_points_manager_.initialize(videos[0], initial_bbox);
 
     // cv::goodFeaturesToTrack(videos[0], prev_corners, 200, 0.01, 10, mask);
 
     // feature_points_manager_.set_tracking_results(prev_corners);
 
     for (int i = 1; i < videos.size(); i++) {
-        // todo feature_points_manager_.set_current_img(img);
+        feature_points_manager_.set_current_img(videos[i]);
         std::vector<cv::Point2f> prev_feature_points = feature_points_manager_.get_feature_points();
 
         std::vector<cv::Point2f> curr_feature_points;
