@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
         cv::cvtColor(img_curr, img_gray_curr, CV_RGB2GRAY);
 
         cv::calcOpticalFlowPyrLK(img_gray_prev, img_gray_curr, feature_points_prev, feature_points_curr, status, err,
-                                 cv::Size(21, 21), 3);
+                                 cv::Size(51, 51), 3);
         for (int i = 0; i < feature_points_curr.size(); i++) {
             cv::circle(img_curr, feature_points_curr[i], 1, cv::Scalar(0, 0, 255), 2, 8, 0);
             cv::line(img_curr, feature_points_cp[i], feature_points_curr[i], cv::Scalar(255, 0, 0), 2);
