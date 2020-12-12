@@ -32,7 +32,7 @@ cv::Point2i template_matching(cv::Mat img, cv::Mat temp);
  * @param height : height of the window
  * @return cv::Mat : sub im
  */
-cv::Mat get_sub_image(cv::Mat image, int x, int y, int width, int height);
+cv::Mat get_sub_image_around(cv::Mat image, int x, int y, int width, int height);
 
 cv::Mat get_bounding_box_vis_image(cv::Mat image, int x, int y, int width, int height);
 
@@ -50,4 +50,7 @@ cv::Mat get_bounding_box_vis_image(cv::Mat image, int x, int y, int width, int h
  * @return cv::Mat
  */
 template <typename T>
-cv::Mat put_val(T val, cv::Mat input_mat, int x_ul, int y_ul, int width, int height);
+void put_val_from_ul(T val, cv::Mat input_mat, int x_ul, int y_ul, int width, int height);
+
+template <typename T>
+void put_val_around(T val, cv::Mat input_mat, int x_center, int y_center, int width, int height);

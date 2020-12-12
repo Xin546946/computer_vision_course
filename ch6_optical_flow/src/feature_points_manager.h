@@ -23,10 +23,10 @@ class FeaturePointsManager {
     std::vector<cv::Point2f> get_feature_points() const {
         return feature_points_;
     };
-    void extract_feature_points(cv::Mat img, cv::Mat mask);
+    // std::vector<cv::Point2f> extract_feature_points(cv::Mat img, cv::Mat mask);
     cv::Mat compute_curr_mask(cv::Mat img, BoundingBox initial_bbox);
-    cv::Mat compute_curr_mask(cv::Mat img);
-    std::vector<cv::Point2f>& operator+=(const std::vector<cv::Point2f>& feature_points);
+    cv::Mat compute_mask(int rows, int cols);
+
     void update_bbox();
     void delete_bad_feature_points(const std::vector<cv::Point2f>& tracked_feature_points,
                                    const std::vector<uchar>& status);
@@ -36,8 +36,8 @@ class FeaturePointsManager {
     void delete_with_direction(const std::vector<float>& angle);
     void delete_with_amplitude(const std::vector<float>& amplitude);
     void delete_with_status(const std::vector<uchar>& status);
-    bool is_enough() {
-        return feature_points_.size() > 30;
+    bool is_enough_points() {
+        return feature_points_.size() > 8;
     };
     void process_num_feature_points();
     void process_bad_feature_points(const std::vector<cv::Point2f>& tracked_feature_points,
@@ -47,3 +47,6 @@ class FeaturePointsManager {
     BoundingBox bbox_;
     // cv::Mat img_;
 };
+
+std::vector<cv::Point2f>& operator+=(const std::vector<cv::Point2f>& feature_points_1,
+                                     const std::vector<cv::Point2f>& feature_points_2)

@@ -1,47 +1,53 @@
 #include "feature_points_manager.h"
+#include "opencv_utils.h"
 #include <numeric>
 #include <opencv2/video/tracking.hpp>
+
+std::vector<cv::Point2f> extract_feature_points(cv::Mat img, cv::Mat mask, float weight);
 
 // todo constructor
 FeaturePointsManager::FeaturePointsManager() {
 }
 
-std::vector<cv::Point2f>& FeaturePointsManager::operator+=(const std::vector<cv::Point2f>& feature_points) {
-    for (cv::Point2f point : feature_points) {
-        this->feature_points_.emplace_back(point);
-        return this->feature_points_;
+std::vector<cv::Point2f>& operator+=(std::vector<cv::Point2f>& feature_points_1,
+                                     std::vector<cv::Point2f>& feature_points_2) {
+    for (cv::Point2f point : feature_points_2) {
+        feature_points_1.push_back(point);
     }
+    return feature_points_1;
 }
 
 void FeaturePointsManager::initialize(cv::Mat img, BoundingBox initial_bbox) {
-    set_bounding_box(initial_bbox);
+    bbox_ = initial_bbox;
     extract_new_feature_points(img);
 }
 
 void FeaturePointsManager::extract_new_feature_points(cv::Mat img) {
-    cv::Mat mask = compute_curr_mask(img);
-
-    //! 分两步, 还是一步?
-    extract_feature_points(img, mask);
-    process_num_feature_points();
+    cv::Mat mask = compute_mask(img.rows, img.cols);
+    int iter = 0;
+    float weight = 1.0f;
+    while (!is_enough_points() && iter < 4) {
+        iter++;
+        std::vector<cv::Point2f> feature_points = extract_feature_points(img, mask, weight);
+        for (cv::Point2f point : feature_points_) {
+            put_val_around(0, mask, point.x, point.y, 3, 3);
+        }
+        weight *= 0.6;
+    }
 }
 
-void FeaturePointsManager::extract_feature_points(cv::Mat img, cv::Mat mask) {
-    //! 新提取的特征点不应该直接覆盖,而是加上
-    vector<Point2f> fps;
-    cv::goodFeaturesToTrack(img, fps, 200, 0.01, 10, mask);
-    feature_points_ += fps;
+std::vector<cv::Point2f> extract_feature_points(cv::Mat img, cv::Mat mask, float weight) {
+    std::vector<cv::Point2f> feature_points;
+    cv::goodFeaturesToTrack(img, feature_points, 200, weight * 0.1, weight * 10, mask);
+    return feature_points;
 }
 
-cv::Mat FeaturePointsManager::compute_curr_mask(cv::Mat img) {
-    //! image 参数的意义?
-    //! 已经存在的特征点没有参与其中
-    cv::Mat mask = cv::Mat::zeros(img.size(), img.type());
-    cv::Rect mask_rect = cv::Rect(cv::Point(0, 0), mask.size());
-    cv::Rect bbox_rect = cv::Rect(bbox_.top_left(), cv::Size(bbox_.width(), bbox_.height()));
-    cv::Rect intersection = mask_rect & bbox_rect;
-    mask(intersection) = cv::Mat::ones(cv::Size(bbox_.width(), bbox_.height()), img.type());
-    return mask;
+cv::Mat FeaturePointsManager::compute_mask(int rows, int cols) {
+    cv::Mat mask = cv::Mat::zeros(cv::Size(cols, rows), CV_8UC1);
+    put_val_from_ul(255, mask, bbox_.top_left().x, bbox_.top_left().y, cols, rows);
+    for (cv::Point2f point : feature_points_) {
+        put_val_around(0, mask, point.x, point.y, 3, 3);
+    }
 }
 
 //! 这个函数的意义?

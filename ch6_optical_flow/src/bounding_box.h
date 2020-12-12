@@ -5,7 +5,7 @@ typedef cv::Point Point;
 class BoundingBox {
    public:
     BoundingBox(int x, int y, int width, int height) : window_(x, y, width, height){};
-
+    BoundingBox() = default;
     void move(float delta_x, float delta_y) {
         window_.x += delta_x;
         window_.y += delta_y;
