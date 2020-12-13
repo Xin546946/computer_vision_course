@@ -1,5 +1,6 @@
 #include "feature_points_manager.h"
 #include "opencv_utils.h"
+#include <algorithm>
 #include <array>
 #include <numeric>
 #include <opencv2/video/tracking.hpp>
@@ -170,29 +171,42 @@ void FeaturePointsManager::update_bbox(const std::vector<cv::Point2f>& new_featu
 void FeaturePointsManager::update_status(const std::vector<cv::Point2f>& new_feature_points,
                                          std::vector<uchar>& status) {
     std::vector<cv::Vec2f> motion = compute_pixel_motion(this->feature_points_, new_feature_points, status);
-    mark_status_with_amplitude(motion, status);
-    mark_status_with_angle(motion, status);
+    mark_status_with_amplitude(motion, status, 0.8);
+    mark_status_with_angle(motion, status, 0.8);
 }
 
-void FeaturePointsManager::update_feature_points(const std::vector<cv::Point2f>& new_feature_points,
+void FeaturePointsManager::update_feature_points(const std::vector<cv::Point2f>& feature_points_at_new_position,
                                                  std::vector<uchar>& status) {
     // todo
 }
-
-void FeaturePointsManager::mark_status_with_amplitude(const std::vector<cv::Vec2f>& motion,
-                                                      std::vector<uchar>& status) {
+void FeaturePointsManager::mark_status_with_amplitude(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status,
+                                                      float rate) {
+    std::vector<float> amplitude_vec;
+    std::transform(motion.begin(), motion.end(), amplitude_vec.begin(),
+                   [=](cv::Vec2f m) { return std::sqrt(std::pow(m[0] - m[0], 2) + std::pow(m[1] - m[1], 2)); });
+    float mid = median(amplitude_vec);
+    std::vector<float>::iterator it = amplitude_vec.begin();
+    std::replace_if(status.begin(), status.end(), [=](uchar i) {}, 0);
+}
+void FeaturePointsManager::mark_status_with_angle(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status,
+                                                  float rate) {
     // todo
 }
-void FeaturePointsManager::mark_status_with_angle(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status) {
-    // todo
-}
-std::vector<cv::Vec2f> compute_pixel_motion(const std::vector<cv::Point2f>& feature_points_,
+std::vector<cv::Vec2f> compute_pixel_motion(const std::vector<cv::Point2f>& old_feature_points,
                                             const std::vector<cv::Point2f>& new_feature_points) {
-    // todo
+    std::vector<cv::Vec2f> result;
+    std::transform(old_feature_points.begin(), old_feature_points.end(), new_feature_points.begin(), result.begin(),
+                   [=](cv::Point2f old_feature_point, cv::Point2f new_feature_point) {
+                       return cv::Vec2f(new_feature_point.x - old_feature_point.x,
+                                        new_feature_point.y - old_feature_point.y);
+                   });
 }
 
 float median(std::vector<float> data) {
-    // todo
+    std::vector<float> result = data;
+    int n = data.size() / 2;
+    std::nth_element(result.begin(), result.begin() + n, result.end());
+    return result[n];
 }
 
 void vis_optical_flow(cv::Mat img, const std::vector<cv::Point2f>& feature_points_,
