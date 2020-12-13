@@ -24,8 +24,8 @@ class FeaturePointsManager {
     // std::vector<cv::Point2f> extract_feature_points(cv::Mat img, cv::Mat mask);
     // cv::Mat compute_curr_mask(cv::Mat img, BoundingBox initial_bbox);
     cv::Mat compute_mask(int rows, int cols);
-    void update_status(const std::vector<cv::Point2f>& new_feature_points, std::vector<uchar>& status);
-    void update_bbox(const std::vector<cv::Point2f>& new_feature_points, std::vector<uchar>& status);
+    void update_status(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status);
+    void update_bbox(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status);
     void update_feature_points(const std::vector<cv::Point2f>& new_feature_points, std::vector<uchar>& status);
     // void adjust_bbox();  // todo need to be discussed
 
@@ -34,6 +34,7 @@ class FeaturePointsManager {
     // void delete_with_status(std::vector<cv::Point2f> new_feature_points, const std::vector<uchar>& status);
     // void set_feature_points(std::vector<cv::Point2f> new_feature_points);
 
+    void visualize(cv::Mat img, const std::vector<cv::Point2f>& feature_points_at_new_position);
     bool is_enough_points() {
         return feature_points_.size() > 8;
     };
