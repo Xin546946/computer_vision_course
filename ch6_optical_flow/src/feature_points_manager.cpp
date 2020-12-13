@@ -7,7 +7,7 @@
 std::vector<cv::Point2f> extract_feature_points(cv::Mat img, cv::Mat mask, float weight);
 std::vector<cv::Point2f> process_feature_points(std::vector<cv::Point2f> feature_points, std::vector<uchar> status);
 // std::array<float, 2> compute_incremental_move(std::vector<cv::Point2f> feature_points);
-
+float median(std::vector<float> data);
 // FeaturePointsManager::FeaturePointsManager() {
 // }
 
@@ -130,6 +130,7 @@ cv::Mat FeaturePointsManager::compute_mask(int rows, int cols) {
 
 void FeaturePointsManager::process_feature_points(cv::Mat img, const std::vector<cv::Point2f>& new_feature_points,
                                                   std::vector<uchar>& status) {
+    vis_optical_flow(img, this->feature_points_, new_feature_points);
     update_status(new_feature_points, status);
     update_bbox(new_feature_points, status);
     update_feature_points(new_feature_points, status);
@@ -167,8 +168,9 @@ void FeaturePointsManager::update_bbox(const std::vector<cv::Point2f>& new_featu
 
 void FeaturePointsManager::update_status(const std::vector<cv::Point2f>& new_feature_points,
                                          std::vector<uchar>& status) {
-    mark_status_with_amplitude(new_feature_points, status);
-    mark_status_with_angle(new_feature_points, status);
+    std::vector<cv::Vec2f> motion = compute_pixel_motion(this->feature_points_, new_feature_points, status);
+    mark_status_with_amplitude(motion, status);
+    mark_status_with_angle(motion, status);
 }
 
 void FeaturePointsManager::update_feature_points(const std::vector<cv::Point2f>& new_feature_points,
@@ -176,11 +178,23 @@ void FeaturePointsManager::update_feature_points(const std::vector<cv::Point2f>&
     // todo
 }
 
-void FeaturePointsManager::mark_status_with_amplitude(const std::vector<cv::Point2f>& new_feature_points,
+void FeaturePointsManager::mark_status_with_amplitude(const std::vector<cv::Vec2f>& motion,
                                                       std::vector<uchar>& status) {
     // todo
 }
-void FeaturePointsManager::mark_status_with_angle(const std::vector<cv::Point2f>& new_feature_points,
-                                                  std::vector<uchar>& status) {
+void FeaturePointsManager::mark_status_with_angle(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status) {
+    // todo
+}
+std::vector<cv::Vec2f> compute_pixel_motion(const std::vector<cv::Point2f>& feature_points_,
+                                            const std::vector<cv::Point2f>& new_feature_points) {
+    // todo
+}
+
+float median(std::vector<float> data) {
+    // todo
+}
+
+void vis_optical_flow(cv::Mat img, const std::vector<cv::Point2f>& feature_points_,
+                      const std::vector<cv::Point2f>& new_feature_points) {
     // todo
 }

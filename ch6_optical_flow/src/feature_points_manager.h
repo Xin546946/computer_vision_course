@@ -29,8 +29,8 @@ class FeaturePointsManager {
     void update_feature_points(const std::vector<cv::Point2f>& new_feature_points, std::vector<uchar>& status);
     // void adjust_bbox();  // todo need to be discussed
 
-    void mark_status_with_amplitude(const std::vector<cv::Point2f>& new_feature_points, std::vector<uchar>& status);
-    void mark_status_with_angle(const std::vector<cv::Point2f>& new_feature_points, std::vector<uchar>& status);
+    void mark_status_with_amplitude(const std::vector<cv::Vec2f>& new_feature_points, std::vector<uchar>& status);
+    void mark_status_with_angle(const std::vector<cv::Vec2f>& new_feature_points, std::vector<uchar>& status);
     // void delete_with_status(std::vector<cv::Point2f> new_feature_points, const std::vector<uchar>& status);
     // void set_feature_points(std::vector<cv::Point2f> new_feature_points);
 
