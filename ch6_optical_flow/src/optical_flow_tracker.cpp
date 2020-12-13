@@ -23,7 +23,7 @@ void OpticalFlowTracker::process(BoundingBox initial_bbox, const std::vector<cv:
 
     for (int i = 1; i < videos.size(); i++) {
         //! 先跟踪, 再补点
-        feature_points_manager_.extract_new_feature_points(videos[i]);
+
         std::vector<cv::Point2f> prev_feature_points = feature_points_manager_.get_feature_points();
 
         std::vector<cv::Point2f> curr_feature_points;
@@ -31,10 +31,9 @@ void OpticalFlowTracker::process(BoundingBox initial_bbox, const std::vector<cv:
         std::vector<float> err;
         cv::calcOpticalFlowPyrLK(last_img, videos[i], prev_feature_points, curr_feature_points, status, err,
                                  cv::Size(21, 21), 3);
-        feature_points_manager_.set_tracking_results(curr_feature_points, status);
 
-        // curr_corners = feature_points_manager_.delete_bad_feature_points(status);
-        // feature_points_manager_.update_bbox();
+        feature_points_manager_.process_feature_points(videos[i], curr_feature_points, status);
+
         feature_points_manager_.get_bbox();
         last_img = videos[i];
         // todo vis img with bbox
