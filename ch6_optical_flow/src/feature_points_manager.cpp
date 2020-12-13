@@ -30,8 +30,9 @@ void FeaturePointsManager::extract_new_feature_points(cv::Mat img) {
     float weight = 1.0f;
     while (!is_enough_points() && iter < 4) {
         iter++;
-        std::vector<cv::Point2f> feature_points = extract_feature_points(img, mask, weight);
-        for (cv::Point2f point : feature_points_) {
+        std::vector<cv::Point2f> additional_feature_points = extract_feature_points(img, mask, weight);
+        feature_points_ += additional_feature_points;
+        for (cv::Point2f point : additional_feature_points) {
             put_val_around(0, mask, point.x, point.y, 3, 3);
         }
         weight *= 0.6;
