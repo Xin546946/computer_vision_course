@@ -1,5 +1,7 @@
 #pragma once
 
+#include "bounding_box.h"
+#include "feature_points_manager.h"
 #include <opencv2/core/core.hpp>
 
 class OpticalFlowTracker {

@@ -71,7 +71,7 @@ void draw_arrowed_lines(cv::Mat img, const std::vector<cv::Point_<T>>& begin, co
 ---------------------------------------------------------*/
 template <typename T>
 void put_val_from_ul(T val, cv::Mat input_mat, int x_ul, int y_ul, int width, int height) {
-    cv::Rect intersection = get_intersection(image, x_ul, y_ul, width, height);
+    cv::Rect intersection = get_intersection(input_mat, x_ul, y_ul, width, height);
     input_mat(intersection) = val * cv::Mat::ones(intersection.size(), CV_8UC1);
 }
 
