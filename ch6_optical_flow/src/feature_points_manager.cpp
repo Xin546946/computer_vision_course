@@ -173,7 +173,7 @@ void FeaturePointsManager::visualize(cv::Mat img, const std::vector<cv::Point2f>
     draw_bounding_box_vis_image(vis, tl.x, tl.y, bbox_.width(), bbox_.height());
 
     cv::imshow("Optical flow tracker", vis);
-    cv::waitKey(0);
+    cv::waitKey(1);
 }
 
 void FeaturePointsManager::update_bbox(const std::vector<cv::Vec2f>& motions, std::vector<uchar>& status) {
