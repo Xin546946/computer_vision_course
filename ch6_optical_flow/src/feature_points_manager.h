@@ -35,7 +35,7 @@ class FeaturePointsManager {
     // void set_feature_points(std::vector<cv::Point2f> new_feature_points);
 
     void visualize(cv::Mat img, const std::vector<cv::Point2f>& feature_points_at_new_position);
-    bool is_enough_points() {
+    bool is_enough_points() const {
         return feature_points_.size() > 8;
     };
 

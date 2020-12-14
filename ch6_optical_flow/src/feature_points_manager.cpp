@@ -36,6 +36,8 @@ void FeaturePointsManager::extract_new_feature_points(cv::Mat img) {
     while (!is_enough_points() && iter < 4) {
         iter++;
         std::vector<cv::Point2f> additional_feature_points = extract_feature_points(img, mask, weight);
+        std::cout << "add new feature points, num : " << additional_feature_points.size() << '\n';
+
         feature_points_ += additional_feature_points;
         for (cv::Point2f point : additional_feature_points) {
             put_val_around(0, mask, point.x, point.y, 3, 3);
