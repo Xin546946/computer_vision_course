@@ -42,6 +42,7 @@ void FeaturePointsManager::extract_new_feature_points(cv::Mat img) {
         for (cv::Point2f point : additional_feature_points) {
             put_val_around(0, mask, point.x, point.y, 3, 3);
         }
+
         weight *= 0.6;
     }
 }
@@ -181,7 +182,7 @@ void FeaturePointsManager::update_bbox(const std::vector<cv::Vec2f>& motions, st
             num_valid++;
         }
     }
-
+    assert(num_valid != 0);
     delta_motion[0] = acc_motion[0] / num_valid;
     delta_motion[1] = acc_motion[1] / num_valid;
 
