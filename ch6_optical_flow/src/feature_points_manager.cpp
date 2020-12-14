@@ -203,6 +203,7 @@ void FeaturePointsManager::update_bbox(const std::vector<cv::Vec2f>& motions, st
 
 void FeaturePointsManager::update_status(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status) {
     mark_status_with_amplitude(motion, status, 0.2);
+
     mark_status_with_angle(motion, status, 5);
 }
 
@@ -221,14 +222,14 @@ void FeaturePointsManager::mark_status_with_amplitude(const std::vector<cv::Vec2
                                                       float rate) {
     std::vector<float> amplitude_vec(motion.size());
     std::transform(motion.begin(), motion.end(), amplitude_vec.begin(),
-                   [=](cv::Vec2f m) { return std::sqrt(std::pow(m[0] - m[0], 2) + std::pow(m[1] - m[1], 2)); });
+                   [=](cv::Vec2f m) { return std::sqrt(m.dot(m)); });
     float mid = median(amplitude_vec);
     std::vector<float>::iterator it_amplitude = amplitude_vec.begin();
     std::replace_if(status.begin(), status.end(),
                     [&](uchar i) {
-                        if ((*it_amplitude < (1 - rate) * mid) && (*it_amplitude > (1 + rate) * mid)) {
-                            return false;
-                        }
+                        bool is_outlier = ((*it_amplitude < (1 - rate) * mid) || (*it_amplitude > (1 + rate) * mid));
+                        it_amplitude++;
+                        return is_outlier;
                     },
                     0);
 }
@@ -236,14 +237,16 @@ void FeaturePointsManager::mark_status_with_angle(const std::vector<cv::Vec2f>& 
                                                   float rate) {
     std::vector<float> angle_vec(motion.size());
     std::transform(motion.begin(), motion.end(), angle_vec.begin(),
-                   [=](cv::Vec2f m) { return ((m[1] - m[1]) / (m[0] - m[0])); });
+                   [=](cv::Vec2f m) { return atan2(m[1], m[0]) * 180 * M_1_PI; });
+
     float mid = median(angle_vec);
+
     std::vector<float>::iterator it_angle = angle_vec.begin();
     std::replace_if(status.begin(), status.end(),
                     [&](uchar i) {
-                        if ((*it_angle < mid - rate) && (*it_angle > mid + rate)) {
-                            return false;
-                        }
+                        bool is_outlier = ((*it_angle < mid - rate) || (*it_angle > mid + rate));
+                        it_angle++;
+                        return is_outlier;
                     },
                     0);
 }

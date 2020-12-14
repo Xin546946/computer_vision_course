@@ -22,3 +22,10 @@ target_link_libraries(test_put_val
 ${OpenCV_LIBS}
 utils
 )
+
+add_executable(test_status test_status.cpp)
+target_link_libraries(test_status
+${OpenCV_LIBS}
+utils
+feature_points_manager
+)
