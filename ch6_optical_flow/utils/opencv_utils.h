@@ -51,6 +51,9 @@ cv::Mat get_bounding_box_vis_image(cv::Mat image, int x, int y, int width, int h
  * @param height
  * @return cv::Mat
  */
+
+cv::Rect get_intersection(cv::Mat image, int x, int y, int width, int height);
+
 template <typename T>
 void put_val_from_ul(T val, cv::Mat input_mat, int x_ul, int y_ul, int width, int height);
 
@@ -61,11 +64,11 @@ template <typename T>
 void draw_points(cv::Mat img, const std::vector<cv::Point_<T>>& points, cv::Scalar bgr = cv::Scalar(0, 0, 255));
 
 template <typename T>
-void draw_lines(cv::Mat img, const std::vector<cv::Point_<T>>& begin, const std::vector<cv::Point_<T>>& end,
+void draw_lines(cv::Mat img, const std::vector<cv::Point_<T>>& src, const std::vector<cv::Point_<T>>& target,
                 cv::Scalar bgr = cv::Scalar(0, 0, 255), int width = 2);
 
 template <typename T>
-void draw_arrowed_lines(cv::Mat img, const std::vector<cv::Point_<T>>& begin, const std::vector<cv::Point_<T>>& end,
+void draw_arrowed_lines(cv::Mat img, const std::vector<cv::Point_<T>>& src, const std::vector<cv::Point_<T>>& target,
                         cv::Scalar bgr = cv::Scalar(0, 0, 255), int width = 2);
 
 /*--------------------------------------------------------
@@ -85,21 +88,21 @@ void put_val_around(T val, cv::Mat input_mat, int x_center, int y_center, int wi
 
 template <typename T>
 void draw_points(cv::Mat img, const std::vector<cv::Point_<T>>& points, cv::Scalar bgr) {
-    std::for_each(points.begin(), points.end(), [&](const cv::Point_<T> point) { cv::circle(img, point, 1, bgr, 2) });
+    std::for_each(points.begin(), points.end(), [&](const cv::Point_<T> point) { cv::circle(img, point, 1, bgr, 2); });
 }
 
 template <typename T>
 void draw_lines(cv::Mat img, const std::vector<cv::Point_<T>>& src, const std::vector<cv::Point_<T>>& target,
                 cv::Scalar bgr, int width) {
     auto it_target = target.begin();
-    std::for_each(points.begin(), points.end(),
+    std::for_each(src.begin(), src.end(),
                   [&](const cv::Point_<T> point) { cv::line(img, point, *it_target++, bgr, width); });
 }
 
 template <typename T>
-void draw_arrowed_lines(cv::Mat img, const std::vector<cv::Point_<T>>& begin, const std::vector<cv::Point_<T>>& end,
-                        cv::Scalar bgr = cv::Scalar(0, 0, 255), int width = 2) {
+void draw_arrowed_lines(cv::Mat img, const std::vector<cv::Point_<T>>& src, const std::vector<cv::Point_<T>>& target,
+                        cv::Scalar bgr, int width) {
     auto it_target = target.begin();
-    std::for_each(points.begin(), points.end(),
+    std::for_each(src.begin(), src.end(),
                   [&](const cv::Point_<T> point) { cv::arrowedLine(img, point, *it_target++, bgr, width); });
 }

@@ -10,6 +10,8 @@ std::vector<cv::Point2f> extract_feature_points(cv::Mat img, cv::Mat mask, float
 std::vector<cv::Point2f> process_feature_points(std::vector<cv::Point2f> feature_points, std::vector<uchar> status);
 // std::array<float, 2> compute_incremental_move(std::vector<cv::Point2f> feature_points);
 float median(std::vector<float> data);
+std::vector<cv::Vec2f> compute_pixel_motion(const std::vector<cv::Point2f>& old_feature_points,
+                                            const std::vector<cv::Point2f>& new_feature_points);
 // FeaturePointsManager::FeaturePointsManager() {
 // }
 
@@ -192,7 +194,7 @@ void FeaturePointsManager::update_feature_points(const std::vector<cv::Point2f>&
 
     auto it_status = status.begin();
     std::copy_if(feature_points_at_new_position.begin(), feature_points_at_new_position.end(),
-                 std::back_inserter(feature_points_), [&]() { return *it_status++; });
+                 std::back_inserter(feature_points_), [&](cv::Point2f) { return *it_status++; });
 }
 
 void FeaturePointsManager::mark_status_with_amplitude(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status,
@@ -236,8 +238,7 @@ std::vector<cv::Vec2f> compute_pixel_motion(const std::vector<cv::Point2f>& old_
 }
 
 float median(std::vector<float> data) {
-    std::vector<float> result = data;
     int n = data.size() / 2;
-    std::nth_element(result.begin(), result.begin() + n, result.end());
-    return result[n];
+    std::nth_element(data.begin(), data.begin() + n, data.end());
+    return data[n];
 }
