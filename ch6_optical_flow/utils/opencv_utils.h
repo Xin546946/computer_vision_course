@@ -1,5 +1,6 @@
 #include <opencv2/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 inline bool is_in_img(cv::Mat img, int row, int col) {
     return row < img.rows && row >= 0 && col < img.cols && col >= 0;
@@ -78,7 +79,7 @@ void put_val_from_ul(T val, cv::Mat input_mat, int x_ul, int y_ul, int width, in
 template <typename T>
 void put_val_around(T val, cv::Mat input_mat, int x_center, int y_center, int width, int height) {
     assert(width % 2 == 1 && height % 2 == 1);
-    put_val_from_ul(val, input_mat, x_ul - width / 2, y_ul - height / 2, width, height);
+    put_val_from_ul(val, input_mat, x_center - width / 2, y_center - height / 2, width, height);
 }
 
 template <typename T>
