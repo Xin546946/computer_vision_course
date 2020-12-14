@@ -44,4 +44,4 @@ class FeaturePointsManager {
 };
 
 std::vector<cv::Point2f>& operator+=(const std::vector<cv::Point2f>& feature_points_1,
-                                     const std::vector<cv::Point2f>& feature_points_2)
+                                     const std::vector<cv::Point2f>& feature_points_2);
