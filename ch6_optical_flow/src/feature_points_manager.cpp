@@ -199,7 +199,7 @@ void FeaturePointsManager::update_feature_points(const std::vector<cv::Point2f>&
 
 void FeaturePointsManager::mark_status_with_amplitude(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status,
                                                       float rate) {
-    std::vector<float> amplitude_vec;
+    std::vector<float> amplitude_vec(motion.size());
     std::transform(motion.begin(), motion.end(), amplitude_vec.begin(),
                    [=](cv::Vec2f m) { return std::sqrt(std::pow(m[0] - m[0], 2) + std::pow(m[1] - m[1], 2)); });
     float mid = median(amplitude_vec);
@@ -214,7 +214,7 @@ void FeaturePointsManager::mark_status_with_amplitude(const std::vector<cv::Vec2
 }
 void FeaturePointsManager::mark_status_with_angle(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status,
                                                   float rate) {
-    std::vector<float> angle_vec;
+    std::vector<float> angle_vec(motion.size());
     std::transform(motion.begin(), motion.end(), angle_vec.begin(),
                    [=](cv::Vec2f m) { return ((m[1] - m[1]) / (m[0] - m[0])); });
     float mid = median(angle_vec);
@@ -229,12 +229,13 @@ void FeaturePointsManager::mark_status_with_angle(const std::vector<cv::Vec2f>& 
 }
 std::vector<cv::Vec2f> compute_pixel_motion(const std::vector<cv::Point2f>& old_feature_points,
                                             const std::vector<cv::Point2f>& new_feature_points) {
-    std::vector<cv::Vec2f> result;
+    std::vector<cv::Vec2f> result(old_feature_points.size());
     std::transform(old_feature_points.begin(), old_feature_points.end(), new_feature_points.begin(), result.begin(),
                    [=](cv::Point2f old_feature_point, cv::Point2f new_feature_point) {
                        return cv::Vec2f(new_feature_point.x - old_feature_point.x,
                                         new_feature_point.y - old_feature_point.y);
                    });
+    return result;
 }
 
 float median(std::vector<float> data) {
