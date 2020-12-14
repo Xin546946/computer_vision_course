@@ -157,20 +157,33 @@ void FeaturePointsManager::visualize(cv::Mat img, const std::vector<cv::Point2f>
     cv::Mat vis;
     cv::cvtColor(img, vis, cv::COLOR_GRAY2BGR);
 
-    draw_points(vis, feature_points_);
-    draw_arrowed_lines(vis, feature_points_, feature_points_at_new_position);
+    draw_points(vis, feature_points_, cv::Scalar(255, 0, 0));
+    draw_arrowed_lines(vis, feature_points_, feature_points_at_new_position, cv::Scalar(0, 255, 0), 1);
 
     auto tl = bbox_.top_left();
     draw_bounding_box_vis_image(vis, tl.x, tl.y, bbox_.width(), bbox_.height());
 
     cv::imshow("Optical flow tracker", vis);
-    cv::waitKey(1);
+    cv::waitKey(0);
 }
 
-void FeaturePointsManager::update_bbox(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status) {
+void FeaturePointsManager::update_bbox(const std::vector<cv::Vec2f>& motions, std::vector<uchar>& status) {
     // todo rewrite!
-    cv::Vec2f delta_motion = mean(motion);
+    cv::Vec2f delta_motion;
 
+    cv::Vec2f acc_motion;
+    int num_valid = 0;
+    for (int i = 0; i < motions.size(); i++) {
+        if (status[i]) {
+            acc_motion += motions[i];
+            num_valid++;
+        }
+    }
+
+    delta_motion[0] = acc_motion[0] / num_valid;
+    delta_motion[1] = acc_motion[1] / num_valid;
+
+    std::cout << "delta motion :" << delta_motion << '\n';
     bbox_.move(delta_motion[0], delta_motion[1]);
 }
 
