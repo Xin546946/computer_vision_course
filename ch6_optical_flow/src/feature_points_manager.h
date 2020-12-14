@@ -36,7 +36,7 @@ class FeaturePointsManager {
 
     void visualize(cv::Mat img, const std::vector<cv::Point2f>& feature_points_at_new_position);
     bool is_enough_points() const {
-        return feature_points_.size() > 8;
+        return feature_points_.size() > 20;
     };
 
     std::vector<cv::Point2f> feature_points_;

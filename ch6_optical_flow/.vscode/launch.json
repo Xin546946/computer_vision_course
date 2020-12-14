@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/test/test_optical_flow_tracker",
-            "args": ["${workspaceFolder}/dataset/Car2/","${workspaceFolder}/dataset/Car2/template/template2.jpg" ],
+            "args": ["${workspaceFolder}/dataset/Car2/","${workspaceFolder}/dataset/Car2/template/template.jpg" ],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

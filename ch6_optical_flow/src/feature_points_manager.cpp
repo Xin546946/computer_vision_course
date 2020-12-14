@@ -48,7 +48,7 @@ void FeaturePointsManager::extract_new_feature_points(cv::Mat img) {
 
 std::vector<cv::Point2f> extract_feature_points(cv::Mat img, cv::Mat mask, float weight) {
     std::vector<cv::Point2f> feature_points;
-    cv::goodFeaturesToTrack(img, feature_points, 200, weight * 0.1, weight * 10, mask);
+    cv::goodFeaturesToTrack(img, feature_points, 200, weight * 0.1, weight * 6, mask);
     return feature_points;
 }
 
@@ -185,6 +185,8 @@ void FeaturePointsManager::update_bbox(const std::vector<cv::Vec2f>& motions, st
     delta_motion[0] = acc_motion[0] / num_valid;
     delta_motion[1] = acc_motion[1] / num_valid;
 
+    assert(num_valid);
+
     std::cout << "delta motion :" << delta_motion << '\n';
     bbox_.move(delta_motion[0], delta_motion[1]);
 }
@@ -204,9 +206,8 @@ void FeaturePointsManager::update_bbox(const std::vector<cv::Vec2f>& motions, st
 // }
 
 void FeaturePointsManager::update_status(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status) {
-    mark_status_with_amplitude(motion, status, 0.2);
-
-    mark_status_with_angle(motion, status, 5);
+    mark_status_with_amplitude(motion, status, 0.9);
+    mark_status_with_angle(motion, status, 60);
 }
 
 void FeaturePointsManager::update_feature_points(const std::vector<cv::Point2f>& feature_points_at_new_position,
