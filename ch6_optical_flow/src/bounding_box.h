@@ -25,5 +25,5 @@ class BoundingBox {
     }
 
    private:
-    cv::Rect2i window_;
+    cv::Rect2f window_;
 };
