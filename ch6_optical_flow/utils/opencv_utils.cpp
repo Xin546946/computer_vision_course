@@ -47,8 +47,7 @@ cv::Mat get_sub_image_around(cv::Mat image, int x, int y, int width, int height)
     return sub_img;
 }
 
-cv::Mat get_bounding_box_vis_image(cv::Mat image, int x, int y, int width, int height) {
-    cv::Mat vis_bbox = image.clone();
-    cv::rectangle(vis_bbox, cv::Rect2i(x, y, width, height), cv::Scalar(0, 0, 255));
-    return vis_bbox;
+cv::Mat draw_bounding_box_vis_image(cv::Mat image, int x, int y, int width, int height) {
+    cv::rectangle(image, cv::Rect2i(x, y, width, height), cv::Scalar(0, 0, 255));
+    return image;
 }

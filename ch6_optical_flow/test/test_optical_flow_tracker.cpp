@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
     cv::Point2i center = template_matching(video[0], temp);
 
     // visualize bounding box in first frame
-    cv::Mat vis_bbox = get_bounding_box_vis_image(video[0], center.x, center.y, temp.cols, temp.rows);
+    cv::Mat vis_bbox = draw_bounding_box_vis_image(video[0], center.x, center.y, temp.cols, temp.rows);
     cv::imshow("img", vis_bbox);
     cv::waitKey(0);
 

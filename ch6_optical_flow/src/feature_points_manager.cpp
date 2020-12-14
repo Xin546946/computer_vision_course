@@ -3,6 +3,7 @@
 #include "opencv_utils.h"
 #include <algorithm>
 #include <array>
+#include <iostream>
 #include <numeric>
 #include <opencv2/video/tracking.hpp>
 
@@ -144,6 +145,10 @@ void FeaturePointsManager::process_feature_points(cv::Mat img,
     update_feature_points(feature_points_at_new_position, status);
     cv::Mat mask = compute_mask(img.rows, img.cols);
     extract_new_feature_points(img);
+    static int i = 0;
+    std::cout << "curr img id :" << i++ << " num fps : " << feature_points_.size() << " window tl :" << bbox_.top_left()
+              << '\n';
+
     // adjust_bbox();
 }
 
@@ -151,13 +156,14 @@ void FeaturePointsManager::visualize(cv::Mat img, const std::vector<cv::Point2f>
     cv::Mat vis;
     cv::cvtColor(img, vis, cv::COLOR_GRAY2BGR);
 
-    draw_points(img, feature_points_);
-    draw_arrowed_lines(img, feature_points_, feature_points_at_new_position);
+    draw_points(vis, feature_points_);
+    draw_arrowed_lines(vis, feature_points_, feature_points_at_new_position);
 
     auto tl = bbox_.top_left();
-    get_bounding_box_vis_image(vis, tl.x, tl.y, bbox_.width(), bbox_.height());
+    draw_bounding_box_vis_image(vis, tl.x, tl.y, bbox_.width(), bbox_.height());
+
     cv::imshow("Optical flow tracker", vis);
-    cv::waitKey(1);
+    cv::waitKey(0);
 }
 
 void FeaturePointsManager::update_bbox(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status) {
