@@ -11,6 +11,7 @@ std::vector<cv::Point2f> extract_feature_points(cv::Mat img, cv::Mat mask, float
 std::vector<cv::Point2f> process_feature_points(std::vector<cv::Point2f> feature_points, std::vector<uchar> status);
 // std::array<float, 2> compute_incremental_move(std::vector<cv::Point2f> feature_points);
 float median(std::vector<float> data);
+float median(std::vector<float> data, const std::vector<uchar>& status);
 std::vector<cv::Vec2f> compute_pixel_motion(const std::vector<cv::Point2f>& old_feature_points,
                                             const std::vector<cv::Point2f>& new_feature_points);
 // FeaturePointsManager::FeaturePointsManager() {
@@ -43,17 +44,17 @@ void FeaturePointsManager::extract_new_feature_points(cv::Mat img) {
             put_val_around(0, mask, point.x, point.y, 3, 3);
         }
 
-        weight *= 0.6;
+        weight *= 0.8;
     }
 }
 
 std::vector<cv::Point2f> extract_feature_points(cv::Mat img, cv::Mat mask, float weight) {
     std::vector<cv::Point2f> feature_points;
 
-    double quality_level = std::max(0.005, weight * 0.1);
-    double min_distance = std::max(3.0f, weight * 6);
+    double quality_level = std::max(0.02, weight * 0.5);
+    double min_distance = std::max(2.0f, weight * 8);
 
-    cv::goodFeaturesToTrack(img, feature_points, 200, quality_level, min_distance, mask);
+    cv::goodFeaturesToTrack(img, feature_points, 50, quality_level, min_distance, mask);
     return feature_points;
 }
 
@@ -153,9 +154,10 @@ void FeaturePointsManager::process_feature_points(cv::Mat img,
     update_feature_points(feature_points_at_new_position, status);
     cv::Mat mask = compute_mask(img.rows, img.cols);
     extract_new_feature_points(img);
-    static int i = 0;
-    std::cout << "curr img id :" << i++ << " num fps : " << feature_points_.size() << " window tl :" << bbox_.top_left()
-              << '\n';
+    // static int i = 0;
+    // std::cout << "curr img id :" << i++ << " num fps : " << feature_points_.size() << " window tl :" <<
+    // bbox_.top_left()
+    //          << '\n';
 
     // adjust_bbox();
 }
@@ -165,7 +167,7 @@ void FeaturePointsManager::visualize(cv::Mat img, const std::vector<cv::Point2f>
     cv::cvtColor(img, vis, cv::COLOR_GRAY2BGR);
 
     draw_points(vis, feature_points_, cv::Scalar(255, 0, 0));
-    draw_arrowed_lines(vis, feature_points_, feature_points_at_new_position, cv::Scalar(0, 255, 0), 1);
+    draw_arrowed_lines(vis, feature_points_, feature_points_at_new_position, cv::Scalar(0, 0, 255), 1);
 
     auto tl = bbox_.top_left();
     draw_bounding_box_vis_image(vis, tl.x, tl.y, bbox_.width(), bbox_.height());
@@ -186,13 +188,10 @@ void FeaturePointsManager::update_bbox(const std::vector<cv::Vec2f>& motions, st
             num_valid++;
         }
     }
-    assert(num_valid != 0);
     delta_motion[0] = acc_motion[0] / num_valid;
     delta_motion[1] = acc_motion[1] / num_valid;
 
-    assert(num_valid);
-
-    std::cout << "delta motion :" << delta_motion << '\n';
+    std::cout << " delete : " << status.size() - num_valid << " preserve : " << num_valid << '\n';
     bbox_.move(delta_motion[0], delta_motion[1]);
 }
 
@@ -212,8 +211,8 @@ void FeaturePointsManager::update_bbox(const std::vector<cv::Vec2f>& motions, st
 
 void FeaturePointsManager::update_status(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status) {
     mark_status_with_contained_points(status);
-    mark_status_with_amplitude(motion, status, 0.9);
-    mark_status_with_angle(motion, status, 60);
+    mark_status_with_amplitude(motion, status, 1.2);
+    mark_status_with_angle(motion, status, 25);
 }
 
 void FeaturePointsManager::update_feature_points(const std::vector<cv::Point2f>& feature_points_at_new_position,
@@ -232,32 +231,33 @@ void FeaturePointsManager::mark_status_with_contained_points(std::vector<uchar>&
     std::replace_if(status.begin(), status.end(), [&](uchar s) { return !bbox_.contains(*it++); }, 0);
 }
 void FeaturePointsManager::mark_status_with_amplitude(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status,
-                                                      float rate) {
+                                                      float ratio) {
     std::vector<float> amplitude_vec(motion.size());
     std::transform(motion.begin(), motion.end(), amplitude_vec.begin(),
                    [=](cv::Vec2f m) { return std::sqrt(m.dot(m)); });
-    float mid = median(amplitude_vec);
+    float mid = median(amplitude_vec, status);
+
     std::vector<float>::iterator it_amplitude = amplitude_vec.begin();
     std::replace_if(status.begin(), status.end(),
                     [&](uchar i) {
-                        bool is_outlier = ((*it_amplitude < (1 - rate) * mid) || (*it_amplitude > (1 + rate) * mid));
+                        bool is_outlier = ((*it_amplitude > ratio * mid) || mid > ratio * (*it_amplitude));
                         it_amplitude++;
                         return is_outlier;
                     },
                     0);
 }
 void FeaturePointsManager::mark_status_with_angle(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status,
-                                                  float rate) {
+                                                  float shift) {
     std::vector<float> angle_vec(motion.size());
     std::transform(motion.begin(), motion.end(), angle_vec.begin(),
                    [=](cv::Vec2f m) { return atan2(m[1], m[0]) * 180 * M_1_PI; });
 
-    float mid = median(angle_vec);
+    float mid = median(angle_vec, status);
 
     std::vector<float>::iterator it_angle = angle_vec.begin();
     std::replace_if(status.begin(), status.end(),
                     [&](uchar i) {
-                        bool is_outlier = ((*it_angle < mid - rate) || (*it_angle > mid + rate));
+                        bool is_outlier = ((*it_angle < mid - shift) || (*it_angle > mid + shift));
                         it_angle++;
                         return is_outlier;
                     },
@@ -278,4 +278,16 @@ float median(std::vector<float> data) {
     int n = data.size() / 2;
     std::nth_element(data.begin(), data.begin() + n, data.end());
     return data[n];
+}
+
+float median(std::vector<float> data, const std::vector<uchar>& status) {
+    std::vector<float> good_data;
+
+    for (int i = 0; i < status.size(); i++) {
+        if (status[i]) {
+            good_data.push_back(data[i]);
+        }
+    }
+
+    return median(good_data);
 }

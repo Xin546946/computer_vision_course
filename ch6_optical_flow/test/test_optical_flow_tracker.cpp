@@ -18,12 +18,9 @@ int main(int argc, char** argv) {
     cv::Mat temp = cv::imread(argv[2], cv::IMREAD_GRAYSCALE);
     cv::Point2i center = template_matching(video[0], temp);
 
-    // visualize bounding box in first frame
-    cv::Mat vis_bbox = draw_bounding_box_vis_image(video[0], center.x, center.y, temp.cols, temp.rows);
-    cv::imshow("img", vis_bbox);
-    cv::waitKey(0);
-
-    BoundingBox bbox_init(center.x, center.y, temp.cols, temp.rows);
+    float w = 0.1;
+    BoundingBox bbox_init(center.x + w * temp.cols, center.y + w * temp.rows, (1 - 2 * w) * temp.cols,
+                          (1 - 2 * w) * temp.rows);
 
     OpticalFlowTracker tracker;
     tracker.process(bbox_init, video);

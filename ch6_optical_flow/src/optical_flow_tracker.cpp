@@ -30,7 +30,7 @@ void OpticalFlowTracker::process(BoundingBox initial_bbox, const std::vector<cv:
     // cv::Rect intersection = mask_rect & bbox_rect;
     // mask(intersection) = cv::Mat::ones(cv::Size(initial_bbox.width(), initial_bbox.height()), videos[0].type());
 
-    apply_histo_equalization_around(initial_bbox, videos[0], 0.05);
+    apply_histo_equalization_around(initial_bbox, videos[0], 0.06);
     feature_points_manager_.initialize(videos[0], initial_bbox);
 
     // cv::goodFeaturesToTrack(videos[0], prev_corners, 200, 0.01, 10, mask);
@@ -49,7 +49,7 @@ void OpticalFlowTracker::process(BoundingBox initial_bbox, const std::vector<cv:
         // aplly histogramm equalization in local
         BoundingBox bbox = feature_points_manager_.get_bbox();
 
-        apply_histo_equalization_around(bbox, videos[i], 0.05);
+        apply_histo_equalization_around(bbox, videos[i], 0.1);
         cv::calcOpticalFlowPyrLK(last_img, videos[i], prev_feature_points, curr_feature_points, status, err,
                                  cv::Size(11, 11), 3);
 
