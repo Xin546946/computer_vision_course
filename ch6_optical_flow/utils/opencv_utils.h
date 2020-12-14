@@ -38,22 +38,9 @@ cv::Mat get_sub_image_around(cv::Mat image, int x, int y, int width, int height)
 
 cv::Mat draw_bounding_box_vis_image(cv::Mat image, int x, int y, int width, int height);
 
-// todo
-/**
- * @brief put val to a cv::Mat with up-left(x,y), and window size(widht, height)
- *
- * @tparam T
- * @param val
- * @param input_mat
- * @param x_ul
- * @param y_ul
- * @param width
- * @param height
- * @return cv::Mat
- */
+cv::Rect get_intersection_around(cv::Mat image, int x, int y, int width, int height);
 
-cv::Rect get_intersection(cv::Mat image, int x, int y, int width, int height);
-
+cv::Rect get_intersection_from_ul(cv::Mat image, int x, int y, int width, int height);
 template <typename T>
 void put_val_from_ul(T val, cv::Mat input_mat, int x_ul, int y_ul, int width, int height);
 
@@ -76,7 +63,7 @@ void draw_arrowed_lines(cv::Mat img, const std::vector<cv::Point_<T>>& src, cons
 ---------------------------------------------------------*/
 template <typename T>
 void put_val_from_ul(T val, cv::Mat input_mat, int x_ul, int y_ul, int width, int height) {
-    cv::Rect intersection = get_intersection(input_mat, x_ul, y_ul, width, height);
+    cv::Rect intersection = get_intersection_from_ul(input_mat, x_ul, y_ul, width, height);
     input_mat(intersection) = val * cv::Mat::ones(intersection.size(), CV_8UC1);
 }
 

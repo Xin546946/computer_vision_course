@@ -52,7 +52,8 @@ std::vector<cv::Point2f> extract_feature_points(cv::Mat img, cv::Mat mask, float
 
 cv::Mat FeaturePointsManager::compute_mask(int rows, int cols) {
     cv::Mat mask = cv::Mat::zeros(cv::Size(cols, rows), CV_8UC1);
-    put_val_from_ul(255, mask, bbox_.top_left().x, bbox_.top_left().y, cols, rows);
+
+    put_val_from_ul(255, mask, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
     for (cv::Point2f point : feature_points_) {
         put_val_around(0, mask, point.x, point.y, 3, 3);
     }
@@ -163,7 +164,7 @@ void FeaturePointsManager::visualize(cv::Mat img, const std::vector<cv::Point2f>
     draw_bounding_box_vis_image(vis, tl.x, tl.y, bbox_.width(), bbox_.height());
 
     cv::imshow("Optical flow tracker", vis);
-    cv::waitKey(0);
+    cv::waitKey(1);
 }
 
 void FeaturePointsManager::update_bbox(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status) {

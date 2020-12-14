@@ -16,3 +16,9 @@ add_executable(test_of_opencv test_optical_flow.cpp)
 target_link_libraries(test_of_opencv
 ${OpenCV_LIBS}
 )
+
+add_executable(test_put_val test_put_val.cpp)
+target_link_libraries(test_put_val
+${OpenCV_LIBS}
+utils
+)
