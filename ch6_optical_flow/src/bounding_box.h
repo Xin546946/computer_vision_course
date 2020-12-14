@@ -1,7 +1,7 @@
 #pragma once
 #include <opencv2/core/core.hpp>
 
-typedef cv::Point Point;
+typedef cv::Point2f Point;
 
 class BoundingBox {
    public:
@@ -22,6 +22,10 @@ class BoundingBox {
 
     const int height() const {
         return window_.height;
+    }
+
+    const Point center() const {
+        return cv::Point(window_.tl().x + window_.width / 2, window_.tl().y + window_.height / 2);
     }
 
    private:

@@ -9,7 +9,7 @@ void OpticalFlowTracker::process(BoundingBox initial_bbox, const std::vector<cv:
     assert(!videos.empty());
 
     cv::Mat last_img = videos[0];
-
+    // cv::equalizeHist(last_img, last_img);
     // cv::Mat mask = cv::Mat::zeros(videos[0].size(), videos[0].type());
     // cv::Rect mask_rect = cv::Rect(cv::Point(0, 0), mask.size());
     // cv::Rect bbox_rect = cv::Rect(initial_bbox.top_left(), cv::Size(initial_bbox.width(), initial_bbox.height()));
@@ -31,7 +31,7 @@ void OpticalFlowTracker::process(BoundingBox initial_bbox, const std::vector<cv:
         std::vector<uchar> status;
         std::vector<float> err;
         cv::calcOpticalFlowPyrLK(last_img, videos[i], prev_feature_points, curr_feature_points, status, err,
-                                 cv::Size(21, 21), 3);
+                                 cv::Size(7, 7), 3);
 
         feature_points_manager_.process_feature_points(videos[i], curr_feature_points, status);
 
