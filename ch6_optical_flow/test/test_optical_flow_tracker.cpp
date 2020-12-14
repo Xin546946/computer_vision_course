@@ -8,7 +8,7 @@
 
 int main(int argc, char** argv) {
     std::vector<cv::Mat> video;
-    for (int id = 1; id < 914; id++) {
+    for (int id = 1; id < 875; id++) {
         cv::Mat img = cv::imread(argv[1] + std::to_string(id) + ".jpg", cv::IMREAD_GRAYSCALE);
         assert(!img.empty());
         video.push_back(img);
