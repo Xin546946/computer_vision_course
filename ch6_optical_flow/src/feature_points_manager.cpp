@@ -49,7 +49,11 @@ void FeaturePointsManager::extract_new_feature_points(cv::Mat img) {
 
 std::vector<cv::Point2f> extract_feature_points(cv::Mat img, cv::Mat mask, float weight) {
     std::vector<cv::Point2f> feature_points;
-    cv::goodFeaturesToTrack(img, feature_points, 200, weight * 0.1, weight * 6, mask);
+
+    double quality_level = std::max(0.005, weight * 0.1);
+    double min_distance = std::max(3.0f, weight * 6);
+
+    cv::goodFeaturesToTrack(img, feature_points, 200, quality_level, min_distance, mask);
     return feature_points;
 }
 
@@ -207,6 +211,7 @@ void FeaturePointsManager::update_bbox(const std::vector<cv::Vec2f>& motions, st
 // }
 
 void FeaturePointsManager::update_status(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status) {
+    mark_status_with_contained_points(status);
     mark_status_with_amplitude(motion, status, 0.9);
     mark_status_with_angle(motion, status, 60);
 }
@@ -222,6 +227,10 @@ void FeaturePointsManager::update_feature_points(const std::vector<cv::Point2f>&
                  std::back_inserter(feature_points_), [&](cv::Point2f) { return *it_status++; });
 }
 
+void FeaturePointsManager::mark_status_with_contained_points(std::vector<uchar>& status) {
+    auto it = feature_points_.begin();
+    std::replace_if(status.begin(), status.end(), [&](uchar s) { return !bbox_.contains(*it++); }, 0);
+}
 void FeaturePointsManager::mark_status_with_amplitude(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status,
                                                       float rate) {
     std::vector<float> amplitude_vec(motion.size());

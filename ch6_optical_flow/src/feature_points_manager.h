@@ -31,6 +31,7 @@ class FeaturePointsManager {
 
     void mark_status_with_amplitude(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status, float rate);
     void mark_status_with_angle(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status, float rate);
+    void mark_status_with_contained_points(std::vector<uchar>& status);
     // void delete_with_status(std::vector<cv::Point2f> new_feature_points, const std::vector<uchar>& status);
     // void set_feature_points(std::vector<cv::Point2f> new_feature_points);
 

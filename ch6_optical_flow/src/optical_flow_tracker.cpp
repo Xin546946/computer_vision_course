@@ -6,6 +6,19 @@
 #include <opencv2/video/tracking.hpp>
 #include <vector>
 
+void apply_histo_equalization_around(BoundingBox bbox, cv::Mat img, int ratio_flattenning) {
+    cv::Rect2i rect_local(bbox.top_left().x - 0.5 * ratio_flattenning * bbox.width(),
+                          bbox.top_left().y - 0.5 * ratio_flattenning * bbox.height(),
+                          (1 + ratio_flattenning) * bbox.width(), (1 + ratio_flattenning) * bbox.height());
+
+    cv::Mat local =
+        get_sub_image_around(img, rect_local.tl().x + 0.5 * rect_local.width,
+                             rect_local.tl().y + 0.5 * rect_local.height, rect_local.width, rect_local.height);
+
+    cv::equalizeHist(local, local);
+    local.copyTo(img(rect_local));
+}
+
 void OpticalFlowTracker::process(BoundingBox initial_bbox, const std::vector<cv::Mat>& videos) {
     assert(!videos.empty());
 
@@ -17,6 +30,7 @@ void OpticalFlowTracker::process(BoundingBox initial_bbox, const std::vector<cv:
     // cv::Rect intersection = mask_rect & bbox_rect;
     // mask(intersection) = cv::Mat::ones(cv::Size(initial_bbox.width(), initial_bbox.height()), videos[0].type());
 
+    apply_histo_equalization_around(initial_bbox, videos[0], 0.05);
     feature_points_manager_.initialize(videos[0], initial_bbox);
 
     // cv::goodFeaturesToTrack(videos[0], prev_corners, 200, 0.01, 10, mask);
@@ -35,17 +49,7 @@ void OpticalFlowTracker::process(BoundingBox initial_bbox, const std::vector<cv:
         // aplly histogramm equalization in local
         BoundingBox bbox = feature_points_manager_.get_bbox();
 
-        float w = 0.05;
-        cv::Rect2i rect_local(bbox.top_left().x - 0.5 * w * bbox.width(), bbox.top_left().y - 0.5 * w * bbox.height(),
-                              (1 + w) * bbox.width(), (1 + w) * bbox.height());
-
-        cv::Mat local =
-            get_sub_image_around(videos[i], rect_local.tl().x + 0.5 * rect_local.width,
-                                 rect_local.tl().y + 0.5 * rect_local.height, rect_local.width, rect_local.height);
-
-        cv::equalizeHist(local, local);
-        local.copyTo(videos[i](rect_local));
-
+        apply_histo_equalization_around(bbox, videos[i], 0.05);
         cv::calcOpticalFlowPyrLK(last_img, videos[i], prev_feature_points, curr_feature_points, status, err,
                                  cv::Size(11, 11), 3);
 

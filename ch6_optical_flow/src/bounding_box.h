@@ -25,7 +25,11 @@ class BoundingBox {
     }
 
     const Point center() const {
-        return cv::Point(window_.tl().x + window_.width / 2, window_.tl().y + window_.height / 2);
+        return Point(window_.tl().x + window_.width / 2, window_.tl().y + window_.height / 2);
+    }
+
+    bool contains(Point point) const {
+        return window_.contains(point);
     }
 
    private:
