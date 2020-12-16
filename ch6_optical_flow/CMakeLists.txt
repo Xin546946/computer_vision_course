@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS -Wall -Wextra )
-set(CMAKE_CXX_FLAGS  -g)
+set(CMAKE_CXX_FLAGS  -o3)
 
 
 find_package(OpenCV 3.2.0 REQUIRED)
