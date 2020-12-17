@@ -12,7 +12,7 @@ ${OpenCV_LIBS}
 utils
 )
 
-add_executable(test_of_opencv test_optical_flow.cpp)
+add_executable(test_of_opencv test_optical_flow_tracker_opencv.cpp)
 target_link_libraries(test_of_opencv
 ${OpenCV_LIBS}
 )
@@ -29,3 +29,12 @@ ${OpenCV_LIBS}
 utils
 feature_points_manager
 )
+
+add_executable(test_optical_flow test_optical_flow.cpp)
+target_link_libraries(test_optical_flow
+${OpenCV_LIBS}
+utils
+optical_flow
+)
+
+

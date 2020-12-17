@@ -1,50 +1,34 @@
+#include "opencv_utils.h"
+#include "optical_flow.h"
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/video/tracking.hpp>
-#include <opencv2/video/video.hpp>
 #include <vector>
 
+cv::Mat generate_img_with_rect(int rows, int cols, cv::Point2f ul, int width, int height);
+
 int main(int argc, char** argv) {
-    // open the camera of your laptop and extract feature points
-    cv::VideoCapture video(0);
-    cv::Mat img_prev;
-    std::cout << img_prev.type() << '\n';
-    video >> img_prev;
-    cv::namedWindow("Feature Points");
+    cv::Mat img1 = generate_img_with_rect(100, 100, cv::Point2f(10.0f, 10.0f), 10, 10);
+    cv::Mat img2 = generate_img_with_rect(100, 100, cv::Point2f(30.0f, 30.0f), 10, 10);
+    cv::imshow("img1", img1);
+    cv::waitKey(0);
+    cv::imshow("img2", img2);
+    cv::waitKey(0);
 
-    cv::Mat img_gray_prev;
-    cv::cvtColor(img_prev, img_gray_prev, CV_RGB2GRAY);
+    std::vector<cv::Point2f> prev_fps;
+    cv::goodFeaturesToTrack(img1, prev_fps, 10, 0.01, 3);
 
-    std::vector<cv::Point2f> feature_points_prev;
-    cv::goodFeaturesToTrack(img_gray_prev, feature_points_prev, 200, 0.01, 10, cv::Mat());
-    for (cv::Point2f point : feature_points_prev) {
-        cv::circle(img_prev, point, 1, cv::Scalar(0, 0, 255), 1, 8, 0);
-    }
-    std::vector<cv::Point2f>& feature_points_cp = feature_points_prev;
-    cv::imshow("Feature Points", img_prev);
-
-    cv::Mat img_curr, img_gray_curr;
-    std::vector<cv::Point2f> feature_points_curr;
+    std::vector<cv::Point2f> curr_fps;
     std::vector<uchar> status;
-    std::vector<float> err;
-    while (true) {
-        if (cv::waitKey(33) == ' ') {
-            break;
-        }
-        video >> img_curr;
-        cv::cvtColor(img_curr, img_gray_curr, CV_RGB2GRAY);
+    OpticalFlow optical_flow(img1, img2, prev_fps, curr_fps, status, cv::Size(11, 11));
+    std::vector<cv::Point2f> fps_optical_flow = optical_flow.get_result();
+    optical_flow.vis_optical_flow();
 
-        cv::calcOpticalFlowPyrLK(img_gray_prev, img_gray_curr, feature_points_prev, feature_points_curr, status, err,
-                                 cv::Size(51, 51), 3);
-        for (int i = 0; i < feature_points_curr.size(); i++) {
-            cv::circle(img_curr, feature_points_curr[i], 1, cv::Scalar(0, 0, 255), 2, 8, 0);
-            cv::line(img_curr, feature_points_cp[i], feature_points_curr[i], cv::Scalar(255, 0, 0), 2);
-        }
-        cv::imshow("Feature Points", img_curr);
-        swap(feature_points_prev, feature_points_curr);
-        img_gray_prev = img_gray_curr.clone();
-    }
     return 0;
+}
+
+cv::Mat generate_img_with_rect(int rows, int cols, cv::Point2f ul, int width, int height) {
+    cv::Mat img = 255 * cv::Mat::ones(cv::Size(cols, rows), CV_8UC1);
+    put_val_from_ul(0, img, ul.x, ul.y, width, height);
+    return img;
 }

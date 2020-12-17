@@ -93,3 +93,5 @@ void draw_arrowed_lines(cv::Mat img, const std::vector<cv::Point_<T>>& src, cons
     std::for_each(src.begin(), src.end(),
                   [&](const cv::Point_<T> point) { cv::arrowedLine(img, point, *it_target++, bgr, width); });
 }
+
+cv::Mat do_sobel(cv::Mat input, int flag = 0);

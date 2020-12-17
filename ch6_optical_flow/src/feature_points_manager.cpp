@@ -1,3 +1,15 @@
+/**
+______________________________________________________________________
+*********************************************************************
+* @brief This file is developed for the course of ShenLan XueYuan:
+* Fundamental implementations of Computer Vision
+* all rights preserved
+* @author Xin Jin, Zhaoran Wu
+* @contact: xinjin1109@gmail.com, zhaoran.wu1@gmail.com
+*
+______________________________________________________________________
+*********************************************************************
+**/
 #include "feature_points_manager.h"
 #include "math_utils.h"
 #include "opencv_utils.h"
@@ -7,15 +19,47 @@
 #include <numeric>
 #include <opencv2/video/tracking.hpp>
 
+/**
+ * @brief Extrac feature points
+ *
+ * @param img
+ * @param mask
+ * @param weight
+ * @return std::vector<cv::Point2f>
+ */
 std::vector<cv::Point2f> extract_feature_points(cv::Mat img, cv::Mat mask, float weight);
+/**
+ * @brief Process fps with status
+ *
+ * @param feature_points
+ * @param status
+ * @return std::vector<cv::Point2f>
+ */
 std::vector<cv::Point2f> process_feature_points(std::vector<cv::Point2f> feature_points, std::vector<uchar> status);
-// std::array<float, 2> compute_incremental_move(std::vector<cv::Point2f> feature_points);
+/**
+ * @brief find median value of vector
+ *
+ * @param data
+ * @return float
+ */
 float median(std::vector<float> data);
+/**
+ * @brief find median value with status of vector
+ *
+ * @param data
+ * @param status
+ * @return float
+ */
 float median(std::vector<float> data, const std::vector<uchar>& status);
+/**
+ * @brief Compute motion of pixel with 2 frame feature points
+ *
+ * @param old_feature_points
+ * @param new_feature_points
+ * @return std::vector<cv::Vec2f>
+ */
 std::vector<cv::Vec2f> compute_pixel_motion(const std::vector<cv::Point2f>& old_feature_points,
                                             const std::vector<cv::Point2f>& new_feature_points);
-// FeaturePointsManager::FeaturePointsManager() {
-// }
 
 std::vector<cv::Point2f>& operator+=(std::vector<cv::Point2f>& feature_points_1,
                                      std::vector<cv::Point2f>& feature_points_2) {
@@ -30,12 +74,24 @@ void FeaturePointsManager::initialize(cv::Mat img, BoundingBox initial_bbox) {
     extract_new_feature_points(img);
 }
 
+std::vector<cv::Point2f> extract_feature_points(cv::Mat img, cv::Mat mask, float weight) {
+    std::vector<cv::Point2f> feature_points;
+
+    double quality_level = std::max(0.02, weight * 0.5);
+    double min_distance = std::max(2.0f, weight * 8);
+
+    cv::goodFeaturesToTrack(img, feature_points, 50, quality_level, min_distance, mask);
+    return feature_points;
+}
+
 void FeaturePointsManager::extract_new_feature_points(cv::Mat img) {
     cv::Mat mask = compute_mask(img.rows, img.cols);
     int iter = 0;
     float weight = 1.0f;
     while (!is_enough_points() && iter < 4) {
         iter++;
+        // If mask is 0 at some position, this position would not be considered for extracting fps
+        // We extract only the fps at the position, where mask is 1
         std::vector<cv::Point2f> additional_feature_points = extract_feature_points(img, mask, weight);
         std::cout << "add new feature points, num : " << additional_feature_points.size() << '\n';
 
@@ -46,16 +102,6 @@ void FeaturePointsManager::extract_new_feature_points(cv::Mat img) {
 
         weight *= 0.8;
     }
-}
-
-std::vector<cv::Point2f> extract_feature_points(cv::Mat img, cv::Mat mask, float weight) {
-    std::vector<cv::Point2f> feature_points;
-
-    double quality_level = std::max(0.02, weight * 0.5);
-    double min_distance = std::max(2.0f, weight * 8);
-
-    cv::goodFeaturesToTrack(img, feature_points, 50, quality_level, min_distance, mask);
-    return feature_points;
 }
 
 cv::Mat FeaturePointsManager::compute_mask(int rows, int cols) {
@@ -79,12 +125,6 @@ void FeaturePointsManager::process_feature_points(cv::Mat img,
     update_feature_points(feature_points_at_new_position, status);
     cv::Mat mask = compute_mask(img.rows, img.cols);
     extract_new_feature_points(img);
-    // static int i = 0;
-    // std::cout << "curr img id :" << i++ << " num fps : " << feature_points_.size() << " window tl :" <<
-    // bbox_.top_left()
-    //          << '\n';
-
-    // adjust_bbox();
 }
 
 void FeaturePointsManager::visualize(cv::Mat img, const std::vector<cv::Point2f>& feature_points_at_new_position) {
@@ -96,44 +136,11 @@ void FeaturePointsManager::visualize(cv::Mat img, const std::vector<cv::Point2f>
 
     auto tl = bbox_.top_left();
     draw_bounding_box_vis_image(vis, tl.x - 0.05 * bbox_.width(), tl.y - 0.05 * bbox_.height(), 1.1f * bbox_.width(),
-                                1.1f * bbox_.height());  // todo
+                                1.1f * bbox_.height());
 
     cv::imshow("Optical flow tracker", vis);
     cv::waitKey(1);
 }
-
-void FeaturePointsManager::update_bbox(const std::vector<cv::Vec2f>& motions, std::vector<uchar>& status) {
-    // todo rewrite!
-    cv::Vec2f delta_motion;
-
-    cv::Vec2f acc_motion;
-    int num_valid = 0;
-    for (int i = 0; i < motions.size(); i++) {
-        if (status[i]) {
-            acc_motion += motions[i];
-            num_valid++;
-        }
-    }
-    delta_motion[0] = acc_motion[0] / num_valid;
-    delta_motion[1] = acc_motion[1] / num_valid;
-
-    std::cout << " delete : " << status.size() - num_valid << " preserve : " << num_valid << '\n';
-    bbox_.move(delta_motion[0], delta_motion[1]);
-}
-
-// void FeaturePointsManager::adjust_bbox() {
-//     std::array<float, 2> delta = compute_incremental_move(this->feature_points_);
-//     update_bbox(delta[0], delta[1]);
-// }
-
-// std::array<float, 2> compute_incremental_move(std::vector<cv::Point2f> feature_points) {
-//     std::array<float, 2> delta{0.0f, 0.0f};
-//     for (cv::Point2f point : feature_points) {
-//         delta[0] += point.x;
-//         delta[1] += point.y;
-//     }
-//     return delta;
-// }
 
 void FeaturePointsManager::update_status(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status) {
     mark_status_with_contained_points(status);
@@ -141,21 +148,11 @@ void FeaturePointsManager::update_status(const std::vector<cv::Vec2f>& motion, s
     mark_status_with_angle(motion, status, 25);
 }
 
-void FeaturePointsManager::update_feature_points(const std::vector<cv::Point2f>& feature_points_at_new_position,
-                                                 std::vector<uchar>& status) {
-    assert(feature_points_at_new_position.size() == status.size());
-
-    feature_points_.clear();
-
-    auto it_status = status.begin();
-    std::copy_if(feature_points_at_new_position.begin(), feature_points_at_new_position.end(),
-                 std::back_inserter(feature_points_), [&](cv::Point2f) { return *it_status++; });
-}
-
 void FeaturePointsManager::mark_status_with_contained_points(std::vector<uchar>& status) {
     auto it = feature_points_.begin();
     std::replace_if(status.begin(), status.end(), [&](uchar s) { return !bbox_.contains(*it++); }, 0);
 }
+
 void FeaturePointsManager::mark_status_with_amplitude(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status,
                                                       float ratio) {
     std::vector<float> amplitude_vec(motion.size());
@@ -172,6 +169,7 @@ void FeaturePointsManager::mark_status_with_amplitude(const std::vector<cv::Vec2
                     },
                     0);
 }
+
 void FeaturePointsManager::mark_status_with_angle(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status,
                                                   float shift) {
     std::vector<float> angle_vec(motion.size());
@@ -189,6 +187,36 @@ void FeaturePointsManager::mark_status_with_angle(const std::vector<cv::Vec2f>& 
                     },
                     0);
 }
+
+void FeaturePointsManager::update_bbox(const std::vector<cv::Vec2f>& motions, std::vector<uchar>& status) {
+    cv::Vec2f delta_motion;
+
+    cv::Vec2f acc_motion;
+    int num_valid = 0;
+    for (int i = 0; i < motions.size(); i++) {
+        if (status[i]) {
+            acc_motion += motions[i];
+            num_valid++;
+        }
+    }
+    delta_motion[0] = acc_motion[0] / num_valid;
+    delta_motion[1] = acc_motion[1] / num_valid;
+
+    std::cout << " delete : " << status.size() - num_valid << " preserve : " << num_valid << '\n';
+    bbox_.move(delta_motion[0], delta_motion[1]);
+}
+
+void FeaturePointsManager::update_feature_points(const std::vector<cv::Point2f>& feature_points_at_new_position,
+                                                 std::vector<uchar>& status) {
+    assert(feature_points_at_new_position.size() == status.size());
+
+    feature_points_.clear();
+
+    auto it_status = status.begin();
+    std::copy_if(feature_points_at_new_position.begin(), feature_points_at_new_position.end(),
+                 std::back_inserter(feature_points_), [&](cv::Point2f) { return *it_status++; });
+}
+
 std::vector<cv::Vec2f> compute_pixel_motion(const std::vector<cv::Point2f>& old_feature_points,
                                             const std::vector<cv::Point2f>& new_feature_points) {
     std::vector<cv::Vec2f> result(old_feature_points.size());
