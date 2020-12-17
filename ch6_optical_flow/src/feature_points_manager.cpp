@@ -127,6 +127,7 @@ void FeaturePointsManager::process_feature_points(cv::Mat img,
     update_status(motion, status);
     update_bbox(motion, status, img.cols, img.rows);
     update_feature_points(feature_points_at_new_position, status);
+
     extract_new_feature_points(img);
 }
 
