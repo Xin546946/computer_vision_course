@@ -68,81 +68,6 @@ cv::Mat FeaturePointsManager::compute_mask(int rows, int cols) {
     return mask;
 }
 
-// //! 这个函数的意义?
-// cv::Mat FeaturePointsManager::compute_curr_mask(cv::Mat img, BoundingBox bbox) {
-//     cv::Mat mask = cv::Mat::zeros(img.size(), img.type());
-//     cv::Rect mask_rect = cv::Rect(cv::Point(0, 0), mask.size());
-//     cv::Rect bbox_rect = cv::Rect(bbox.top_left(), cv::Size(bbox.width(), bbox.height()));
-//     cv::Rect intersection = mask_rect & bbox_rect;
-//     mask(intersection) = cv::Mat::ones(cv::Size(bbox.width(), bbox.height()), img.type());
-//     return mask;
-// }
-
-// void FeaturePointsManager::process_num_feature_points() {
-//     int max_iter = 10;
-//     int iter = 0;
-//     while (!is_enough() && iter < max_iter) {
-//         iter++;
-//         // todo overload +=
-//         feature_points_ += get_feature_points();  //! ??????
-//     }
-//     if (!is_enough()) {
-//         // todo
-//     }
-// }
-
-// void FeaturePointsManager::set_tracking_results(const std::vector<cv::Point2f>& tracked_feature_points,
-//                                                 const std::vector<uchar>& status) {
-//     delete_bad_feature_points(tracked_feature_points, status);
-//     update_bbox();
-// }
-
-// void FeaturePointsManager::delete_bad_feature_points(const std::vector<cv::Point2f>& tracked_feature_points,
-//                                                      const std::vector<uchar>& status) {
-//     // todo calc_with_direction, then delete_with_direction
-//     std::vector<float> amplitude = compute_with_amplitude(tracked_feature_points);
-//     std::vector<float> angle = compute_with_direction(tracked_feature_points);
-//     delete_with_direction(amplitude);
-//     delete_with_amplitude(angle);
-//     delete_with_status(status);
-// }
-
-// void FeaturePointsManager::delete_with_status(const std::vector<uchar>& status) {
-//     for (int i = 0; i < status.size(); i++) {
-//         if (int(status[i]) == 0) {
-//             feature_points_.erase(feature_points_.begin() + i);
-//         }
-//     }
-// }
-
-// std::vector<float>& FeaturePointsManager::compute_with_direction(
-//     const std::vector<cv::Point2f>& tracked_feature_points) {
-//     std::vector<float> angle;
-//     for (int i = 0; i < tracked_feature_points.size(); i++) {
-//         angle.emplace_back((tracked_feature_points[i].y - feature_points_[i].y) /
-//                            (tracked_feature_points[i].x - feature_points_[i].x));
-//     }
-//     return angle;
-// }
-
-// std::vector<float>& FeaturePointsManager::compute_with_amplitude(
-//     const std::vector<cv::Point2f>& tracked_feature_points) {
-//     std::vector<float> amplitude;
-//     for (int i = 0; i < tracked_feature_points.size(); i++) {
-//         amplitude.emplace_back(sqrt(pow(tracked_feature_points[i].y - feature_points_[i].y, 2) +
-//                                     pow(tracked_feature_points[i].x - feature_points_[i].x, 2)));
-//     }
-//     return amplitude;
-// }
-
-// void FeaturePointsManager::delete_with_amplitude(const std::vector<float>& amplitude) {
-//     float sum_of_elems = std::accumulate(amplitude.begin(), amplitude.end(), 0);
-//     // calculate variance
-// }
-
-// void FeaturePointsManager::delete_with_direction(const std::vector<float>& angle) {
-// }
-
 void FeaturePointsManager::process_feature_points(cv::Mat img,
                                                   const std::vector<cv::Point2f>& feature_points_at_new_position,
                                                   std::vector<uchar>& status) {
@@ -170,7 +95,8 @@ void FeaturePointsManager::visualize(cv::Mat img, const std::vector<cv::Point2f>
     draw_arrowed_lines(vis, feature_points_, feature_points_at_new_position, cv::Scalar(0, 0, 255), 1);
 
     auto tl = bbox_.top_left();
-    draw_bounding_box_vis_image(vis, tl.x, tl.y, bbox_.width(), bbox_.height());
+    draw_bounding_box_vis_image(vis, tl.x - 0.05 * bbox_.width(), tl.y - 0.05 * bbox_.height(), 1.1f * bbox_.width(),
+                                1.1f * bbox_.height());  // todo
 
     cv::imshow("Optical flow tracker", vis);
     cv::waitKey(1);
