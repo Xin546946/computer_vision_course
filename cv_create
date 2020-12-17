@@ -1,5 +1,10 @@
 #!/bin/bash
 dst_dir=$1
+if [ -d $dst_dir ];  then
+  echo "Directory $1 existed, please check it or remove it"
+  exit 0
+fi
+
 mkdir $dst_dir
 cd $dst_dir
 
