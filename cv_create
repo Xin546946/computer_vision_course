@@ -1,4 +1,9 @@
 #!/bin/bash
+if [ "$1" == "-h" ]; then
+  echo "Usage: cv_create [name of new workspace] [path to a utils folder to be copied]"
+  exit 0
+fi
+
 dst_dir=$1
 if [ -d $dst_dir ];  then
   echo "Directory $1 existed, please check it or remove it"
