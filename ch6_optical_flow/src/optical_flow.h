@@ -12,22 +12,16 @@ class OpticalFlow {
      * @param img1
      * @param img2
      */
-    OpticalFlow(cv::Mat img1, cv::Mat img2, std::vector<cv::Point2f> prev_fps, std::vector<cv::Point2f> curr_fps,
-                std::vector<uchar> status, cv::Size2i win_size);
-    /**
-     * @brief Get the result fps
-     *
-     * @return std::vector<cv::Point2f>
-     */
-    std::vector<cv::Point2f> get_result() const {
-        return fps_;
-    };
-    void vis_optical_flow();
+    OpticalFlow(cv::Mat img1, cv::Mat img2, const std::vector<cv::Point2f>& prev_fps,
+                cv::Size2i win_size = cv::Size(11, 11));
+    std::vector<cv::Point2f> compute_curr_fps();
+    std::vector<uchar> get_status() const;
 
    private:
-    void update_status();
-    cv::Point2f compute_flow_in_window(cv::Point2f feature_point, cv::Size win_size);
+    cv::Point2f compute_flow_in_window(cv::Point2f feature_point);
+    uchar update_status();
     std::vector<cv::Point2f> fps_;
     cv::Mat img1_;
     cv::Mat img2_;
+    cv::Size2i win_size_;
 };

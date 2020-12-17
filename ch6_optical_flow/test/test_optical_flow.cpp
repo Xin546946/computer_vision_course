@@ -6,6 +6,7 @@
 #include <vector>
 
 cv::Mat generate_img_with_rect(int rows, int cols, cv::Point2f ul, int width, int height);
+void vis_optical_flow();
 
 int main(int argc, char** argv) {
     cv::Mat img1 = generate_img_with_rect(100, 100, cv::Point2f(10.0f, 10.0f), 10, 10);
@@ -18,11 +19,9 @@ int main(int argc, char** argv) {
     std::vector<cv::Point2f> prev_fps;
     cv::goodFeaturesToTrack(img1, prev_fps, 10, 0.01, 3);
 
-    std::vector<cv::Point2f> curr_fps;
-    std::vector<uchar> status;
-    OpticalFlow optical_flow(img1, img2, prev_fps, curr_fps, status, cv::Size(11, 11));
-    std::vector<cv::Point2f> fps_optical_flow = optical_flow.get_result();
-    optical_flow.vis_optical_flow();
+    OpticalFlow optical_flow(img1, img2, prev_fps, cv::Size2i(11, 11));
+    std::vector<cv::Point2f> fps_optical_flow = optical_flow.compute_curr_fps();
+    vis_optical_flow();
 
     return 0;
 }
