@@ -63,7 +63,7 @@ cv::Mat draw_bounding_box_vis_image(cv::Mat image, float x, float y, float width
  * @param flag  = 0 x , = 1 y
  * @return cv::Mat
  */
-cv::Mat do_sobel(cv::Mat input, int flag = 0) {
+cv::Mat do_sobel(cv::Mat input, int flag) {
     cv::Mat im = input.clone();
     if (im.channels() != 1) {
         cv::cvtColor(input, im, CV_BGR2GRAY);
