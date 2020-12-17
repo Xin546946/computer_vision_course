@@ -33,11 +33,15 @@ cv::Point2i template_matching(cv::Mat img, cv::Mat temp) {
     return center_max;
 }
 
+cv::Rect get_intersection_from_ul(cv::Rect rect_img, int x, int y, int width, int height) {
+    cv::Rect roi = cv::Rect(cv::Point(x, y), cv::Size(width, height));
+    cv::Rect intersection = rect_img & roi;
+    return intersection;
+}
+
 cv::Rect get_intersection_from_ul(cv::Mat image, int x, int y, int width, int height) {
     cv::Rect img_rect = cv::Rect(cv::Point(0, 0), image.size());
-    cv::Rect roi = cv::Rect(cv::Point(x, y), cv::Size(width, height));
-    cv::Rect intersection = img_rect & roi;
-    return intersection;
+    return get_intersection_from_ul(img_rect, x, y, width, height);
 }
 
 cv::Rect get_intersection_around(cv::Mat image, int x, int y, int width, int height) {
@@ -54,37 +58,4 @@ cv::Mat get_sub_image_around(cv::Mat image, int x, int y, int width, int height)
 cv::Mat draw_bounding_box_vis_image(cv::Mat image, float x, float y, float width, float height) {
     cv::rectangle(image, cv::Rect2i(x, y, width, height), cv::Scalar(0, 255, 0), 2);
     return image;
-}
-
-/**
- * @brief
- *
- * @param input
- * @param flag  = 0 x , = 1 y
- * @return cv::Mat
- */
-cv::Mat do_sobel(cv::Mat input, int flag = 0) {
-    cv::Mat im = input.clone();
-    if (im.channels() != 1) {
-        cv::cvtColor(input, im, CV_BGR2GRAY);
-    }
-    if (im.type() != CV_64FC1) {
-        im.convertTo(im, CV_64FC1);
-    }
-
-    cv::Mat output(im.size(), im.type());
-    for (int r = 0; r < im.rows; r++) {
-        for (int c = 0; c < im.cols; c++) {
-            int r_dhs = r + flag;
-            int c_rhs = c + (1 - flag);
-            c_rhs = std::min(std::max(0, c_rhs), im.cols - 1);
-            r_dhs = std::min(std::max(0, r_dhs), im.rows - 1);
-            int r_uhs = r - flag;
-            int c_lhs = c - (1 - flag);
-            c_lhs = std::min(std::max(0, c_lhs), im.cols - 1);
-            r_uhs = std::min(std::max(0, r_uhs), im.rows - 1);
-            output.at<double>(r, c) = 0.5 * (im.at<double>(r_dhs, c_rhs) - im.at<double>(r_uhs, c_lhs));
-        }
-    }
-    return output;
 }
