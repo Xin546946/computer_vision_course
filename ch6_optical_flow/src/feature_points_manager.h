@@ -139,6 +139,8 @@ class FeaturePointsManager {
         return feature_points_.size() > 25;
     };
 
+    double compute_matching_score(cv::Mat);
+
     std::vector<cv::Point2f> feature_points_;
     BoundingBox bbox_;
     cv::Mat temp_;

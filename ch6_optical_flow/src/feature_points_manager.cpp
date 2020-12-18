@@ -61,6 +61,8 @@ float median(std::vector<float> data, const std::vector<uchar>& status);
 std::vector<cv::Vec2f> compute_pixel_motion(const std::vector<cv::Point2f>& old_feature_points,
                                             const std::vector<cv::Point2f>& new_feature_points);
 
+double compute_normalized_cross_correlation(cv::Mat img1, cv::Mat img2);
+
 std::vector<cv::Point2f>& operator+=(std::vector<cv::Point2f>& feature_points_1,
                                      std::vector<cv::Point2f>& feature_points_2) {
     for (cv::Point2f point : feature_points_2) {
@@ -254,6 +256,15 @@ void FeaturePointsManager::update_feature_points(const std::vector<cv::Point2f>&
                  std::back_inserter(feature_points_), [&](cv::Point2f) { return *it_status++; });
 }
 
+double FeaturePointsManager::compute_matching_score(cv::Mat img) {
+    cv::Mat sub_img = get_sub_image_around(img, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
+    return compute_normalized_cross_correlation(temp_, sub_img);
+}
+
+double compute_normalized_cross_correlation(cv::Mat img1, cv::Mat img2) {
+    // todo
+    return 0.0;
+}
 std::vector<cv::Vec2f> compute_pixel_motion(const std::vector<cv::Point2f>& old_feature_points,
                                             const std::vector<cv::Point2f>& new_feature_points) {
     std::vector<cv::Vec2f> result(old_feature_points.size());
