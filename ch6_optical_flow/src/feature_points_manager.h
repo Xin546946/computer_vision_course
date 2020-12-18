@@ -139,7 +139,7 @@ class FeaturePointsManager {
         return feature_points_.size() > 25;
     };
 
-    double compute_matching_score(cv::Mat);
+    double compute_matching_score(cv::Mat img);
 
     std::vector<cv::Point2f> feature_points_;
     BoundingBox bbox_;

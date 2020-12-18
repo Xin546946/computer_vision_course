@@ -35,6 +35,7 @@ cv::Point2i template_matching(cv::Mat img, cv::Mat temp);
  * @return cv::Mat : sub im
  */
 cv::Mat get_sub_image_around(cv::Mat image, int x, int y, int width, int height);
+cv::Mat get_sub_image_from_ul(cv::Mat image, int x, int y, int width, int height);
 
 cv::Mat draw_bounding_box_vis_image(cv::Mat image, float x, float y, float width, float height);
 

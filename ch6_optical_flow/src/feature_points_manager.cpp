@@ -61,7 +61,7 @@ float median(std::vector<float> data, const std::vector<uchar>& status);
 std::vector<cv::Vec2f> compute_pixel_motion(const std::vector<cv::Point2f>& old_feature_points,
                                             const std::vector<cv::Point2f>& new_feature_points);
 
-double compute_normalized_cross_correlation(cv::Mat img1, cv::Mat img2);
+double compute_zero_normalized_cross_correlation(cv::Mat img1, cv::Mat img2);
 
 std::vector<cv::Point2f>& operator+=(std::vector<cv::Point2f>& feature_points_1,
                                      std::vector<cv::Point2f>& feature_points_2) {
@@ -107,17 +107,21 @@ void FeaturePointsManager::extract_new_feature_points(cv::Mat img) {
 
         weight *= 0.8;
     }
+    double score = compute_matching_score(img);
+    std::cout << "Template matching score is " << score << '\n';
 
-    if (feature_points_.size() < 4) {
+    if (feature_points_.size() < 4 || score < 0.01) {
+        cv::waitKey(1);
         // todo add template matching and matching score
         cv::Point2i center = template_matching(img, temp_);
-        float w = 0.1;
-        BoundingBox bbox_(center.x + w * temp_.cols, center.y + w * temp_.rows, (1 - 2 * w) * temp_.cols,
-                          (1 - 2 * w) * temp_.rows);
-        feature_points_ = extract_feature_points(img, mask, weight);
-
-        std::cout << "do not have enough points for tracking, programm exited." << std::endl;
-        std::exit(0);
+        float w = 0.0;
+        bbox_ = BoundingBox(center.x + w * temp_.cols, center.y + w * temp_.rows, (1 - 2 * w) * temp_.cols,
+                            (1 - 2 * w) * temp_.rows);
+        feature_points_.clear();
+        feature_points_ = extract_feature_points(img, compute_mask(img.rows, img.cols), weight);
+        std::cout << "The tracking is reset" << '\n';
+        // std::cout << "do not have enough points for tracking, programm exited." << std::endl;
+        // std::exit(0);
     }
 }
 
@@ -257,11 +261,22 @@ void FeaturePointsManager::update_feature_points(const std::vector<cv::Point2f>&
 }
 
 double FeaturePointsManager::compute_matching_score(cv::Mat img) {
-    cv::Mat sub_img = get_sub_image_around(img, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
-    return compute_normalized_cross_correlation(temp_, sub_img);
+    cv::Mat sub_img = get_sub_image_from_ul(img, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
+    cv::Rect intersection =
+        get_intersection_from_ul(img, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
+    intersection.x -= intersection.tl().x;
+    intersection.y -= intersection.tl().y;
+
+    cv::Mat sub_template = temp_(intersection);
+    assert(sub_img.size() == sub_template.size());
+    // cv::imshow("Sub image", sub_sub_img);
+    // cv::waitKey(0);
+    // cv::imshow("Template", temp_);
+    // cv::waitKey(0);
+    return compute_zero_normalized_cross_correlation(sub_template, sub_img);
 }
 
-double compute_normalized_cross_correlation(cv::Mat img1, cv::Mat img2) {
+double compute_zero_normalized_cross_correlation(cv::Mat img1, cv::Mat img2) {
     // todo test
     assert(img1.size() == img2.size());
     cv::Scalar mean1, mean2, dev1, dev2;
@@ -269,8 +284,9 @@ double compute_normalized_cross_correlation(cv::Mat img1, cv::Mat img2) {
     cv::meanStdDev(img2, mean2, dev2);
     int num = img1.rows * img1.cols;
 
-    return (1 / num) * cv::sum(((img1 - mean1.val[0]) / dev1.val[0]) * ((img2 - mean2.val[0]) / dev2.val[2]))[0];
+    return (1 / (num * (dev1.val[0] + 1e-5) * (dev2.val[0] + 1e-5))) * (img1 - mean1.val[0]).dot(img2 - mean2.val[0]);
 }
+
 std::vector<cv::Vec2f> compute_pixel_motion(const std::vector<cv::Point2f>& old_feature_points,
                                             const std::vector<cv::Point2f>& new_feature_points) {
     std::vector<cv::Vec2f> result(old_feature_points.size());
