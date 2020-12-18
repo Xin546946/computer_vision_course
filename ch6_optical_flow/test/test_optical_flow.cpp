@@ -25,12 +25,13 @@ int main(int argc, char** argv) {
     cv::goodFeaturesToTrack(img1, prev_fps, 500, 0.2, 3);
     cv::Mat img2_clone = img2.clone();
     cv::cvtColor(img2_clone, img2_clone, CV_GRAY2BGR);
+
     for (cv::Point2f fp : prev_fps) {
         cv::circle(img2_clone, fp, 1, cv::Scalar(0, 0, 255), 2, 8);
     }
     cv::imshow("Feature Points", img2_clone);
     cv::waitKey(0);
-    OpticalFlow optical_flow(img1, img2, prev_fps, cv::Size2i(55, 55));
+    OpticalFlow optical_flow(img1, img2, prev_fps, cv::Size2i(15, 15));
     std::vector<cv::Point2f> curr_fps = optical_flow.get_curr_fps();
     std::vector<uchar> status = optical_flow.get_status();
     std::cout << "******Print status**********" << '\n';

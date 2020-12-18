@@ -4,6 +4,8 @@
 
 OpticalFlow::OpticalFlow(cv::Mat img1, cv::Mat img2, const std::vector<cv::Point2f>& prev_fps, cv::Size2i win_size)
     : img1_(img1), img2_(img2), fps_(prev_fps), curr_fps_(prev_fps), win_size_(win_size), status_(prev_fps.size()) {
+    img1_.convertTo(img1_, CV_32FC1);
+    img2_.convertTo(img2_, CV_32FC1);
     process_optical_flow();
 }
 
@@ -18,8 +20,8 @@ void OpticalFlow::process_optical_flow() {
         cv::Mat grad_y_img_roi =
             get_sub_image_around(grad_y_img, fps_[i].x, fps_[i].y, win_size_.width, win_size_.height);
         cv::Matx22f A = compute_A(grad_x_img_roi, grad_y_img_roi);
-        std::cout << "A is : " << '\n';
-        std::cout << A << '\n';
+        // std::cout << "A is : " << '\n';
+        // std::cout << A << '\n';
         status_[i] = update_status(A);
         std::cout << static_cast<int>(status_[i]);
         cv::Mat roi_img1 = get_sub_image_around(img1_, fps_[i].x, fps_[i].y, win_size_.width, win_size_.height);
@@ -42,9 +44,9 @@ cv::Matx21f OpticalFlow::compute_b(cv::Mat prev_img, cv::Mat curr_img, cv::Mat g
 
     assert(prev_img.type() == curr_img.type() && grad_x.type() == grad_y.type() && prev_img.type() == grad_x.type());
     cv::Mat diff_img_roi = prev_img - curr_img;
-    std::cout << grad_x << '\n';
-    std::cout << grad_y << '\n';
-    std::cout << diff_img_roi << '\n';
+    // std::cout << grad_x << '\n';
+    // std::cout << grad_y << '\n';
+    // std::cout << diff_img_roi << '\n';
     return cv::Matx21f(grad_x.dot(diff_img_roi), grad_y.dot(diff_img_roi));
 }
 
@@ -52,7 +54,7 @@ uchar OpticalFlow::update_status(cv::Matx22f matrix) {
     uchar status_success = 1;
     double det = cv::determinant(matrix);
     double trace = cv::trace(matrix);
-    std::cout << "det: " << det << ".  trace: " << trace << '\n';
+    // std::cout << "det: " << det << ".  trace: " << trace << '\n';
     float kappa = 0.01f;
     if ((det - kappa * trace * trace) < 0) {
         status_success = 0;
