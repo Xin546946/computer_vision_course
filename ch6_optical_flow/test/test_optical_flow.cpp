@@ -10,8 +10,12 @@ cv::Mat generate_img_with_rect(int rows, int cols, cv::Point2f ul, int width, in
 // void vis_optical_flow();
 
 int main(int argc, char** argv) {
-    cv::Mat img1 = generate_img_with_rect(100, 100, cv::Point2f(10.0f, 10.0f), 10, 10);
-    cv::Mat img2 = generate_img_with_rect(100, 100, cv::Point2f(30.0f, 30.0f), 10, 10);
+    // cv::Mat img1 = generate_img_with_rect(1000, 1000, cv::Point2f(100.0f, 100.0f), 100, 100);
+    // cv::Mat img2 = generate_img_with_rect(1000, 1000, cv::Point2f(120.0f, 120.0f), 100, 100);
+    // cv::GaussianBlur(img1, img1, cv::Size(31, 31), 31, 31);
+    // cv::GaussianBlur(img2, img2, cv::Size(31, 31), 31, 31);
+    cv::Mat img1 = cv::imread(argv[1], CV_8UC1);
+    cv::Mat img2 = cv::imread(argv[2], CV_8UC1);
     cv::imshow("img1", img1);
     cv::waitKey(0);
     cv::imshow("img2", img2);
@@ -26,7 +30,7 @@ int main(int argc, char** argv) {
     }
     cv::imshow("Feature Points", img2_clone);
     cv::waitKey(0);
-    OpticalFlow optical_flow(img1, img2, prev_fps, cv::Size2i(5, 5));
+    OpticalFlow optical_flow(img1, img2, prev_fps, cv::Size2i(55, 55));
     std::vector<cv::Point2f> curr_fps = optical_flow.get_curr_fps();
     std::vector<uchar> status = optical_flow.get_status();
     std::cout << "******Print status**********" << '\n';
