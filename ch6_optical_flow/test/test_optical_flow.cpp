@@ -8,44 +8,38 @@
 cv::Mat generate_img_with_rect(int rows, int cols, cv::Point2f ul, int width, int height);
 
 // void vis_optical_flow();
-
-int main(int argc, char** argv) {
-    // cv::Mat img1 = generate_img_with_rect(1000, 1000, cv::Point2f(100.0f, 100.0f), 100, 100);
-    // cv::Mat img2 = generate_img_with_rect(1000, 1000, cv::Point2f(120.0f, 120.0f), 100, 100);
-    // cv::GaussianBlur(img1, img1, cv::Size(31, 31), 31, 31);
-    // cv::GaussianBlur(img2, img2, cv::Size(31, 31), 31, 31);
-    cv::Mat img1 = cv::imread(argv[1], CV_8UC1);
-    cv::Mat img2 = cv::imread(argv[2], CV_8UC1);
-    cv::imshow("img1", img1);
-    cv::waitKey(0);
-    cv::imshow("img2", img2);
-    cv::waitKey(0);
-
-    std::vector<cv::Point2f> prev_fps;
-    cv::goodFeaturesToTrack(img1, prev_fps, 100, 0.01, 3);
+std::vector<cv::Point2f> optical_flow_track(cv::Mat img1, cv::Mat img2, std::vector<cv::Point2f> prev_fps) {
+    // cv::goodFeaturesToTrack(img1, prev_fps, 100, 0.01, 3);
     cv::Mat img2_clone = img2.clone();
     cv::cvtColor(img2_clone, img2_clone, CV_GRAY2BGR);
 
-    for (cv::Point2f fp : prev_fps) {
-        cv::circle(img2_clone, fp, 1, cv::Scalar(0, 0, 255), 2, 8, 0);
-    }
-    cv::imshow("Feature Points", img2_clone);
-    cv::waitKey(0);
-    OpticalFlow optical_flow(img1, img2, prev_fps, cv::Size2i(55, 55));
+    OpticalFlow optical_flow(img1, img2, prev_fps, cv::Size2i(21, 21));
     std::vector<cv::Point2f> curr_fps = optical_flow.get_curr_fps();
-    std::vector<uchar> status = optical_flow.get_status();
-    std::cout << "******Print status**********" << '\n';
-    for (uchar c : status) {
-        std::cout << static_cast<int>(c) << " ";
-    }
-    std::cout << '\n';
-    std::cout << "feature_points_size: " << curr_fps.size() << '\n';
+
     for (cv::Point2f fp : curr_fps) {
-        std::cout << "feature point is at " << fp.x << " " << fp.y << '\n';
         cv::circle(img2_clone, fp, 1, cv::Scalar(0, 255, 0), 2, 8, 0);
     }
     cv::imshow("Feature Points", img2_clone);
-    cv::waitKey(0);
+    cv::waitKey(1);
+    return curr_fps;
+}
+
+int main(int argc, char** argv) {
+    std::vector<cv::Mat> video;
+    for (int id = 1; id < 200; id++) {
+        cv::Mat img = cv::imread(argv[1] + std::to_string(id) + ".jpg", cv::IMREAD_GRAYSCALE);
+        assert(!img.empty());
+        video.push_back(img);
+    }
+    std::vector<cv::Point2f> curr_fps;
+    cv::goodFeaturesToTrack(video[0], curr_fps, 200, 0.2, 3);
+    cv::Mat prev_img = video[0];
+    for (int i = 1; i < video.size(); i++) {
+        std::vector<cv::Point2f> fps = optical_flow_track(prev_img, video[i], curr_fps);
+        prev_img = video[i];
+        curr_fps = fps;
+        std::cout << "The size of feature points: " << fps.size() << '\n';
+    }
 
     return 0;
 }
