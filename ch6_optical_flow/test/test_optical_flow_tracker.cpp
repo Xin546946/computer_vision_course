@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
     BoundingBox bbox_init(center.x + w * temp.cols, center.y + w * temp.rows, (1 - 2 * w) * temp.cols,
                           (1 - 2 * w) * temp.rows);
 
-    OpticalFlowTracker tracker;
+    OpticalFlowTracker tracker(temp);
     tracker.process(bbox_init, video);
 
     return 0;

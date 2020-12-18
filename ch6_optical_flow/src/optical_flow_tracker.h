@@ -26,6 +26,8 @@ class OpticalFlowTracker {
      *
      */
     OpticalFlowTracker() = default;
+
+    OpticalFlowTracker(cv::Mat temp);
     /**
      * @brief Process the videos (image sequences) with an initial bounding box, and videos
      *
@@ -40,4 +42,5 @@ class OpticalFlowTracker {
      *
      */
     FeaturePointsManager feature_points_manager_;
+    cv::Mat temp_;
 };

@@ -17,6 +17,9 @@ ______________________________________________________________________
 #include <opencv2/imgproc.hpp>
 #include <opencv2/video/tracking.hpp>
 #include <vector>
+
+OpticalFlowTracker::OpticalFlowTracker(cv::Mat temp) : temp_(temp), feature_points_manager_(temp) {
+}
 /**
  * @brief Histogram equalization locally according to the size of bounding box and ratio flattenning
  *

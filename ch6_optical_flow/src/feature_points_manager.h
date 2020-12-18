@@ -25,6 +25,8 @@ class FeaturePointsManager {
      *
      */
     FeaturePointsManager() = default;
+
+    FeaturePointsManager(cv::Mat temp);
     /**
      * @brief initialize feature points with given images and initial bounding box
      *
@@ -139,6 +141,7 @@ class FeaturePointsManager {
 
     std::vector<cv::Point2f> feature_points_;
     BoundingBox bbox_;
+    cv::Mat temp_;
 };
 /**
  * @brief Overloaded function for +=, which returns a vec of fps including fps1 and fps2

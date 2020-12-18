@@ -69,6 +69,9 @@ std::vector<cv::Point2f>& operator+=(std::vector<cv::Point2f>& feature_points_1,
     return feature_points_1;
 }
 
+FeaturePointsManager::FeaturePointsManager(cv::Mat temp) : temp_(temp) {
+}
+
 void FeaturePointsManager::initialize(cv::Mat img, BoundingBox initial_bbox) {
     bbox_ = initial_bbox;
     extract_new_feature_points(img);
@@ -104,6 +107,13 @@ void FeaturePointsManager::extract_new_feature_points(cv::Mat img) {
     }
 
     if (feature_points_.size() < 4) {
+        // todo add template matching and matching score
+        cv::Point2i center = template_matching(img, temp_);
+        float w = 0.1;
+        BoundingBox bbox_(center.x + w * temp_.cols, center.y + w * temp_.rows, (1 - 2 * w) * temp_.cols,
+                          (1 - 2 * w) * temp_.rows);
+        feature_points_ = extract_feature_points(img, mask, weight);
+
         std::cout << "do not have enough points for tracking, programm exited." << std::endl;
         std::exit(0);
     }
