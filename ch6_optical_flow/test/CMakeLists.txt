@@ -37,4 +37,8 @@ utils
 optical_flow
 )
 
+add_executable(test_ncc test_ncc.cpp)
+target_link_libraries(test_ncc
+${OpenCV_LIBS}
+)
 

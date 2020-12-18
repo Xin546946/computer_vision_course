@@ -262,8 +262,14 @@ double FeaturePointsManager::compute_matching_score(cv::Mat img) {
 }
 
 double compute_normalized_cross_correlation(cv::Mat img1, cv::Mat img2) {
-    // todo
-    return 0.0;
+    // todo test
+    assert(img1.size() == img2.size());
+    cv::Scalar mean1, mean2, dev1, dev2;
+    cv::meanStdDev(img1, mean1, dev1);
+    cv::meanStdDev(img2, mean2, dev2);
+    int num = img1.rows * img1.cols;
+
+    return (1 / num) * cv::sum(((img1 - mean1.val[0]) / dev1.val[0]) * ((img2 - mean2.val[0]) / dev2.val[2]))[0];
 }
 std::vector<cv::Vec2f> compute_pixel_motion(const std::vector<cv::Point2f>& old_feature_points,
                                             const std::vector<cv::Point2f>& new_feature_points) {
