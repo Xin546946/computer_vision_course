@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/test/test_optical_flow",
-            "args": [],
+            "args": ["${workspaceFolder}/dataset/Car2/"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

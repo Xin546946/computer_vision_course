@@ -2,6 +2,7 @@
 #include "opencv_utils.h"
 #include <opencv2/core/core.hpp>
 
+//! todo add status and pyramide
 OpticalFlow::OpticalFlow(cv::Mat img1, cv::Mat img2, const std::vector<cv::Point2f>& prev_fps, cv::Size2i win_size)
     : img1_(img1), img2_(img2), fps_(prev_fps), curr_fps_(prev_fps), win_size_(win_size), status_(prev_fps.size()) {
     img1_.convertTo(img1_, CV_32FC1);
@@ -23,10 +24,11 @@ void OpticalFlow::process_optical_flow() {
         // std::cout << "A is : " << '\n';
         // std::cout << A << '\n';
         status_[i] = update_status(A);
-        std::cout << static_cast<int>(status_[i]);
+        // std::cout << static_cast<int>(status_[i]);
         cv::Mat roi_img1 = get_sub_image_around(img1_, fps_[i].x, fps_[i].y, win_size_.width, win_size_.height);
         cv::Mat roi_img2 = get_sub_image_around(img2_, fps_[i].x, fps_[i].y, win_size_.width, win_size_.height);
         cv::Matx21f b = compute_b(roi_img1, roi_img2, grad_x_img_roi, grad_y_img_roi);
+        // todo iterative solve : jacobi or gaussian seidel
         cv::Matx21f optical_flow = A.solve(b, cv::DECOMP_CHOLESKY);
         curr_fps_[i] = cv::Point2f(fps_[i].x + optical_flow(0, 0), fps_[i].y + optical_flow(0, 1));
     }
