@@ -14,14 +14,20 @@ class OpticalFlow {
      */
     OpticalFlow(cv::Mat img1, cv::Mat img2, const std::vector<cv::Point2f>& prev_fps,
                 cv::Size2i win_size = cv::Size(11, 11));
-    std::vector<cv::Point2f> compute_curr_fps();
+
     std::vector<uchar> get_status() const;
+    std::vector<cv::Point2f> get_curr_fps() const;
 
    private:
-    cv::Point2f compute_flow_in_window(cv::Point2f feature_point);
-    uchar update_status();
+    void process_optical_flow();
+    uchar update_status(cv::Matx22f matrix);
+
     std::vector<cv::Point2f> fps_;
+    std::vector<cv::Point2f> curr_fps_;
+    cv::Matx22f compute_A(cv::Mat grad_x, cv::Mat grad_y);
+    cv::Matx21f compute_b(cv::Mat prev_img, cv::Mat curr_img, cv::Mat grad_x, cv::Mat grad_y);
     cv::Mat img1_;
     cv::Mat img2_;
     cv::Size2i win_size_;
+    std::vector<uchar> status_;  // todo check if it is useful
 };
