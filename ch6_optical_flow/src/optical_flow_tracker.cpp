@@ -28,13 +28,15 @@ void apply_histo_equalization_around(BoundingBox bbox, cv::Mat img, int ratio_fl
     cv::Rect2i rect_local(bbox.top_left().x - 0.5 * ratio_flattenning * bbox.width(),
                           bbox.top_left().y - 0.5 * ratio_flattenning * bbox.height(),
                           (1 + ratio_flattenning) * bbox.width(), (1 + ratio_flattenning) * bbox.height());
+    cv::Rect2i rect_intersection =
+        get_intersection_from_ul(img, rect_local.tl().x, rect_local.tl().y, rect_local.width, rect_local.height);
 
-    cv::Mat local =
-        get_sub_image_around(img, rect_local.tl().x + 0.5 * rect_local.width,
-                             rect_local.tl().y + 0.5 * rect_local.height, rect_local.width, rect_local.height);
+    cv::Mat img_intersection = get_sub_image_around(img, rect_intersection.tl().x + 0.5 * rect_intersection.width,
+                                                    rect_intersection.tl().y + 0.5 * rect_intersection.height,
+                                                    rect_intersection.width, rect_intersection.height);
 
-    cv::equalizeHist(local, local);
-    local.copyTo(img(rect_local));
+    cv::equalizeHist(img_intersection, img_intersection);
+    img_intersection.copyTo(img(rect_intersection));
 }
 
 void OpticalFlowTracker::process(BoundingBox initial_bbox, const std::vector<cv::Mat>& videos) {

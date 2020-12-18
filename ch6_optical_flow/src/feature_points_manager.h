@@ -81,12 +81,14 @@ class FeaturePointsManager {
      */
     void update_status(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status);
     /**
-     * @brief update bounding box with motion
+     * @brief
      *
-     * @param motion
-     * @param status
+     * @param [in] motion
+     * @param [in] status
+     * @param [in] width_img
+     * @param [in] hight_img
      */
-    void update_bbox(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status);
+    void update_bbox(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status, int width_img, int height_img);
     /**
      * @brief update feature points with status
      *

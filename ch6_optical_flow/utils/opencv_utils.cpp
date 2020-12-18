@@ -33,11 +33,15 @@ cv::Point2i template_matching(cv::Mat img, cv::Mat temp) {
     return center_max;
 }
 
+cv::Rect get_intersection_from_ul(cv::Rect rect_img, int x, int y, int width, int height) {
+    cv::Rect roi = cv::Rect(cv::Point(x, y), cv::Size(width, height));
+    cv::Rect intersection = rect_img & roi;
+    return intersection;
+}
+
 cv::Rect get_intersection_from_ul(cv::Mat image, int x, int y, int width, int height) {
     cv::Rect img_rect = cv::Rect(cv::Point(0, 0), image.size());
-    cv::Rect roi = cv::Rect(cv::Point(x, y), cv::Size(width, height));
-    cv::Rect intersection = img_rect & roi;
-    return intersection;
+    return get_intersection_from_ul(img_rect, x, y, width, height);
 }
 
 cv::Rect get_intersection_around(cv::Mat image, int x, int y, int width, int height) {

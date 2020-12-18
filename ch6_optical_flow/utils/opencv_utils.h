@@ -40,6 +40,7 @@ cv::Mat draw_bounding_box_vis_image(cv::Mat image, float x, float y, float width
 
 cv::Rect get_intersection_around(cv::Mat image, int x, int y, int width, int height);
 
+cv::Rect get_intersection_from_ul(cv::Rect rect_img, int x, int y, int width, int height);
 cv::Rect get_intersection_from_ul(cv::Mat image, int x, int y, int width, int height);
 
 template <typename T1, typename T2>

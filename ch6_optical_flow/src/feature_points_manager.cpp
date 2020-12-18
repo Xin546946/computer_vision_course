@@ -102,6 +102,11 @@ void FeaturePointsManager::extract_new_feature_points(cv::Mat img) {
 
         weight *= 0.8;
     }
+
+    if (feature_points_.size() < 4) {
+        std::cout << "do not have enough points for tracking, programm exited." << std::endl;
+        std::exit(0);
+    }
 }
 
 cv::Mat FeaturePointsManager::compute_mask(int rows, int cols) {
@@ -118,12 +123,11 @@ void FeaturePointsManager::process_feature_points(cv::Mat img,
                                                   const std::vector<cv::Point2f>& feature_points_at_new_position,
                                                   std::vector<uchar>& status) {
     visualize(img, feature_points_at_new_position);
-
     std::vector<cv::Vec2f> motion = compute_pixel_motion(this->feature_points_, feature_points_at_new_position);
     update_status(motion, status);
-    update_bbox(motion, status);
+    update_bbox(motion, status, img.cols, img.rows);
     update_feature_points(feature_points_at_new_position, status);
-    cv::Mat mask = compute_mask(img.rows, img.cols);
+
     extract_new_feature_points(img);
 }
 
@@ -143,6 +147,19 @@ void FeaturePointsManager::visualize(cv::Mat img, const std::vector<cv::Point2f>
 }
 
 void FeaturePointsManager::update_status(const std::vector<cv::Vec2f>& motion, std::vector<uchar>& status) {
+    bool all_tracking_lost = true;
+    for (uchar s : status) {
+        if (s) {
+            all_tracking_lost = false;
+            break;
+        }
+    }
+
+    if (all_tracking_lost) {
+        std::cout << "all points are not valid after optical flow tracking, progrom finished" << std::endl;
+        std::exit(0);
+    }
+
     mark_status_with_contained_points(status);
     mark_status_with_amplitude(motion, status, 1.2);
     mark_status_with_angle(motion, status, 25);
@@ -188,7 +205,8 @@ void FeaturePointsManager::mark_status_with_angle(const std::vector<cv::Vec2f>& 
                     0);
 }
 
-void FeaturePointsManager::update_bbox(const std::vector<cv::Vec2f>& motions, std::vector<uchar>& status) {
+void FeaturePointsManager::update_bbox(const std::vector<cv::Vec2f>& motions, std::vector<uchar>& status, int width_img,
+                                       int height_img) {
     cv::Vec2f delta_motion;
 
     cv::Vec2f acc_motion;
@@ -204,6 +222,15 @@ void FeaturePointsManager::update_bbox(const std::vector<cv::Vec2f>& motions, st
 
     std::cout << " delete : " << status.size() - num_valid << " preserve : " << num_valid << '\n';
     bbox_.move(delta_motion[0], delta_motion[1]);
+
+    cv::Rect2i rect_img(0, 0, width_img, height_img);
+    cv::Rect2i intersection =
+        get_intersection_from_ul(rect_img, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
+
+    if (intersection.area() < 200) {
+        std::cout << "bounding box move out of range, tracking finished.";
+        std::exit(0);
+    }
 }
 
 void FeaturePointsManager::update_feature_points(const std::vector<cv::Point2f>& feature_points_at_new_position,
@@ -229,6 +256,7 @@ std::vector<cv::Vec2f> compute_pixel_motion(const std::vector<cv::Point2f>& old_
 }
 
 float median(std::vector<float> data) {
+    assert(!data.empty());
     int n = data.size() / 2;
     std::nth_element(data.begin(), data.begin() + n, data.end());
     return data[n];
