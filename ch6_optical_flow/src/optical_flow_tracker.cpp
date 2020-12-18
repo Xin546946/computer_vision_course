@@ -57,8 +57,9 @@ void OpticalFlowTracker::process(BoundingBox initial_bbox, const std::vector<cv:
         BoundingBox bbox = feature_points_manager_.get_bbox();
 
         apply_histo_equalization_around(bbox, videos[i], 0.1);
-        cv::calcOpticalFlowPyrLK(last_img, videos[i], prev_feature_points, curr_feature_points, status, err,
-                                 cv::Size(11, 11), 3);
+
+        // todo fill the parameters
+        cv::calcOpticalFlowPyrLK();
 
         feature_points_manager_.process_feature_points(videos[i], curr_feature_points, status);
 
