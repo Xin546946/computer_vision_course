@@ -31,10 +31,12 @@ int main(int argc, char** argv) {
     std::vector<uchar> status = optical_flow.get_status();
     std::cout << "******Print status**********" << '\n';
     for (uchar c : status) {
-        std::cout << c << " ";
+        std::cout << static_cast<int>(c) << " ";
     }
     std::cout << '\n';
+    std::cout << "feature_points_size: " << curr_fps.size() << '\n';
     for (cv::Point2f fp : curr_fps) {
+        std::cout << "feature point is at " << fp.x << " " << fp.y << '\n';
         cv::circle(img2_clone, fp, 1, cv::Scalar(0, 0, 255), 1, 8, 0);
     }
     cv::imshow("Feature Points", img2_clone);

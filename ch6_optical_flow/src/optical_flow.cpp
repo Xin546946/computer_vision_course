@@ -21,7 +21,7 @@ void OpticalFlow::process_optical_flow() {
         std::cout << "A is : " << '\n';
         std::cout << A << '\n';
         status_[i] = update_status(A);
-        std::cout << status_[i];
+        std::cout << static_cast<int>(status_[i]);
         cv::Mat roi_img1 = get_sub_image_around(img1_, fps_[i].x, fps_[i].y, win_size_.width, win_size_.height);
         cv::Mat roi_img2 = get_sub_image_around(img2_, fps_[i].x, fps_[i].y, win_size_.width, win_size_.height);
         cv::Matx21f b = compute_b(roi_img1, roi_img2, grad_x_img_roi, grad_y_img_roi);
@@ -46,10 +46,17 @@ cv::Matx21f OpticalFlow::compute_b(cv::Mat prev_img, cv::Mat curr_img, cv::Mat g
 }
 
 uchar OpticalFlow::update_status(cv::Matx22f matrix) {
+    uchar status_success = 1;
     double det = cv::determinant(matrix);
     double trace = cv::trace(matrix);
+    std::cout << "det: " << det << ".  trace: " << trace << '\n';
     float kappa = 1.0f;
-    return (det - kappa * trace * trace) > 0;
+    if ((det - kappa * trace * trace) < 0) {
+        status_success = 0;
+    } else {
+        status_success = 1;
+    }
+    return status_success;
 }
 
 std::vector<uchar> OpticalFlow::get_status() const {
