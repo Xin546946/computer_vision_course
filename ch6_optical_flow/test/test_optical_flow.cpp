@@ -22,11 +22,11 @@ int main(int argc, char** argv) {
     cv::waitKey(0);
 
     std::vector<cv::Point2f> prev_fps;
-    cv::goodFeaturesToTrack(img1, prev_fps, 10, 0.01, 3);
+    cv::goodFeaturesToTrack(img1, prev_fps, 500, 0.2, 3);
     cv::Mat img2_clone = img2.clone();
     cv::cvtColor(img2_clone, img2_clone, CV_GRAY2BGR);
     for (cv::Point2f fp : prev_fps) {
-        cv::circle(img2_clone, fp, 1, cv::Scalar(0, 0, 255), 1, 8, 0);
+        cv::circle(img2_clone, fp, 1, cv::Scalar(0, 0, 255), 2, 8);
     }
     cv::imshow("Feature Points", img2_clone);
     cv::waitKey(0);
@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
     std::cout << "feature_points_size: " << curr_fps.size() << '\n';
     for (cv::Point2f fp : curr_fps) {
         std::cout << "feature point is at " << fp.x << " " << fp.y << '\n';
-        cv::circle(img2_clone, fp, 1, cv::Scalar(0, 0, 255), 1, 8, 0);
+        cv::circle(img2_clone, fp, 1, cv::Scalar(0, 255, 0), 2, 8);
     }
     cv::imshow("Feature Points", img2_clone);
     cv::waitKey(0);
