@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/test/test_ncc",
+            "program": "${workspaceFolder}/build/test/test_optical_flow_tracker",
             "args": ["${workspaceFolder}/dataset/SUV/", "${workspaceFolder}/dataset/SUV/template.png",],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
