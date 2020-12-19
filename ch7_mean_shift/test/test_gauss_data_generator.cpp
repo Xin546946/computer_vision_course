@@ -13,8 +13,8 @@ void draw_circles(const std::vector<std::array<double, 2>>& data, cv::Mat img, c
 }
 
 int main(int argc, char** argv) {
-    auto data1 = generate_gauss_data<double, 2>(10000, {500, 500}, {100, 50});
-    auto data2 = generate_gauss_data<double, 2>(10000, {80, 800}, {30, 30});
+    auto data1 = generate_gauss_data<double, 2>(1000, {500, 500}, {100, 50});
+    auto data2 = generate_gauss_data<double, 2>(1000, {800, 800}, {300, 600});
 
     auto all_data = data1;
     std::copy(data2.begin(), data2.end(), std::back_inserter(all_data));
