@@ -12,7 +12,7 @@ void draw_circles(const std::vector<std::array<double, 2>>& data, cv::Mat img, c
 
 int main(int argc, char** argv) {
     auto data1 = generate_gauss_data<double, 2>(1000, {500, 500}, {100, 50});
-    auto data2 = generate_gauss_data<double, 2>(1000, {800, 800}, {300, 600});
+    auto data2 = generate_gauss_data<double, 2>(1000, {800, 800}, {30, 60});
 
     auto all_data = data1;
     std::copy(data2.begin(), data2.end(), std::back_inserter(all_data));
@@ -26,7 +26,7 @@ int main(int argc, char** argv) {
         draw_circles(all_data, vis, cv::Scalar(0, 255, 0));
 
         cv::imshow("img", vis);
-        cv::waitKey(10);
+        cv::waitKey(0);
         for (int i = 0; i < all_data.size(); i++) {
             double acc_x = 0.0;
             double acc_y = 0.0;
