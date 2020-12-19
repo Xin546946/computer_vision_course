@@ -1,10 +1,8 @@
 #include "math_utils.h"
-
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-
 void draw_circles(const std::vector<std::array<double, 2>>& data, cv::Mat img, cv::Scalar bgr) {
     for (auto d : data) {
         cv::Point2d p(d[0], d[1]);
@@ -21,22 +19,20 @@ int main(int argc, char** argv) {
 
     cv::Mat img = cv::Mat::zeros(cv::Size(1000, 1000), CV_8UC3);
 
-    draw_circles(data1, img, cv::Scalar(0, 255, 0));
-    draw_circles(data2, img, cv::Scalar(255, 0, 0));
-    // cv::imshow("img", img);
-    // cv::waitKey(0);
-
-    double r_square = 100 * 100;
+    double r_square = 200 * 200;
 
     while (true) {
         cv::Mat vis = cv::Mat::zeros(cv::Size(1000, 1000), CV_8UC3);
         draw_circles(all_data, vis, cv::Scalar(0, 255, 0));
+
         cv::imshow("img", vis);
-        cv::waitKey(1);
+        cv::waitKey(0);
+
         for (int i = 0; i < all_data.size(); i++) {
             double acc_x = 0.0;
             double acc_y = 0.0;
             int num = 0;
+
             for (int j = 0; j < all_data.size(); j++) {
                 auto d1 = all_data[i];
                 auto d2 = all_data[j];
@@ -47,6 +43,7 @@ int main(int argc, char** argv) {
                 acc_y += d2[1];
                 num++;
             }
+
             all_data[i] = {acc_x / num, acc_y / num};
         }
     }
