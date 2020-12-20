@@ -7,6 +7,8 @@ set(CMAKE_CXX_FLAGS  -g)
 
 
 find_package(OpenCV 3.2.0 REQUIRED)
+find_package(Eigen3 REQUIRED)
+find_package(Pangolin  REQUIRED)
 
 
 MESSAGE ( STATUS "OpenCV library status:" )
@@ -18,6 +20,7 @@ MESSAGE ( STATUS "include path ${OpenCV_INCLUDE_DIRS}" )
 include_directories(${OpenCV_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/utils)
+include_directories(/usr/include/eigen3)
 
 add_subdirectory(utils)
 add_subdirectory(src)

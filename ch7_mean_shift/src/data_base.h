@@ -1,4 +1,5 @@
 #pragma once
+#include "visualizer.h"
 #include <memory>
 #include <opencv2/core/core.hpp>
 class DataBase {
@@ -7,7 +8,7 @@ class DataBase {
     virtual ~DataBase() = default;
     virtual void init_mass_center() = 0;
     virtual void update_mass_center() = 0;
-    virtual void visualize() const = 0;
+    virtual void visualize() = 0;
     virtual bool is_convergent() = 0;
     virtual void back_up_mass_center() = 0;
 
@@ -19,7 +20,7 @@ class ColorData : public DataBase {
     ColorData(cv::Mat img, double radius);
     void init_mass_center() override{};
     void update_mass_center() override;
-    void visualize() const override;
+    void visualize() override;
     bool is_convergent() override;
     void back_up_mass_center() override;
 
@@ -27,4 +28,5 @@ class ColorData : public DataBase {
     double r_square_;
     std::vector<cv::Vec3d> colors_;
     std::vector<cv::Vec3d> colors_back_up_;
+    Visualizer vis_;
 };

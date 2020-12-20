@@ -26,8 +26,8 @@ void ColorData::update_mass_center() {
     }
 }
 
-void ColorData::visualize() const {
-    // visualizer::show(colors_);
+void ColorData::visualize() {
+    vis_.set_data(colors_);
 }
 bool ColorData::is_convergent() {
     if (colors_back_up_.empty()) return false;
