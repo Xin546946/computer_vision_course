@@ -9,7 +9,7 @@ typedef std::pair<cv::Vec3d, cv::Vec3d> line;
 class Visualizer {
    public:
     Visualizer() = default;
-    void show();
+    void show(int rows, int cols);
     void set_data(const std::vector<cv::Vec3d>& bgr_datas);
     void request_shut();
 
@@ -18,8 +18,9 @@ class Visualizer {
 
    private:
     void init();
-    void draw_points() const;
+    void draw_points();
     void draw_frame() const;
+    void show_segmentation(int rows, int cols);
 
     // opengl object
     pangolin::View view_3d_;

@@ -1,4 +1,5 @@
 #include "visualizer.h"
+#include "opencv_utils.h"
 #include <thread>
 
 void Visualizer::init() {
@@ -24,7 +25,7 @@ void Visualizer::init() {
     pangolin::CreatePanel("menu").SetBounds(0.0, 1.0, 0.0, pangolin::Attach::Pix(w_ui));
 }
 
-void Visualizer::show() {
+void Visualizer::show(int rows, int cols) {
     pangolin::Var<bool> menuStop("menu.Stop", true, true);
     init();
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -35,6 +36,7 @@ void Visualizer::show() {
 
         draw_points();
         draw_frame();
+        show_segmentation(rows, cols);
 
         pangolin::FinishFrame();
 
@@ -47,11 +49,15 @@ void Visualizer::show() {
     }
 }
 
-void Visualizer::draw_points() const {
+void Visualizer::draw_points() {
     glPointSize(6);
     glBegin(GL_POINTS);
 
-    for (const cv::Vec3d& p : points_) {
+    points_mutex_.lock();
+    std::vector<cv::Vec3d> points = points_;
+    points_mutex_.unlock();
+
+    for (const cv::Vec3d& p : points) {
         glColor3f(p[0], p[1], p[2]);
         glVertex3f(p[0], p[1], p[2]);
     }
@@ -100,4 +106,21 @@ void draw_lines_with_interpolated_color(const std::vector<line>& lines) {
         glVertex3f(lines[i].second[0], lines[i].second[1], lines[i].second[2]);
     }
     glEnd();
+}
+
+void Visualizer::show_segmentation(int rows, int cols) {
+    points_mutex_.lock();
+    std::vector<cv::Vec3d> points = points_;
+    points_mutex_.unlock();
+
+    cv::Mat vis(cv::Size(cols, rows), CV_8UC3);
+    for (int r = 0; r < vis.rows; r++) {
+        for (int c = 0; c < vis.cols; c++) {
+            int id = pos_to_id(r, c, cols);
+            vis.at<cv::Vec3b>(r, c) = points[id] * 255;
+        }
+    }
+    cv::cvtColor(vis, vis, cv::COLOR_RGB2BGR);
+    cv::imshow("segementaion", vis);
+    cv::waitKey(1);
 }

@@ -6,11 +6,11 @@
 #include <thread>
 
 int main(int argc, char** argv) {
-    std::shared_ptr<Visualizer> vis_ptr(new Visualizer);
-    std::thread vis_thread(&Visualizer::show, std::ref(*vis_ptr));
-
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_COLOR);
-    cv::resize(img, img, cv::Size(50, 50));
+    cv::resize(img, img, cv::Size(100, 100));
+
+    std::shared_ptr<Visualizer> vis_ptr(new Visualizer);
+    std::thread vis_thread(&Visualizer::show, std::ref(*vis_ptr), img.rows, img.cols);
     std::unique_ptr<DataBase> db_ptr = std::make_unique<ColorData>(img, 50, vis_ptr);
     MeanShift ms(db_ptr);
 
