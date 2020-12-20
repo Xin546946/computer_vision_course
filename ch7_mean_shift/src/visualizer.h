@@ -5,9 +5,10 @@
 #include <pangolin/pangolin.h>
 #include <vector>
 
+typedef std::pair<cv::Vec3d, cv::Vec3d> line;
 class Visualizer {
    public:
-    Visualizer();
+    Visualizer() = default;
     void show();
     void set_data(const std::vector<cv::Vec3d>& bgr_datas);
     void shut();
@@ -15,6 +16,7 @@ class Visualizer {
    private:
     void init();
     void draw_points() const;
+    void draw_frame() const;
 
     // opengl object
     pangolin::View view_3d_;
@@ -24,3 +26,5 @@ class Visualizer {
     std::mutex points_mutex_;
     std::vector<cv::Vec3d> points_;
 };
+
+void draw_lines_with_interpolated_color(const std::vector<line>& lines);

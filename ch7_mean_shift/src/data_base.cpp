@@ -1,13 +1,18 @@
 #include "data_base.h"
 #include "memory"
 #include <opencv2/core/core.hpp>
+#include <thread>
 
-ColorData::ColorData(cv::Mat img, double radius) : r_square_(radius * radius) {
+ColorData::ColorData(cv::Mat img, double radius, std::shared_ptr<Visualizer> vis_ptr)
+    : r_square_(radius * radius), vis_ptr_(vis_ptr) {
     for (int r = 0; r < img.rows; r++) {
         for (int c = 0; c < img.cols; c++) {
             colors_.push_back(img.at<cv::Vec3b>(r, c));
         }
     }
+}
+ColorData::~ColorData() {
+    // vis_.shut();
 }
 
 void ColorData::update_mass_center() {
@@ -27,7 +32,7 @@ void ColorData::update_mass_center() {
 }
 
 void ColorData::visualize() {
-    vis_.set_data(colors_);
+    vis_ptr_->set_data(colors_);
 }
 bool ColorData::is_convergent() {
     if (colors_back_up_.empty()) return false;
