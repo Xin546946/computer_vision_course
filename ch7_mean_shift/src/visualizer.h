@@ -13,6 +13,9 @@ class Visualizer {
     void set_data(const std::vector<cv::Vec3d>& bgr_datas);
     void shut();
 
+    std::mutex stop_mutex_;
+    bool stop_ = true;
+
    private:
     void init();
     void draw_points() const;

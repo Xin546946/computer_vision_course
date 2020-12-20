@@ -28,6 +28,7 @@ class ColorData : public DataBase {
    private:
     double r_square_;
     std::vector<cv::Vec3d> colors_;
-    std::vector<cv::Vec3d> colors_back_up_;
+    std::vector<cv::Vec3d> colors_last_;
+    std::vector<cv::Vec3d> colors_original_;
     std::shared_ptr<Visualizer> vis_ptr_;
 };

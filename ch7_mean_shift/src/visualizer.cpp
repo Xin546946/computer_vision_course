@@ -11,8 +11,9 @@ void Visualizer::init() {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    cam_3d_ = pangolin::OpenGlRenderState(pangolin::ProjectionMatrix(w, h, 600, 600, w / 2.0, h / 2.0, 0.0001, 10.0),
-                                          pangolin::ModelViewLookAt(2, 1, 2, 0, 0, 0, pangolin::AxisZ));
+    cam_3d_ =
+        pangolin::OpenGlRenderState(pangolin::ProjectionMatrix(w, h, 1000.0, 1000.0, w / 2.0, h / 2.0, 0.0001, 10.0),
+                                    pangolin::ModelViewLookAt(2.0, 1.0, 1.8, 0.1, 0.1, 0.1, pangolin::AxisZ));
 
     // add 3D view(main)
     const int w_ui = 100;
@@ -24,26 +25,32 @@ void Visualizer::init() {
 }
 
 void Visualizer::show() {
-    init();
     pangolin::Var<bool> menuExit("menu.Exit", false, false);
-    int id_pose = 0;
-    int num_writed_pose = 0;
+    pangolin::Var<bool> menuStop("menu.Stop", true, true);
+    init();
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
     while (!pangolin::ShouldQuit()) {
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        view_3d_.Activate(cam_3d_);
+
         if (menuExit) {
+            pangolin::QuitAll();
             break;
         }
 
-        view_3d_.Activate(cam_3d_);
-
         draw_points();
         draw_frame();
-        pangolin::glDrawAxis(5);
 
         pangolin::FinishFrame();
+
+        if (menuStop != stop_) {
+            std::lock_guard<std::mutex> lg_stop(stop_mutex_);
+            if (menuStop != stop_) {
+                stop_ = menuStop;
+            }
+        }
     }
-    shut();
 }
 
 void Visualizer::draw_points() const {
@@ -81,11 +88,12 @@ void Visualizer::draw_frame() const {
 }
 
 void Visualizer::set_data(const std::vector<cv::Vec3d>& bgr_datas) {
-    std::lock_guard<std::mutex> points_lg(points_mutex_);
+    points_mutex_.lock();
     points_.clear();
     points_.reserve(bgr_datas.size());
     std::transform(bgr_datas.begin(), bgr_datas.end(), std::back_inserter(points_),
                    [](const cv::Vec3d& p) { return cv::Vec3f(p[2] / 255.0, p[1] / 255.0, p[0] / 255.0); });
+    points_mutex_.unlock();
 }
 
 void Visualizer::shut() {

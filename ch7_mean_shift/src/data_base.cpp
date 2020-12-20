@@ -1,5 +1,6 @@
 #include "data_base.h"
 #include "memory"
+#include <chrono>
 #include <opencv2/core/core.hpp>
 #include <thread>
 
@@ -10,6 +11,8 @@ ColorData::ColorData(cv::Mat img, double radius, std::shared_ptr<Visualizer> vis
             colors_.push_back(img.at<cv::Vec3b>(r, c));
         }
     }
+
+    colors_original_ = colors_;
 }
 ColorData::~ColorData() {
     // vis_.shut();
@@ -19,12 +22,12 @@ void ColorData::update_mass_center() {
     for (cv::Vec3d& color : colors_) {
         cv::Vec3d acc_rgb(0.0, 0.0, 0.0);
         int num = 0;
-        for (const cv::Vec3d& color2 : colors_) {
-            if (cv::norm(color - color2, cv::NORM_L2SQR) > r_square_) {
+        for (const cv::Vec3d& color_original : colors_original_) {
+            if (cv::norm(color - color_original, cv::NORM_L2SQR) > r_square_) {
                 continue;
             }
             num++;
-            acc_rgb += color2;
+            acc_rgb += color_original;
         }
 
         color = acc_rgb / num;
@@ -33,12 +36,19 @@ void ColorData::update_mass_center() {
 
 void ColorData::visualize() {
     vis_ptr_->set_data(colors_);
+
+    std::unique_lock<std::mutex> ul_stop(vis_ptr_->stop_mutex_);
+    while (vis_ptr_->stop_) {
+        ul_stop.unlock();
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+        ul_stop.lock();
+    }
 }
 bool ColorData::is_convergent() {
-    if (colors_back_up_.empty()) return false;
+    if (colors_last_.empty()) return false;
 
     for (int i = 0; i < colors_.size(); i++) {
-        if (cv::norm(colors_[i] - colors_back_up_[i], cv::NORM_L2SQR) > 1e-3) {
+        if (cv::norm(colors_[i] - colors_last_[i], cv::NORM_L2SQR) > 1e-3) {
             return false;
         }
     }
@@ -46,5 +56,5 @@ bool ColorData::is_convergent() {
 }
 
 void ColorData::back_up_mass_center() {
-    colors_back_up_ = colors_;
+    colors_last_ = colors_;
 }
