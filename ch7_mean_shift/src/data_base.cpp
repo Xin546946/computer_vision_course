@@ -14,9 +14,6 @@ ColorData::ColorData(cv::Mat img, double radius, std::shared_ptr<Visualizer> vis
 
     colors_original_ = colors_;
 }
-ColorData::~ColorData() {
-    // vis_.shut();
-}
 
 void ColorData::update_mass_center() {
     for (cv::Vec3d& color : colors_) {

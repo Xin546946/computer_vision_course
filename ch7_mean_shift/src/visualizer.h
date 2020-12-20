@@ -11,7 +11,7 @@ class Visualizer {
     Visualizer() = default;
     void show();
     void set_data(const std::vector<cv::Vec3d>& bgr_datas);
-    void shut();
+    void request_shut();
 
     std::mutex stop_mutex_;
     bool stop_ = true;

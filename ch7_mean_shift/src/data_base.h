@@ -8,22 +8,24 @@ class DataBase {
     virtual ~DataBase() = default;
     virtual void init_mass_center() = 0;
     virtual void update_mass_center() = 0;
-    virtual void visualize() = 0;
     virtual bool is_convergent() = 0;
     virtual void back_up_mass_center() = 0;
+
+    virtual void visualize() = 0;
 
    private:
 };
 
 class ColorData : public DataBase {
    public:
-    ~ColorData();
+    ~ColorData() = default;
     ColorData(cv::Mat img, double radius, std::shared_ptr<Visualizer> vis_ptr);
     void init_mass_center() override{};
     void update_mass_center() override;
-    void visualize() override;
     bool is_convergent() override;
     void back_up_mass_center() override;
+
+    void visualize() override;
 
    private:
     double r_square_;

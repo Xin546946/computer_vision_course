@@ -25,7 +25,6 @@ void Visualizer::init() {
 }
 
 void Visualizer::show() {
-    pangolin::Var<bool> menuExit("menu.Exit", false, false);
     pangolin::Var<bool> menuStop("menu.Stop", true, true);
     init();
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -33,11 +32,6 @@ void Visualizer::show() {
     while (!pangolin::ShouldQuit()) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         view_3d_.Activate(cam_3d_);
-
-        if (menuExit) {
-            pangolin::QuitAll();
-            break;
-        }
 
         draw_points();
         draw_frame();
@@ -94,12 +88,6 @@ void Visualizer::set_data(const std::vector<cv::Vec3d>& bgr_datas) {
     std::transform(bgr_datas.begin(), bgr_datas.end(), std::back_inserter(points_),
                    [](const cv::Vec3d& p) { return cv::Vec3f(p[2] / 255.0, p[1] / 255.0, p[0] / 255.0); });
     points_mutex_.unlock();
-}
-
-void Visualizer::shut() {
-    if (pangolin::ShouldQuit()) {
-        pangolin::Quit();
-    }
 }
 
 void draw_lines_with_interpolated_color(const std::vector<line>& lines) {
