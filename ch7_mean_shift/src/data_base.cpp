@@ -30,6 +30,8 @@ void ColorData::visualize() const {
     // visualizer::show(colors_);
 }
 bool ColorData::is_convergent() {
+    if (colors_back_up_.empty()) return false;
+
     for (int i = 0; i < colors_.size(); i++) {
         if (cv::norm(colors_[i] - colors_back_up_[i], cv::NORM_L2SQR) > 1e-3) {
             return false;
