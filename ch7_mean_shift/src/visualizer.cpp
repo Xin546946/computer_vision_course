@@ -113,6 +113,8 @@ void Visualizer::show_segmentation(int rows, int cols) {
     std::vector<cv::Vec3d> points = points_;
     points_mutex_.unlock();
 
+    if (points.empty()) return;
+
     cv::Mat vis(cv::Size(cols, rows), CV_8UC3);
     for (int r = 0; r < vis.rows; r++) {
         for (int c = 0; c < vis.cols; c++) {

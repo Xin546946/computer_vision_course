@@ -10,16 +10,31 @@ BST::BST(std::vector<int> data) {
 }
 
 void BST::add_data(int data) {
-    BSTNode* curr = new BSTNode(data);
-    while (!curr) {
-        if (root_ == nullptr) {
-            root_ = new BSTNode(data);
-        } else {
-            if (data <= this->root_->value_) {
-                this->root_->smaller_ = new BSTNode(data);
-            } else if (data > this->root_->value_) {
-                this->root_->larger_ = new BSTNode(data);
-            }
-        }
+    BSTNode** curr = &root_;
+
+    while (*curr) {
+        curr = data < (*curr)->value_ ? &((*curr)->smaller_) : &((*curr)->larger_);
     }
+
+    *curr = new BSTNode(data);
+}
+
+void inorder(BSTNode* curr, std::vector<int>& result) {
+    if (curr->smaller_) {
+        inorder(curr->smaller_, result);
+    }
+
+    result.push_back(curr->value_);
+
+    if (curr->larger_) {
+        inorder(curr->larger_, result);
+    }
+}
+
+std::vector<int> BST::inorder() {
+    std::vector<int> result;
+    if (root_) {
+        ::inorder(root_, result);
+    }
+    return result;
 }

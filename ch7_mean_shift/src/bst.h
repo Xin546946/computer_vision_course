@@ -3,8 +3,8 @@
 
 struct BSTNode {
     BSTNode(int value);
-    BSTNode* smaller_;
-    BSTNode* larger_;
+    BSTNode* smaller_ = nullptr;
+    BSTNode* larger_ = nullptr;
 
     int value_;
 };
@@ -16,5 +16,5 @@ class BST {
     void add_data(int data);
 
    private:
-    BSTNode* root_;
+    BSTNode* root_ = nullptr;
 };

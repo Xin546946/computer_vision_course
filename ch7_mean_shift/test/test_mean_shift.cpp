@@ -7,7 +7,6 @@
 
 int main(int argc, char** argv) {
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_COLOR);
-    cv::resize(img, img, cv::Size(100, 100));
 
     std::shared_ptr<Visualizer> vis_ptr(new Visualizer);
     std::thread vis_thread(&Visualizer::show, std::ref(*vis_ptr), img.rows, img.cols);

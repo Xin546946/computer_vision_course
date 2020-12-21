@@ -45,6 +45,11 @@ int main(int argc, char** argv) {
     BST bst(data);
     std::vector<int> data_inorder = bst.inorder();
     std::sort(data.begin(), data.end());
+
+    for (size_t i = 0; i < data.size(); i++) {
+        std::cout << "@@@ :" << data[i] << "  #####" << data_inorder[i] << '\n';
+    }
+
     assert(data == data_inorder);
 
     bst.add_data(generate_random_data(0, 10));
