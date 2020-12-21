@@ -22,6 +22,14 @@ int KNNResultSet::worst_dist() {
     return result_set_.top().dist_;
 }
 
+std::vector<KNNResult> KNNResultSet::get_result() {
+    std::vector<KNNResult> result;
+    for (int i = 0; i < result_set_.size(); i++) {
+        result.push_back(result_set_.top());
+        result_set_.pop();
+    }
+    return result;
+}
 BSTNode::BSTNode(int value) : value_(value) {
 }
 
@@ -164,4 +172,5 @@ void knn_search(BSTNode* node, int data, KNNResultSet& result_set) {
 std::vector<KNNResult> BST::knn_search(int data, int k) {
     KNNResultSet result_set(k);
     ::knn_search(root_, data, result_set);
+    return result_set.get_result();
 }

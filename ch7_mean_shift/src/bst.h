@@ -27,6 +27,7 @@ class KNNResultSet {
     void add_node(KNNResult result);
     int worst_dist();
     std::priority_queue<KNNResult, std::vector<KNNResult>, decltype(cmp)> result_set_;
+    std::vector<KNNResult> get_result();
 };
 
 class BST {
