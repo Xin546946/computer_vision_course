@@ -11,9 +11,10 @@ struct BSTNode {
 
 class BST {
    public:
-    BST(std::vector<int> data);
+    BST(std::vector<int> datas, bool recursively = false);
     std::vector<int> inorder();
-    void add_data(int data);
+    void add_data_iteratively(int data);
+    void add_data_recursively(int data);
 
    private:
     BSTNode* root_ = nullptr;
