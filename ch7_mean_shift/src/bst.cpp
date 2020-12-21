@@ -2,6 +2,7 @@
 #include <cmath>
 #include <iostream>
 #include <limits>
+#include <queue>
 
 BSTNode::BSTNode(int value) : value_(value) {
 }
@@ -108,6 +109,8 @@ void onenn_search(BSTNode* node, int data, int min_dist, BSTNode*& min_dis_node)
                 min_dis_node = node;
             }
             onenn_search(node->smaller_, data, min_dist, min_dis_node);
+        } else {
+            min_dis_node = node;
         }
     }
 }
@@ -119,4 +122,12 @@ BSTNode* BST::onenn_search(int data) {
         ::onenn_search(root_, data, min_dist, min_dist_node);
     }
     return min_dist_node;
+}
+
+void knn_search(BSTNode* node, int data, int k, KNNResultSet result_set) {
+}
+
+std::vector<KNNResult> knn_search(int data, int k) {
+    KNNResultSet result_set(k);
+    ::knn_search(root_, data, k, result_set);
 }
