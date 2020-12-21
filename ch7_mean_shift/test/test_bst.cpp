@@ -105,6 +105,5 @@ int main(int argc, char** argv) {
     for (auto r : result) {
         std::cout << r.node_->value_ << '\n';
     }
-
     return 0;
 }
