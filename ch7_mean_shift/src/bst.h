@@ -2,7 +2,7 @@
 #include <limits>
 #include <queue>
 #include <vector>
-auto cmp = [](KNNResult lhs, KNNResult rhs) { return lhs.dist_ < rhs.dist_; };
+
 struct BSTNode {
     BSTNode(int value);
     BSTNode* smaller_ = nullptr;
@@ -12,17 +12,21 @@ struct BSTNode {
 };
 
 struct KNNResult {
+    KNNResult() = default;
+    KNNResult(int dist, BSTNode* node);
     int dist_ = std::numeric_limits<int>::max();
     BSTNode* node_ = nullptr;
 };
 
+auto cmp = [](KNNResult lhs, KNNResult rhs) { return lhs.dist_ < rhs.dist_; };
+
 class KNNResultSet {
    public:
     KNNResultSet(int k);
-    void add_node(KNNResult result);
 
+    void add_node(KNNResult result);
+    int worst_dist();
     std::priority_queue<KNNResult, std::vector<KNNResult>, decltype(cmp)> result_set_;
-    std::vector<KNNResult> get_result();
 };
 
 class BST {

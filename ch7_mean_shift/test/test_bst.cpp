@@ -88,14 +88,23 @@ int main(int argc, char** argv) {
     // } else {
     //     std::cout << "No data in the BST " << '\n';
     // }
+    // test for 1 nn search
+    // std::vector<int> data = generate_random_data(1000, 0, 10000);
+    // BST bst(data);
+    // BSTNode* node = bst.onenn_search(45);
+    // if (node) {
+    //     std::cout << node->value_ << '\n';
+    // } else {
+    //     std::cout << "BST is empty! " << '\n';
+    // }
 
-    std::vector<int> data = generate_random_data(1000, 0, 10000);
+    // test for knn search
+    std::vector<int> data{1, 2, 3, 4, 6, 7};
     BST bst(data);
-    BSTNode* node = bst.onenn_search(45);
-    if (node) {
-        std::cout << node->value_ << '\n';
-    } else {
-        std::cout << "BST is empty! " << '\n';
+    std::vector<KNNResult> result = bst.knn_search(4, 2);
+    for (auto r : result) {
+        std::cout << r.node_->value_ << '\n';
     }
+
     return 0;
 }
