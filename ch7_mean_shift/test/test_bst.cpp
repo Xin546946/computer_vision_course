@@ -38,24 +38,64 @@ int generate_random_data(int min, int max) {
 }
 
 int main(int argc, char** argv) {
-    for (int n = 100; n < 1e9; n *= 10) {
-        std::vector<int> data = generate_random_data(n, 0, 1e9);
+    // test for add and traverse data
+    // for (int n = 100; n < 1e5; n *= 10) {
+    //     std::vector<int> data = generate_random_data(n, 0, 1e9);
 
-        tictoc::tic();
-        BST bst(data, false);
-        std::cout << "iteratively add " << n << " data cost :" << tictoc::toc() / 1e6 << " seconds\n";
+    //     tictoc::tic();
+    //     BST bst(data, false);
+    //     std::cout << "iteratively add " << n << " data cost :" << tictoc::toc() / 1e6 << " seconds\n";
 
-        tictoc::tic();
-        BST bst2(data, true);
-        std::cout << "recursively add " << n << " data cost : " << tictoc::toc() / 1e6 << " seconds\n ";
+    //     tictoc::tic();
+    //     BST bst2(data, true);
+    //     std::cout << "recursively add " << n << " data cost : " << tictoc::toc() / 1e6 << " seconds\n ";
 
-        tictoc::tic();
-        std::vector<int> data_inorder = bst.inorder();
-        std::cout << "recursively inorder traverse " << n << " data cost " << tictoc::toc() / 1e6 << " seconds\n";
+    //     tictoc::tic();
+    //     std::vector<int> data_inorder = bst.inorder();
+    //     std::cout << "recursively inorder traverse " << n << " data cost " << tictoc::toc() / 1e6 << " seconds\n";
 
-        std::sort(data.begin(), data.end());
+    //     std::sort(data.begin(), data.end());
 
-        assert(data == data_inorder);
+    //     assert(data == data_inorder);
+    // }
+
+    // test for search data
+    // std::vector<int> data;
+    // for (int i = 0; i < 1e6; i++) {
+    //     data.push_back(i);
+    // }
+    // std::cout << " Generate data done! " << '\n';
+    // tictoc::tic();
+    // BST bst(data, true);
+    // std::cout << "Build BST costs " << tictoc::toc() / 1e3 << " miliseconds\n";
+    // int query_data = 1e5;
+    // tictoc::tic();
+    // BSTNode* node_for_search = bst.search_data_iterative(query_data);
+    // std::cout << "Search the data iterative cost: " << tictoc::toc() / 1e3 << " miliseconds\n";
+    // if (node_for_search) {
+    //     assert(node_for_search->value_ == query_data);
+    //     std::cout << "Has search " << node_for_search->value_ << " iterative successfully" << '\n';
+    // } else {
+    //     std::cout << "No data in the BST " << '\n';
+    // }
+
+    // tictoc::tic();
+    // BSTNode* node_for_search_recur = bst.search_data_recursive(query_data);
+    // std::cout << "Search the data recursive cost: " << tictoc::toc() / 1e3 << " miliseconds\n";
+    // if (node_for_search_recur) {
+    //     assert(node_for_search_recur->value_ == query_data);
+    //     std::cout << "Has search " << node_for_search_recur->value_ << "recursive  successfully" << '\n';
+    // } else {
+    //     std::cout << "No data in the BST " << '\n';
+    // }
+
+    std::vector<int> data = generate_random_data(1000, 0, 10000);
+    BST bst(data);
+    BSTNode* node = bst.onenn_search(45);
+    if (node) {
+        std::cout << node->value_ << '\n';
+    } else {
+        std::cout << "BST is empty! " << '\n';
     }
     return 0;
 }

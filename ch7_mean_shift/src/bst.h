@@ -15,6 +15,10 @@ class BST {
     std::vector<int> inorder();
     void add_data_iteratively(int data);
     void add_data_recursively(int data);
+    BSTNode* search_data_recursive(int data);
+    BSTNode* search_data_iterative(int data);
+    BSTNode* onenn_search(int data);
+    BSTNode* knn_search(int data);
 
    private:
     BSTNode* root_ = nullptr;

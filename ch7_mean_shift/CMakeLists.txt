@@ -3,7 +3,7 @@ project(mean_shift)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS -Wall -Wextra )
-set(CMAKE_CXX_FLAGS  -o3)
+set(CMAKE_CXX_FLAGS  -g)
 
 
 find_package(OpenCV 3.2.0 REQUIRED)

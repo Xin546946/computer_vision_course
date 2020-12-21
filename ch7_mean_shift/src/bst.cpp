@@ -1,4 +1,7 @@
 #include "bst.h"
+#include <cmath>
+#include <iostream>
+#include <limits>
 
 BSTNode::BSTNode(int value) : value_(value) {
 }
@@ -57,4 +60,63 @@ void add_data(BSTNode*& root, int data) {
 
 void BST::add_data_recursively(int data) {
     add_data(root_, data);
+}
+
+BSTNode* search_data_recursive(BSTNode* root, int data) {
+    if (root) {
+        if (data < root->value_) {
+            return search_data_recursive(root->smaller_, data);
+        } else if (data > root->value_) {
+            return search_data_recursive(root->larger_, data);
+        } else {
+            return root;
+        }
+    }
+    return nullptr;
+}
+BSTNode* BST::search_data_recursive(int data) {
+    return ::search_data_recursive(root_, data);
+}
+
+BSTNode* BST::search_data_iterative(int data) {
+    BSTNode* curr = root_;
+    while (curr) {
+        if (curr->value_ == data) {
+            return curr;
+        } else if (data < curr->value_) {
+            curr = curr->smaller_;
+        } else {
+            curr = curr->larger_;
+        }
+    }
+    return curr;
+}
+
+void onenn_search(BSTNode* node, int data, int min_dist, BSTNode*& min_dis_node) {
+    std::cout << "Min distance is" << min_dist << '\n';
+
+    if (node) {
+        if (data > node->value_) {
+            if (min_dist > data - node->value_) {
+                min_dist = data - node->value_;
+                min_dis_node = node;
+            }
+            onenn_search(node->larger_, data, min_dist, min_dis_node);
+        } else if (data < node->value_) {
+            if (min_dist > node->value_ - data) {
+                min_dist = node->value_ - data;
+                min_dis_node = node;
+            }
+            onenn_search(node->smaller_, data, min_dist, min_dis_node);
+        }
+    }
+}
+
+BSTNode* BST::onenn_search(int data) {
+    int min_dist = std::numeric_limits<int>::max();
+    BSTNode* min_dist_node = root_;
+    if (root_) {
+        ::onenn_search(root_, data, min_dist, min_dist_node);
+    }
+    return min_dist_node;
 }
