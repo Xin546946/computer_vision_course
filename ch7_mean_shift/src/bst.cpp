@@ -24,10 +24,11 @@ int KNNResultSet::worst_dist() {
 
 std::vector<KNNResult> KNNResultSet::get_result() {
     std::vector<KNNResult> result;
-    for (int i = 0; i < result_set_.size(); i++) {
+    while (!result_set_.empty()) {
         result.push_back(result_set_.top());
         result_set_.pop();
     }
+
     return result;
 }
 BSTNode::BSTNode(int value) : value_(value) {
@@ -152,18 +153,19 @@ BSTNode* BST::onenn_search(int data) {
 
 void knn_search(BSTNode* node, int data, KNNResultSet& result_set) {
     if (node) {
+        // todo 单独处理= ?
         if (data < node->value_) {
             knn_search(node->smaller_, data, result_set);
-            if (std::fabs(node->value_ - data) < result_set.worst_dist()) {
+            if (std::abs(node->value_ - data) <= result_set.worst_dist()) {
                 knn_search(node->larger_, data, result_set);
-                result_set.add_node(KNNResult(std::fabs(node->value_ - data), node));
+                result_set.add_node(KNNResult(std::abs(node->value_ - data), node));
             }
 
         } else {
             knn_search(node->larger_, data, result_set);
-            if (std::fabs(data - node->value_) < result_set.worst_dist()) {
+            if (std::abs(data - node->value_) <= result_set.worst_dist()) {
                 knn_search(node->smaller_, data, result_set);
-                result_set.add_node(KNNResult(std::fabs(data - node->value_), node));
+                result_set.add_node(KNNResult(std::abs(data - node->value_), node));
             }
         }
     }
