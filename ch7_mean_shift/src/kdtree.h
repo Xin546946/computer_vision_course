@@ -1,11 +1,12 @@
 #pragma once
 #include <algorithm>
 #include <array>
+#include <initializer_list>
 #include <vector>
 
 template <typename T, int Dim>
 struct Data {
-    Data(const std::initialized_list<T>& l) : data_(l);
+    Data(const std::initializer_list<T>& l) : data_(l);
     std::array<T, Dim> data_;
     T& operator[](int i) {
         return data[i];
@@ -18,8 +19,8 @@ struct KDTreeNode {
     Data<T, Dim> data_;
     int axis_;
 
-    KDTreeNode<T, Dim>* smaller_ = nullptr;
-    KDTreeNode<T, Dim>* larger_ = nullptr;
+    PtrNode smaller_ = nullptr;
+    PtrNode larger_ = nullptr;
     std::vector<KDTreeNode*> children_;
     bool is_leaf() {
         return (this->smaller_ == nullptr && this->larger_ == nullptr);
@@ -86,7 +87,7 @@ void KDTree<T, Dim>::build_kdtree(KDTreeNode<T, Dim>*& curr, KDTree<T, Dim>::Ite
 }
 template <typename T, int Dim>
 inline void KDTree<T, Dim>::next_axis() {
-    if (axis == Dim - 1) {
+    if (axis_ == Dim - 1) {
         axis_ = 0;
     } else {
         axis_++;
