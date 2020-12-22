@@ -6,3 +6,6 @@ target_link_libraries(test_mean_shift data_base mean_shift visualizer)
 
 add_executable(test_bst test_bst.cpp)
 target_link_libraries(test_bst bst utils)
+
+add_executable(test_kdtree test_kdtree.cpp)
+target_link_libraries(test_kdtree kdtree utils)

@@ -38,7 +38,7 @@ int generate_random_data(int min, int max) {
 }
 
 int main(int argc, char** argv) {
-    // test for add and traverse data
+    //! test for add and traverse data
     // for (int n = 100; n < 1e5; n *= 10) {
     //     std::vector<int> data = generate_random_data(n, 0, 1e9);
 
@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
     // } else {
     //     std::cout << "No data in the BST " << '\n';
     // }
-    // test for 1 nn search
+    //! test for 1 nn search
     // std::vector<int> data = generate_random_data(1000, 0, 10000);
     // BST bst(data);
     // BSTNode* node = bst.onenn_search(45);
@@ -98,10 +98,10 @@ int main(int argc, char** argv) {
     //     std::cout << "BST is empty! " << '\n';
     // }
 
-    // test for knn search
+    //! test for knn search with compare to brute force
     std::vector<int> data = generate_random_data(1000000, 0, 100000000000);
     int dist;
-    std::cout << "Search 1,000,000 random points for comparison of brute force and RNN\n  ";
+    std::cout << "Search 100,000,000,000 random points for comparison of brute force and RNN\n";
     std::cout << "With center 1000000 radius 50000 \n";
     std::cout << "@@@@@@@@@@@ Brute force" << '\n';
     std::vector<int> brute_force_data;
@@ -111,14 +111,14 @@ int main(int argc, char** argv) {
             brute_force_data.push_back(d);
         }
     }
-    std::cout << "Brute force needs: " << tictoc::toc() / 1e3 << "miliseconds\n";
+    std::cout << "Brute force needs: " << tictoc::toc() / 1e3 << " miliseconds\n";
     tictoc::tic();
     BST bst(data);
-    std::cout << "Build a bst needs: " << tictoc::toc() / 1e3 << "miliseconds\n";
+    std::cout << "Build a bst needs: " << tictoc::toc() / 1e3 << " miliseconds\n";
     std::cout << "@@@@@@@@@@@ RNN Search" << '\n';
     tictoc::tic();
     std::vector<BSTNode*> result = bst.rnn_search(100000, 50000);
-    std::cout << "RNN Search needs: " << tictoc::toc() / 1e3 << "miliseconds\n";
+    std::cout << "RNN Search needs: " << tictoc::toc() / 1e3 << " miliseconds\n";
     std::cout << "RNN Search result" << '\n';
     auto cmp_result = [](BSTNode* lhs, BSTNode* rhs) { return lhs->value_ < rhs->value_; };
     std::sort(result.begin(), result.end(), cmp_result);
