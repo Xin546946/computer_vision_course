@@ -69,22 +69,18 @@ void BST::add_data_iteratively(int data) {
 }
 
 void inorder(BSTNode* curr, std::vector<int>& result) {
-    if (curr->smaller_) {
+    if (curr) {
         inorder(curr->smaller_, result);
-    }
 
-    result.push_back(curr->value_);
+        result.push_back(curr->value_);
 
-    if (curr->larger_) {
         inorder(curr->larger_, result);
     }
 }
 
 std::vector<int> BST::inorder() {
     std::vector<int> result;
-    if (root_) {
-        ::inorder(root_, result);
-    }
+    ::inorder(root_, result);
     return result;
 }
 
@@ -157,9 +153,7 @@ void onenn_search(BSTNode* node, int data, int min_dist, BSTNode*& min_dis_node)
 BSTNode* BST::onenn_search(int data) {
     int min_dist = std::numeric_limits<int>::max();
     BSTNode* min_dist_node = root_;
-    if (root_) {
-        ::onenn_search(root_, data, min_dist, min_dist_node);
-    }
+    ::onenn_search(root_, data, min_dist, min_dist_node);
     return min_dist_node;
 }
 
