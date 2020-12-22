@@ -31,6 +31,18 @@ std::vector<KNNResult> KNNResultSet::get_result() {
 
     return result;
 }
+
+RNNResultSet::RNNResultSet(int radius) : radius_(radius) {
+}
+
+void RNNResultSet::add_node(BSTNode* result) {
+    result_set_.push_back(result);
+}
+
+std::vector<BSTNode*> RNNResultSet::get_result() const {
+    return result_set_;
+}
+
 BSTNode::BSTNode(int value) : value_(value) {
 }
 
@@ -161,12 +173,14 @@ void knn_search(BSTNode* node, int data, KNNResultSet& result_set) {
                 result_set.add_node(KNNResult(std::abs(node->value_ - data), node));
             }
 
-        } else {
+        } else if (data > node->value_) {
             knn_search(node->larger_, data, result_set);
             if (std::abs(data - node->value_) <= result_set.worst_dist()) {
                 knn_search(node->smaller_, data, result_set);
                 result_set.add_node(KNNResult(std::abs(data - node->value_), node));
             }
+        } else {
+            result_set.add_node(KNNResult(0, node));
         }
     }
 }
@@ -174,5 +188,36 @@ void knn_search(BSTNode* node, int data, KNNResultSet& result_set) {
 std::vector<KNNResult> BST::knn_search(int data, int k) {
     KNNResultSet result_set(k);
     ::knn_search(root_, data, result_set);
+    return result_set.get_result();
+}
+
+void rnn_search(BSTNode* node, int data, RNNResultSet& result_set) {
+    if (node) {
+        // todo 单独处理= ?
+        if (data < node->value_) {
+            rnn_search(node->smaller_, data, result_set);
+            if (std::abs(node->value_ - data) <= result_set.radius_) {
+                rnn_search(node->larger_, data, result_set);
+                result_set.add_node(node);
+            }
+
+        } else if (data > node->value_) {
+            rnn_search(node->larger_, data, result_set);
+            if (std::abs(data - node->value_) <= result_set.radius_) {
+                rnn_search(node->smaller_, data, result_set);
+                result_set.add_node(node);
+            }
+        } else {
+            result_set.add_node(node);
+            rnn_search(node->larger_, data, result_set);
+            rnn_search(node->smaller_, data, result_set);
+        }
+    }
+}
+
+std::vector<BSTNode*> BST::rnn_search(int data, int radius) {
+    RNNResultSet result_set(radius);
+    ::rnn_search(root_, data, result_set);
+
     return result_set.get_result();
 }

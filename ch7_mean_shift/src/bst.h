@@ -18,6 +18,7 @@ struct KNNResult {
     BSTNode* node_ = nullptr;
 };
 
+// todo why lambda? normal function does not work?
 auto cmp = [](KNNResult lhs, KNNResult rhs) { return lhs.dist_ < rhs.dist_; };
 
 class KNNResultSet {
@@ -30,6 +31,15 @@ class KNNResultSet {
     std::vector<KNNResult> get_result();
 };
 
+class RNNResultSet {
+   public:
+    RNNResultSet(int radius);
+    void add_node(BSTNode* node);
+    std::vector<BSTNode*> get_result() const;
+    std::vector<BSTNode*> result_set_;
+    int radius_;
+};
+
 class BST {
    public:
     BST(std::vector<int> datas, bool recursively = false);
@@ -40,6 +50,7 @@ class BST {
     BSTNode* search_data_iterative(int data);
     BSTNode* onenn_search(int data);
     std::vector<KNNResult> knn_search(int data, int k);
+    std::vector<BSTNode*> rnn_search(int data, int radius);
 
    private:
     BSTNode* root_ = nullptr;

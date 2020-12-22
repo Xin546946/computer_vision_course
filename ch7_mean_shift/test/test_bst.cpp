@@ -99,11 +99,11 @@ int main(int argc, char** argv) {
     // }
 
     // test for knn search
-    std::vector<int> data{1, 2, 3, 4, 6, 7};
+    std::vector<int> data = generate_random_data(1000, 0, 100000);
     BST bst(data);
-    std::vector<KNNResult> result = bst.knn_search(4, 2);
+    std::vector<BSTNode*> result = bst.rnn_search(45, 300);
     for (auto r : result) {
-        std::cout << r.node_->value_ << '\n';
+        std::cout << r->value_ << '\n';
     }
     return 0;
 }
