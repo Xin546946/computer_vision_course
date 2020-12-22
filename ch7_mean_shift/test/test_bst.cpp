@@ -99,11 +99,34 @@ int main(int argc, char** argv) {
     // }
 
     // test for knn search
-    std::vector<int> data = generate_random_data(1000, 0, 100000);
-    BST bst(data);
-    std::vector<BSTNode*> result = bst.rnn_search(45, 300);
-    for (auto r : result) {
-        std::cout << r->value_ << '\n';
+    std::vector<int> data = generate_random_data(1000000, 0, 100000000000);
+    int dist;
+    std::cout << "Search 1,000,000 random points for comparison of brute force and RNN\n  ";
+    std::cout << "With center 1000000 radius 50000 \n";
+    std::cout << "@@@@@@@@@@@ Brute force" << '\n';
+    std::vector<int> brute_force_data;
+    tictoc::tic();
+    for (int d : data) {
+        if (std::abs(d - 100000) <= 50000) {
+            brute_force_data.push_back(d);
+        }
     }
+    std::cout << "Brute force needs: " << tictoc::toc() / 1e3 << "miliseconds\n";
+    tictoc::tic();
+    BST bst(data);
+    std::cout << "Build a bst needs: " << tictoc::toc() / 1e3 << "miliseconds\n";
+    std::cout << "@@@@@@@@@@@ RNN Search" << '\n';
+    tictoc::tic();
+    std::vector<BSTNode*> result = bst.rnn_search(100000, 50000);
+    std::cout << "RNN Search needs: " << tictoc::toc() / 1e3 << "miliseconds\n";
+    std::cout << "RNN Search result" << '\n';
+    auto cmp_result = [](BSTNode* lhs, BSTNode* rhs) { return lhs->value_ < rhs->value_; };
+    std::sort(result.begin(), result.end(), cmp_result);
+    std::sort(brute_force_data.begin(), brute_force_data.end());
+    assert(result.size() == brute_force_data.size());
+    for (int i = 0; i < brute_force_data.size(); i++) {
+        assert(brute_force_data[i] == result[i]->value_);
+    }
+
     return 0;
 }

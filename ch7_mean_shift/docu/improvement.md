@@ -21,3 +21,6 @@
   * traverse, search
   * KNN, RNN
 
+
+
+**resources**: https://github.com/jlblancoc/nanoflann
