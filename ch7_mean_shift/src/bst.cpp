@@ -181,6 +181,8 @@ void knn_search(BSTNode* node, int data, KNNResultSet& result_set) {
             }
         } else {
             result_set.add_node(KNNResult(0, node));
+            knn_search(node->larger_, data, result_set);
+            knn_search(node->smaller_, data, result_set);
         }
     }
 }
@@ -217,6 +219,7 @@ void rnn_search(BSTNode* node, int data, RNNResultSet& result_set) {
 
 std::vector<BSTNode*> BST::rnn_search(int data, int radius) {
     RNNResultSet result_set(radius);
+
     ::rnn_search(root_, data, result_set);
 
     return result_set.get_result();
