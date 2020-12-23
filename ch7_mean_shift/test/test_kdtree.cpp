@@ -126,13 +126,23 @@ int main(int argc, char** argv) {
     //     }
     //     std::cout << "seatch an unexisting data costs " << tictoc::toc() / 1e3 << "ms\n";
     // }
-    std::vector<std::array<int, 3>> data_test = generate_3d_data<3>();
-    KDTree<int, 3> kdtree(data_test, 5);
+
+    std::array<int, 1> search_data{10};
+    // brute force search
+
+    std::vector<std::array<int, 1>> data_test{{5}, {1}, {2}, {3}, {4}, {100}};
+    KDTree<int, 1> kdtree(data_test, 1);
+    std::vector<std::array<int, 1>> inorder_data = kdtree.inorder();
+    for (auto i : inorder_data) {
+        std::cout << i[0] << '\n';
+    }
+    KDTreeNode<int, 1>* d = kdtree.search_data_recursively(std::array<int, 1>{1});
+    std::cout << d->data_[0] << '\n';
     std::cout << "Success to build a tree" << '\n';
-    std::array<int, 3> search_data{100, 100, 100};
-    KNNResultSet<int, 3> knn_result = kdtree.knn_search(search_data, 100);
+
+    KNNResultSet<int, 1> knn_result = kdtree.knn_search(search_data, 2);
     for (auto r : knn_result.get_result()) {
-        std::cout << r.node_->data_[0] << " " << r.node_->data_[1] << " " << r.node_->data_[2] << '\n';
+        std::cout << r.node_->data_[0] << '\n';
     }
     return 0;
 }

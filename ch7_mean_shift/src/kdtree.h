@@ -3,6 +3,7 @@
 #include <array>
 #include <cmath>
 #include <initializer_list>
+#include <iostream>
 #include <limits>
 #include <queue>
 #include <vector>
@@ -198,7 +199,7 @@ typename KDTree<T, Dim>::PtrNode KDTree<T, Dim>::search_data_recursively(const K
 
 template <typename T, int Dim>
 T compute_square_distance(const std::array<T, Dim>& lhs, const std::array<T, Dim>& rhs) {
-    T dist;
+    T dist = 0.0;
     for (int i = 0; i < Dim; i++) {
         dist += std::pow(lhs[i] - rhs[i], 2);
     }
@@ -208,25 +209,30 @@ T compute_square_distance(const std::array<T, Dim>& lhs, const std::array<T, Dim
 template <typename T, int Dim>
 void knn_search(KDTreeNode<T, Dim>* curr, std::array<T, Dim>& data, KNNResultSet<T, Dim>& result_set) {
     if (curr->has_leaves()) {
+        std::cout << "Visit the leaves of node" << curr->data_[0] << '\n';
         for (KDTreeNode<T, Dim>*& child : curr->children_) {
             T dist = compute_square_distance<T, Dim>(child->data_, data);
             result_set.add_node(dist, child);
         }
     } else {
         if (data[curr->axis_] < curr->data_[curr->axis_]) {
+            std::cout << "Search left of the node " << curr->data_[0] << '\n';
             knn_search<T, Dim>(curr->smaller_, data, result_set);
 
             if (std::abs(data[curr->axis_] - curr->data_[curr->axis_]) < result_set.worst_dist()) {
                 knn_search<T, Dim>(curr->larger_, data, result_set);
             }
         } else if (data[curr->axis_] > curr->data_[curr->axis_]) {
+            std::cout << "Search right of the node " << curr->data_[0] << '\n';
             knn_search<T, Dim>(curr->larger_, data, result_set);
             if (std::abs(data[curr->axis_] - curr->data_[curr->axis_] < result_set.worst_dist())) {
                 knn_search<T, Dim>(curr->smaller_, data, result_set);
             }
         } else {
-            result_set.add_node(0, curr);
+            std::cout << "The node of " << curr->data_[0] << "is the same as data " << '\n';
+            std::cout << "Look left of the node " << curr->smaller_->data_[0] << '\n';
             knn_search<T, Dim>(curr->smaller_, data, result_set);
+            std::cout << "Look right of the node " << curr->larger_->data_[0] << '\n';
             knn_search<T, Dim>(curr->larger_, data, result_set);
         }
     }
