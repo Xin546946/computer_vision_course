@@ -8,11 +8,17 @@ template <typename T, int Dim>
 struct Data {
     // Data(const std::initializer_list<T>& l) : data_(l) {
     // }
+    // Data(std::array<T, Dim>& data);
     std::array<T, Dim> data_;
     T& operator[](int i) {
         return data_[i];
     }
 };
+
+template <typename T, int Dim>
+inline bool operator==(const Data<T, Dim>& lhs, const Data<T, Dim>& rhs) {
+    return lhs.data_ == rhs.data_;
+}
 
 template <typename T, int Dim>
 struct KDTreeNode {
@@ -36,7 +42,7 @@ class KDTree {
     KDTree(std::vector<Data<T, Dim>>& data, int leaf_size = 1);
     void build_kdtree(PtrNode& curr, typename std::vector<Data<T, Dim>>::iterator begin,
                       typename std::vector<Data<T, Dim>>::iterator end);
-    PtrNode search_data_recursively(const Data<T, Dim>& data);
+    PtrNode search_data_recursively(Data<T, Dim>& data);
     PtrNode point_index_sort(int axis, int dim);
     std::vector<PtrNode> onenn_search(const Data<T, Dim>& data);
     std::vector<PtrNode> knn_search(const Data<T, Dim>& data, int k);
@@ -111,11 +117,11 @@ std::vector<Data<T, Dim>> KDTree<T, Dim>::inorder() {
 }
 
 template <typename T, int Dim>
-KDTreeNode<T, Dim>* search_data_recursively(KDTreeNode<T, Dim>* curr, const Data<T, Dim>& data) {
+KDTreeNode<T, Dim>* search_data_recursively(KDTreeNode<T, Dim>* curr, Data<T, Dim>& data) {
     if (curr->has_leaves()) {
-        for (const KDTreeNode<T, Dim>* leaf : curr->children_) {
+        for (KDTreeNode<T, Dim>* leaf : curr->children_) {
             if (leaf->data_ == data) {
-                return KDTreeNode<T, Dim>(data, -1);
+                return leaf;
             }
         }
     } else {
@@ -135,6 +141,6 @@ KDTreeNode<T, Dim>* search_data_recursively(KDTreeNode<T, Dim>* curr, const Data
 }
 
 template <typename T, int Dim>
-KDTreeNode<T, Dim>* KDTree<T, Dim>::search_data_recursively(const Data<T, Dim>& data) {
+KDTreeNode<T, Dim>* KDTree<T, Dim>::search_data_recursively(Data<T, Dim>& data) {
     return ::search_data_recursively(root_, data);
 }

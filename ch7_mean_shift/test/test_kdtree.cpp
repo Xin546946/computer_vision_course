@@ -40,6 +40,8 @@ int generate_random_data(int min, int max) {
 int main(int argc, char** argv) {
     //! test for add and traverse data
 
+    Data<int, 1> d_search;
+    d_search[0] = -1;
     for (int leaf_size = 1; leaf_size < 1e4; leaf_size *= 10) {
         std::vector<int> data = generate_random_data(1e6, 0, 1e9);
         std::vector<Data<int, 1>> data_test;
@@ -52,9 +54,20 @@ int main(int argc, char** argv) {
 
         tictoc::tic();
         KDTree<int, 1> kdtree(data_test, leaf_size);
+
         std::cout << "build kdtree with leaf size :" << leaf_size << " cost time :" << tictoc::toc() / 1e3 << " ms\n";
 
         std::vector<Data<int, 1>> result = kdtree.inorder();
+
+        tictoc::tic();
+        KDTreeNode<int, 1>* node = kdtree.search_data_recursively(d_search);
+        if (node) {
+            assert(node->data_[0] == d_search[0]);
+        } else {
+            std::cout << "there is no such a data in kd tree." << '\n';
+        }
+        std::cout << "seatch an unexisting data costs " << tictoc::toc() / 1e3 << "ms\n";
     }
+
     return 0;
 }
