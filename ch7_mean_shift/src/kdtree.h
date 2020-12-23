@@ -212,7 +212,6 @@ void knn_search(KDTreeNode<T, Dim>* curr, const std::array<T, Dim>& data, KNNRes
         }
     } else {
         if (data[curr->axis_] < curr->data_[curr->axis_]) {
-            std::cout << "Search left of the node " << curr->data_[0] << '\n';
             knn_search<T, Dim>(curr->smaller_, data, result_set);
 
             if (std::abs(data[curr->axis_] - curr->data_[curr->axis_]) < result_set.worst_dist()) {
@@ -220,17 +219,13 @@ void knn_search(KDTreeNode<T, Dim>* curr, const std::array<T, Dim>& data, KNNRes
             }
 
         } else if (data[curr->axis_] > curr->data_[curr->axis_]) {
-            std::cout << "Search right of the node " << curr->data_[0] << '\n';
             knn_search<T, Dim>(curr->larger_, data, result_set);
 
             if (std::abs(data[curr->axis_] - curr->data_[curr->axis_] < result_set.worst_dist())) {
                 knn_search<T, Dim>(curr->smaller_, data, result_set);
             }
         } else {
-            //! result_set.add_node(0, curr);
-
             knn_search<T, Dim>(curr->smaller_, data, result_set);
-            std::cout << "Look right of the node " << curr->larger_->data_[0] << '\n';
             knn_search<T, Dim>(curr->larger_, data, result_set);
         }
     }
