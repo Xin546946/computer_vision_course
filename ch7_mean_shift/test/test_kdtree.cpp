@@ -94,11 +94,6 @@ void test_3dtree_with_diff_leaf_size() {
     }
 }
 
-KDTree<int, 3> build_3d_tree() {
-    std::vector<std::array<int, 3>> data_test = generate_3d_data<3>();
-    KDTree<int, 3> kdtree(data_test, 5);
-}
-
 int main(int argc, char** argv) {
     //! test for add and traverse data
 
@@ -131,10 +126,11 @@ int main(int argc, char** argv) {
     //     }
     //     std::cout << "seatch an unexisting data costs " << tictoc::toc() / 1e3 << "ms\n";
     // }
-    auto kdtree = build_3d_tree();
+    std::vector<std::array<int, 3>> data_test = generate_3d_data<3>();
+    KDTree<int, 3> kdtree(data_test, 5);
     std::cout << "Success to build a tree" << '\n';
-    std::array<int, 3> data_test{100, 100, 100};
-    KNNResultSet<int, 3> knn_result = kdtree.knn_search(data_test, 100);
+    std::array<int, 3> search_data{100, 100, 100};
+    KNNResultSet<int, 3> knn_result = kdtree.knn_search(search_data, 100);
     for (auto r : knn_result.get_result()) {
         std::cout << r.node_->data_[0] << " " << r.node_->data_[1] << " " << r.node_->data_[2] << '\n';
     }

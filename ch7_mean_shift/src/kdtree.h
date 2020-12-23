@@ -208,26 +208,27 @@ T compute_square_distance(const std::array<T, Dim>& lhs, const std::array<T, Dim
 template <typename T, int Dim>
 void knn_search(KDTreeNode<T, Dim>* curr, std::array<T, Dim>& data, KNNResultSet<T, Dim>& result_set) {
     if (curr->has_leaves()) {
-        for (KDTreeNode<T, Dim>* child : curr->children_) {
+        for (KDTreeNode<T, Dim>*& child : curr->children_) {
             T dist = compute_square_distance<T, Dim>(child->data_, data);
             result_set.add_node(dist, child);
         }
-    }
-    if (data[curr->axis_] < curr->data_[curr->axis_]) {
-        knn_search<T, Dim>(curr->smaller_, data, result_set);
-        // todo implement worst dist
-        if (std::abs(data[curr->axis_] - curr->data_[curr->axis_]) < result_set.worst_dist()) {
+    } else {
+        if (data[curr->axis_] < curr->data_[curr->axis_]) {
+            knn_search<T, Dim>(curr->smaller_, data, result_set);
+
+            if (std::abs(data[curr->axis_] - curr->data_[curr->axis_]) < result_set.worst_dist()) {
+                knn_search<T, Dim>(curr->larger_, data, result_set);
+            }
+        } else if (data[curr->axis_] > curr->data_[curr->axis_]) {
+            knn_search<T, Dim>(curr->larger_, data, result_set);
+            if (std::abs(data[curr->axis_] - curr->data_[curr->axis_] < result_set.worst_dist())) {
+                knn_search<T, Dim>(curr->smaller_, data, result_set);
+            }
+        } else {
+            result_set.add_node(0, curr);
+            knn_search<T, Dim>(curr->smaller_, data, result_set);
             knn_search<T, Dim>(curr->larger_, data, result_set);
         }
-    } else if (data[curr->axis_] > curr->data_[curr->axis_]) {
-        knn_search<T, Dim>(curr->larger_, data, result_set);
-        if (std::abs(data[curr->axis_] - curr->data_[curr->axis_] < result_set.worst_dist())) {
-            knn_search<T, Dim>(curr->smaller_, data, result_set);
-        }
-    } else {
-        result_set.add_node(0, curr);
-        knn_search<T, Dim>(curr->smaller_, data, result_set);
-        knn_search<T, Dim>(curr->larger_, data, result_set);
     }
 }
 
