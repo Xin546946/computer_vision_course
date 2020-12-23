@@ -163,22 +163,10 @@ std::vector<typename KDTree<T, Dim>::KdData> KDTree<T, Dim>::inorder() const {
 }
 
 template <typename T, int Dim>
-inline bool equal(const std::array<T, Dim>& lhs, const std::array<T, Dim>& rhs) {
-    bool is_equal = true;
-    for (int i = 0; i < Dim; i++) {
-        if (lhs[i] != rhs[i]) {
-            is_equal = false;
-            break;
-        }
-    }
-    return is_equal;
-}
-
-template <typename T, int Dim>
 KDTreeNode<T, Dim>* search_data_recursively(KDTreeNode<T, Dim>* curr, const std::array<T, Dim>& data) {
     if (curr->has_leaves()) {
         for (KDTreeNode<T, Dim>* leaf : curr->children_) {
-            if (equal<T, Dim>(leaf->data_, data)) return leaf;
+            if (curr->data_ == data) return leaf;
         }
     } else {
         int axis = curr->axis_;
