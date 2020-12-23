@@ -23,8 +23,8 @@ struct KDTreeNode {
     KDTreeNode<T, Dim>* smaller_ = nullptr;
     KDTreeNode<T, Dim>* larger_ = nullptr;
     std::vector<KDTreeNode*> children_;
-    bool is_leaf() {
-        return (this->smaller_ == nullptr && this->larger_ == nullptr && this->children_.empty());
+    bool has_leaves() {
+        return (!this->children_.empty());
     };
 };
 
@@ -108,4 +108,33 @@ std::vector<Data<T, Dim>> KDTree<T, Dim>::inorder() {
     std::vector<Data<T, Dim>> result;
     ::inorder(root_, result);
     return result;
+}
+
+template <typename T, int Dim>
+KDTreeNode<T, Dim>* search_data_recursively(KDTreeNode<T, Dim>* curr, const Data<T, Dim>& data) {
+    if (curr->has_leaves()) {
+        for (const KDTreeNode<T, Dim>* leaf : curr->children_) {
+            if (leaf->data_ == data) {
+                return KDTreeNode<T, Dim>(data, -1);
+            }
+        }
+    } else {
+        int axis = curr->axis_;
+        if (data[axis] < curr->data_[axis]) {
+            return search_data_recursively(curr->smaller_, data);
+        } else if (data[axis] > curr->data_[axis]) {
+            return search_data_recursively(curr->larger_, data);
+        } else {
+            auto temp = search_data_recursively(curr->smaller_, data);
+            if (temp) return temp;
+            temp = search_data_recursively(curr->larger_, data);
+            return temp;
+        }
+    }
+    return nullptr;
+}
+
+template <typename T, int Dim>
+KDTreeNode<T, Dim>* KDTree<T, Dim>::search_data_recursively(const Data<T, Dim>& data) {
+    return ::search_data_recursively(root_, data);
 }
