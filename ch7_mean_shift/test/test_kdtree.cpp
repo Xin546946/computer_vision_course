@@ -40,23 +40,21 @@ int generate_random_data(int min, int max) {
 int main(int argc, char** argv) {
     //! test for add and traverse data
 
-    std::vector<int> data(10);  // generate_random_data(1000, 0, 1e9);
-    std::iota(data.begin(), data.end(), 0);
-    std::vector<Data<int, 1>> data_test;
+    for (int leaf_size = 1; leaf_size < 1e4; leaf_size *= 10) {
+        std::vector<int> data = generate_random_data(1e6, 0, 1e9);
+        std::vector<Data<int, 1>> data_test;
 
-    for (auto d : data) {
-        Data<int, 1> d2;
-        d2[0] = d;
-        data_test.push_back(d2);
+        for (auto d : data) {
+            Data<int, 1> d2;
+            d2[0] = d;
+            data_test.push_back(d2);
+        }
+
+        tictoc::tic();
+        KDTree<int, 1> kdtree(data_test, leaf_size);
+        std::cout << "build kdtree with leaf size :" << leaf_size << " cost time :" << tictoc::toc() / 1e3 << " ms\n";
+
+        std::vector<Data<int, 1>> result = kdtree.inorder();
     }
-
-    tictoc::tic();
-    KDTree<int, 1> kdtree(data_test, 1);
-    std::vector<Data<int, 1>> result = kdtree.inorder();
-
-    for (auto data : result) {
-        std::cout << data[0] << '\n';
-    }
-
     return 0;
 }
