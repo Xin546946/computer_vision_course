@@ -42,6 +42,7 @@ class KDTree {
     PtrNode root_ = nullptr;
     int axis_ = 0;
     int leaf_size_;
+    int size_data_;
     void next_axis();
 };
 
@@ -56,7 +57,7 @@ KDTreeNode<T, Dim>::KDTreeNode(const KdData& data, int axis) : data_(data), axis
 #####################implementation: KDTree #####################
 ---------------------------------------------------------*/
 template <typename T, int Dim>
-KDTree<T, Dim>::KDTree(std::vector<KdData>& data, int leaf_size) : leaf_size_(leaf_size) {
+KDTree<T, Dim>::KDTree(std::vector<KdData>& data, int leaf_size) : leaf_size_(leaf_size), size_data_(data.size()) {
     this->build_kdtree(root_, data.begin(), data.end());
 }
 
@@ -100,6 +101,7 @@ void inorder(KDTreeNode<T, Dim>* curr, std::vector<std::array<T, Dim>>& result) 
 template <typename T, int Dim>
 std::vector<typename KDTree<T, Dim>::KdData> KDTree<T, Dim>::inorder() const {
     std::vector<KdData> result;
+    result.reserve(size_data_);
     ::inorder<T, Dim>(root_, result);
     return result;
 }
