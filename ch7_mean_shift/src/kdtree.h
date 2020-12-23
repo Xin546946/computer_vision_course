@@ -40,8 +40,7 @@ class KDTree {
     // typedef typename std::vector<Data<T, Dim>>::iterator Iter;
     typedef KDTreeNode<T, Dim>* PtrNode;
     KDTree(std::vector<Data<T, Dim>>& data, int leaf_size = 1);
-    void build_kdtree(PtrNode& curr, typename std::vector<Data<T, Dim>>::iterator begin,
-                      typename std::vector<Data<T, Dim>>::iterator end);
+
     PtrNode search_data_recursively(Data<T, Dim>& data);
     PtrNode point_index_sort(int axis, int dim);
     std::vector<PtrNode> onenn_search(const Data<T, Dim>& data);
@@ -50,6 +49,8 @@ class KDTree {
     std::vector<Data<T, Dim>> inorder();
 
    private:
+    void build_kdtree(PtrNode& curr, typename std::vector<Data<T, Dim>>::iterator begin,
+                      typename std::vector<Data<T, Dim>>::iterator end);
     PtrNode root_ = nullptr;
     int axis_ = 0;
     int leaf_size_;
