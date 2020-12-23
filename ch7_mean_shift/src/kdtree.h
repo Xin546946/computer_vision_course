@@ -206,7 +206,9 @@ void knn_search(KDTreeNode<T, Dim>* curr, const std::array<T, Dim>& data, KNNRes
     if (curr->has_leaves()) {
         for (KDTreeNode<T, Dim>* child : curr->children_) {
             T dist = compute_square_distance<T, Dim>(child->data_, data);
-            result_set.add_node(dist, child);
+            if (dist < result_set.worst_dist()) {
+                result_set.add_node(dist, child);
+            }
         }
     } else {
         if (data[curr->axis_] < curr->data_[curr->axis_]) {
