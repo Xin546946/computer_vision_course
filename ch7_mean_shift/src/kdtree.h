@@ -69,7 +69,6 @@ template <typename T, int Dim>
 void KDTree<T, Dim>::build_kdtree(KDTreeNode<T, Dim>*& curr, typename std::vector<Data<T, Dim>>::iterator begin,
                                   typename std::vector<Data<T, Dim>>::iterator end) {
     int dist = std::distance(begin, end);
-    if (!dist) return;
 
     typename std::vector<Data<T, Dim>>::iterator mid = begin + dist / 2;
     std::nth_element(begin, mid, end, [=](Data<T, Dim>& lhs, Data<T, Dim>& rhs) { return lhs[axis_] < rhs[axis_]; });
@@ -95,14 +94,12 @@ inline void KDTree<T, Dim>::next_axis() {
 template <typename T, int Dim>
 void inorder(KDTreeNode<T, Dim>* curr, std::vector<Data<T, Dim>>& result) {
     if (curr) {
-        if (curr->children_.empty()) {
-            inorder(curr->smaller_, result);
-            // result.push_back(curr->data_);
-            inorder(curr->larger_, result);
-        } else {
-            std::for_each(curr->children_.begin(), curr->children_.end(),
-                          [&](KDTreeNode<T, Dim>* ptr_node) { result.push_back(ptr_node->data_); });
-        }
+        inorder(curr->smaller_, result);
+        // result.push_back(curr->data_);
+        inorder(curr->larger_, result);
+
+        std::for_each(curr->children_.begin(), curr->children_.end(),
+                      [&](KDTreeNode<T, Dim>* ptr_node) { result.push_back(ptr_node->data_); });
     }
 }
 
