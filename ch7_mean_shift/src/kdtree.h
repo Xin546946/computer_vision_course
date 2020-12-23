@@ -1,8 +1,10 @@
 #pragma once
 #include <algorithm>
 #include <array>
+#include <cassert>
 #include <cmath>
 #include <initializer_list>
+#include <iostream>
 #include <limits>
 #include <queue>
 #include <vector>
@@ -89,7 +91,8 @@ KNNResultSet<T, Dim>::KNNResultSet(int k) : result_set_(cmp<T, Dim>) {
 }
 
 template <typename T, int Dim>
-void KNNResultSet<T, Dim>::add_node(T dist, KDTreeNode<T, Dim>* node) {
+inline void KNNResultSet<T, Dim>::add_node(T dist, KDTreeNode<T, Dim>* node) {
+    assert(dist > 0);
     result_set_.pop();
     result_set_.emplace(dist, node);
 }
@@ -191,7 +194,7 @@ typename KDTree<T, Dim>::PtrNode KDTree<T, Dim>::search_data_recursively(const K
 
 template <typename T, int Dim>
 inline T compute_square_distance(const std::array<T, Dim>& lhs, const std::array<T, Dim>& rhs) {
-    T dist;
+    T dist = 0.0;
     for (int i = 0; i < Dim; i++) {
         dist += std::pow(lhs[i] - rhs[i], 2);
     }
@@ -199,7 +202,7 @@ inline T compute_square_distance(const std::array<T, Dim>& lhs, const std::array
 }
 
 template <typename T, int Dim>
-void knn_search(KDTreeNode<T, Dim>* curr, std::array<T, Dim>& data, KNNResultSet<T, Dim>& result_set) {
+void knn_search(KDTreeNode<T, Dim>* curr, const std::array<T, Dim>& data, KNNResultSet<T, Dim>& result_set) {
     if (curr->has_leaves()) {
         for (KDTreeNode<T, Dim>* child : curr->children_) {
             T dist = compute_square_distance<T, Dim>(child->data_, data);
@@ -220,7 +223,7 @@ void knn_search(KDTreeNode<T, Dim>* curr, std::array<T, Dim>& data, KNNResultSet
                 knn_search<T, Dim>(curr->smaller_, data, result_set);
             }
         } else {
-            result_set.add_node(0, curr);
+            //! result_set.add_node(0, curr);
 
             knn_search<T, Dim>(curr->smaller_, data, result_set);
             knn_search<T, Dim>(curr->larger_, data, result_set);
