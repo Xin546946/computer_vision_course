@@ -40,7 +40,8 @@ int generate_random_data(int min, int max) {
 int main(int argc, char** argv) {
     //! test for add and traverse data
 
-    std::vector<int> data = generate_random_data(1000, 0, 1e9);
+    std::vector<int> data(10);  // generate_random_data(1000, 0, 1e9);
+    std::iota(data.begin(), data.end(), 0);
     std::vector<Data<int, 1>> data_test;
 
     for (auto d : data) {

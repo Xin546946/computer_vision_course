@@ -68,37 +68,28 @@ KDTree<T, Dim>::KDTree(std::vector<Data<T, Dim>>& data, int leaf_size) : leaf_si
 template <typename T, int Dim>
 void KDTree<T, Dim>::build_kdtree(KDTreeNode<T, Dim>*& curr, typename std::vector<Data<T, Dim>>::iterator begin,
                                   typename std::vector<Data<T, Dim>>::iterator end) {
-    // choose one axis, compute the median in this axis, split the points at this axis into two pieces
-    typename std::vector<Data<T, Dim>>::iterator mid = begin + std::distance(begin, end) / 2;
+    int dist = std::distance(begin, end);
+    if (!dist) return;
+
+    typename std::vector<Data<T, Dim>>::iterator mid = begin + dist / 2;
     std::nth_element(begin, mid, end, [=](Data<T, Dim>& lhs, Data<T, Dim>& rhs) { return lhs[axis_] < rhs[axis_]; });
-
     curr = new KDTreeNode<T, Dim>(*mid, axis_);
-    next_axis();
 
-    if (std::distance(begin, mid) >= leaf_size_) {
+    if (dist <= leaf_size_) {
+        curr->children_.reserve(leaf_size_);
+        std::for_each(begin, end,
+                      [&](Data<T, Dim> data) { curr->children_.push_back(new KDTreeNode<T, Dim>(data, axis_)); });
+    } else {
         build_kdtree(curr->smaller_, begin, mid);
-    } else {
-        curr->children_.reserve(leaf_size_);
-        std::for_each(begin, mid,
-                      [&](Data<T, Dim> data) { curr->children_.push_back(new KDTreeNode<T, Dim>(data, axis_)); });
-    }
-    if (std::distance(mid, end) >= leaf_size_) {
         build_kdtree(curr->larger_, mid, end);
-    } else {
-        curr->children_.reserve(leaf_size_);
-        std::for_each(mid, end,
-                      [&](Data<T, Dim> data) { curr->children_.push_back(new KDTreeNode<T, Dim>(data, axis_)); });
     }
 
-    // change an axis, splits the points in each side
+    next_axis();
 }
+
 template <typename T, int Dim>
 inline void KDTree<T, Dim>::next_axis() {
-    if (axis_ == Dim - 1) {
-        axis_ = 0;
-    } else {
-        axis_++;
-    }
+    axis_ = (axis_ == Dim - 1) ? 0 : axis_ + 1;
 }
 
 template <typename T, int Dim>
@@ -106,7 +97,7 @@ void inorder(KDTreeNode<T, Dim>* curr, std::vector<Data<T, Dim>>& result) {
     if (curr) {
         if (curr->children_.empty()) {
             inorder(curr->smaller_, result);
-            result.push_back(curr->data_);
+            // result.push_back(curr->data_);
             inorder(curr->larger_, result);
         } else {
             std::for_each(curr->children_.begin(), curr->children_.end(),
