@@ -59,7 +59,7 @@ std::vector<std::array<int, Dim>> generate_nd_data(int num, int min, int max) {
 }
 
 template <int Dim>
-std::vector<Data<int, Dim>> generate_3d_data() {
+std::vector<std::array<int, Dim>> generate_3d_data() {
     std::vector<std::array<int, 3>> data = generate_nd_data<3>(1e6, 0, 1e9);
     // for (auto d : data) {
     //     std::cout << d[0] << " " << d[1] << " " << d[2] << '\n';
@@ -110,7 +110,7 @@ int main(int argc, char** argv) {
     //! test for generate n dim random data
 
     for (int leaf_size = 1; leaf_size < 1e8; leaf_size *= 10) {
-        std::vector<Data<int, 3>> data_test = generate_3d_data<3>();
+        std::vector<std::array<int, 3>> data_test = generate_3d_data<3>();
         std::cout << "@@@@@@ Search for leaf size " << leaf_size << '\n';
         KDTree<int, 3> kdtree(data_test, leaf_size);
         tictoc::tic();
