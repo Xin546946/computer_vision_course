@@ -60,7 +60,7 @@ class KDTree {
     // std::vector<PtrNode> onenn_search(const std::array<T, Dim>& data);
     KNNResultSet<T, Dim> knn_search(std::array<T, Dim>& data, int k);
     KNNResultSet<T, Dim> rnn_search(std::array<T, Dim>& data, double radius);
-    std::vector<std::array<T, Dim>> inorder();
+    std::vector<KdData> inorder() const;
 
    private:
     void build_kdtree(PtrNode& curr, IterNode begin, IterNode end);
