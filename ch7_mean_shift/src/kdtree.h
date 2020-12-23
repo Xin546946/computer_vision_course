@@ -67,6 +67,7 @@ class KDTree {
     PtrNode root_ = nullptr;
     int axis_ = 0;
     int leaf_size_;
+    int size_data_;
     void next_axis();
 };
 
@@ -112,7 +113,7 @@ std::vector<KNNResult<T, Dim>> KNNResultSet<T, Dim>::get_result() {
 #####################implementation: KDTree #####################
 ---------------------------------------------------------*/
 template <typename T, int Dim>
-KDTree<T, Dim>::KDTree(std::vector<KdData>& data, int leaf_size) : leaf_size_(leaf_size) {
+KDTree<T, Dim>::KDTree(std::vector<KdData>& data, int leaf_size) : leaf_size_(leaf_size), size_data_(data.size()) {
     this->build_kdtree(root_, data.begin(), data.end());
 }
 
@@ -156,6 +157,7 @@ void inorder(KDTreeNode<T, Dim>* curr, std::vector<std::array<T, Dim>>& result) 
 template <typename T, int Dim>
 std::vector<typename KDTree<T, Dim>::KdData> KDTree<T, Dim>::inorder() const {
     std::vector<KdData> result;
+    result.reserve(size_data_);
     ::inorder<T, Dim>(root_, result);
     return result;
 }
@@ -164,9 +166,14 @@ template <typename T, int Dim>
 KDTreeNode<T, Dim>* search_data_recursively(KDTreeNode<T, Dim>* curr, const std::array<T, Dim>& data) {
     if (curr->has_leaves()) {
         for (KDTreeNode<T, Dim>* leaf : curr->children_) {
-            if (leaf->data_ == data) {
-                return leaf;
+            bool equal = true;
+            for (int i = 0; i < Dim; i++) {
+                if (leaf->data_[i] != data[i]) {
+                    equal = false;
+                    break;
+                }
             }
+            if (equal) return leaf;
         }
     } else {
         int axis = curr->axis_;
