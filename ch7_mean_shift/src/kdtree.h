@@ -7,14 +7,15 @@
 template <typename T, int Dim>
 struct KDTreeNode {
     typedef std::array<T, Dim> KdData;
+    typedef KDTreeNode<T, Dim>* PtrNode;
 
     KDTreeNode(const KdData& data, int axis);
     KdData data_;
     int axis_;
 
-    KDTreeNode<T, Dim>* smaller_ = nullptr;
-    KDTreeNode<T, Dim>* larger_ = nullptr;
-    std::vector<KDTreeNode*> children_;
+    PtrNode smaller_ = nullptr;
+    PtrNode larger_ = nullptr;
+    std::vector<PtrNode> children_;
     bool has_leaves() {
         return (!this->children_.empty());
     };
@@ -24,7 +25,7 @@ template <typename T, int Dim>
 class KDTree {
    public:
     typedef typename KDTreeNode<T, Dim>::KdData KdData;
-    typedef KDTreeNode<T, Dim>* PtrNode;
+    typedef typename KDTreeNode<T, Dim>::PtrNode PtrNode;
     typedef typename std::vector<std::array<T, Dim>>::iterator IterNode;
 
     KDTree(std::vector<KdData>& data, int leaf_size = 1);
@@ -45,7 +46,7 @@ class KDTree {
 };
 
 /*--------------------------------------------------------
-#####################implementation: KDTree #####################
+#####################implementation: KDTreeNode #####################
 ---------------------------------------------------------*/
 template <typename T, int Dim>
 KDTreeNode<T, Dim>::KDTreeNode(const KdData& data, int axis) : data_(data), axis_(axis) {
