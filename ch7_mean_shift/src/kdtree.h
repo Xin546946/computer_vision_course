@@ -28,12 +28,12 @@ struct KNNResult {
     KNNResult() = default;
     KNNResult(int dist, KDTreeNode<T, Dim>* node) : dist_(dist), node_(node) {
     }
-    int dist_ = std::numeric_limits<int>::max();
+    T dist_ = std::numeric_limits<T>::max();
     KDTreeNode<T, Dim>* node_ = nullptr;
 };
 
 template <typename T, int Dim>
-auto cmp = [](KNNResult<T, Dim> lhs, KNNResult<T, Dim> rhs) { return lhs.dist_ < rhs.dist_; };
+inline auto cmp = [](const KNNResult<T, Dim>& lhs, const KNNResult<T, Dim>& rhs) { return lhs.dist_ < rhs.dist_; };
 
 template <typename T, int Dim>
 class KNNResultSet {
