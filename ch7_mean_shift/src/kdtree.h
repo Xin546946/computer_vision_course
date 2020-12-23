@@ -40,8 +40,8 @@ class KNNResultSet {
    public:
     KNNResultSet(int k);
 
-    void add_node(int dist, KDTreeNode<T, Dim>* node);
-    int worst_dist();
+    void add_node(T dist, KDTreeNode<T, Dim>* node);
+    T worst_dist();
     std::priority_queue<KNNResult<T, Dim>, std::vector<KNNResult<T, Dim>>, decltype(cmp<T, Dim>)> result_set_;
     std::vector<KNNResult<T, Dim>> get_result();
 };
@@ -89,13 +89,13 @@ KNNResultSet<T, Dim>::KNNResultSet(int k) : result_set_(cmp<T, Dim>) {
 }
 
 template <typename T, int Dim>
-void KNNResultSet<T, Dim>::add_node(int dist, KDTreeNode<T, Dim>* node) {
+void KNNResultSet<T, Dim>::add_node(T dist, KDTreeNode<T, Dim>* node) {
     result_set_.pop();
     result_set_.emplace(dist, node);
 }
 
 template <typename T, int Dim>
-int KNNResultSet<T, Dim>::worst_dist() {
+inline T KNNResultSet<T, Dim>::worst_dist() {
     return result_set_.top().dist_;
 }
 
@@ -163,17 +163,22 @@ std::vector<typename KDTree<T, Dim>::KdData> KDTree<T, Dim>::inorder() const {
 }
 
 template <typename T, int Dim>
+inline bool equal(const std::array<T, Dim>& lhs, const std::array<T, Dim>& rhs) {
+    bool is_equal = true;
+    for (int i = 0; i < Dim; i++) {
+        if (lhs[i] != rhs[i]) {
+            is_equal = false;
+            break;
+        }
+    }
+    return is_equal;
+}
+
+template <typename T, int Dim>
 KDTreeNode<T, Dim>* search_data_recursively(KDTreeNode<T, Dim>* curr, const std::array<T, Dim>& data) {
     if (curr->has_leaves()) {
         for (KDTreeNode<T, Dim>* leaf : curr->children_) {
-            bool equal = true;
-            for (int i = 0; i < Dim; i++) {
-                if (leaf->data_[i] != data[i]) {
-                    equal = false;
-                    break;
-                }
-            }
-            if (equal) return leaf;
+            if (equal<T, Dim>(leaf->data_, data)) return leaf;
         }
     } else {
         int axis = curr->axis_;
@@ -197,7 +202,7 @@ typename KDTree<T, Dim>::PtrNode KDTree<T, Dim>::search_data_recursively(const K
 }
 
 template <typename T, int Dim>
-T compute_square_distance(const std::array<T, Dim>& lhs, const std::array<T, Dim>& rhs) {
+inline T compute_square_distance(const std::array<T, Dim>& lhs, const std::array<T, Dim>& rhs) {
     T dist;
     for (int i = 0; i < Dim; i++) {
         dist += std::pow(lhs[i] - rhs[i], 2);
@@ -208,7 +213,7 @@ T compute_square_distance(const std::array<T, Dim>& lhs, const std::array<T, Dim
 template <typename T, int Dim>
 void knn_search(KDTreeNode<T, Dim>* curr, std::array<T, Dim>& data, KNNResultSet<T, Dim>& result_set) {
     if (curr->has_leaves()) {
-        for (KDTreeNode<T, Dim>*& child : curr->children_) {
+        for (KDTreeNode<T, Dim>* child : curr->children_) {
             T dist = compute_square_distance<T, Dim>(child->data_, data);
             result_set.add_node(dist, child);
         }
@@ -219,13 +224,16 @@ void knn_search(KDTreeNode<T, Dim>* curr, std::array<T, Dim>& data, KNNResultSet
             if (std::abs(data[curr->axis_] - curr->data_[curr->axis_]) < result_set.worst_dist()) {
                 knn_search<T, Dim>(curr->larger_, data, result_set);
             }
+
         } else if (data[curr->axis_] > curr->data_[curr->axis_]) {
             knn_search<T, Dim>(curr->larger_, data, result_set);
+
             if (std::abs(data[curr->axis_] - curr->data_[curr->axis_] < result_set.worst_dist())) {
                 knn_search<T, Dim>(curr->smaller_, data, result_set);
             }
         } else {
             result_set.add_node(0, curr);
+
             knn_search<T, Dim>(curr->smaller_, data, result_set);
             knn_search<T, Dim>(curr->larger_, data, result_set);
         }
