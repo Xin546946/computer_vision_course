@@ -26,7 +26,7 @@ class Visualizer {
     pangolin::View view_3d_;
     pangolin::OpenGlRenderState cam_3d_;
 
-    // Data stored in the order of rgb
+    // std::array stored in the order of rgb
     std::mutex points_mutex_;
     std::vector<cv::Vec3d> points_;
 };

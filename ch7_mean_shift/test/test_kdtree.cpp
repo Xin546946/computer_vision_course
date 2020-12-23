@@ -64,9 +64,9 @@ std::vector<std::array<int, Dim>> generate_3d_data() {
     // for (auto d : data) {
     //     std::cout << d[0] << " " << d[1] << " " << d[2] << '\n';
     // }
-    std::vector<Data<int, 3>> data_test;
+    std::vector<std::array<int, 3>> data_test;
     for (auto d : data) {
-        Data<int, 3> d2;
+        std::array<int, 3> d2;
         d2[0] = d[0];
         d2[1] = d[1];
         d2[2] = d[2];
@@ -78,14 +78,14 @@ std::vector<std::array<int, Dim>> generate_3d_data() {
 int main(int argc, char** argv) {
     //! test for add and traverse data
 
-    // Data<int, 1> d_search;
+    // std::array<int, 1> d_search;
     // d_search[0] = -1;
     // for (int leaf_size = 1; leaf_size < 1e4; leaf_size *= 10) {
     //     std::vector<int> data = generate_random_data(1e6, 0, 1e9);
-    //     std::vector<Data<int, 1>> data_test;
+    //     std::vector<std::array<int, 1>> data_test;
 
     //     for (auto d : data) {
-    //         Data<int, 1> d2;
+    //         std::array<int, 1> d2;
     //         d2[0] = d;
     //         data_test.push_back(d2);
     //     }
@@ -96,7 +96,7 @@ int main(int argc, char** argv) {
     //     std::cout << "build kdtree with leaf size :" << leaf_size << " cost time :" << tictoc::toc() / 1e3 << "
     //     ms\n";
 
-    //     std::vector<Data<int, 1>> result = kdtree.inorder();
+    //     std::vector<std::array<int, 1>> result = kdtree.inorder();
 
     //     tictoc::tic();
     //     KDTreeNode<int, 1>* node = kdtree.search_data_recursively(d_search);
