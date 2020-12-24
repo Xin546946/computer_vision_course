@@ -67,7 +67,7 @@ class KDTree {
    public:
     typedef typename KDTreeNode<T, Dim>::KDData KDData;
     typedef typename KDTreeNode<T, Dim>::PtrNode PtrNode;
-    typedef typename std::vector<std::array<T, Dim>>::iterator IterNode;
+    typedef typename std::vector<std::array<T, Dim>>::iterator IterData;
 
     KDTree(std::vector<KDData>& data, int leaf_size = 1);
     KDTree() = default;
@@ -80,7 +80,7 @@ class KDTree {
     std::vector<KDData> inorder(bool only_leaf = false) const;
 
    private:
-    void build_kdtree(PtrNode& curr, IterNode begin, IterNode end);
+    void build_kdtree(PtrNode& curr, IterData begin, IterData end);
     PtrNode root_ = nullptr;
     int axis_ = 0;
     int leaf_size_;
@@ -166,10 +166,10 @@ KDTree<T, Dim>::~KDTree() {
 }
 
 template <typename T, int Dim>
-void KDTree<T, Dim>::build_kdtree(PtrNode& curr, IterNode begin, IterNode end) {
+void KDTree<T, Dim>::build_kdtree(PtrNode& curr, IterData begin, IterData end) {
     int dist = std::distance(begin, end);
 
-    IterNode mid = begin + dist / 2;
+    IterData mid = begin + dist / 2;
     std::nth_element(begin, mid, end, [=](const KDData& lhs, const KDData& rhs) { return lhs[axis_] < rhs[axis_]; });
     curr = new KDTreeNode<T, Dim>(*mid, axis_);
 
