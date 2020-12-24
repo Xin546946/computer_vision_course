@@ -173,6 +173,8 @@ void KDTree<T, Dim>::build_kdtree(PtrNode& curr, IterData begin, IterData end) {
     std::nth_element(begin, mid, end, [=](const KDData& lhs, const KDData& rhs) { return lhs[axis_] < rhs[axis_]; });
     curr = new KDTreeNode<T, Dim>(*mid, axis_);
 
+    next_axis();
+
     if (dist <= leaf_size_) {
         curr->children_.reserve(leaf_size_);
         std::for_each(begin, end,
@@ -181,8 +183,6 @@ void KDTree<T, Dim>::build_kdtree(PtrNode& curr, IterData begin, IterData end) {
         build_kdtree(curr->smaller_, begin, mid);
         build_kdtree(curr->larger_, mid, end);
     }
-
-    next_axis();
 }
 
 template <typename T, int Dim>
