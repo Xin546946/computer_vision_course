@@ -204,10 +204,17 @@ KDTreeNode<T, Dim>* search_data_recursively(KDTreeNode<T, Dim>* curr, const std:
         } else if (data[axis] > curr->data_[axis]) {
             return search_data_recursively<T, Dim>(curr->larger_, data);
         } else {
-            auto temp = search_data_recursively<T, Dim>(curr->smaller_, data);
-            if (temp) return temp;
-            temp = search_data_recursively<T, Dim>(curr->larger_, data);
-            return temp;
+            auto ptr1 = search_data_recursively<T, Dim>(curr->smaller_, data);
+            auto ptr2 = search_data_recursively<T, Dim>(curr->larger_, data);
+            if (ptr1) {
+                return ptr1;
+            }
+
+            if (ptr2) {
+                return ptr2;
+            }
+
+            return nullptr;
         }
     }
     return nullptr;
