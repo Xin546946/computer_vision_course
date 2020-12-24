@@ -23,6 +23,7 @@ ColorData::ColorData(cv::Mat img, double radius, std::shared_ptr<Visualizer> vis
         }
     }
     kdtree_ = new KDTree3D(kdtree_img, 2);
+    std::cout << "Finish to build KDTree! " << '\n';
 }
 
 void ColorData::update_mass_center() {
@@ -32,9 +33,10 @@ void ColorData::update_mass_center() {
         RNNResultSet<int, 3> rnn_result = kdtree_->rnn_search(vec2array(color), std::sqrt(r_square_));
 
         std::vector<std::array<int, 3>> color_roi = rnn_result.get_result();
-        for (std::array<int, 3> color : color_roi) {
+        for (std::array<int, 3> color1 : color_roi) {
+            // std::cout << color1[0] << " " << color[1] << " " << color[2] << '\n';
             num++;
-            acc_rgb += array2vec(color);
+            acc_rgb += array2vec(color1);
         }
         color = acc_rgb / num;
     }
