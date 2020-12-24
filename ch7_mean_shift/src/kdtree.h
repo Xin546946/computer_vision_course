@@ -71,12 +71,13 @@ class KDTree {
 
     KDTree(std::vector<KDData>& data, int leaf_size = 1);
     KDTree() = default;
+    ~KDTree();
     PtrNode search_data_recursively(const KDData& data) const;
     PtrNode point_index_sort(int axis, int dim);
     // std::vector<PtrNode> onenn_search(const std::array<T, Dim>& data);
     KNNResultSet<T, Dim> knn_search(const KDData& data, int k) const;
     RNNResultSet<T, Dim> rnn_search(const KDData& data, T radius) const;
-    std::vector<KDData> inorder() const;
+    std::vector<KDData> inorder(bool only_leaf = false) const;
 
    private:
     void build_kdtree(PtrNode& curr, IterNode begin, IterNode end);
@@ -151,6 +152,10 @@ KDTree<T, Dim>::KDTree(std::vector<KDData>& data, int leaf_size) : leaf_size_(le
 }
 
 template <typename T, int Dim>
+KDTree<T, Dim>::~KDTree() {
+}
+
+template <typename T, int Dim>
 void KDTree<T, Dim>::build_kdtree(PtrNode& curr, IterNode begin, IterNode end) {
     int dist = std::distance(begin, end);
 
@@ -176,22 +181,32 @@ inline void KDTree<T, Dim>::next_axis() {
 }
 
 template <typename T, int Dim>
-void inorder(KDTreeNode<T, Dim>* curr, std::vector<std::array<T, Dim>>& result) {
+void inorder(KDTreeNode<T, Dim>* curr, std::vector<KDTreeNode<T, Dim>*>& result, bool only_leaf) {
     if (curr) {
         inorder<T, Dim>(curr->smaller_, result);
-        // result.push_back(curr->data_);
+
+        if (!only_leaf) {
+            result.push_back(curr);
+        }
         inorder<T, Dim>(curr->larger_, result);
 
         std::for_each(curr->children_.begin(), curr->children_.end(),
-                      [&](KDTreeNode<T, Dim>* ptr_node) { result.push_back(ptr_node->data_); });
+                      [&](KDTreeNode<T, Dim>* ptr_node) { result.push_back(ptr_node); });
     }
 }
 
 template <typename T, int Dim>
-std::vector<typename KDTree<T, Dim>::KDData> KDTree<T, Dim>::inorder() const {
+std::vector<typename KDTree<T, Dim>::KDData> KDTree<T, Dim>::inorder(bool only_leaf) const {
+    std::vector<PtrNode> ptr_nodes;
+    ptr_nodes.reserve(size_data_);
+    ::inorder<T, Dim>(root_, ptr_nodes, only_leaf);
     std::vector<KDData> result;
     result.reserve(size_data_);
-    ::inorder<T, Dim>(root_, result);
+
+    for (auto ptr_node : ptr_nodes) {
+        result.push_back(ptr_node->data_);
+    }
+
     return result;
 }
 
