@@ -29,19 +29,12 @@ void ColorData::update_mass_center() {
     for (cv::Vec3d& color : colors_) {
         cv::Vec3d acc_rgb(0.0, 0.0, 0.0);
         int num = 0;
-        RNNResultSet<int, 3> rnn_result = kdtree_.rnn_search(vec2array(color), std::sqrt(r_square_));
-        std::vector<std::array<int, 3>> result = rnn_result.get_result();
-        for (auto acc_rgb : result) {
-            acc_rgb.
-        }
-        {
-            if (cv::norm(color - color_original, cv::NORM_L2SQR) > r_square_) {
-                continue;
-            }
+        RNNResultSet<int, 3> rnn_result = kdtree_->rnn_search(vec2array(color), std::sqrt(r_square_));
+        std::vector<std::array<int, 3>> color_roi = rnn_result.get_result();
+        for (std::array<int, 3> color : color_roi) {
             num++;
-            acc_rgb += color_original;
+            acc_rgb += array2vec(color);
         }
-
         color = acc_rgb / num;
     }
 }
