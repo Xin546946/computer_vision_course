@@ -58,33 +58,41 @@ std::vector<std::array<int, Dim>> generate_nd_data(int num, int min, int max) {
     return result;
 }
 
-std::vector<std::array<int, 3>> generate_3d_data() {
-    return generate_nd_data<3>(100, 0, 1000);
+std::vector<std::array<int, 3>> generate_3d_data(int num, int min, int max) {
+    return generate_nd_data<3>(num, min, max);
 }
 
 //! distance of 3d int will be outside of the range of int
 //! test for generate n dim random data
 void test_3dtree_with_diff_leaf_size() {
+    int num = 1e6;
     for (int leaf_size = 1; leaf_size < 1e8; leaf_size *= 5) {
-        std::vector<std::array<int, 3>> data_test = generate_3d_data();
+        std::vector<std::array<int, 3>> data_test = generate_3d_data(num, 0, 255);
         std::cout << "@@@@@@ Search for leaf size " << leaf_size << '\n';
         KDTree<int, 3> kdtree(data_test, leaf_size);
+
         tictoc::tic();
-        KDTreeNode<int, 3>* node = kdtree.search_data_recursively(data_test[50]);
+        for (auto d : data_test) {
+            if (d == data_test[num / 2]) break;
+        }
+        std::cout << "bf search data costs " << tictoc::toc() / 1e3 << "ms\n";
+
+        tictoc::tic();
+        KDTreeNode<int, 3>* node = kdtree.search_data_recursively(data_test[num / 2]);
         std::cout << "seatch data costs " << tictoc::toc() / 1e3 << "ms\n";
         if (node) {
             std::cout << node->data_[0] << " " << node->data_[1] << " " << node->data_[2] << '\n';
-            std::cout << data_test[50][0] << " " << data_test[50][1] << " " << data_test[50][2] << '\n';
-            assert(node->data_ == data_test[50]);
+            std::cout << data_test[num / 2][0] << " " << data_test[num / 2][1] << " " << data_test[num / 2][2] << '\n';
+            assert(node->data_ == data_test[num / 2]);
         } else {
             std::cout << "there is no such a data in kd tree." << '\n';
         }
         tictoc::tic();
-        RNNResultSet<int, 3> result_rnn = kdtree.rnn_search(data_test[50], 1e4);
+        RNNResultSet<int, 3> result_rnn = kdtree.rnn_search(data_test[num / 2], 50);
         std::cout << "RNN Search costs " << tictoc::toc() / 1e3 << "miliseconds, find " << result_rnn.result_set_.size()
                   << " point\n";
         tictoc::tic();
-        KNNResultSet<int, 3> result_knn = kdtree.knn_search(data_test[50], 10);
+        KNNResultSet<int, 3> result_knn = kdtree.knn_search(data_test[num / 2], 10);
         std::cout << "KNN Search costs " << tictoc::toc() / 1e3 << "miliseconds\n";
     }
 }

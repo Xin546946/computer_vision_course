@@ -1,5 +1,6 @@
 #include "data_base.h"
 #include "memory"
+#include "tictoc.h"
 #include <chrono>
 #include <opencv2/core/core.hpp>
 #include <thread>
@@ -15,7 +16,6 @@ inline cv::Vec3b array2vec(const std::array<int, 3> data) {
 ColorData::ColorData(cv::Mat img, double radius, std::shared_ptr<Visualizer> vis_ptr)
     : r_square_(radius * radius), vis_ptr_(vis_ptr) {
     std::vector<std::array<int, 3>> kdtree_img;
-
     for (int r = 0; r < img.rows; r++) {
         for (int c = 0; c < img.cols; c++) {
             colors_.push_back(img.at<cv::Vec3b>(r, c));
@@ -31,6 +31,7 @@ void ColorData::update_mass_center() {
         cv::Vec3d acc_rgb(0.0, 0.0, 0.0);
         int num = 0;
         RNNResultSet<int, 3> rnn_result = kdtree_->rnn_search(vec2array(color), std::sqrt(r_square_));
+
         std::vector<std::array<int, 3>> color_roi = rnn_result.get_result();
         for (std::array<int, 3> color1 : color_roi) {
             // std::cout << color1[0] << " " << color[1] << " " << color[2] << '\n';
