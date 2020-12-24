@@ -80,8 +80,9 @@ void test_3dtree_with_diff_leaf_size() {
             std::cout << "there is no such a data in kd tree." << '\n';
         }
         tictoc::tic();
-        RNNResultSet<int, 3> result_rnn = kdtree.rnn_search(data_test[50], 100);
-        std::cout << "RNN Search costs " << tictoc::toc() / 1e3 << "miliseconds\n";
+        RNNResultSet<int, 3> result_rnn = kdtree.rnn_search(data_test[50], 1e4);
+        std::cout << "RNN Search costs " << tictoc::toc() / 1e3 << "miliseconds, find " << result_rnn.result_set_.size()
+                  << " point\n";
         tictoc::tic();
         KNNResultSet<int, 3> result_knn = kdtree.knn_search(data_test[50], 10);
         std::cout << "KNN Search costs " << tictoc::toc() / 1e3 << "miliseconds\n";
