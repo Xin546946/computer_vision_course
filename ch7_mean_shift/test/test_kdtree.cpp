@@ -59,25 +59,32 @@ std::vector<std::array<int, Dim>> generate_nd_data(int num, int min, int max) {
 }
 
 std::vector<std::array<int, 3>> generate_3d_data() {
-    return generate_nd_data<3>(1e6, 0, 1e9);
+    return generate_nd_data<3>(100, 0, 10000);
 }
 
+//! distance of 3d int will be outside of the range of int
 //! test for generate n dim random data
 void test_3dtree_with_diff_leaf_size() {
-    for (int leaf_size = 1; leaf_size < 1e8; leaf_size *= 10) {
+    for (int leaf_size = 1; leaf_size < 100; leaf_size *= 5) {
         std::vector<std::array<int, 3>> data_test = generate_3d_data();
         std::cout << "@@@@@@ Search for leaf size " << leaf_size << '\n';
         KDTree<int, 3> kdtree(data_test, leaf_size);
         tictoc::tic();
-        KDTreeNode<int, 3>* node = kdtree.search_data_recursively(data_test[1000]);
+        KDTreeNode<int, 3>* node = kdtree.search_data_recursively(data_test[50]);
         std::cout << "seatch data costs " << tictoc::toc() / 1e3 << "ms\n";
         if (node) {
             std::cout << node->data_[0] << " " << node->data_[1] << " " << node->data_[2] << '\n';
-            std::cout << data_test[1000][0] << " " << data_test[1000][1] << " " << data_test[1000][2] << '\n';
-            assert(node->data_ == data_test[1000]);
+            std::cout << data_test[50][0] << " " << data_test[50][1] << " " << data_test[50][2] << '\n';
+            assert(node->data_ == data_test[50]);
         } else {
             std::cout << "there is no such a data in kd tree." << '\n';
         }
+        tictoc::tic();
+        RNNResultSet<int, 3> result_rnn = kdtree.rnn_search(data_test[50], 100);
+        std::cout << "RNN Search costs " << tictoc::toc() / 1e3 << "miliseconds\n";
+        tictoc::tic();
+        KNNResultSet<int, 3> result_knn = kdtree.knn_search(data_test[50], 10);
+        std::cout << "KNN Search costs " << tictoc::toc() / 1e3 << "miliseconds\n";
     }
 }
 
@@ -114,22 +121,28 @@ int main(int argc, char** argv) {
     //     std::cout << "seatch an unexisting data costs " << tictoc::toc() / 1e3 << "ms\n";
     // }
 
-    std::array<int, 1> search_data{10};
-    // brute force search
+    // std::array<int, 1> search_data{5};
+    // // brute force search
 
-    std::vector<std::array<int, 1>> data_test{{5}, {1}, {2}, {3}, {4}, {100}};
-    KDTree<int, 1> kdtree(data_test, 1);
-    std::vector<std::array<int, 1>> inorder_data = kdtree.inorder();
-    for (auto i : inorder_data) {
-        std::cout << i[0] << '\n';
-    }
-    KDTreeNode<int, 1>* d = kdtree.search_data_recursively(std::array<int, 1>{1});
-    std::cout << d->data_[0] << '\n';
-    std::cout << "Success to build a tree" << '\n';
+    // std::vector<std::array<int, 1>> data_test{{5}, {1}, {2}, {3}, {4}};
+    // KDTree<int, 1> kdtree(data_test, 1);
+    // std::vector<std::array<int, 1>> inorder_data = kdtree.inorder();
+    // for (auto i : inorder_data) {
+    //     std::cout << i[0] << '\n';
+    // }
+    // KDTreeNode<int, 1>* d = kdtree.search_data_recursively(std::array<int, 1>{1});
+    // std::cout << d->data_[0] << '\n';
+    // std::cout << "Success to build a tree" << '\n';
+    // int radius = 1;
+    // RNNResultSet<int, 1> rnn_result = kdtree.rnn_search(search_data, radius);
+    // if (!rnn_result.result_set_.empty()) {
+    //     for (auto r : rnn_result.get_result()) {
+    //         std::cout << r->data_[0] << '\n';
+    //     }
+    // } else {
+    //     std::cout << "There is no nodes in the radius of " << radius << " for " << search_data[0] << '\n';
+    // }
 
-    KNNResultSet<int, 1> knn_result = kdtree.knn_search(search_data, 2);
-    for (auto r : knn_result.get_result()) {
-        std::cout << r.node_->data_[0] << '\n';
-    }
+    test_3dtree_with_diff_leaf_size();
     return 0;
 }

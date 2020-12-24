@@ -49,6 +49,17 @@ class KNNResultSet {
 };
 
 template <typename T, int Dim>
+class RNNResultSet {
+   public:
+    RNNResultSet(T radius) : radius_(radius) {
+    }
+    void add_node(KDTreeNode<T, Dim>* node);
+    std::vector<KDTreeNode<T, Dim>*> get_result() const;
+    std::vector<KDTreeNode<T, Dim>*> result_set_;
+    T radius_;
+};
+
+template <typename T, int Dim>
 class KDTree {
    public:
     typedef typename KDTreeNode<T, Dim>::KdData KdData;
@@ -61,7 +72,7 @@ class KDTree {
     PtrNode point_index_sort(int axis, int dim);
     // std::vector<PtrNode> onenn_search(const std::array<T, Dim>& data);
     KNNResultSet<T, Dim> knn_search(std::array<T, Dim>& data, int k);
-    KNNResultSet<T, Dim> rnn_search(std::array<T, Dim>& data, double radius);
+    RNNResultSet<T, Dim> rnn_search(std::array<T, Dim>& data, T radius);
     std::vector<KdData> inorder() const;
 
    private:
@@ -92,7 +103,7 @@ KNNResultSet<T, Dim>::KNNResultSet(int k) : result_set_(cmp<T, Dim>) {
 
 template <typename T, int Dim>
 inline void KNNResultSet<T, Dim>::add_node(T dist, KDTreeNode<T, Dim>* node) {
-    assert(dist > 0);
+    assert(abs(dist - 0.0) > -0.0000001);
     result_set_.pop();
     result_set_.emplace(dist, node);
 }
@@ -112,6 +123,17 @@ std::vector<KNNResult<T, Dim>> KNNResultSet<T, Dim>::get_result() {
     return result;
 }
 
+/*--------------------------------------------------------
+#####################implementation: RNNResultSet #####################
+---------------------------------------------------------*/
+template <typename T, int Dim>
+inline void RNNResultSet<T, Dim>::add_node(KDTreeNode<T, Dim>* node) {
+    result_set_.push_back(node);
+}
+template <typename T, int Dim>
+std::vector<KDTreeNode<T, Dim>*> RNNResultSet<T, Dim>::get_result() const {
+    return result_set_;
+}
 /*--------------------------------------------------------
 #####################implementation: KDTree #####################
 ---------------------------------------------------------*/
@@ -206,7 +228,7 @@ void knn_search(KDTreeNode<T, Dim>* curr, const std::array<T, Dim>& data, KNNRes
     if (curr->has_leaves()) {
         for (KDTreeNode<T, Dim>* child : curr->children_) {
             T dist = compute_square_distance<T, Dim>(child->data_, data);
-            if (dist < result_set.worst_dist()) {
+            if (dist <= result_set.worst_dist()) {
                 result_set.add_node(dist, child);
             }
         }
@@ -214,14 +236,14 @@ void knn_search(KDTreeNode<T, Dim>* curr, const std::array<T, Dim>& data, KNNRes
         if (data[curr->axis_] < curr->data_[curr->axis_]) {
             knn_search<T, Dim>(curr->smaller_, data, result_set);
 
-            if (std::abs(data[curr->axis_] - curr->data_[curr->axis_]) < result_set.worst_dist()) {
+            if (std::abs(data[curr->axis_] - curr->data_[curr->axis_]) <= result_set.worst_dist()) {
                 knn_search<T, Dim>(curr->larger_, data, result_set);
             }
 
         } else if (data[curr->axis_] > curr->data_[curr->axis_]) {
             knn_search<T, Dim>(curr->larger_, data, result_set);
 
-            if (std::abs(data[curr->axis_] - curr->data_[curr->axis_] < result_set.worst_dist())) {
+            if (std::abs(data[curr->axis_] - curr->data_[curr->axis_] <= result_set.worst_dist())) {
                 knn_search<T, Dim>(curr->smaller_, data, result_set);
             }
         } else {
@@ -235,6 +257,45 @@ template <typename T, int Dim>
 KNNResultSet<T, Dim> KDTree<T, Dim>::knn_search(std::array<T, Dim>& data, int k) {
     KNNResultSet<T, Dim> result_set(k);
     ::knn_search<T, Dim>(root_, data, result_set);
+
+    return result_set;
+}
+
+template <typename T, int Dim>
+void rnn_search(KDTreeNode<T, Dim>* curr, const std::array<T, Dim>& data, RNNResultSet<T, Dim>& result_set) {
+    if (curr->has_leaves()) {
+        for (KDTreeNode<T, Dim>* child : curr->children_) {
+            // std::cout << child->data_[0] << " ";
+            T dist = compute_square_distance<T, Dim>(child->data_, data);
+            if (dist <= result_set.radius_ * result_set.radius_) {
+                result_set.add_node(child);
+            }
+        }
+    } else {
+        if (data[curr->axis_] < curr->data_[curr->axis_]) {
+            rnn_search<T, Dim>(curr->smaller_, data, result_set);
+
+            if (std::abs(data[curr->axis_] - curr->data_[curr->axis_]) <= result_set.radius_) {
+                rnn_search<T, Dim>(curr->larger_, data, result_set);
+            }
+
+        } else if (data[curr->axis_] > curr->data_[curr->axis_]) {
+            rnn_search<T, Dim>(curr->larger_, data, result_set);
+
+            if (std::abs(data[curr->axis_] - curr->data_[curr->axis_] <= result_set.radius_)) {
+                rnn_search<T, Dim>(curr->smaller_, data, result_set);
+            }
+        } else {
+            rnn_search<T, Dim>(curr->smaller_, data, result_set);
+            rnn_search<T, Dim>(curr->larger_, data, result_set);
+        }
+    }
+}
+
+template <typename T, int Dim>
+RNNResultSet<T, Dim> KDTree<T, Dim>::rnn_search(std::array<T, Dim>& data, T radius) {
+    RNNResultSet<T, Dim> result_set(radius);
+    ::rnn_search<T, Dim>(root_, data, result_set);
 
     return result_set;
 }
