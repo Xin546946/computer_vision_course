@@ -59,7 +59,7 @@ std::vector<std::array<int, Dim>> generate_nd_data(int num, int min, int max) {
 }
 
 std::vector<std::array<int, 3>> generate_3d_data() {
-    return generate_nd_data<3>(100, 0, 10000);
+    return generate_nd_data<3>(100, 0, 1000);
 }
 
 //! distance of 3d int will be outside of the range of int
