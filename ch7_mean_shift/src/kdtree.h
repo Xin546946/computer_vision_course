@@ -73,7 +73,7 @@ class KDTree {
     KDTree() = default;
     ~KDTree();
     PtrNode search_data_recursively(const KDData& data) const;
-    PtrNode point_index_sort(int axis, int dim);
+    // PtrNode point_index_sort(int axis, int dim);
     // std::vector<PtrNode> onenn_search(const std::array<T, Dim>& data);
     KNNResultSet<T, Dim> knn_search(const KDData& data, int k) const;
     RNNResultSet<T, Dim> rnn_search(const KDData& data, T radius) const;
