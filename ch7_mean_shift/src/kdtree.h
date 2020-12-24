@@ -87,6 +87,8 @@ class KDTree {
     int size_data_;
     void next_axis();
 };
+template <typename T, int Dim>
+void inorder(KDTreeNode<T, Dim>* curr, std::vector<KDTreeNode<T, Dim>*>& result, bool only_leaf);
 
 /*--------------------------------------------------------
 #####################implementation: KDTreeNode #####################
@@ -153,6 +155,14 @@ KDTree<T, Dim>::KDTree(std::vector<KDData>& data, int leaf_size) : leaf_size_(le
 
 template <typename T, int Dim>
 KDTree<T, Dim>::~KDTree() {
+    std::vector<PtrNode> ptr_nodes;
+    ptr_nodes.reserve(size_data_);
+    ::inorder(root_, ptr_nodes, false);
+
+    for (auto ptr_node : ptr_nodes) {
+        delete ptr_node;
+        ptr_node = nullptr;
+    }
 }
 
 template <typename T, int Dim>
@@ -183,12 +193,12 @@ inline void KDTree<T, Dim>::next_axis() {
 template <typename T, int Dim>
 void inorder(KDTreeNode<T, Dim>* curr, std::vector<KDTreeNode<T, Dim>*>& result, bool only_leaf) {
     if (curr) {
-        inorder<T, Dim>(curr->smaller_, result);
+        inorder<T, Dim>(curr->smaller_, result, only_leaf);
 
         if (!only_leaf) {
             result.push_back(curr);
         }
-        inorder<T, Dim>(curr->larger_, result);
+        inorder<T, Dim>(curr->larger_, result, only_leaf);
 
         std::for_each(curr->children_.begin(), curr->children_.end(),
                       [&](KDTreeNode<T, Dim>* ptr_node) { result.push_back(ptr_node); });
