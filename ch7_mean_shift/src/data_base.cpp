@@ -4,22 +4,37 @@
 #include <opencv2/core/core.hpp>
 #include <thread>
 
+inline std::array<int, 3> vec2array(const cv::Vec3b& data) {
+    return {data[0], data[1], data[2]};
+}
+
+inline cv::Vec3b array2vec(const std::array<int, 3> data) {
+    return cv::Vec3b(data[0], data[1], data[2]);
+}
+
 ColorData::ColorData(cv::Mat img, double radius, std::shared_ptr<Visualizer> vis_ptr)
     : r_square_(radius * radius), vis_ptr_(vis_ptr) {
+    std::vector<std::array<int, 3>> kdtree_img;
+
     for (int r = 0; r < img.rows; r++) {
         for (int c = 0; c < img.cols; c++) {
             colors_.push_back(img.at<cv::Vec3b>(r, c));
+            kdtree_img.push_back(vec2array(img.at<cv::Vec3b>(r, c)));
         }
     }
-
-    colors_original_ = colors_;
+    kdtree_ = new KDTree3D(kdtree_img, 2);
 }
 
 void ColorData::update_mass_center() {
     for (cv::Vec3d& color : colors_) {
         cv::Vec3d acc_rgb(0.0, 0.0, 0.0);
         int num = 0;
-        for (const cv::Vec3d& color_original : colors_original_) {
+        RNNResultSet<int, 3> rnn_result = kdtree_.rnn_search(vec2array(color), std::sqrt(r_square_));
+        std::vector<std::array<int, 3>> result = rnn_result.get_result();
+        for (auto acc_rgb : result) {
+            acc_rgb.
+        }
+        {
             if (cv::norm(color - color_original, cv::NORM_L2SQR) > r_square_) {
                 continue;
             }

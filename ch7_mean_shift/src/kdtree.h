@@ -56,7 +56,7 @@ class RNNResultSet {
     RNNResultSet(T radius) : radius_(radius), radius_square_(radius * radius) {
     }
     void add_node(PtrNode node);
-    std::vector<PtrNode> get_result() const;
+    std::vector<std::array<T, Dim>> get_result() const;
     std::vector<PtrNode> result_set_;
     T radius_;
     T radius_square_;
@@ -70,7 +70,7 @@ class KDTree {
     typedef typename std::vector<std::array<T, Dim>>::iterator IterNode;
 
     KDTree(std::vector<KDData>& data, int leaf_size = 1);
-
+    KDTree() = default;
     PtrNode search_data_recursively(const KDData& data) const;
     PtrNode point_index_sort(int axis, int dim);
     // std::vector<PtrNode> onenn_search(const std::array<T, Dim>& data);
@@ -135,8 +135,12 @@ inline void RNNResultSet<T, Dim>::add_node(PtrNode node) {
     result_set_.push_back(node);
 }
 template <typename T, int Dim>
-std::vector<typename RNNResultSet<T, Dim>::PtrNode> RNNResultSet<T, Dim>::get_result() const {
-    return result_set_;
+std::vector<std::array<T, Dim>> RNNResultSet<T, Dim>::get_result() const {
+    std::vector<std::array<T, Dim>> result;
+    for (PtrNode ptr_node : result_set_) {
+        result.push_back(ptr_node->data_);
+    }
+    return result;
 }
 /*--------------------------------------------------------
 #####################implementation: KDTree #####################
@@ -214,8 +218,6 @@ KDTreeNode<T, Dim>* search_data_recursively(KDTreeNode<T, Dim>* curr, const std:
             if (ptr2) {
                 return ptr2;
             }
-
-            return nullptr;
         }
     }
     return nullptr;

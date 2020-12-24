@@ -1,6 +1,6 @@
 #pragma once
-#include <memory>
 
+#include <memory>
 class DataBase;
 
 class MeanShift {

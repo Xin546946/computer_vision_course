@@ -1,7 +1,7 @@
 #include "mean_shift.h"
 #include "data_base.h"
-#include <iostream>
 
+#include <iostream>
 MeanShift::MeanShift(std::unique_ptr<DataBase>& db_ptr) : db_ptr_(std::move(db_ptr)) {
 }
 
