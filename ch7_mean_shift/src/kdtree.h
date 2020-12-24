@@ -195,7 +195,7 @@ template <typename T, int Dim>
 KDTreeNode<T, Dim>* search_data_recursively(KDTreeNode<T, Dim>* curr, const std::array<T, Dim>& data) {
     if (curr->has_leaves()) {
         for (KDTreeNode<T, Dim>* leaf : curr->children_) {
-            if (curr->data_ == data) return leaf;
+            if (leaf->data_ == data) return leaf;
         }
     } else {
         int axis = curr->axis_;
