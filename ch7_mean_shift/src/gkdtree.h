@@ -57,14 +57,15 @@ void GKdTree<T>::build_tree(GKDTreeNode<T>*& curr, T* begin, T* end) {
     std::nth_element(begin, mid, end, [=](const T& lhs, const T& rhs) { return lhs[axis_] < rhs[axis_]; });
     curr = new GKDTreeNode<T>(mid, axis_);
 
+    next_axis();
+
     if (dist <= leaf_size_) {
         curr->leaves_.reserve(leaf_size_);
         std::for_each(begin, end, [&](T& data) { curr->leaves_.push_back(&data); });
     } else {
-        build_tree(curr->smaller_, begin, end);
+        build_tree(curr->smaller_, begin, mid);
         build_tree(curr->larger_, mid, end);
     }
-    next_axis();
 }
 
 template <typename T>
