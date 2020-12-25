@@ -1,48 +1,33 @@
 #include "data_base.h"
 #include "memory"
-#include "tictoc.h"
+#include "visualizer.h"
 #include <chrono>
 #include <opencv2/core/core.hpp>
-#include <opencv2/highgui/highgui.hpp>
 #include <thread>
-
-BGR operator+(const BGR& lhs, const BGR& rhs) {
-    return BGR(lhs.bgr_ + rhs.bgr_);
-}
-
-inline std::array<int, 3> vec2array(const cv::Vec3b& data) {
-    return {data[0], data[1], data[2]};
-}
-
-inline cv::Vec3b array2vec(const std::array<int, 3> data) {
-    return cv::Vec3b(data[0], data[1], data[2]);
-}
 
 ColorData::ColorData(cv::Mat img, double radius, std::shared_ptr<Visualizer> vis_ptr)
     : r_square_(radius * radius), vis_ptr_(vis_ptr) {
-    std::vector<std::array<int, 3>> kdtree_img;
     for (int r = 0; r < img.rows; r++) {
         for (int c = 0; c < img.cols; c++) {
             colors_.push_back(img.at<cv::Vec3b>(r, c));
-            kdtree_img.push_back(vec2array(img.at<cv::Vec3b>(r, c)));
         }
     }
-    kdtree_ = new KDTree3D(kdtree_img, 2);
-    std::cout << "Finish to build KDTree! " << '\n';
+
+    colors_original_ = colors_;
 }
 
 void ColorData::update_mass_center() {
     for (cv::Vec3f& color : colors_) {
         cv::Vec3f acc_rgb(0.0, 0.0, 0.0);
         int num = 0;
-        RNNResultSet<int, 3> rnn_result = kdtree_->rnn_search(vec2array(color), std::sqrt(r_square_));
-
-        std::vector<std::array<int, 3>> color_roi = rnn_result.get_result();
-        for (std::array<int, 3> color1 : color_roi) {
-            // std::cout << color1[0] << " " << color[1] << " " << color[2] << '\n';
+        for (const cv::Vec3f& color_original : colors_original_) {
+            if (cv::norm(color - color_original, cv::NORM_L2SQR) > r_square_) {
+                continue;
+            }
             num++;
-            acc_rgb += array2vec(color1);
+            acc_rgb += color_original;
         }
+
         color = acc_rgb / num;
     }
 }
@@ -73,22 +58,18 @@ void ColorData::back_up_mass_center() {
 }
 
 BGRData::BGRData(cv::Mat img, double radius, std::shared_ptr<Visualizer> vis_ptr)
-    : radius_(radius), vis_ptr_(vis_ptr), quarter_r_square_(0.25 * radius_ * radius_) {
+    : radius_(radius), vis_ptr_(vis_ptr), quarter_r_square_(radius_ * radius_) {
     int size = img.cols * img.rows;
     colors_.reserve(size);
 
     for (int r = 0; r < img.rows; r++) {
         for (int c = 0; c < img.cols; c++) {
-            colors_.emplace_back(img.at<cv::Vec3b>(r, c));
+            colors_.emplace_back(img.at<cv::Vec3b>(r, c), r, c);
             traverse_queue_.push(&colors_.back());
         }
     }
 
     kdtree_ = new ColorKdTree(&colors_[0], size, 1);
-}
-
-inline float compute_square_dist(const BGR& lhs, const BGR& rhs) {
-    return cv::norm(lhs.bgr_ - rhs.bgr_, cv::NORM_L2SQR);
 }
 
 /**
@@ -101,56 +82,56 @@ void BGRData::update_mass_center() {
     if (ptr_curr->is_convergent_) return;
 
     std::unordered_set<BGR*> colors_passed_by;
-    std::vector<BGR*> neighbors;
 
     int iteration = 0;
-    BGR color_last = *ptr_curr + BGR(1, 0, 0);
+    cv::Vec3f color_last = ptr_curr->bgr_ + cv::Vec3f(1.f, 0.f, 0.f);
 
-    while (iteration++ < 50 && compute_square_dist(color_last, *ptr_curr) > 1e-4) {
-        neighbors = kdtree_->rnn_search(ptr_curr, radius_);
-        std::cout << "kd tree rnn num : " << neighbors.size() << '\n';
-        std::for_each(neighbors.begin(), neighbors.end(), [&](auto ptr_neigh) {
-            if (ptr_neigh->is_convergent_) {
-                return;
-            } else if (BGR::is_in_radius(ptr_curr, ptr_neigh, quarter_r_square_)) {
-                colors_passed_by.insert(ptr_neigh);
-            }
-        });
+    while (iteration++ < 50) {
+        float diff = cv::norm(color_last, ptr_curr->bgr_, cv::NORM_L2SQR);
+        if (diff < 1e-2) break;
+
+        std::vector<BGR*> neighbors = kdtree_->rnn_search(ptr_curr, radius_);
 
         cv::Vec3f acc_color(0.f, 0.f, 0.f);
         for (auto neigh : neighbors) {
             acc_color += neigh->bgr_;
         }
 
-        color_last = *ptr_curr;
+        color_last = ptr_curr->bgr_;
         ptr_curr->bgr_ = acc_color / static_cast<float>(neighbors.size());
+
+        if (diff > 2) {
+            std::for_each(neighbors.begin(), neighbors.end(), [&](auto ptr_neigh) {
+                if (ptr_neigh->is_convergent_) {
+                    return;
+                } else {
+                    colors_passed_by.insert(ptr_neigh);
+                }
+            });
+        }
     }
-    std::cout << "num of pass by :" << colors_passed_by.size() << '\n';
     std::for_each(colors_passed_by.begin(), colors_passed_by.end(), [=](BGR* ptr_pass) {
         if (!ptr_pass->is_convergent_) {
             ptr_pass->is_convergent_ = true;
             ptr_pass->bgr_ = ptr_curr->bgr_;
         }
     });
-
-    std::cout << "num of mode neighbors :" << neighbors.size() << '\n';
-    std::for_each(neighbors.begin(), neighbors.end(), [=](BGR* ptr_pass) {
-        if (!ptr_pass->is_convergent_) {
-            ptr_pass->is_convergent_ = true;
-            ptr_pass->bgr_ = ptr_curr->bgr_;
-        }
-    });
 }
 
-bool BGRData::is_convergent() {
+inline bool BGRData::is_convergent() {
     return traverse_queue_.empty();
 }
 
-void BGRData::back_up_mass_center() {
+inline void BGRData::back_up_mass_center() {
 }
 
 void BGRData::visualize() {
-    vis_ptr_->set_data(colors_);
+    std::vector<cv::Point> pos;
+    for (auto color : colors_) {
+        pos.emplace_back(color.col_, color.row_);
+    }
+
+    vis_ptr_->set_data(colors_, pos);
 
     std::unique_lock<std::mutex> ul_stop(vis_ptr_->stop_mutex_);
     while (vis_ptr_->stop_) {

@@ -12,7 +12,7 @@ class Visualizer {
     Visualizer() = default;
     void show(int rows, int cols);
     void set_data(const std::vector<cv::Vec3f>& bgr_datas);
-    void set_data(const std::vector<BGR>& bgr_datas);
+    void set_data(const std::vector<BGR>& bgr_datas, const std::vector<cv::Point>& pos);
     void request_shut();
 
     std::mutex stop_mutex_;
@@ -31,6 +31,8 @@ class Visualizer {
     // std::array stored in the order of rgb
     std::mutex points_mutex_;
     std::vector<cv::Vec3f> points_;
+
+    std::vector<cv::Point> pos_;
 };
 
 void draw_lines_with_interpolated_color(const std::vector<line>& lines);

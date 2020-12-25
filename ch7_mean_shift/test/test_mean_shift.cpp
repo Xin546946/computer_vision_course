@@ -7,7 +7,6 @@
 
 int main(int argc, char** argv) {
     cv::Mat img = cv::imread(argv[1], cv::IMREAD_COLOR);
-
     std::shared_ptr<Visualizer> vis_ptr(new Visualizer);
     std::thread vis_thread(&Visualizer::show, std::ref(*vis_ptr), img.rows, img.cols);
     std::unique_ptr<DataBase> db_ptr = std::make_unique<ColorData>(img, 50, vis_ptr);
