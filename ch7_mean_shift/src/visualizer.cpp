@@ -55,7 +55,7 @@ void Visualizer::draw_points() {
     glBegin(GL_POINTS);
 
     points_mutex_.lock();
-    std::vector<cv::Vec3d> points = points_;
+    std::vector<cv::Vec3f> points = points_;
     points_mutex_.unlock();
 
     for (const cv::Vec3d& p : points) {
@@ -88,12 +88,12 @@ void Visualizer::draw_frame() const {
     draw_lines_with_interpolated_color(lines);
 }
 
-void Visualizer::set_data(const std::vector<cv::Vec3d>& bgr_datas) {
+void Visualizer::set_data(const std::vector<cv::Vec3f>& bgr_datas) {
     points_mutex_.lock();
     points_.clear();
     points_.reserve(bgr_datas.size());
     std::transform(bgr_datas.begin(), bgr_datas.end(), std::back_inserter(points_),
-                   [](const cv::Vec3d& p) { return cv::Vec3f(p[2] / 255.0, p[1] / 255.0, p[0] / 255.0); });
+                   [](const cv::Vec3f& p) { return cv::Vec3f(p[2] / 255.0, p[1] / 255.0, p[0] / 255.0); });
     points_mutex_.unlock();
 }
 
@@ -120,7 +120,7 @@ void draw_lines_with_interpolated_color(const std::vector<line>& lines) {
 
 void Visualizer::show_segmentation(int rows, int cols) {
     points_mutex_.lock();
-    std::vector<cv::Vec3d> points = points_;
+    std::vector<cv::Vec3f> points = points_;
     points_mutex_.unlock();
 
     if (points.empty()) return;

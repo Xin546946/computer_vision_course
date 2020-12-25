@@ -33,8 +33,8 @@ class ColorData : public DataBase {
 
    private:
     double r_square_;
-    std::vector<cv::Vec3d> colors_;
-    std::vector<cv::Vec3d> colors_last_;
+    std::vector<cv::Vec3f> colors_;
+    std::vector<cv::Vec3f> colors_last_;
     //  std::vector<cv::Vec3d> colors_original_;
     std::shared_ptr<Visualizer> vis_ptr_;
     KDTree3D* kdtree_;

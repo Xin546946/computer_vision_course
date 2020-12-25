@@ -31,8 +31,8 @@ ColorData::ColorData(cv::Mat img, double radius, std::shared_ptr<Visualizer> vis
 }
 
 void ColorData::update_mass_center() {
-    for (cv::Vec3d& color : colors_) {
-        cv::Vec3d acc_rgb(0.0, 0.0, 0.0);
+    for (cv::Vec3f& color : colors_) {
+        cv::Vec3f acc_rgb(0.0, 0.0, 0.0);
         int num = 0;
         RNNResultSet<int, 3> rnn_result = kdtree_->rnn_search(vec2array(color), std::sqrt(r_square_));
 
@@ -78,7 +78,7 @@ BGRData::BGRData(cv::Mat img, double radius, std::shared_ptr<Visualizer> vis_ptr
 
     for (int r = 0; r < img.rows; r++) {
         for (int c = 0; c < img.cols; c++) {
-            colors_.emplace_back(img.at<cv::Vec3f>(r, c));
+            colors_.emplace_back(img.at<cv::Vec3b>(r, c));
             traverse_queue_.push(&colors_.back());
         }
     }
@@ -108,11 +108,8 @@ void BGRData::update_mass_center() {
     while (iteration < 50 && compute_square_dist(color_last, *ptr_curr) < 1e-4) {
         neighbors = kdtree_->rnn_search(ptr_curr, radius_);
 
-        std::for_each(neighbors.begin(), neighbors.end(), [=](auto ptr_neigh) {
-            if (BGR::is_in_radius(ptr_curr, ptr_neigh, quarter_r_square_)) {
-                ptr_neigh->is_convergent = true;
-            }
-        });
+        std::copy_if(neighbors.begin(), neighbors.end(), std::back_inserter(colors_passed_by),
+                     [=](auto ptr_neigh) { return BGR::is_in_radius(ptr_curr, ptr_neigh, quarter_r_square_); });
 
         cv::Vec3f acc_color(0.f, 0.f, 0.f);
         for (auto neigh : neighbors) {
@@ -122,6 +119,15 @@ void BGRData::update_mass_center() {
         color_last = *ptr_curr;
         ptr_curr->bgr_ = acc_color / static_cast<float>(neighbors.size());
     }
+
+    std::for_each(colors_passed_by.begin(), colors_passed_by.end(), [=](BGR* ptr_pass) {
+        ptr_pass->is_convergent = true;
+        ptr_pass->bgr_ = ptr_curr->bgr_;
+    });
+    std::for_each(neighbors.begin(), neighbors.end(), [=](BGR* ptr_pass) {
+        ptr_pass->is_convergent = true;
+        ptr_pass->bgr_ = ptr_curr->bgr_;
+    });
 }
 
 bool BGRData::is_convergent() {
