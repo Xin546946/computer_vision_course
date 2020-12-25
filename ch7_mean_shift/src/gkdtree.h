@@ -4,13 +4,24 @@
 
 template <typename T>
 struct GKDTreeNode {
+    typedef GKDTreeNode* PtrNode;
+
     GKDTreeNode(T* data, int axis) : data_(data), axis_(axis) {
     }
+
+    bool in_smaler_side(T* sample) {
+        return (*sample)[axis_] < (*data_)[axis_];
+    }
+
+    bool in_larger_side(T* sample) {
+        return (*sample)[axis_] > (*data_)[axis_];
+    }
+
     T* data_;
     int axis_;
 
-    GKDTreeNode<T>* smaller_ = nullptr;
-    GKDTreeNode<T>* larger_ = nullptr;
+    PtrNode smaller_ = nullptr;
+    PtrNode larger_ = nullptr;
     std::vector<T*> leaves_;
     bool has_leaves() {
         return (!this->leaves_.empty());
@@ -20,6 +31,7 @@ struct GKDTreeNode {
 template <typename T>
 class GKdTree {
    public:
+    typedef typename GKDTreeNode<T>::PtrNode PtrNode;
     GKdTree(T* head, int size, int leaf_size = 1);
     GKdTree() = default;
     ~GKdTree();
@@ -27,10 +39,10 @@ class GKdTree {
     std::vector<T*> rnn_search(T* data, typename T::DistType radius) const;
 
    private:
-    void build_tree(GKDTreeNode<T>*& curr, T* begin, T* end);
+    void build_tree(PtrNode& curr, T* begin, T* end);
     void next_axis();
 
-    GKDTreeNode<T>* root_ = nullptr;
+    PtrNode root_ = nullptr;
     int axis_ = 0;
     int leaf_size_;
     int size_;
@@ -50,7 +62,7 @@ inline void GKdTree<T>::next_axis() {
 }
 
 template <typename T>
-void GKdTree<T>::build_tree(GKDTreeNode<T>*& curr, T* begin, T* end) {
+void GKdTree<T>::build_tree(PtrNode& curr, T* begin, T* end) {
     int dist = std::distance(begin, end);
     T* mid = begin + dist / 2;
 
@@ -88,13 +100,13 @@ void rnn_search(GKDTreeNode<T>* curr, T* data, std::vector<T*>& result_set, type
             }
         }
     } else {
-        if ((*data)[curr->axis_] < (*curr->data_)[curr->axis_]) {
+        if (curr->in_smaler_side(data)) {
             rnn_search<T>(curr->smaller_, data, result_set, radius);
 
             if (T::is_in_radius(data, curr->data_, curr->axis_, radius)) {
                 rnn_search<T>(curr->larger_, data, result_set, radius);
             }
-        } else if ((*data)[curr->axis_] > (*curr->data_)[curr->axis_]) {
+        } else if (curr->in_larger_side(data)) {
             rnn_search<T>(curr->larger_, data, result_set, radius);
             if (T::is_in_radius(data, curr->data_, curr->axis_, radius)) {
                 rnn_search<T>(curr->smaller_, data, result_set, radius);
@@ -114,7 +126,7 @@ std::vector<T*> GKdTree<T>::rnn_search(T* data, typename T::DistType radius) con
 }
 template <typename T>
 GKdTree<T>::~GKdTree() {
-    std::vector<GKDTreeNode<T>*> ptr_nodes;
+    std::vector<PtrNode> ptr_nodes;
     ptr_nodes.reserve(size_);
     ::inorder(root_, ptr_nodes);
 
