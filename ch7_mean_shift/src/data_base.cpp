@@ -98,19 +98,24 @@ inline float compute_square_dist(const BGR& lhs, const BGR& rhs) {
 void BGRData::update_mass_center() {
     BGR* ptr_curr = traverse_queue_.front();
     traverse_queue_.pop();
-    if (ptr_curr->is_convergent) return;
+    if (ptr_curr->is_convergent_) return;
 
-    std::vector<BGR*> colors_passed_by;
+    std::unordered_set<BGR*> colors_passed_by;
+    std::vector<BGR*> neighbors;
 
     int iteration = 0;
     BGR color_last = *ptr_curr + BGR(1, 0, 0);
-    std::vector<BGR*> neighbors;
 
-    while (iteration < 50 && compute_square_dist(color_last, *ptr_curr) < 1e-4) {
+    while (iteration++ < 50 && compute_square_dist(color_last, *ptr_curr) > 1e-4) {
         neighbors = kdtree_->rnn_search(ptr_curr, radius_);
-
-        std::copy_if(neighbors.begin(), neighbors.end(), std::back_inserter(colors_passed_by),
-                     [=](auto ptr_neigh) { return BGR::is_in_radius(ptr_curr, ptr_neigh, quarter_r_square_); });
+        std::cout << "kd tree rnn num : " << neighbors.size() << '\n';
+        std::for_each(neighbors.begin(), neighbors.end(), [&](auto ptr_neigh) {
+            if (ptr_neigh->is_convergent_) {
+                return;
+            } else if (BGR::is_in_radius(ptr_curr, ptr_neigh, quarter_r_square_)) {
+                colors_passed_by.insert(ptr_neigh);
+            }
+        });
 
         cv::Vec3f acc_color(0.f, 0.f, 0.f);
         for (auto neigh : neighbors) {
@@ -120,14 +125,20 @@ void BGRData::update_mass_center() {
         color_last = *ptr_curr;
         ptr_curr->bgr_ = acc_color / static_cast<float>(neighbors.size());
     }
-
+    std::cout << "num of pass by :" << colors_passed_by.size() << '\n';
     std::for_each(colors_passed_by.begin(), colors_passed_by.end(), [=](BGR* ptr_pass) {
-        ptr_pass->is_convergent = true;
-        ptr_pass->bgr_ = ptr_curr->bgr_;
+        if (!ptr_pass->is_convergent_) {
+            ptr_pass->is_convergent_ = true;
+            ptr_pass->bgr_ = ptr_curr->bgr_;
+        }
     });
+
+    std::cout << "num of mode neighbors :" << neighbors.size() << '\n';
     std::for_each(neighbors.begin(), neighbors.end(), [=](BGR* ptr_pass) {
-        ptr_pass->is_convergent = true;
-        ptr_pass->bgr_ = ptr_curr->bgr_;
+        if (!ptr_pass->is_convergent_) {
+            ptr_pass->is_convergent_ = true;
+            ptr_pass->bgr_ = ptr_curr->bgr_;
+        }
     });
 }
 

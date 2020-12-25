@@ -59,7 +59,7 @@ struct BGR {
     }
 
     cv::Vec3f bgr_;
-    bool is_convergent = false;
+    bool is_convergent_ = false;
     static const int dim_ = 3;
 };
 
