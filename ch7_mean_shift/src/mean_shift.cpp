@@ -6,7 +6,7 @@ MeanShift::MeanShift(std::unique_ptr<DataBase>& db_ptr) : db_ptr_(std::move(db_p
 }
 
 void MeanShift::run() {
-    int max_it = 1000;
+    int max_it = 1e9;
     int it = 0;
     while (it++ < max_it && !db_ptr_->is_convergent()) {
         db_ptr_->visualize();

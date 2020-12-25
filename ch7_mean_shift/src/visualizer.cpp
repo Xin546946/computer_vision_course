@@ -1,4 +1,5 @@
 #include "visualizer.h"
+#include "data_base.h"
 #include "opencv_utils.h"
 #include <thread>
 
@@ -93,6 +94,15 @@ void Visualizer::set_data(const std::vector<cv::Vec3d>& bgr_datas) {
     points_.reserve(bgr_datas.size());
     std::transform(bgr_datas.begin(), bgr_datas.end(), std::back_inserter(points_),
                    [](const cv::Vec3d& p) { return cv::Vec3f(p[2] / 255.0, p[1] / 255.0, p[0] / 255.0); });
+    points_mutex_.unlock();
+}
+
+void Visualizer::set_data(const std::vector<BGR>& bgr_datas) {
+    points_mutex_.lock();
+    points_.clear();
+    points_.reserve(bgr_datas.size());
+    std::transform(bgr_datas.begin(), bgr_datas.end(), std::back_inserter(points_),
+                   [](const BGR& p) { return cv::Vec3f(p[2] / 255.0, p[1] / 255.0, p[0] / 255.0); });
     points_mutex_.unlock();
 }
 

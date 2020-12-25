@@ -6,11 +6,13 @@
 #include <vector>
 
 typedef std::pair<cv::Vec3d, cv::Vec3d> line;
+class BGR;
 class Visualizer {
    public:
     Visualizer() = default;
     void show(int rows, int cols);
     void set_data(const std::vector<cv::Vec3d>& bgr_datas);
+    void set_data(const std::vector<BGR>& bgr_datas);
     void request_shut();
 
     std::mutex stop_mutex_;

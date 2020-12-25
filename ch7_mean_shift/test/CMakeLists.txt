@@ -12,3 +12,6 @@ target_link_libraries(test_kdtree kdtree utils)
 
 add_executable(test_gkdtree test_gkdtree.cpp)
 target_link_libraries(test_gkdtree gkdtree utils)
+
+add_executable(test_gkdtree_mean_shift test_gkdtree_mean_shift.cpp)
+target_link_libraries(test_gkdtree_mean_shift data_base mean_shift visualizer utils)
