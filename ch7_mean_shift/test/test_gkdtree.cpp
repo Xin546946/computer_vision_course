@@ -10,6 +10,7 @@
 #include <vector>
 
 struct BGR {
+    BGR() = default;
     BGR(cv::Vec3b bgr) : bgr_(bgr) {
     }
     BGR(uchar b, uchar g, uchar r) : bgr_(b, g, r) {

@@ -43,6 +43,8 @@ class GKdTree {
     void next_axis();
 
     PtrNode root_ = nullptr;
+
+    T* backup_;
     int axis_ = 0;
     int leaf_size_;
     int size_;
@@ -53,7 +55,9 @@ class GKdTree {
 ---------------------------------------------------------*/
 template <typename T>
 GKdTree<T>::GKdTree(T* head, int size, int leaf_size) : leaf_size_(leaf_size), size_(size) {
-    this->build_tree(root_, head, head + size_);
+    backup_ = new T[size];
+    std::copy(head, head + size_, backup_);
+    this->build_tree(root_, backup_, backup_ + size_);
 }
 
 template <typename T>
@@ -134,4 +138,5 @@ GKdTree<T>::~GKdTree() {
         delete ptr_node;
         ptr_node = nullptr;
     }
+    delete[] backup_;
 }

@@ -3,6 +3,7 @@
 #include "tictoc.h"
 #include <chrono>
 #include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 #include <thread>
 
 BGR operator+(const BGR& lhs, const BGR& rhs) {
