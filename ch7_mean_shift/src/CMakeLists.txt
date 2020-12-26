@@ -15,5 +15,5 @@ add_library(gkdtree gkdtree.cpp)
 add_library(ms_tracker mean_shift_tracker.cpp)
 target_link_libraries(ms_tracker ms_data_base)
 
-add_library(ms_tracker_data_base tracking_data_base.cpp)
-target_link_libraries(ms_tracker_data_base utils data_base)
+add_library(tracking_data_base tracking_data_base.cpp)
+target_link_libraries(tracking_data_base utils data_base)
