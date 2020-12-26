@@ -1,6 +1,12 @@
 #include "opencv_utils.h"
 #include "opencv2/imgproc.hpp"
 
+cv::Mat read_img(std::string img_path, cv::ImreadModes read_mode) {
+    cv::Mat img = cv::imread(img_path, read_mode);
+    assert(!img.empty());
+    return img;
+}
+
 std::vector<cv::Mat> record_webcam() {
     std::vector<cv::Mat> result;
     cv::VideoCapture cap;

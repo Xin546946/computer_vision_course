@@ -94,15 +94,17 @@ void Visualizer::set_data(const std::vector<cv::Vec3f>& bgr_datas) {
     points_.reserve(bgr_datas.size());
     std::transform(bgr_datas.begin(), bgr_datas.end(), std::back_inserter(points_),
                    [](const cv::Vec3f& p) { return cv::Vec3f(p[2] / 255.0, p[1] / 255.0, p[0] / 255.0); });
+    pos_.clear();
     points_mutex_.unlock();
 }
 
-void Visualizer::set_data(const std::vector<BGR>& bgr_datas) {
+void Visualizer::set_data(const std::vector<BGR>& bgr_datas, const std::vector<cv::Point>& pos) {
     points_mutex_.lock();
     points_.clear();
     points_.reserve(bgr_datas.size());
     std::transform(bgr_datas.begin(), bgr_datas.end(), std::back_inserter(points_),
                    [](const BGR& p) { return cv::Vec3f(p[2] / 255.0, p[1] / 255.0, p[0] / 255.0); });
+    pos_ = pos;
     points_mutex_.unlock();
 }
 
@@ -121,17 +123,25 @@ void draw_lines_with_interpolated_color(const std::vector<line>& lines) {
 void Visualizer::show_segmentation(int rows, int cols) {
     points_mutex_.lock();
     std::vector<cv::Vec3f> points = points_;
+    std::vector<cv::Point> pos = pos_;
     points_mutex_.unlock();
 
     if (points.empty()) return;
 
     cv::Mat vis(cv::Size(cols, rows), CV_8UC3);
-    for (int r = 0; r < vis.rows; r++) {
-        for (int c = 0; c < vis.cols; c++) {
-            int id = pos_to_id(r, c, cols);
-            vis.at<cv::Vec3b>(r, c) = points[id] * 255;
+    if (pos.empty()) {
+        for (int r = 0; r < vis.rows; r++) {
+            for (int c = 0; c < vis.cols; c++) {
+                int id = pos_to_id(r, c, cols);
+                vis.at<cv::Vec3b>(r, c) = points[id] * 255;
+            }
+        }
+    } else {
+        for (int i = 0; i < pos.size(); i++) {
+            vis.at<cv::Vec3b>(pos[i].y, pos[i].x) = points[i] * 255;
         }
     }
+
     cv::cvtColor(vis, vis, cv::COLOR_RGB2BGR);
     cv::imshow("segementaion", vis);
     cv::waitKey(1);
