@@ -13,5 +13,5 @@ class MeanShiftTracker {
    private:
     cv::Mat temp_;
     MeanShift ms_;
-    std::shared_ptr<DataBase> db_ptr_;
+    std::shared_ptr<TrackerDataBase> db_ptr_;
 };

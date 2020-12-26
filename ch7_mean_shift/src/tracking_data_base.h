@@ -7,6 +7,8 @@ class TrackerDataBase : public DataBase {
     ~TrackerDataBase() = default;
     TrackerDataBase(cv::Mat img, cv::Mat temp, cv::Point2f initial_pos);
 
+    cv::Point2f get_tracking_result() const;
+
     void init_mass_center() override{};
     void update_mass_center() override;
     bool is_convergent() override;

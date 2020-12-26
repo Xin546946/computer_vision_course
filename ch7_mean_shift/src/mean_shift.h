@@ -6,7 +6,7 @@ class DataBase;
 class MeanShift {
    public:
     MeanShift() = default;
-    MeanShift(std::shared_ptr<DataBase>& db_ptr);
+    MeanShift(const std::shared_ptr<DataBase>& db_ptr);
     void run(int max_iteration);
 
    private:
