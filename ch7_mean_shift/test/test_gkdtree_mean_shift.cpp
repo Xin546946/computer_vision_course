@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
     assert(!img.empty());
     std::shared_ptr<Visualizer> vis_ptr(new Visualizer);
     std::thread vis_thread(&Visualizer::show, std::ref(*vis_ptr), img.rows, img.cols);
-    std::unique_ptr<DataBase> db_ptr = std::make_unique<BGRData>(img, 50, vis_ptr);
+    std::shared_ptr<DataBase> db_ptr = std::make_shared<BGRData>(img, 50, vis_ptr);
     MeanShift ms(db_ptr);
 
     ms.run(1e9);

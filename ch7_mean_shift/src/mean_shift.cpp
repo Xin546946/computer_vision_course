@@ -2,7 +2,7 @@
 #include "data_base.h"
 
 #include <iostream>
-MeanShift::MeanShift(std::unique_ptr<DataBase>& db_ptr) : db_ptr_(std::move(db_ptr)) {
+MeanShift::MeanShift(std::shared_ptr<DataBase>& db_ptr) : db_ptr_(db_ptr) {
 }
 
 void MeanShift::run(int max_iteration) {
@@ -13,7 +13,4 @@ void MeanShift::run(int max_iteration) {
         db_ptr_->back_up_mass_center();
         db_ptr_->update_mass_center();
     }
-}
-void MeanShift::set_data_base(std::unique_ptr<DataBase>& db_ptr) {
-    db_ptr_ = std::move(db_ptr);
 }
