@@ -21,13 +21,6 @@ cv::Point2f TrackerDataBase::get_tracking_result() const {
 }
 
 void TrackerDataBase::init_mass_center() {
-    if (initialized_ == false) {
-        // template matching and get the bbox
-        cv::Point2i center = template_matching(img_, temp_);
-        initialized_ = true;
-    } else {
-        // predict the initial pos for tracking at the next frame
-    }
 }
 
 void TrackerDataBase::update_mass_center() {

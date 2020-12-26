@@ -6,6 +6,7 @@ class MotionPredictor {
     MotionPredictor(cv::Point2f initial_pos) : curr_pos_(initial_pos) {
         back_up();
     }
+
     void back_up() {
         last_pos_ = curr_pos_;
     }

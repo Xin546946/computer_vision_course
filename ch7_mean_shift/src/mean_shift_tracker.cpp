@@ -1,5 +1,6 @@
 #include "mean_shift_tracker.h"
 #include "motion_predictor.h"
+#include "opencv_utils.h"
 
 MeanShiftTracker::MeanShiftTracker() {
     TrackerDataBase* db_raw_ptr = new TrackerDataBase(cv::Mat(), cv::Mat(), cv::Point2f());
@@ -8,8 +9,8 @@ MeanShiftTracker::MeanShiftTracker() {
 }
 
 void MeanShiftTracker::process(const std::vector<cv::Mat>& video, const cv::Mat temp) {
-    db_ptr_->set_template(temp);
-    MotionPredictor motion_predictor(db_ptr_->get_pos());
+    cv::Point2i center = template_matching(video[0], temp_);
+    MotionPredictor motion_predictor(static_cast<cv::Point2f>(center));
     for (int i = 0; i < video.size(); i++) {
         db_ptr_->set_img(video[i]);
         db_ptr_->set_pos(motion_predictor.next_pos());
