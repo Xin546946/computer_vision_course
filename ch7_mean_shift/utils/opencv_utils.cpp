@@ -34,9 +34,9 @@ cv::Point2i template_matching(cv::Mat img, cv::Mat temp) {
     cv::matchTemplate(img, temp, result, cv::TM_CCORR_NORMED);
 
     double val_min, val_max;
-    cv::Point center_min, center_max;
-    cv::minMaxLoc(result, &val_min, &val_max, &center_min, &center_max, cv::Mat());
-    return center_max;
+    cv::Point ul_min, ul_max;
+    cv::minMaxLoc(result, &val_min, &val_max, &ul_min, &ul_max, cv::Mat());
+    return ul_max;
 }
 
 cv::Rect get_intersection_from_ul(cv::Rect rect_img, int x, int y, int width, int height) {

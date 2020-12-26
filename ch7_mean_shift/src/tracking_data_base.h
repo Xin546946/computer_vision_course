@@ -26,8 +26,9 @@ class TrackerDataBase : public DataBase {
 
    private:
     cv::Mat img_;
+    cv::Mat img_64f_;
     cv::Mat compute_kernel_weight();
-    cv::Mat temp_;
+    cv::Mat temp_64f_;
     BoundingBox bbox_;
     BoundingBox last_bbox_;
     bool initialized_ = false;

@@ -9,15 +9,13 @@ MeanShiftTracker::MeanShiftTracker() {
 }
 
 void MeanShiftTracker::process(const std::vector<cv::Mat>& video, const cv::Mat temp) {
-    cv::Point2i center = template_matching(video[0], temp);
+    cv::Point2i up_left = template_matching(video[0], temp);
     cv::Mat vis = video[0].clone();
-    draw_bounding_box_vis_image(vis, center.x - temp.cols / 2, center.y - temp.rows / 2, temp.cols, temp.rows);
-    cv::imshow("window", vis);
-    cv::waitKey(0);
+    draw_bounding_box_vis_image(vis, up_left.x, up_left.y, temp.cols, temp.rows);
 
     db_ptr_->set_template(temp);
 
-    MotionPredictor motion_predictor(static_cast<cv::Point2f>(center));
+    MotionPredictor motion_predictor(static_cast<cv::Point2f>(up_left));
     for (int i = 0; i < video.size(); i++) {
         db_ptr_->set_img(video[i]);
         db_ptr_->set_pos(motion_predictor.next_pos());
