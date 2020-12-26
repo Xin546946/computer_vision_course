@@ -31,7 +31,7 @@ void TrackerDataBase::update_mass_center() {
     int num_bin = 10;
     double sigma = 4.0;
     cv::Mat back_proj_weight = compute_back_projection_weight(num_bin, sigma);
-    cv::Point2f mean_shift = compute_mean_shift(back_proj_weight, simga);
+    cv::Point2f mean_shift = compute_mean_shift(back_proj_weight, sigma);
 }
 
 bool TrackerDataBase::is_convergent() {
@@ -53,15 +53,6 @@ cv::Point2f TrackerDataBase::get_pos() {
     return this->bbox_.center();
 }
 
-cv::Mat TrackerDataBase::compute_back_projection_weight(int num_bin, double sigma) {
-    cv::Mat weight = compute_gaussian_kernel(this->temp_.cols, this->temp_.rows, sigma);
-    std::vector<int> hist_temp = compute_histogram(num_bin, this->temp_, weight);
-    cv::Mat candidate =
-        get_sub_image_from_ul(this->img_, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
-    std::vector<int> hist_candidate = compute_histogram(num_bin, candidate, weight);
-    cv::Mat back_proj_weight = compute_back_projection(this->img_, hist_temp, hist_candidate);
-}
-
 cv::Mat compute_gaussian_kernel(int width, int height, double sigma) {
     cv::Mat result = cv::Mat::zeros(cv::Size(width, height), CV_64F);
     for (int r = 0; r < height; r++) {
@@ -71,6 +62,10 @@ cv::Mat compute_gaussian_kernel(int width, int height, double sigma) {
         }
     }
     return result / cv::sum(result)[0];
+}
+
+void TrackerDataBase::back_up_mass_center() {
+    last_bbox_ = bbox_;
 }
 
 int get_bin(int gray_value, int width_bin) {
@@ -139,6 +134,15 @@ cv::Point2f compute_weighted_average(const std::vector<cv::Point>& data, cv::Mat
     }
 
     return cv::Point2f(sum_x / data.size(), sum_y / data.size());
+}
+
+cv::Mat TrackerDataBase::compute_back_projection_weight(int num_bin, double sigma) {
+    cv::Mat weight = compute_gaussian_kernel(this->temp_.cols, this->temp_.rows, sigma);
+    std::vector<int> hist_temp = compute_histogram(num_bin, this->temp_, weight);
+    cv::Mat candidate =
+        get_sub_image_from_ul(this->img_, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
+    std::vector<int> hist_candidate = compute_histogram(num_bin, candidate, weight);
+    cv::Mat back_proj_weight = compute_back_projection(this->img_, hist_temp, hist_candidate);
 }
 
 cv::Point2f TrackerDataBase::compute_mean_shift(cv::Mat back_projection_weight, double sigma) {
