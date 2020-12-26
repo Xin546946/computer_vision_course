@@ -10,6 +10,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <thread>
 
+cv::Mat compute_back_projection(cv::Mat img, cv::Mat hist_temp, cv::Mat hist_candidate);
 TrackerDataBase::TrackerDataBase(cv::Mat img, cv::Mat temp, cv::Point2f initial_pos)
     : img_(img),
       temp_(temp),
@@ -39,6 +40,7 @@ bool TrackerDataBase::is_convergent() {
 
 void TrackerDataBase::set_pos(cv::Point2f pos) {
     //! update bounding box using this pose
+    //! todo make sure the bbox is inside the image
     bbox_.move(pos.x - bbox_.center().x, pos.y - bbox_.center().y);
 }
 
@@ -110,15 +112,47 @@ cv::Mat compute_back_projection(cv::Mat img, std::vector<int> hist_temp, std::ve
 }
 
 std::vector<cv::Point> TrackerDataBase::get_positions() {
+    std::vector<cv::Point> result;
+    result.reserve(bbox_.area());
+
+    cv::Point tl = static_cast<cv::Point>(bbox_.top_left());
+    cv::Point br = static_cast<cv::Point>(bbox_.bottom_right());
+
+    for (int y = tl.y; y < br.y; y++) {
+        for (int x = tl.x; x < br.x; x++) {
+            result.emplace_back(x, y);
+        }
+    }
+
+    return result;
 }
 
-template <typename T, typename T2>
-T compute_weighted_average(std::vector<T> data, T2 weight) {
+cv::Point2f compute_weighted_average(const std::vector<cv::Point>& data, cv::Mat weight) {
+    assert(data.size() == weight.cols);
+
+    double sum_x = 0.0, sum_y = 0.0;
+    for (int i = 0; i < data.size(); i++) {
+        double w = weight.at<double>(i);
+
+        sum_x += data[i].x * w;
+        sum_y += data[i].y * w;
+    }
+
+    return cv::Point2f(sum_x / data.size(), sum_y / data.size());
 }
 
 cv::Point2f TrackerDataBase::compute_mean_shift(cv::Mat back_projection_weight, double sigma) {
     cv::Mat gaussian_weight = compute_gaussian_kernel(temp_.cols, temp_.rows, sigma);
     cv::Mat weight = gaussian_weight.mul(back_projection_weight);
     std::vector<cv::Point> positions = get_positions();
-    return compute_weighted_average(positions, weight);
+    return compute_weighted_average(positions, weight.reshape(0, positions.size()));
+}
+
+void TrackerDataBase::visualize() {
+    cv::Mat vis;
+    cv::cvtColor(img_, vis, cv::COLOR_GRAY2BGR);
+    draw_bounding_box_vis_image(vis, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
+
+    cv::imshow("tracking result", vis);
+    cv::waitKey(0);
 }
