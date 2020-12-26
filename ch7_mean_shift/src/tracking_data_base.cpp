@@ -35,7 +35,7 @@ void TrackerDataBase::update_mass_center() {
     int num_bin = 10;
     double sigma = 4.0;
     cv::Mat back_proj_weight = compute_back_projection_weight(num_bin, sigma);
-    cv::Mat mean_shift = compute_mean_shift(back_proj_weight);
+    cv::Point2f mean_shift = compute_mean_shift(back_proj_weight, simga);
 }
 
 bool TrackerDataBase::is_convergent() {
@@ -79,5 +79,22 @@ int get_bin(int gray_value, int width_bin) {
     return gray_value / width_bin;
 }
 
-cv::Mat TrackerDataBase::get_candidate() {
+cv::Mat compute_histogram(int num_bin, cv::Mat img) {
+}
+
+cv::Mat compute_back_projection(cv::Mat img, cv::Mat hist_temp, cv::Mat hist_candidate) {
+}
+
+std::vector<cv::Point> TrackerDataBase::get_positions() {
+}
+
+template <typename T, typename T2>
+T compute_weighted_average(std::vector<T> data, T2 weight) {
+}
+
+cv::Point2f TrackerDataBase::compute_mean_shift(cv::Mat back_projection_weight, double sigma) {
+    cv::Mat gaussian_weight = compute_gaussian_kernel(temp_.cols, temp_.rows, sigma);
+    cv::Mat weight = gaussian_weight.mul(back_projection_weight);
+    std::vector<cv::Point> positions = get_positions();
+    return compute_weighted_average(positions, weight);
 }
