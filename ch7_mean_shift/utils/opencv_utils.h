@@ -3,6 +3,8 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 
+cv::Mat read_img(std::string img_path, cv::ImreadModes read_mode);
+
 inline bool is_in_img(cv::Mat img, int row, int col) {
     return row < img.rows && row >= 0 && col < img.cols && col >= 0;
 }

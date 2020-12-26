@@ -5,10 +5,9 @@
 MeanShift::MeanShift(std::unique_ptr<DataBase>& db_ptr) : db_ptr_(std::move(db_ptr)) {
 }
 
-void MeanShift::run() {
-    int max_it = 1e9;
+void MeanShift::run(int max_iteration) {
     int it = 0;
-    while (it++ < max_it && !db_ptr_->is_convergent()) {
+    while (it++ < max_iteration && !db_ptr_->is_convergent()) {
         db_ptr_->visualize();
         std::cout << "current iteration :" << it << '\n';
         db_ptr_->back_up_mass_center();

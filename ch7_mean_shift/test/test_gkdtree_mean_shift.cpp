@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
     std::unique_ptr<DataBase> db_ptr = std::make_unique<BGRData>(img, 50, vis_ptr);
     MeanShift ms(db_ptr);
 
-    ms.run();
+    ms.run(1e9);
     vis_thread.join();
 
     return 0;
