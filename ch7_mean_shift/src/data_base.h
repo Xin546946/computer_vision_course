@@ -1,10 +1,10 @@
 #pragma once
 #include "gkdtree.h"
-#include "visualizer.h"
 #include <memory>
 #include <opencv2/core/core.hpp>
 #include <queue>
 #include <unordered_set>
+class Visualizer;
 class DataBase {
    public:
     DataBase() = default;
@@ -46,7 +46,7 @@ struct BGR {
     }
     // interface for gkdtree;
     typedef int DistType;
-    const uchar operator[](int idx) const {
+    uchar operator[](int idx) const {
         return this->bgr_(idx);
     }
     static bool is_in_radius(const BGR* center, const BGR* data, float r_square) {
