@@ -79,6 +79,10 @@ int get_bin(int gray_value, int width_bin) {
     return gray_value / width_bin;
 }
 
+void TrackerDataBase::set_img(cv::Mat img) {
+    img_ = img;
+}
+
 cv::Mat compute_histogram(int num_bin, cv::Mat img) {
 }
 
