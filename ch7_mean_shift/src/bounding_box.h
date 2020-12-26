@@ -13,12 +13,19 @@ class BoundingBox {
     const cv::Point2f top_left() const {
         return window_.tl();
     }
+    const cv::Point2f bottom_right() const {
+        return window_.br();
+    }
 
-    const int width() const {
+    int area() const {
+        return window_.width * window_.height;
+    }
+
+    int width() const {
         return window_.width;
     }
 
-    const int height() const {
+    int height() const {
         return window_.height;
     }
 
