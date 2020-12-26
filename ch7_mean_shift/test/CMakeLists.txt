@@ -15,3 +15,7 @@ target_link_libraries(test_gkdtree gkdtree utils)
 
 add_executable(test_gkdtree_mean_shift test_gkdtree_mean_shift.cpp)
 target_link_libraries(test_gkdtree_mean_shift data_base mean_shift visualizer utils)
+
+
+add_executable(test_mean_shift_tracker test_mean_shift_tracker.cpp)
+target_link_libraries(test_mean_shift_tracker ${OpenCV_LIBS} bounding_box utils mean_shift data_base)

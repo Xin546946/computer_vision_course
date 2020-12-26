@@ -35,14 +35,14 @@ void ColorData::update_mass_center() {
     for (cv::Vec3f& color : colors_) {
         cv::Vec3f acc_rgb(0.0, 0.0, 0.0);
         int num = 0;
-        RNNResultSet<int, 3> rnn_result = kdtree_->rnn_search(vec2array(color), std::sqrt(r_square_));
-
-        std::vector<std::array<int, 3>> color_roi = rnn_result.get_result();
-        for (std::array<int, 3> color1 : color_roi) {
-            // std::cout << color1[0] << " " << color[1] << " " << color[2] << '\n';
+        for (const cv::Vec3f& color2 : colors_) {
+            if (cv::norm(color - color2, cv::NORM_L2SQR) > r_square_) {
+                continue;
+            }
             num++;
-            acc_rgb += array2vec(color1);
+            acc_rgb += color2;
         }
+
         color = acc_rgb / num;
     }
 }
@@ -83,6 +83,8 @@ BGRData::BGRData(cv::Mat img, double radius, std::shared_ptr<Visualizer> vis_ptr
             traverse_queue_.push(&colors_.back());
         }
     }
+    std::cout << traverse_queue_.size() << '\n';
+    std::cout << img.rows * img.cols << '\n';
 
     kdtree_ = new ColorKdTree(&colors_[0], size, 1);
 }
@@ -113,10 +115,11 @@ void BGRData::update_mass_center() {
             if (ptr_neigh->is_convergent_) {
                 return;
             } else if (BGR::is_in_radius(ptr_curr, ptr_neigh, quarter_r_square_)) {
+                std::cout << "ptr_negh should be inserted." << '\n';
                 colors_passed_by.insert(ptr_neigh);
             }
         });
-
+        std::cout << "num of pass by :" << colors_passed_by.size() << '\n';
         cv::Vec3f acc_color(0.f, 0.f, 0.f);
         for (auto neigh : neighbors) {
             acc_color += neigh->bgr_;
