@@ -41,7 +41,7 @@ bool TrackerDataBase::is_convergent() {
 void TrackerDataBase::set_pos(cv::Point2f pos) {
     //! update bounding box using this pose
     //! todo make sure the bbox is inside the image
-    bbox_.move(pos.x - bbox_.center().x, pos.y - bbox_.center().y);
+    bbox_ = BoundingBox(pos.x - temp_.cols / 2, pos.y - temp_.rows / 2, temp_.cols, temp_.rows);
 }
 
 void TrackerDataBase::set_template(cv::Mat temp) {
