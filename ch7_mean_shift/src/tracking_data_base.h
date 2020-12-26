@@ -14,6 +14,7 @@ class TrackerDataBase : public DataBase {
 
     void visualize() override;
     void set_initial_pos(cv::Point2f initial_pos);
+    void set_template(cv::Mat temp);
 
    private:
     cv::Rect2f bbox_;
