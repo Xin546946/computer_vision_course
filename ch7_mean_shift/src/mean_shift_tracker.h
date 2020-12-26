@@ -11,7 +11,6 @@ class MeanShiftTracker {
     void process(const std::vector<cv::Mat>& video, const cv::Mat temp);
 
    private:
-    cv::Mat temp_;
     MeanShift ms_;
     std::shared_ptr<TrackerDataBase> db_ptr_;
 };

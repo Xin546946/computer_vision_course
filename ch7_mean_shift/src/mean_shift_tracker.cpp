@@ -9,7 +9,7 @@ MeanShiftTracker::MeanShiftTracker() {
 }
 
 void MeanShiftTracker::process(const std::vector<cv::Mat>& video, const cv::Mat temp) {
-    cv::Point2i center = template_matching(video[0], temp_);
+    cv::Point2i center = template_matching(video[0], temp);
     MotionPredictor motion_predictor(static_cast<cv::Point2f>(center));
     for (int i = 0; i < video.size(); i++) {
         db_ptr_->set_img(video[i]);
