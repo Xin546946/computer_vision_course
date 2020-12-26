@@ -67,7 +67,7 @@ cv::Mat get_sub_image_from_ul(cv::Mat image, int x, int y, int width, int height
     image(intersection).copyTo(sub_img);
     return sub_img;
 }
-cv::Mat draw_bounding_box_vis_image(cv::Mat image, float x, float y, float width, float height) {
-    cv::rectangle(image, cv::Rect2i(x, y, width, height), cv::Scalar(0, 255, 0), 2);
+cv::Mat draw_bounding_box_vis_image(cv::Mat image, float x_ul, float y_ul, float width, float height) {
+    cv::rectangle(image, cv::Rect2i(x_ul, y_ul, width, height), cv::Scalar(0, 255, 0), 2);
     return image;
 }
