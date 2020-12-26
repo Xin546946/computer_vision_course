@@ -46,7 +46,7 @@ void TrackerDataBase::set_pos(cv::Point2f pos) {
 
 void TrackerDataBase::set_template(cv::Mat temp) {
     //! set template
-    this->temp_64f_ = temp;
+    temp.convertTo(temp_64f_, CV_64F);
 }
 
 cv::Point2f TrackerDataBase::get_pos() {
@@ -98,14 +98,15 @@ std::vector<int> compute_histogram(int num_bin, cv::Mat img, cv::Mat weight) {
 
 cv::Mat compute_back_projection(cv::Mat img, std::vector<int> hist_temp, std::vector<int> hist_candidate) {
     assert(hist_candidate.size() == hist_temp.size());
-    cv::Mat result;
+    cv::Mat result = cv::Mat::zeros(img.size(), CV_64F);
     for (int r = 0; r < img.rows; r++) {
         for (int c = 0; c < img.cols; c++) {
             int hist_pos = get_bin(static_cast<float>(img.at<double>(r, c)), std::ceil(255 / hist_temp.size()));
 
-            result.at<double>(r, c) = std::sqrt(hist_temp[hist_pos] / hist_candidate[hist_pos]);
+            result.at<double>(r, c) = std::sqrt(hist_temp[hist_pos] / (hist_candidate[hist_pos] + 1e-8));
         }
     }
+    return result;
 }
 
 std::vector<cv::Point> TrackerDataBase::get_positions() {
@@ -125,7 +126,7 @@ std::vector<cv::Point> TrackerDataBase::get_positions() {
 }
 
 cv::Point2f compute_weighted_average(const std::vector<cv::Point>& data, cv::Mat weight) {
-    assert(data.size() == weight.cols);
+    assert(data.size() == weight.rows);
 
     double sum_x = 0.0, sum_y = 0.0;
     for (int i = 0; i < data.size(); i++) {
@@ -144,7 +145,8 @@ cv::Mat TrackerDataBase::compute_back_projection_weight(int num_bin, double sigm
     cv::Mat candidate =
         get_sub_image_from_ul(this->img_64f_, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
     std::vector<int> hist_candidate = compute_histogram(num_bin, candidate, weight);
-    cv::Mat back_proj_weight = compute_back_projection(this->img_64f_, hist_temp, hist_candidate);
+    cv::Mat back_proj_weight = compute_back_projection(this->temp_64f_, hist_temp, hist_candidate);
+    return back_proj_weight;
 }
 
 cv::Point2f TrackerDataBase::compute_mean_shift(cv::Mat back_projection_weight, double sigma) {
