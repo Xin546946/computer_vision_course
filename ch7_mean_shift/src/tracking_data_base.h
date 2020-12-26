@@ -19,8 +19,9 @@ class TrackerDataBase : public DataBase {
     void set_template(cv::Mat temp);
 
    private:
-    cv::Rect2f bbox_;
     cv::Mat img_;
     cv::Mat temp_;
-    cv::Point2f initial_pos_;
+    cv::Point2f pos_;
+    cv::Rect2f bbox_;
+    bool initialized_ = false;
 };
