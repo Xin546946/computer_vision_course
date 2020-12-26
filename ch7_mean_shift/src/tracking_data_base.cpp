@@ -120,3 +120,12 @@ cv::Point2f TrackerDataBase::compute_mean_shift(cv::Mat back_projection_weight, 
     std::vector<cv::Point> positions = get_positions();
     return compute_weighted_average(positions, weight.reshape(0, positions.size()));
 }
+
+void TrackerDataBase::visualize() {
+    cv::Mat vis;
+    cv::cvtColor(img_, vis, cv::COLOR_GRAY2BGR);
+    draw_bounding_box_vis_image(vis, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
+
+    cv::imshow("tracking result", vis);
+    cv::waitKey(0);
+}
