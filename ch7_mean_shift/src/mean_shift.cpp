@@ -14,3 +14,6 @@ void MeanShift::run(int max_iteration) {
         db_ptr_->update_mass_center();
     }
 }
+void MeanShift::set_data_base(std::unique_ptr<DataBase>& db_ptr) {
+    db_ptr_ = std::move(db_ptr);
+}

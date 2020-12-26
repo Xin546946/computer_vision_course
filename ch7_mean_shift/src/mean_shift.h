@@ -7,6 +7,7 @@ class MeanShift {
    public:
     MeanShift(std::unique_ptr<DataBase>& db_ptr);
     void run(int max_iteration);
+    void set_data_base(std::unique_ptr<DataBase>& db_ptr);
 
    private:
     std::unique_ptr<DataBase> db_ptr_;
