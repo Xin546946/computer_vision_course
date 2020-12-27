@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
     }
 
     cv::Mat temp = read_img(argv[2], cv::IMREAD_GRAYSCALE);
-
+    std::cout << temp.type() << '\n';
     MeanShiftTracker mstracker;
     mstracker.process(video, temp);
 

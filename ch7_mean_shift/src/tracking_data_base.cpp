@@ -1,9 +1,9 @@
 #include "tracking_data_base.h"
 #include "data_base.h"
+#include "display.h"
 #include "memory"
 #include "opencv_utils.h"
 #include "visualizer.h"
-
 #include <algorithm>
 #include <chrono>
 #include <numeric>
@@ -31,7 +31,7 @@ void TrackerDataBase::init_mass_center() {
 void TrackerDataBase::update_mass_center() {
     last_bbox_ = bbox_;
     int num_bin = 10;
-    double sigma = 4.0;
+    double sigma = 10;
     cv::Mat back_proj_weight = compute_back_projection_weight(num_bin, sigma);
     cv::Point2f mean_shift = compute_mean_shift(back_proj_weight, sigma);
 }
@@ -88,6 +88,10 @@ std::vector<int> compute_histogram(int num_bin, cv::Mat img, cv::Mat weight) {
     assert(img.rows == weight.rows && img.cols == weight.cols);
     std::cout << " img :" << img.type() << " weight :" << weight.type() << '\n';
     cv::Mat smooth_img = img.mul(weight);
+    cv::Mat vis = get_float_mat_vis_img(smooth_img);
+    cv::imshow("smooth img", smooth_img);
+    cv::waitKey(0);
+    std::cout << smooth_img << '\n';
     std::vector<int> result(num_bin, 0);
     int width_bin = std::ceil(255 / num_bin);
     for (int r = 0; r < smooth_img.rows; r++) {
@@ -148,7 +152,7 @@ cv::Point2f compute_weighted_average(const std::vector<cv::Point>& data, cv::Mat
 }
 
 cv::Mat TrackerDataBase::compute_back_projection_weight(int num_bin, double sigma) {
-    cv::Mat weight = compute_gaussian_kernel(this->temp_64f_.cols, this->temp_64f_.rows, sigma);
+    cv::Mat weight = get_gaussian_kernel(this->temp_64f_.cols, this->temp_64f_.rows, sigma);
     std::vector<int> hist_temp = compute_histogram(num_bin, this->temp_64f_, weight);
     cv::Mat candidate =
         get_sub_image_from_ul(this->img_64f_, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
@@ -158,7 +162,7 @@ cv::Mat TrackerDataBase::compute_back_projection_weight(int num_bin, double sigm
 }
 
 cv::Point2f TrackerDataBase::compute_mean_shift(cv::Mat back_projection_weight, double sigma) {
-    cv::Mat gaussian_weight = compute_gaussian_kernel(temp_64f_.cols, temp_64f_.rows, sigma);
+    cv::Mat gaussian_weight = get_gaussian_kernel(temp_64f_.cols, temp_64f_.rows, sigma);
     cv::Mat weight = gaussian_weight.mul(back_projection_weight);
     std::vector<cv::Point> positions = get_positions();
     return compute_weighted_average(positions, weight.reshape(0, positions.size()));
