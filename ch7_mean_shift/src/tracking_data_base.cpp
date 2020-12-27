@@ -33,6 +33,7 @@ void TrackerDataBase::update_mass_center() {
     int num_bin = 10;
     double sigma = 10;
     cv::Mat back_proj_weight = compute_back_projection_weight(num_bin, sigma);
+
     cv::Point2f mean_shift = compute_mean_shift(back_proj_weight, sigma);
 }
 
@@ -85,13 +86,14 @@ void TrackerDataBase::set_img(cv::Mat img) {
 }
 
 std::vector<double> compute_histogram(int num_bin, cv::Mat img, cv::Mat weight) {
+    std::cout << img << '\n';
     assert(img.rows == weight.rows && img.cols == weight.cols);
     std::vector<double> result(num_bin, 0.0);
     int width_bin = std::ceil(255 / num_bin);
 
     for (int r = 0; r < img.rows; r++) {
         for (int c = 0; c < img.cols; c++) {
-            int gray_value = static_cast<int>(img.at<uchar>(r, c));
+            int gray_value = static_cast<int>(img.at<double>(r, c));
             int bin = get_bin(gray_value, width_bin);
             std::cout << "Gray value is: " << gray_value << ", at Bin " << bin << '\n';
             result[bin] += weight.at<double>(r, c);
@@ -155,7 +157,7 @@ cv::Mat TrackerDataBase::compute_back_projection_weight(int num_bin, double sigm
     cv::Mat candidate =
         get_sub_image_from_ul(this->img_64f_, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
     std::vector<double> hist_candidate = compute_histogram(num_bin, candidate, weight);
-    cv::Mat back_proj_weight = compute_back_projection(this->temp_64f_, hist_temp, hist_candidate);
+    cv::Mat back_proj_weight = compute_back_projection(candidate, hist_temp, hist_candidate);
     return back_proj_weight;
 }
 

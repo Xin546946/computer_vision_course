@@ -25,14 +25,14 @@ cv::Mat get_gaussian_kernel(int width, int height, double sigma) {
     return result / cv::sum(result)[0];
 }
 
-cv::Mat compute_back_projection(cv::Mat img, std::vector<int> hist_temp, std::vector<int> hist_candidate) {
+cv::Mat compute_back_projection(cv::Mat img, std::vector<double> hist_temp, std::vector<double> hist_candidate) {
     assert(hist_candidate.size() == hist_temp.size());
     cv::Mat result = cv::Mat::zeros(img.size(), CV_64F);
     for (int r = 0; r < img.rows; r++) {
         for (int c = 0; c < img.cols; c++) {
-            int hist_pos = get_bin(static_cast<float>(img.at<double>(r, c)), std::ceil(255 / hist_temp.size()));
+            int bin = get_bin(static_cast<float>(img.at<double>(r, c)), std::ceil(255 / hist_temp.size()));
 
-            result.at<double>(r, c) = std::sqrt(hist_temp[hist_pos] / (hist_candidate[hist_pos] + 1e-8));
+            result.at<double>(r, c) = std::sqrt(hist_temp[bin] / (hist_candidate[bin] + 1e-8));
         }
     }
     return result;
@@ -62,9 +62,15 @@ std::vector<double> compute_histogram(int num_bin, cv::Mat img, cv::Mat weight) 
 
 int main(int argc, char** argv) {
     cv::Mat img = cv::imread("/home/kit/computer_vision_course/ch7_mean_shift/img/segmentation/horse.jpg", 0);
+
     img.convertTo(img, CV_64F);
     cv::Mat gaussian = get_gaussian_kernel(img.cols, img.rows, 100);
-    std::vector<double> hist = compute_histogram(10, img, gaussian);
+    std::vector<double> hist_temp = compute_histogram(10, img, gaussian);
+    std::vector<double> hist_candidate = compute_histogram(10, img, gaussian);
+    cv::Mat result = compute_back_projection(img, hist_temp, hist_temp);
+    cv::Mat vis = get_float_mat_vis_img(result);
+    cv::imshow("back_projection", vis);
+    cv::waitKey(0);
 
     return 0;
 }
