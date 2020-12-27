@@ -46,13 +46,13 @@ void TrackerDataBase::set_obj_predicted_initial_center(cv::Point2f pos) {
         std::cout << " The bbox is outside of the image, tracking terminantes" << '\n';
         std::exit(0);
     }
-    bbox_ = BoundingBox(pos.x, pos.y, temp_64f_.cols, temp_64f_.rows);
+    bbox_.move_top_left_to(pos.x, pos.y);
 }
 
 void TrackerDataBase::set_template(cv::Mat temp) {
     //! set template
     temp.convertTo(temp_64f_, CV_64F);
-    bbox_ = BoundingBox(0, 0, temp.rows, temp.cols);
+    bbox_ = BoundingBox(0, 0, temp.cols, temp.rows);
 }
 
 cv::Point2f TrackerDataBase::get_pos() {
@@ -164,7 +164,7 @@ void TrackerDataBase::iteration_call_back() {
     int iter = 0;
     while (energy_curr > energy_ && iter < 10) {
         iter++;
-        bbox_ = BoundingBox(0.5 * (bbox_.top_left().x + last_bbox_.top_left().y),
+        bbox_ = BoundingBox(0.5 * (bbox_.top_left().x + last_bbox_.top_left().x),
                             0.5 * (bbox_.top_left().y + last_bbox_.top_left().y), temp_64f_.cols, temp_64f_.rows);
         cv::Mat weight = get_gaussian_kernel(this->temp_64f_.cols, this->temp_64f_.rows, sigma);
 
