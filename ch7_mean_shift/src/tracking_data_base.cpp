@@ -32,9 +32,11 @@ cv::Point2f TrackerDataBase::get_object_center() const {
 void TrackerDataBase::init_mass_center() {
 }
 
-void TrackerDataBase::update_mass_center() {
+void TrackerDataBase::back_up_mass_center() {
     last_bbox_ = bbox_;
+}
 
+void TrackerDataBase::update_mass_center() {
     cv::Mat back_proj_weight = compute_back_projection_weight(num_bin, sigma);
 
     cv::Point2f mean_shift = compute_mean_shift(back_proj_weight, sigma);
@@ -77,10 +79,6 @@ cv::Mat get_gaussian_kernel(int width, int height, double sigma) {
     return result / cv::sum(result)[0];
 }
 
-void TrackerDataBase::back_up_mass_center() {
-    last_bbox_ = bbox_;
-}
-
 float get_bin(float gray_value, int width_bin) {
     return gray_value / width_bin;
 }
@@ -104,7 +102,6 @@ std::vector<double> compute_histogram(int num_bin, cv::Mat img, cv::Mat weight) 
     }
     double sum = std::accumulate(result.begin(), result.end(), 0.0);
 
-    std::cout << sum << '\n';
     for (double& bin_val : result) {
         bin_val /= sum;
     }
@@ -172,8 +169,18 @@ void TrackerDataBase::iteration_call_back() {
         get_sub_image_from_ul(this->img_64f_, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
     hist_candidate_ = compute_histogram(num_bin, candidate, weight);
     double energy_curr = compute_energy();
-    if (energy_curr > energy_) {
-        // bbox_ = BoundingBox(bbox_.top_left().x + last_bbox_.top_left().y)
+    int iter = 0;
+    while (energy_curr > energy_ && iter < 10) {
+        iter++;
+        bbox_ = BoundingBox(0.5 * (bbox_.top_left().x + last_bbox_.top_left().y),
+                            0.5 * (bbox_.top_left().y + last_bbox_.top_left().y), temp_64f_.cols, temp_64f_.rows);
+        cv::Mat weight = get_gaussian_kernel(this->temp_64f_.cols, this->temp_64f_.rows, sigma);
+
+        cv::Mat candidate = get_sub_image_from_ul(this->img_64f_, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(),
+                                                  bbox_.height());
+        hist_candidate_ = compute_histogram(num_bin, candidate, weight);
+
+        energy_curr = compute_energy();
     }
 }
 
@@ -203,5 +210,5 @@ void TrackerDataBase::visualize() {
     draw_bounding_box_vis_image(vis, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
 
     cv::imshow("tracking result", vis);
-    cv::waitKey(100);
+    cv::waitKey(0);
 }
