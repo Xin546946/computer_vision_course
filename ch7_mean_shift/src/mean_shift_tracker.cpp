@@ -4,7 +4,7 @@
 #include <iostream>
 
 MeanShiftTracker::MeanShiftTracker() {
-    TrackerDataBase* db_raw_ptr = new TrackerDataBase(cv::Mat(), cv::Mat(), cv::Point2f());
+    TrackerDataBase* db_raw_ptr = new TrackerDataBase();
     db_ptr_ = std::shared_ptr<TrackerDataBase>(db_raw_ptr);
     ms_ = MeanShift(std::shared_ptr<DataBase>(db_raw_ptr));
 }

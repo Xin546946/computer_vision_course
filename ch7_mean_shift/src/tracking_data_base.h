@@ -5,7 +5,7 @@
 class TrackerDataBase : public DataBase {
    public:
     ~TrackerDataBase() = default;
-    TrackerDataBase(cv::Mat img, cv::Mat temp, cv::Point2f pos);
+    TrackerDataBase() = default;
 
     cv::Point2f get_object_center() const;
 
