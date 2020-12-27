@@ -36,7 +36,8 @@ void TrackerDataBase::update_mass_center() {
 }
 
 bool TrackerDataBase::is_convergent() {
-    return cv::norm(bbox_.center() - last_bbox_.center()) < 1e-4;
+    // return cv::norm(bbox_.center() - last_bbox_.center()) < 1e-4;
+    return false;
 }
 
 void TrackerDataBase::set_obj_predicted_initial_center(cv::Point2f pos) {
@@ -144,6 +145,12 @@ cv::Point2f compute_weighted_average(const std::vector<cv::Point2f>& data, cv::M
 }
 
 double TrackerDataBase::compute_energy() {
+    cv::Mat weight = get_gaussian_kernel(this->temp_64f_.cols, this->temp_64f_.rows, sigma);
+    hist_temp_ = compute_histogram(num_bin, this->temp_64f_, weight);
+    cv::Mat candidate =
+        get_sub_image_from_ul(this->img_64f_, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
+    hist_candidate_ = compute_histogram(num_bin, candidate, weight);
+
     assert(hist_temp_.size() == hist_candidate_.size());
     double result = 0.0;
     for (int i = 0; i < hist_temp_.size(); i++) {
@@ -153,32 +160,22 @@ double TrackerDataBase::compute_energy() {
 }
 
 bool TrackerDataBase::iteration_call_back() {
-    BoundingBox bbox_back_up = bbox_;
-
-    cv::Mat weight = get_gaussian_kernel(this->temp_64f_.cols, this->temp_64f_.rows, sigma);
-    hist_temp_ = compute_histogram(num_bin, this->temp_64f_, weight);
-    cv::Mat candidate =
-        get_sub_image_from_ul(this->img_64f_, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
-    hist_candidate_ = compute_histogram(num_bin, candidate, weight);
     double energy_curr = compute_energy();
     int iter = 0;
-    while (energy_curr > energy_ && iter < 10) {
-        iter++;
-        bbox_.move_center_to(0.5 * (last_bbox_.center().x + bbox_.center().x),
-                             0.5 * (last_bbox_.center().y + bbox_.center().y));
-        cv::Mat weight = get_gaussian_kernel(this->temp_64f_.cols, this->temp_64f_.rows, sigma);
+    while (energy_curr > energy_ && iter++ < 10) {
+        cv::Point2f mid_point = calc_mid_point(last_bbox_.center(), bbox_.center());
 
-        cv::Mat candidate = get_sub_image_from_ul(this->img_64f_, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(),
-                                                  bbox_.height());
-        hist_candidate_ = compute_histogram(num_bin, candidate, weight);
+        bbox_.move_center_to(mid_point.x, mid_point.y);
 
         energy_curr = compute_energy();
     }
 
     if (energy_curr > energy_) {
-        bbox_ = bbox_back_up;
+        bbox_ = last_bbox_;
         return true;
     }
+
+    std::cout << "energy : " << energy_ << '\n';
 
     return false;
 }
@@ -210,5 +207,14 @@ void TrackerDataBase::visualize_tracking_result() {
     draw_bounding_box_vis_image(vis, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
 
     cv::imshow("tracking result", vis);
-    cv::waitKey(100);
+    cv::waitKey(50);
+}
+
+void TrackerDataBase::visualize() {
+    cv::Mat vis;
+    cv::cvtColor(img_, vis, cv::COLOR_GRAY2BGR);
+    draw_bounding_box_vis_image(vis, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
+
+    /*     cv::imshow("tracking result", vis);
+        cv::waitKey(50); */
 }

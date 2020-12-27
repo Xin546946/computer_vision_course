@@ -132,3 +132,8 @@ cv::Mat_<T> do_sobel(cv::Mat_<T> input, int flag) {
     }
     return output;
 }
+
+template <typename T>
+cv::Point_<T> calc_mid_point(cv::Point_<T> p1, cv::Point_<T> p2) {
+    return cv::Point_<T>(0.5 * (p1.x + p2.x), 0.5 * (p1.y + p2.y));
+}

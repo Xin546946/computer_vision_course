@@ -6,7 +6,7 @@
 MeanShiftTracker::MeanShiftTracker() {
     TrackerDataBase* db_raw_ptr = new TrackerDataBase();
     db_ptr_ = std::shared_ptr<TrackerDataBase>(db_raw_ptr);
-    ms_ = MeanShift(std::shared_ptr<DataBase>(db_raw_ptr));
+    ms_ = MeanShift(static_cast<DataBase*>(db_raw_ptr));
 }
 
 void MeanShiftTracker::process(const std::vector<cv::Mat>& video, const cv::Mat temp) {

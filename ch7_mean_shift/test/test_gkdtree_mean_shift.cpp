@@ -11,7 +11,8 @@ int main(int argc, char** argv) {
     assert(!img.empty());
     std::shared_ptr<Visualizer> vis_ptr(new Visualizer);
     std::thread vis_thread(&Visualizer::show, std::ref(*vis_ptr), img.rows, img.cols);
-    std::shared_ptr<DataBase> db_ptr = std::make_shared<BGRData>(img, 50, vis_ptr);
+    BGRData img_data(img, 50, vis_ptr);
+    DataBase* db_ptr = &img_data;
     MeanShift ms(db_ptr);
 
     ms.run(1e9);

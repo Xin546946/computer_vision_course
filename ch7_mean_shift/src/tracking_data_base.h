@@ -15,6 +15,7 @@ class TrackerDataBase : public DataBase {
     bool is_convergent() override;
     void back_up_mass_center() override;
     double compute_energy() override;
+    void visualize() override;
     void visualize_tracking_result();
     void set_obj_predicted_initial_center(cv::Point2f pos);
     bool iteration_call_back() override;
@@ -37,7 +38,6 @@ class TrackerDataBase : public DataBase {
     bool initialized_ = false;
     std::vector<double> hist_temp_;
     std::vector<double> hist_candidate_;
-    double energy_;
     // int num_bin_;
     // double sigma_;
 };

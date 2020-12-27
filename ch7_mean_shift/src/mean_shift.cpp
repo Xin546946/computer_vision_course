@@ -2,7 +2,7 @@
 #include "data_base.h"
 
 #include <iostream>
-MeanShift::MeanShift(const std::shared_ptr<DataBase>& db_ptr) : db_ptr_(db_ptr) {
+MeanShift::MeanShift(DataBase* db_ptr) : db_ptr_(db_ptr) {
 }
 
 void MeanShift::run(int max_iteration) {
