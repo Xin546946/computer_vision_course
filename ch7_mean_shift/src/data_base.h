@@ -18,7 +18,7 @@ class DataBase {
     };
     virtual bool iteration_call_back(){};
 
-    virtual void visualize() = 0;
+    virtual void visualize(){};
     double energy_ = 0.0;
 
    private:

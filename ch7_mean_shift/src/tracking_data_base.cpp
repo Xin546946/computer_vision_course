@@ -153,6 +153,8 @@ double TrackerDataBase::compute_energy() {
 }
 
 bool TrackerDataBase::iteration_call_back() {
+    BoundingBox bbox_back_up = bbox_;
+
     cv::Mat weight = get_gaussian_kernel(this->temp_64f_.cols, this->temp_64f_.rows, sigma);
     hist_temp_ = compute_histogram(num_bin, this->temp_64f_, weight);
     cv::Mat candidate =
@@ -162,8 +164,8 @@ bool TrackerDataBase::iteration_call_back() {
     int iter = 0;
     while (energy_curr > energy_ && iter < 10) {
         iter++;
-        bbox_ = BoundingBox(0.5 * (bbox_.top_left().x + last_bbox_.top_left().x),
-                            0.5 * (bbox_.top_left().y + last_bbox_.top_left().y), temp_64f_.cols, temp_64f_.rows);
+        bbox_.move_center_to(0.5 * (last_bbox_.center().x + bbox_.center().x),
+                             0.5 * (last_bbox_.center().y + bbox_.center().y));
         cv::Mat weight = get_gaussian_kernel(this->temp_64f_.cols, this->temp_64f_.rows, sigma);
 
         cv::Mat candidate = get_sub_image_from_ul(this->img_64f_, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(),
@@ -171,6 +173,11 @@ bool TrackerDataBase::iteration_call_back() {
         hist_candidate_ = compute_histogram(num_bin, candidate, weight);
 
         energy_curr = compute_energy();
+    }
+
+    if (energy_curr > energy_) {
+        bbox_ = bbox_back_up;
+        return true;
     }
 
     return false;
@@ -197,11 +204,11 @@ cv::Point2f TrackerDataBase::compute_mean_shift(cv::Mat back_projection_weight, 
     return compute_weighted_average(positions, weight);
 }
 
-void TrackerDataBase::visualize() {
+void TrackerDataBase::visualize_tracking_result() {
     cv::Mat vis;
     cv::cvtColor(img_, vis, cv::COLOR_GRAY2BGR);
     draw_bounding_box_vis_image(vis, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
 
     cv::imshow("tracking result", vis);
-    cv::waitKey(0);
+    cv::waitKey(100);
 }
