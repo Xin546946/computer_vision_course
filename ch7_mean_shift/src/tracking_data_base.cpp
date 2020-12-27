@@ -25,7 +25,7 @@ TrackerDataBase::TrackerDataBase(cv::Mat img, cv::Mat temp, cv::Point2f initial_
     temp.convertTo(temp_64f_, CV_64F);
 }
 
-cv::Point2f TrackerDataBase::get_bbox_center() const {
+cv::Point2f TrackerDataBase::get_object_center() const {
     return bbox_.center();
 }
 
@@ -38,9 +38,8 @@ void TrackerDataBase::update_mass_center() {
     cv::Mat back_proj_weight = compute_back_projection_weight(num_bin, sigma);
 
     cv::Point2f mean_shift = compute_mean_shift(back_proj_weight, sigma);
-    bbox_ = BoundingBox(mean_shift.x - temp_64f_.cols / 2, mean_shift.y - temp_64f_.rows / 2, temp_64f_.cols,
-                        temp_64f_.rows);
-    std::cout << mean_shift.x << " " << mean_shift.y << '\n';
+
+    bbox_.move_center_to(mean_shift.x, mean_shift.y);
 }
 
 bool TrackerDataBase::is_convergent() {
@@ -204,5 +203,5 @@ void TrackerDataBase::visualize() {
     draw_bounding_box_vis_image(vis, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
 
     cv::imshow("tracking result", vis);
-    cv::waitKey(1);
+    cv::waitKey(100);
 }

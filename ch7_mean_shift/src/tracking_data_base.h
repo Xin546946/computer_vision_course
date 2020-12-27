@@ -8,7 +8,7 @@ class TrackerDataBase : public DataBase {
     ~TrackerDataBase() = default;
     TrackerDataBase(cv::Mat img, cv::Mat temp, cv::Point2f pos);
 
-    cv::Point2f get_bbox_center() const;
+    cv::Point2f get_object_center() const;
 
     void init_mass_center() override;
     void update_mass_center() override;
