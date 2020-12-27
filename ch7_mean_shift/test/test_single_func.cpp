@@ -25,46 +25,50 @@ cv::Mat get_gaussian_kernel(int width, int height, double sigma) {
     return result / cv::sum(result)[0];
 }
 
-std::vector<float> compute_histogram(int num_bin, cv::Mat img, cv::Mat weight) {
-    assert(img.rows == weight.rows && img.cols == weight.cols);
-    cv::Mat smooth_img = img.mul(weight);
-    std::vector<float> result(num_bin, 0.0f);
-    int width_bin = std::ceil(255 / num_bin);
-    cv::Mat img_find_bin = smooth_img.clone() * 255.0f;
+cv::Mat compute_back_projection(cv::Mat img, std::vector<int> hist_temp, std::vector<int> hist_candidate) {
+    assert(hist_candidate.size() == hist_temp.size());
+    cv::Mat result = cv::Mat::zeros(img.size(), CV_64F);
+    for (int r = 0; r < img.rows; r++) {
+        for (int c = 0; c < img.cols; c++) {
+            int hist_pos = get_bin(static_cast<float>(img.at<double>(r, c)), std::ceil(255 / hist_temp.size()));
 
-    img_find_bin.convertTo(smooth_img, CV_8UC1);
-    cv::imshow("8UC1 Img", img_find_bin);
-    cv::waitKey(0);
-    // assert(img_find_bin.type() == CV_8UC1);
-    // std::cout << img_find_bin << '\n';
-
-    for (int r = 0; r < img_find_bin.rows; r++) {
-        for (int c = 0; c < img_find_bin.cols; c++) {
-            int gray_value = static_cast<int>(img_find_bin.at<uchar>(r, c));
-            int bin = get_bin(gray_value, width_bin);
-            // std::cout << "Gray value is: " << gray_value << ", at Bin " << bin << '\n';
-            result[bin] += 1.0;
+            result.at<double>(r, c) = std::sqrt(hist_temp[hist_pos] / (hist_candidate[hist_pos] + 1e-8));
         }
     }
-    float sum = static_cast<float>(std::accumulate(result.begin(), result.end(), 0));
-    std::vector<float> res;
-    std::cout << sum << '\n';
-    for (float& bin_val : result) {
-        bin_val /= sum;
-        res.push_back(bin_val);
+    return result;
+}
+
+std::vector<double> compute_histogram(int num_bin, cv::Mat img, cv::Mat weight) {
+    assert(img.rows == weight.rows && img.cols == weight.cols);
+    std::vector<double> result(num_bin, 0.0);
+    int width_bin = std::ceil(255 / num_bin);
+
+    for (int r = 0; r < img.rows; r++) {
+        for (int c = 0; c < img.cols; c++) {
+            int gray_value = static_cast<int>(img.at<uchar>(r, c));
+            int bin = get_bin(gray_value, width_bin);
+            std::cout << "Gray value is: " << gray_value << ", at Bin " << bin << '\n';
+            result[bin] += weight.at<double>(r, c);
+        }
     }
-    return res;
+    double sum = std::accumulate(result.begin(), result.end(), 0.0);
+
+    std::cout << sum << '\n';
+    for (double& bin_val : result) {
+        bin_val /= sum;
+    }
+    return result;
 }
 
 int main(int argc, char** argv) {
     cv::Mat img = cv::imread("/home/kit/computer_vision_course/ch7_mean_shift/img/segmentation/horse.jpg", 0);
     img.convertTo(img, CV_64F);
     cv::Mat gaussian = get_gaussian_kernel(img.cols, img.rows, 100);
-    std::vector<float> hist = compute_histogram(10, img, gaussian);
-    for (int val : hist) {
+    std::vector<double> hist = compute_histogram(10, img, gaussian);
+    for (double val : hist) {
         std::cout << val << " ";
     }
-    float sum = static_cast<float>(std::accumulate(hist.begin(), hist.end(), 0));
+    double sum = std::accumulate(hist.begin(), hist.end(), 0.0);
     std::cout << "Sum of hist " << sum << " should equal to " << 1 << '\n';
     std::cout << '\n';
     return 0;

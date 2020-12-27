@@ -84,25 +84,23 @@ void TrackerDataBase::set_img(cv::Mat img) {
     img.convertTo(img_64f_, CV_64F);
 }
 
-std::vector<int> compute_histogram(int num_bin, cv::Mat img, cv::Mat weight) {
+std::vector<double> compute_histogram(int num_bin, cv::Mat img, cv::Mat weight) {
     assert(img.rows == weight.rows && img.cols == weight.cols);
-    std::cout << " img :" << img.type() << " weight :" << weight.type() << '\n';
-    cv::Mat smooth_img = img.mul(weight);
-    cv::Mat vis = get_float_mat_vis_img(smooth_img);
-    cv::imshow("smooth img", smooth_img);
-    cv::waitKey(0);
-    std::cout << smooth_img << '\n';
-    std::vector<int> result(num_bin, 0);
+    std::vector<double> result(num_bin, 0.0);
     int width_bin = std::ceil(255 / num_bin);
-    for (int r = 0; r < smooth_img.rows; r++) {
-        for (int c = 0; c < smooth_img.cols; c++) {
-            float gray_value = smooth_img.at<float>(r, c);
+
+    for (int r = 0; r < img.rows; r++) {
+        for (int c = 0; c < img.cols; c++) {
+            int gray_value = static_cast<int>(img.at<uchar>(r, c));
             int bin = get_bin(gray_value, width_bin);
-            result[bin]++;
+            std::cout << "Gray value is: " << gray_value << ", at Bin " << bin << '\n';
+            result[bin] += weight.at<double>(r, c);
         }
     }
-    int sum = std::accumulate(result.begin(), result.end(), 0);
-    for (int& bin_val : result) {
+    double sum = std::accumulate(result.begin(), result.end(), 0.0);
+
+    std::cout << sum << '\n';
+    for (double& bin_val : result) {
         bin_val /= sum;
     }
     return result;
