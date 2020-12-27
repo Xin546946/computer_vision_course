@@ -11,11 +11,15 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <thread>
 
+const int sigma = 10;
+const int num_bin = 10;
+
 cv::Mat compute_back_projection(cv::Mat img, cv::Mat hist_temp, cv::Mat hist_candidate);
 TrackerDataBase::TrackerDataBase(cv::Mat img, cv::Mat temp, cv::Point2f initial_pos)
     : img_(img),
       bbox_(initial_pos.x - temp_64f_.cols / 2.0f, initial_pos.y - temp_64f_.rows / 2.0f,
-            static_cast<float>(temp_64f_.cols), static_cast<float>(temp_64f_.rows)) {
+            static_cast<float>(temp_64f_.cols), static_cast<float>(temp_64f_.rows)),
+      energy_(0.0) {
     std::cout << "Bounding Box center is at: " << bbox_.center().x << " " << bbox_.center().y << '\n';
     img.convertTo(img_64f_, CV_64F);
     temp.convertTo(temp_64f_, CV_64F);
@@ -30,8 +34,7 @@ void TrackerDataBase::init_mass_center() {
 
 void TrackerDataBase::update_mass_center() {
     last_bbox_ = bbox_;
-    int num_bin = 10;
-    double sigma = 10;
+
     cv::Mat back_proj_weight = compute_back_projection_weight(num_bin, sigma);
 
     cv::Point2f mean_shift = compute_mean_shift(back_proj_weight, sigma);
@@ -154,23 +157,34 @@ cv::Point2f compute_weighted_average(const std::vector<cv::Point>& data, cv::Mat
     return cv::Point2f(sum_x / sum_w, sum_y / sum_w);
 }
 
-double compute_energy(std::vector<double> hist_lhs, std::vector<double> hist_rhs) {
-    assert(hist_lhs.size() == hist_rhs.size());
+double TrackerDataBase::compute_energy() {
+    assert(hist_temp_.size() == hist_candidate_.size());
     double result = 0.0;
-    for (int i = 0; i < hist_lhs.size(); i++) {
-        result = std::sqrt(hist_lhs[i] * hist_rhs[i]);
+    for (int i = 0; i < hist_temp_.size(); i++) {
+        result += std::sqrt(hist_temp_[i] * hist_candidate_[i]);
     }
-
     return result;
+}
+
+void TrackerDataBase::iteration_call_back() {
+    cv::Mat weight = get_gaussian_kernel(this->temp_64f_.cols, this->temp_64f_.rows, sigma);
+    hist_temp_ = compute_histogram(num_bin, this->temp_64f_, weight);
+    cv::Mat candidate =
+        get_sub_image_from_ul(this->img_64f_, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
+    hist_candidate_ = compute_histogram(num_bin, candidate, weight);
+    double energy_curr = compute_energy();
+    if (energy_curr > energy_) {
+        // bbox_ = BoundingBox(bbox_.top_left().x + last_bbox_.top_left().y)
+    }
 }
 
 cv::Mat TrackerDataBase::compute_back_projection_weight(int num_bin, double sigma) {
     cv::Mat weight = get_gaussian_kernel(this->temp_64f_.cols, this->temp_64f_.rows, sigma);
-    std::vector<double> hist_temp = compute_histogram(num_bin, this->temp_64f_, weight);
+    hist_temp_ = compute_histogram(num_bin, this->temp_64f_, weight);
     cv::Mat candidate =
         get_sub_image_from_ul(this->img_64f_, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
-    std::vector<double> hist_candidate = compute_histogram(num_bin, candidate, weight);
-    cv::Mat back_proj_weight = compute_back_projection(candidate, hist_temp, hist_candidate);
+    hist_candidate_ = compute_histogram(num_bin, candidate, weight);
+    cv::Mat back_proj_weight = compute_back_projection(candidate, hist_temp_, hist_candidate_);
     // double energy = compute_energy(hist_temp, hist_candidate);
     // std::cout << "@@@@@@@@@@@ Energy is " << energy << '\n';
     return back_proj_weight;

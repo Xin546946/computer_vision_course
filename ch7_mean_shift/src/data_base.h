@@ -13,10 +13,13 @@ class DataBase {
     virtual void update_mass_center() = 0;
     virtual bool is_convergent() = 0;
     virtual void back_up_mass_center() = 0;
-    virtual void compute_energy(){};
+    virtual double compute_energy() {
+        return 0.0;
+    };
     virtual void iteration_call_back(){};
 
     virtual void visualize() = 0;
+    double energy_ = 0.0;
 
    private:
 };
