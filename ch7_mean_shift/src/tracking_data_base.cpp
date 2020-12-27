@@ -90,7 +90,6 @@ std::vector<double> compute_histogram(int num_bin, cv::Mat img, cv::Mat weight) 
     assert(img.rows == weight.rows && img.cols == weight.cols);
     std::vector<double> result(num_bin, 0.0);
     int width_bin = std::ceil(255 / num_bin);
-
     for (int r = 0; r < img.rows; r++) {
         for (int c = 0; c < img.cols; c++) {
             int gray_value = static_cast<int>(img.at<double>(r, c));
@@ -148,7 +147,9 @@ cv::Point2f compute_weighted_average(const std::vector<cv::Point>& data, cv::Mat
         sum_y += data[i].y * w;
     }
 
-    return cv::Point2f(sum_x / data.size(), sum_y / data.size());
+    double sum_w = cv::sum(weight)[0];
+
+    return cv::Point2f(sum_x / sum_w, sum_y / sum_w);
 }
 
 cv::Mat TrackerDataBase::compute_back_projection_weight(int num_bin, double sigma) {
@@ -164,6 +165,7 @@ cv::Mat TrackerDataBase::compute_back_projection_weight(int num_bin, double sigm
 cv::Point2f TrackerDataBase::compute_mean_shift(cv::Mat back_projection_weight, double sigma) {
     cv::Mat gaussian_weight = get_gaussian_kernel(temp_64f_.cols, temp_64f_.rows, sigma);
     cv::Mat weight = gaussian_weight.mul(back_projection_weight);
+
     std::vector<cv::Point> positions = get_positions();
     return compute_weighted_average(positions, weight.reshape(0, positions.size()));
 }
