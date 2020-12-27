@@ -29,7 +29,7 @@ void MeanShiftTracker::process(const std::vector<cv::Mat>& video, const cv::Mat 
 
         ms_.run(100);
 
-        cv::Point2f new_pos = db_ptr_->get_tracking_result();
+        cv::Point2f new_pos = db_ptr_->get_bbox_center();
 
         motion_predictor.set_tracking_result(new_pos);
         /* code */

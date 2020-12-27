@@ -21,7 +21,7 @@ TrackerDataBase::TrackerDataBase(cv::Mat img, cv::Mat temp, cv::Point2f initial_
     temp.convertTo(temp_64f_, CV_64F);
 }
 
-cv::Point2f TrackerDataBase::get_tracking_result() const {
+cv::Point2f TrackerDataBase::get_bbox_center() const {
     return bbox_.center();
 }
 
