@@ -106,7 +106,7 @@ std::vector<double> compute_histogram(int num_bin, cv::Mat img, cv::Mat weight) 
     return result;
 }
 
-cv::Mat compute_back_projection(cv::Mat img, std::vector<int> hist_temp, std::vector<int> hist_candidate) {
+cv::Mat compute_back_projection(cv::Mat img, std::vector<double> hist_temp, std::vector<double> hist_candidate) {
     assert(hist_candidate.size() == hist_temp.size());
     cv::Mat result = cv::Mat::zeros(img.size(), CV_64F);
     for (int r = 0; r < img.rows; r++) {
@@ -151,10 +151,10 @@ cv::Point2f compute_weighted_average(const std::vector<cv::Point>& data, cv::Mat
 
 cv::Mat TrackerDataBase::compute_back_projection_weight(int num_bin, double sigma) {
     cv::Mat weight = get_gaussian_kernel(this->temp_64f_.cols, this->temp_64f_.rows, sigma);
-    std::vector<int> hist_temp = compute_histogram(num_bin, this->temp_64f_, weight);
+    std::vector<double> hist_temp = compute_histogram(num_bin, this->temp_64f_, weight);
     cv::Mat candidate =
         get_sub_image_from_ul(this->img_64f_, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
-    std::vector<int> hist_candidate = compute_histogram(num_bin, candidate, weight);
+    std::vector<double> hist_candidate = compute_histogram(num_bin, candidate, weight);
     cv::Mat back_proj_weight = compute_back_projection(this->temp_64f_, hist_temp, hist_candidate);
     return back_proj_weight;
 }

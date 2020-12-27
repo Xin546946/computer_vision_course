@@ -65,11 +65,6 @@ int main(int argc, char** argv) {
     img.convertTo(img, CV_64F);
     cv::Mat gaussian = get_gaussian_kernel(img.cols, img.rows, 100);
     std::vector<double> hist = compute_histogram(10, img, gaussian);
-    for (double val : hist) {
-        std::cout << val << " ";
-    }
-    double sum = std::accumulate(hist.begin(), hist.end(), 0.0);
-    std::cout << "Sum of hist " << sum << " should equal to " << 1 << '\n';
-    std::cout << '\n';
+
     return 0;
 }
