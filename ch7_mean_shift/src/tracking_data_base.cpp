@@ -95,7 +95,7 @@ std::vector<double> compute_histogram(int num_bin, cv::Mat img, cv::Mat weight) 
         for (int c = 0; c < img.cols; c++) {
             int gray_value = static_cast<int>(img.at<double>(r, c));
             int bin = get_bin(gray_value, width_bin);
-            std::cout << "Gray value is: " << gray_value << ", at Bin " << bin << '\n';
+            // std::cout << "Gray value is: " << gray_value << ", at Bin " << bin << '\n';
             result[bin] += weight.at<double>(r, c);
         }
     }
@@ -153,6 +153,16 @@ cv::Point2f compute_weighted_average(const std::vector<cv::Point>& data, cv::Mat
     return cv::Point2f(sum_x / sum_w, sum_y / sum_w);
 }
 
+double compute_energy(std::vector<double> hist_lhs, std::vector<double> hist_rhs) {
+    assert(hist_lhs.size() == hist_rhs.size());
+    double result = 0.0;
+    for (int i = 0; i < hist_lhs.size(); i++) {
+        result = std::sqrt(hist_lhs[i] * hist_rhs[i]);
+    }
+
+    return result;
+}
+
 cv::Mat TrackerDataBase::compute_back_projection_weight(int num_bin, double sigma) {
     cv::Mat weight = get_gaussian_kernel(this->temp_64f_.cols, this->temp_64f_.rows, sigma);
     std::vector<double> hist_temp = compute_histogram(num_bin, this->temp_64f_, weight);
@@ -160,6 +170,8 @@ cv::Mat TrackerDataBase::compute_back_projection_weight(int num_bin, double sigm
         get_sub_image_from_ul(this->img_64f_, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
     std::vector<double> hist_candidate = compute_histogram(num_bin, candidate, weight);
     cv::Mat back_proj_weight = compute_back_projection(candidate, hist_temp, hist_candidate);
+    // double energy = compute_energy(hist_temp, hist_candidate);
+    // std::cout << "@@@@@@@@@@@ Energy is " << energy << '\n';
     return back_proj_weight;
 }
 
@@ -177,5 +189,5 @@ void TrackerDataBase::visualize() {
     draw_bounding_box_vis_image(vis, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
 
     cv::imshow("tracking result", vis);
-    cv::waitKey(1);
+    cv::waitKey(100);
 }
