@@ -21,7 +21,7 @@ TrackerDataBase::TrackerDataBase(cv::Mat img, cv::Mat temp, cv::Point2f initial_
     temp.convertTo(temp_64f_, CV_64F);
 }
 
-cv::Point2f TrackerDataBase::get_tracking_result() const {
+cv::Point2f TrackerDataBase::get_bbox_center() const {
     return bbox_.center();
 }
 
@@ -89,7 +89,6 @@ void TrackerDataBase::set_img(cv::Mat img) {
 }
 
 std::vector<double> compute_histogram(int num_bin, cv::Mat img, cv::Mat weight) {
-    std::cout << img << '\n';
     assert(img.rows == weight.rows && img.cols == weight.cols);
     std::vector<double> result(num_bin, 0.0);
     int width_bin = std::ceil(255 / num_bin);
@@ -191,5 +190,5 @@ void TrackerDataBase::visualize() {
     draw_bounding_box_vis_image(vis, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
 
     cv::imshow("tracking result", vis);
-    cv::waitKey(0);
+    cv::waitKey(1);
 }

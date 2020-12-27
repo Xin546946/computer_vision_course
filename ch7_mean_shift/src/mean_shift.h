@@ -10,5 +10,6 @@ class MeanShift {
     void run(int max_iteration);
 
    private:
+    bool compute_energy_ = false;
     std::shared_ptr<DataBase> db_ptr_;
 };
