@@ -25,7 +25,7 @@ class TrackerDataBase : public DataBase {
 
     cv::Point2f compute_mean_shift(cv::Mat back_projection_weight, double sigma);
     cv::Mat get_candidate();
-    std::vector<cv::Point> get_positions();
+    std::vector<cv::Point2f> get_positions();
 
    private:
     cv::Mat img_;

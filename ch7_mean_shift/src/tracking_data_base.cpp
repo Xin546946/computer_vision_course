@@ -46,17 +46,13 @@ void TrackerDataBase::set_obj_predicted_initial_center(cv::Point2f pos) {
         std::cout << " The bbox is outside of the image, tracking terminantes" << '\n';
         std::exit(0);
     }
-    bbox_.move_top_left_to(pos.x, pos.y);
+    bbox_.move_center_to(pos.x, pos.y);
 }
 
 void TrackerDataBase::set_template(cv::Mat temp) {
     //! set template
     temp.convertTo(temp_64f_, CV_64F);
     bbox_ = BoundingBox(0, 0, temp.cols, temp.rows);
-}
-
-cv::Point2f TrackerDataBase::get_pos() {
-    return this->bbox_.center();
 }
 
 cv::Mat get_gaussian_kernel(int width, int height, double sigma) {
@@ -113,15 +109,15 @@ cv::Mat compute_back_projection(cv::Mat img, std::vector<double> hist_temp, std:
     return result;
 }
 
-std::vector<cv::Point> TrackerDataBase::get_positions() {
-    std::vector<cv::Point> result;
-    result.reserve(bbox_.area());
+std::vector<cv::Point2f> TrackerDataBase::get_positions() {
+    std::vector<cv::Point2f> result;
+    result.reserve(temp_64f_.rows * temp_64f_.cols);
 
-    cv::Point tl = static_cast<cv::Point>(bbox_.top_left());
-    cv::Point br = static_cast<cv::Point>(bbox_.bottom_right());
+    cv::Point2f tl = bbox_.top_left();
+    cv::Point2f br = bbox_.bottom_right();
 
-    for (int y = tl.y; y < br.y; y++) {
-        for (int x = tl.x; x < br.x; x++) {
+    for (float y = tl.y; y < br.y; y++) {
+        for (float x = tl.x; x < br.x; x++) {
             result.emplace_back(x, y);
         }
     }
@@ -129,17 +125,19 @@ std::vector<cv::Point> TrackerDataBase::get_positions() {
     return result;
 }
 
-cv::Point2f compute_weighted_average(const std::vector<cv::Point>& data, cv::Mat weight) {
-    assert(data.size() == weight.rows);
-
+cv::Point2f compute_weighted_average(const std::vector<cv::Point2f>& data, cv::Mat weight) {
+    assert(data.size() == weight.rows * weight.cols);
     double sum_x = 0.0, sum_y = 0.0;
-    for (int i = 0; i < data.size(); i++) {
-        double w = weight.at<double>(i);
 
-        sum_x += data[i].x * w;
-        sum_y += data[i].y * w;
+    for (int r = 0; r < weight.rows; r++) {
+        for (int c = 0; c < weight.cols; c++) {
+            int id = pos_to_id(r, c, weight.cols);
+            double w = weight.at<double>(r, c);
+
+            sum_x += data[id].x * w;
+            sum_y += data[id].y * w;
+        }
     }
-
     double sum_w = cv::sum(weight)[0];
 
     return cv::Point2f(sum_x / sum_w, sum_y / sum_w);
@@ -192,8 +190,9 @@ cv::Point2f TrackerDataBase::compute_mean_shift(cv::Mat back_projection_weight, 
     cv::Mat gaussian_weight = get_gaussian_kernel(temp_64f_.cols, temp_64f_.rows, sigma);
     cv::Mat weight = gaussian_weight.mul(back_projection_weight);
 
-    std::vector<cv::Point> positions = get_positions();
-    return compute_weighted_average(positions, weight.reshape(0, positions.size()));
+    std::vector<cv::Point2f> positions = get_positions();
+    std::cout << "rows: " << positions.size() << "weight size :" << weight.rows * weight.cols << '\n';
+    return compute_weighted_average(positions, weight);
 }
 
 void TrackerDataBase::visualize() {
