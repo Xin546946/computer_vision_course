@@ -14,6 +14,8 @@ void MeanShift::run(int max_iteration) {
         std::cout << "current iteration :" << it << '\n';
         db_ptr_->back_up_mass_center();
         db_ptr_->update_mass_center();
-        db_ptr_->iteration_call_back();
+        if (db_ptr_->iteration_call_back()) {
+            break;
+        }
     }
 }

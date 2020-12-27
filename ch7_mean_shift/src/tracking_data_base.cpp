@@ -152,7 +152,7 @@ double TrackerDataBase::compute_energy() {
     return result;
 }
 
-void TrackerDataBase::iteration_call_back() {
+bool TrackerDataBase::iteration_call_back() {
     cv::Mat weight = get_gaussian_kernel(this->temp_64f_.cols, this->temp_64f_.rows, sigma);
     hist_temp_ = compute_histogram(num_bin, this->temp_64f_, weight);
     cv::Mat candidate =
@@ -172,6 +172,8 @@ void TrackerDataBase::iteration_call_back() {
 
         energy_curr = compute_energy();
     }
+
+    return false;
 }
 
 cv::Mat TrackerDataBase::compute_back_projection_weight(int num_bin, double sigma) {

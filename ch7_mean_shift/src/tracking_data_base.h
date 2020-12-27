@@ -17,7 +17,7 @@ class TrackerDataBase : public DataBase {
     double compute_energy() override;
     void visualize() override;
     void set_obj_predicted_initial_center(cv::Point2f pos);
-    void iteration_call_back() override;
+    bool iteration_call_back() override;
     void set_img(cv::Mat img);
     cv::Point2f get_pos();
     void set_template(cv::Mat temp);
