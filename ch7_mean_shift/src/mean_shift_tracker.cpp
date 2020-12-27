@@ -24,7 +24,7 @@ void MeanShiftTracker::process(const std::vector<cv::Mat>& video, const cv::Mat 
         std::cout << "Set the " << i << "-th img" << '\n';
         db_ptr_->set_img(video[i]);
         cv::Point2f next_pos = motion_predictor.next_pos();
-        db_ptr_->set_pos(next_pos);
+        db_ptr_->set_obj_predicted_initial_center(next_pos);
         std::cout << "|| The predicted motion is: " << next_pos.x << " " << next_pos.y << '\n';
 
         ms_.run(100);

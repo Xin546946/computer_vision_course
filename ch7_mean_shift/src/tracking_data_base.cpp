@@ -12,6 +12,7 @@
 #include <thread>
 
 cv::Mat compute_back_projection(cv::Mat img, cv::Mat hist_temp, cv::Mat hist_candidate);
+
 TrackerDataBase::TrackerDataBase(cv::Mat img, cv::Mat temp, cv::Point2f initial_pos)
     : img_(img),
       bbox_(initial_pos.x - temp_64f_.cols / 2.0f, initial_pos.y - temp_64f_.rows / 2.0f,
@@ -43,7 +44,7 @@ bool TrackerDataBase::is_convergent() {
     return cv::norm(bbox_.center() - last_bbox_.center()) < 1e-4;
 }
 
-void TrackerDataBase::set_pos(cv::Point2f pos) {
+void TrackerDataBase::set_obj_predicted_initial_center(cv::Point2f pos) {
     //! update bounding box using this pose
     //! todo make sure the bbox is inside the image
     if (pos.x + temp_64f_.cols > img_.cols || pos.y + temp_64f_.rows > img_.rows) {
