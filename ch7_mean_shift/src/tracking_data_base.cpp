@@ -3,6 +3,7 @@
 #include "memory"
 #include "opencv_utils.h"
 #include "visualizer.h"
+
 #include <algorithm>
 #include <chrono>
 #include <numeric>
@@ -15,6 +16,7 @@ TrackerDataBase::TrackerDataBase(cv::Mat img, cv::Mat temp, cv::Point2f initial_
     : img_(img),
       bbox_(initial_pos.x - temp_64f_.cols / 2.0f, initial_pos.y - temp_64f_.rows / 2.0f,
             static_cast<float>(temp_64f_.cols), static_cast<float>(temp_64f_.rows)) {
+    std::cout << "Bounding Box center is at: " << bbox_.center().x << " " << bbox_.center().y << '\n';
     img.convertTo(img_64f_, CV_64F);
     temp.convertTo(temp_64f_, CV_64F);
 }
@@ -41,6 +43,10 @@ bool TrackerDataBase::is_convergent() {
 void TrackerDataBase::set_pos(cv::Point2f pos) {
     //! update bounding box using this pose
     //! todo make sure the bbox is inside the image
+    if (pos.x + temp_64f_.cols > img_.cols || pos.y + temp_64f_.rows > img_.rows) {
+        std::cout << " The bbox is outside of the image, tracking terminantes" << '\n';
+        std::exit(0);
+    }
     bbox_ = BoundingBox(pos.x, pos.y, temp_64f_.cols, temp_64f_.rows);
 }
 
@@ -53,12 +59,13 @@ cv::Point2f TrackerDataBase::get_pos() {
     return this->bbox_.center();
 }
 
-cv::Mat compute_gaussian_kernel(int width, int height, double sigma) {
+cv::Mat get_gaussian_kernel(int width, int height, double sigma) {
+    cv::Point center((width - 1) / 2, (height - 1) / 2);
     cv::Mat result = cv::Mat::zeros(cv::Size(width, height), CV_64F);
     for (int r = 0; r < height; r++) {
         for (int c = 0; c < width; c++) {
-            result.at<double>(r, c) =
-                (M_1_PI * 0.5 / (sigma * sigma)) * exp(-(pow(r, 2) + pow(c, 2)) / (2 * sigma * sigma));
+            result.at<double>(r, c) = (M_1_PI * 0.5 / (sigma * sigma)) *
+                                      exp(-(pow(r - center.y, 2) + pow(c - center.x, 2)) / (2 * sigma * sigma));
         }
     }
     return result / cv::sum(result)[0];
@@ -68,7 +75,7 @@ void TrackerDataBase::back_up_mass_center() {
     last_bbox_ = bbox_;
 }
 
-int get_bin(int gray_value, int width_bin) {
+float get_bin(float gray_value, int width_bin) {
     return gray_value / width_bin;
 }
 
@@ -85,7 +92,8 @@ std::vector<int> compute_histogram(int num_bin, cv::Mat img, cv::Mat weight) {
     int width_bin = std::ceil(255 / num_bin);
     for (int r = 0; r < smooth_img.rows; r++) {
         for (int c = 0; c < smooth_img.cols; c++) {
-            int bin = get_bin(static_cast<float>(smooth_img.at<double>(r, c)), width_bin);
+            float gray_value = smooth_img.at<float>(r, c);
+            int bin = get_bin(gray_value, width_bin);
             result[bin]++;
         }
     }

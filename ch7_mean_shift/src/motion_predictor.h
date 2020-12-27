@@ -11,6 +11,10 @@ class MotionPredictor {
         last_pos_ = curr_pos_;
     }
 
+    cv::Point2f get_curr_pos() const {
+        return curr_pos_;
+    }
+
     cv::Point2f next_pos() {
         curr_pos_.x = 2 * curr_pos_.x - last_pos_.x;
         curr_pos_.y = 2 * curr_pos_.y - last_pos_.y;
