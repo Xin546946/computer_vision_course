@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/test/test_single_func",
+            "program": "${workspaceFolder}/build/test/test_mean_shift_tracker",
             "args": ["${workspaceFolder}/img/data25/","${workspaceFolder}/img/data25/template/template_small.png"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
