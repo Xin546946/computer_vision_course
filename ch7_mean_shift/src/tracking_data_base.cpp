@@ -35,6 +35,9 @@ void TrackerDataBase::update_mass_center() {
     cv::Mat back_proj_weight = compute_back_projection_weight(num_bin, sigma);
 
     cv::Point2f mean_shift = compute_mean_shift(back_proj_weight, sigma);
+
+    bbox_ = BoundingBox(mean_shift.x - temp_64f_.cols / 2, mean_shift.y - temp_64f_.rows / 2, temp_64f_.cols,
+                        temp_64f_.rows);
 }
 
 bool TrackerDataBase::is_convergent() {
@@ -86,7 +89,6 @@ void TrackerDataBase::set_img(cv::Mat img) {
 }
 
 std::vector<double> compute_histogram(int num_bin, cv::Mat img, cv::Mat weight) {
-    std::cout << img << '\n';
     assert(img.rows == weight.rows && img.cols == weight.cols);
     std::vector<double> result(num_bin, 0.0);
     int width_bin = std::ceil(255 / num_bin);
@@ -176,5 +178,5 @@ void TrackerDataBase::visualize() {
     draw_bounding_box_vis_image(vis, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
 
     cv::imshow("tracking result", vis);
-    cv::waitKey(0);
+    cv::waitKey(1);
 }
