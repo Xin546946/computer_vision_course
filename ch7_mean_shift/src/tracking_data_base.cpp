@@ -21,7 +21,7 @@ TrackerDataBase::TrackerDataBase(cv::Mat img, cv::Mat temp, cv::Point2f initial_
     temp.convertTo(temp_64f_, CV_64F);
 }
 
-cv::Point2f TrackerDataBase::get_bbox_center() const {
+cv::Point2f TrackerDataBase::get_object_center() const {
     return bbox_.center();
 }
 
@@ -36,8 +36,7 @@ void TrackerDataBase::update_mass_center() {
 
     cv::Point2f mean_shift = compute_mean_shift(back_proj_weight, sigma);
 
-    bbox_ = BoundingBox(mean_shift.x - temp_64f_.cols / 2, mean_shift.y - temp_64f_.rows / 2, temp_64f_.cols,
-                        temp_64f_.rows);
+    bbox_.move_center_to(mean_shift.x, mean_shift.y);
 }
 
 bool TrackerDataBase::is_convergent() {

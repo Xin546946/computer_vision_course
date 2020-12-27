@@ -5,9 +5,24 @@ class BoundingBox {
    public:
     BoundingBox(float x, float y, float width, float height) : window_(x, y, width, height){};
     BoundingBox() = default;
+    /**
+     * @brief move a bounding box with a given delta motion
+     *
+     * @param [in] delta_x
+     * @param [in] delta_y
+     */
     void move(float delta_x, float delta_y) {
         window_.x += delta_x;
         window_.y += delta_y;
+    }
+
+    void move_top_left_to(float x, float y) {
+        window_.x = x;
+        window_.y = y;
+    }
+
+    void move_center_to(float x, float y) {
+        return move_top_left_to(x - window_.width / 2.f, y - window_.height / 2.f);
     }
 
     const cv::Point2f top_left() const {
