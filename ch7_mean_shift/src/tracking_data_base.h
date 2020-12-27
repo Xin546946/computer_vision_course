@@ -6,7 +6,7 @@
 class TrackerDataBase : public DataBase {
    public:
     ~TrackerDataBase() = default;
-    TrackerDataBase(cv::Mat img, cv::Mat temp, cv::Point2f pos);
+    TrackerDataBase() = default;
 
     cv::Point2f get_object_center() const;
 
@@ -16,8 +16,8 @@ class TrackerDataBase : public DataBase {
     void back_up_mass_center() override;
     double compute_energy() override;
     void visualize() override;
+    void set_obj_predicted_initial_center(cv::Point2f pos);
     void iteration_call_back() override;
-    void set_pos(cv::Point2f pos);
     void set_img(cv::Mat img);
     cv::Point2f get_pos();
     void set_template(cv::Mat temp);

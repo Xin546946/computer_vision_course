@@ -15,15 +15,6 @@ const int sigma = 10;
 const int num_bin = 10;
 
 cv::Mat compute_back_projection(cv::Mat img, cv::Mat hist_temp, cv::Mat hist_candidate);
-TrackerDataBase::TrackerDataBase(cv::Mat img, cv::Mat temp, cv::Point2f initial_pos)
-    : img_(img),
-      bbox_(initial_pos.x - temp_64f_.cols / 2.0f, initial_pos.y - temp_64f_.rows / 2.0f,
-            static_cast<float>(temp_64f_.cols), static_cast<float>(temp_64f_.rows)),
-      energy_(0.0) {
-    std::cout << "Bounding Box center is at: " << bbox_.center().x << " " << bbox_.center().y << '\n';
-    img.convertTo(img_64f_, CV_64F);
-    temp.convertTo(temp_64f_, CV_64F);
-}
 
 cv::Point2f TrackerDataBase::get_object_center() const {
     return bbox_.center();
@@ -48,7 +39,7 @@ bool TrackerDataBase::is_convergent() {
     return cv::norm(bbox_.center() - last_bbox_.center()) < 1e-4;
 }
 
-void TrackerDataBase::set_pos(cv::Point2f pos) {
+void TrackerDataBase::set_obj_predicted_initial_center(cv::Point2f pos) {
     //! update bounding box using this pose
     //! todo make sure the bbox is inside the image
     if (pos.x + temp_64f_.cols > img_.cols || pos.y + temp_64f_.rows > img_.rows) {
@@ -61,6 +52,7 @@ void TrackerDataBase::set_pos(cv::Point2f pos) {
 void TrackerDataBase::set_template(cv::Mat temp) {
     //! set template
     temp.convertTo(temp_64f_, CV_64F);
+    bbox_ = BoundingBox(0, 0, temp.rows, temp.cols);
 }
 
 cv::Point2f TrackerDataBase::get_pos() {
