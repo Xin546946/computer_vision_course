@@ -9,7 +9,7 @@ void MeanShift::run(int max_iteration) {
     int it = 0;
     db_ptr_->init_mass_center();
     while (it++ < max_iteration && !db_ptr_->is_convergent()) {
-        db_ptr_->compute_energy();
+        db_ptr_->energy_ = db_ptr_->compute_energy();
         db_ptr_->visualize();
         std::cout << "current iteration :" << it << '\n';
         db_ptr_->back_up_mass_center();

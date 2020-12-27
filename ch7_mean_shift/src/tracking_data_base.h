@@ -2,6 +2,7 @@
 #include "bounding_box.h"
 #include "data_base.h"
 #include <opencv2/core/core.hpp>
+#include <vector>
 class TrackerDataBase : public DataBase {
    public:
     ~TrackerDataBase() = default;
@@ -13,13 +14,15 @@ class TrackerDataBase : public DataBase {
     void update_mass_center() override;
     bool is_convergent() override;
     void back_up_mass_center() override;
-
+    double compute_energy() override;
     void visualize() override;
     void set_obj_predicted_initial_center(cv::Point2f pos);
+    void iteration_call_back() override;
     void set_img(cv::Mat img);
     cv::Point2f get_pos();
     void set_template(cv::Mat temp);
     cv::Mat compute_back_projection_weight(int num_bin, double sigma);
+
     cv::Point2f compute_mean_shift(cv::Mat back_projection_weight, double sigma);
     cv::Mat get_candidate();
     std::vector<cv::Point> get_positions();
@@ -32,4 +35,9 @@ class TrackerDataBase : public DataBase {
     BoundingBox bbox_;
     BoundingBox last_bbox_;
     bool initialized_ = false;
+    std::vector<double> hist_temp_;
+    std::vector<double> hist_candidate_;
+    double energy_;
+    // int num_bin_;
+    // double sigma_;
 };
