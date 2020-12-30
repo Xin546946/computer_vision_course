@@ -7,7 +7,7 @@ class Histogram {
     Histogram(int num_bin, double min_value, double max_value)
         : num_bin_(num_bin),
           min_value_(min_value),
-          max_value_(max_value + 1),  //! fix the upper boundary problem
+          max_value_(max_value + 1),  //! fix the upper boundary problem.
           width_bin_((max_value_ - min_value_) / num_bin_),
           hist_(num_bin) {
         // get_width_bin();
