@@ -40,7 +40,7 @@ void MeanShiftSeg::process(cv::Mat img) {
         update_mass_center();
     }
 
-    if (it == max_iteration) {
+    if (it == max_iteration + 1) {
         std::cout << "reach max iteration, segementation is stopped \n";
     } else {
         std::cout << "segementation is convergent \n";
