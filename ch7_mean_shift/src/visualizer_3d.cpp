@@ -1,5 +1,6 @@
 
 #include "visualizer_3d.h"
+#include <opencv2/highgui.hpp>
 
 Vis3D::Vis3D()
     : window_("features in bgr space"),
@@ -14,6 +15,7 @@ void Vis3D::visualize() {
     window_.showWidget("y_axis", y_axis_);
     window_.showWidget("z_axis", z_axis_);
     window_.showWidget("cube", cube_);
+
     while (!window_.wasStopped()) {
         if (ptr_features_) {
             std::lock_guard<std::mutex> lg_features(mutex_features_);
@@ -21,6 +23,16 @@ void Vis3D::visualize() {
                 window_.showWidget("features", *ptr_features_);
             }
         }
+        cv::Mat vis;
+
+        {
+            std::lock_guard<std::mutex> lg_origin_img(mutex_img_);
+            cv::hconcat(origin_img_, curr_img_, vis);
+        }
+
+        cv::imshow("right: original img, left: segmentation live result", vis);
+        cv::waitKey(1);
+
         window_.spinOnce(1, true);
     }
 }
@@ -33,4 +45,13 @@ void Vis3D::set_features(cv::Mat points_mat) {
         std::lock_guard<std::mutex> lg_features(mutex_features_);
         ptr_features_ = std::make_shared<cv::viz::WCloud>(points_mat, color_mat);
     }
+
+    // make segmentation img
+    std::lock_guard<std::mutex> lg_origin_img(mutex_img_);
+    curr_img_ = color_mat;
+}
+
+void Vis3D::set_origin_img(cv::Mat origin_img) {
+    std::lock_guard<std::mutex> lg_origin_img(mutex_img_);
+    curr_img_ = origin_img_ = origin_img;
 }

@@ -16,8 +16,5 @@ class MeanShiftSeg {
     cv::Mat features_origin_;
     cv::Mat features_curr_;
 
-    // for visualization
-    cv::Mat vis_origin_;
-    cv::Mat vis_curr_;
     std::unique_ptr<Vis3D> visualizer;
 };

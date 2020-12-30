@@ -10,8 +10,6 @@
 int main(int argc, char** argv) {
     cv::Mat img = read_img(argv[1], cv::IMREAD_COLOR);
 
-    cv::resize(img, img, cv::Size(100, 100));
-
     Vis3D* visualizer_ptr = new Vis3D();
     MeanShiftSeg mss(50, visualizer_ptr);  // mss take the ownership of visualizer_ptr;
 

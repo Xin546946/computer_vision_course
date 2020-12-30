@@ -8,6 +8,7 @@ class Vis3D {
    public:
     Vis3D();
     void set_features(cv::Mat points_mat);
+    void set_origin_img(cv::Mat origin_img);
     void visualize();
 
    private:
@@ -21,4 +22,8 @@ class Vis3D {
 
     std::mutex mutex_features_;
     std::shared_ptr<cv::viz::WCloud> ptr_features_ = nullptr;
+
+    std::mutex mutex_img_;
+    cv::Mat origin_img_;
+    cv::Mat curr_img_;
 };

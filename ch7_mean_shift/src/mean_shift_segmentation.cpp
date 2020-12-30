@@ -26,17 +26,24 @@ bool is_convergent(cv::Mat curr, cv::Mat last) {
 void MeanShiftSeg::process(cv::Mat img) {
     assert(img.type() == CV_8UC3);
 
-    vis_origin_ = img.clone();
+    visualizer->set_origin_img(img);
 
     img.convertTo(features_curr_, CV_32FC3);
     features_origin_ = features_curr_.clone();
 
     int it = 0;
+    int max_iteration = 50;
     cv::Mat features_last;
-    while (it++ < 50 && !is_convergent(features_curr_, features_last)) {
+    while (it++ < max_iteration && !is_convergent(features_curr_, features_last)) {
         std::cout << "curr iteration : " << it << '\n';
         features_last = features_curr_.clone();
         update_mass_center();
+    }
+
+    if (it == max_iteration) {
+        std::cout << "reach max iteration, segementation is stopped \n";
+    } else {
+        std::cout << "segementation is convergent \n";
     }
 }
 
