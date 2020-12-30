@@ -18,5 +18,5 @@ target_link_libraries(tracking_data_base utils data_base ${Pangolin_LIBRARIES})
 add_library(mean_shift_tracker mean_shift_tracker.cpp)
 target_link_libraries(mean_shift_tracker tracking_data_base)
 
-
-
+add_library(ms_segmentation mean_shift_segmentation.cpp)
+target_link_libraries(ms_segmentation ${OpenCV_LIBS} utils)
