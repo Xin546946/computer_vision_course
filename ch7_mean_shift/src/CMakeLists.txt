@@ -18,3 +18,5 @@ target_link_libraries(tracking_data_base utils data_base ${Pangolin_LIBRARIES})
 add_library(mean_shift_tracker mean_shift_tracker.cpp)
 target_link_libraries(mean_shift_tracker tracking_data_base)
 
+
+

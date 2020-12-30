@@ -23,3 +23,9 @@ target_link_libraries(test_mean_shift_tracker ${OpenCV_LIBS}  utils mean_shift_t
 
 add_executable(test_single_func test_single_func.cpp)
 target_link_libraries(test_single_func ${OpenCV_LIBS}  utils mean_shift_tracker  mean_shift data_base)
+
+# add_executable(test_ms_tracking test_ms_tracking.cpp)
+# target_link_libraries(test_ms_tracking  ${OpenCV_LIBS}  utils mean_shift_tracking)
+
+add_executable(test_class_histogram test_class_histogram.cpp)
+target_link_libraries(test_class_histogram ${OpenCV_LIBS} utils)
