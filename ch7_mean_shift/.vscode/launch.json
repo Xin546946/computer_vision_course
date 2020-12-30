@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/test/test_mean_shift_tracker",
-            "args": ["${workspaceFolder}/img/data25/","${workspaceFolder}/img/data25/template/template_small.png"],
+            "args": ["${workspaceFolder}/img/data25/","${workspaceFolder}/img/data25/template/4.png"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

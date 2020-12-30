@@ -1,5 +1,5 @@
 #define show_str(str) std::cerr << '\n' << #str << " : " << str << '\n';
-#define show(var) std::cerr << '\n' << #var << " : " << var << '\n';
+#define show_(var) std::cerr << '\n' << #var << " : " << var << '\n';
 #define show_vec(vec)                                                  \
     do {                                                               \
         std::cerr << '\n';                                             \
@@ -9,3 +9,5 @@
         }                                                              \
         std::cerr << '\n';                                             \
     } while (0)
+
+#define get_name(var) #var

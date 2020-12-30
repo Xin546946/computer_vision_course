@@ -71,3 +71,18 @@ cv::Mat draw_bounding_box_vis_image(cv::Mat image, float x_ul, float y_ul, float
     cv::rectangle(image, cv::Rect2i(x_ul, y_ul, width, height), cv::Scalar(0, 255, 0), 2);
     return image;
 }
+
+bool is_good_mat(cv::Mat mat, std::string mat_name) {
+    if (mat.empty()) {
+        std::cerr << "mat " << mat_name << " is empty!\n";
+        return false;
+    }
+
+    cv::Mat mask = cv::Mat(mat != mat);
+    if (cv::sum(mask)[0]) {
+        std::cerr << "mat " << mat_name << " has inf or nan\n";
+        return false;
+    }
+
+    return true;
+}

@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -137,3 +138,5 @@ template <typename T>
 cv::Point_<T> calc_mid_point(cv::Point_<T> p1, cv::Point_<T> p2) {
     return cv::Point_<T>(0.5 * (p1.x + p2.x), 0.5 * (p1.y + p2.y));
 }
+
+bool is_good_mat(cv::Mat mat, std::string mat_name);
