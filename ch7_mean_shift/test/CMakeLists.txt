@@ -25,4 +25,4 @@ add_executable(test_single_func test_single_func.cpp)
 target_link_libraries(test_single_func ${OpenCV_LIBS}  utils mean_shift_tracker  mean_shift data_base)
 
 add_executable(test_ms_segmentation test_ms_segmentation.cpp)
-target_link_libraries(test_ms_segmentation ms_segmentation)
+target_link_libraries(test_ms_segmentation ms_segmentation visualizer_3d)

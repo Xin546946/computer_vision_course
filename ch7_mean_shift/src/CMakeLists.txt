@@ -6,6 +6,9 @@ add_library(mean_shift mean_shift.cpp)
 add_library(visualizer visualizer.cpp)
 target_link_libraries(visualizer ${Pangolin_LIBRARIES})
 
+add_library(visualizer_3d visualizer_3d.cpp)
+target_link_libraries(visualizer_3d ${OpenCV_LIBS})
+
 add_library(bst bst.cpp)
 
 add_library(kdtree kdtree.cpp)
@@ -19,4 +22,4 @@ add_library(mean_shift_tracker mean_shift_tracker.cpp)
 target_link_libraries(mean_shift_tracker tracking_data_base)
 
 add_library(ms_segmentation mean_shift_segmentation.cpp)
-target_link_libraries(ms_segmentation ${OpenCV_LIBS} utils)
+target_link_libraries(ms_segmentation ${OpenCV_LIBS} utils visualizer_3d)
