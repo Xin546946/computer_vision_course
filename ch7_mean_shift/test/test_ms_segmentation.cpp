@@ -12,13 +12,13 @@ int main(int argc, char** argv) {
 
     cv::resize(img, img, cv::Size(100, 100));
 
-    Vis3D* vis_ptr = new Vis3D();
-    MeanShiftSeg mss(50, vis_ptr);  // mss take the ownership of vis_ptr;
+    Vis3D* visualizer_ptr = new Vis3D();
+    MeanShiftSeg mss(50, visualizer_ptr);  // mss take the ownership of visualizer_ptr;
 
-    std::thread vis_th(&Vis3D::visualize, std::ref(*vis_ptr));
+    std::thread vis_thread(&Vis3D::visualize, std::ref(*visualizer_ptr));
     mss.process(img);
 
-    vis_th.join();
+    vis_thread.join();
 
     return 0;
 }
