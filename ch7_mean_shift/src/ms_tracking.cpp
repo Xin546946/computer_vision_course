@@ -14,7 +14,7 @@ cv::Mat compute_gauss_kernel(int width, int height, double sigma) {
 }
 
 inline bool is_convergent(cv::Point2f before, cv::Point2f after) {
-    return cv::norm(cv::Mat(before - after), cv::NORM_L2SQR) < 0.1f;
+    return cv::norm(cv::Mat(before - after), cv::NORM_L2SQR) < 0.1;
 }
 
 Histogram make_histogramm(cv::Mat img, int num_bins, cv::Mat weight) {
@@ -101,7 +101,12 @@ bool MeanShiftTracking::make_sure_score_increase(const BoundingBox& bbox_before_
         bbox_.move_center_to(mid_point.x, mid_point.y);
 
         hist_curr = make_histogramm(img, bbox_, hist_temp_.num_bin(), weight_geometirc_);
-        score_after_update = compute_matching_score(hist_curr, hist_temp_);
+        float new_matching_score = compute_matching_score(hist_curr, hist_temp_);
+        if (new_matching_score - score_after_update < 1e-6) {
+            break;
+        } else {
+            score_after_update = new_matching_score;
+        }
     }
 
     if (it == max_iteration + 1) {
@@ -123,9 +128,8 @@ void MeanShiftTracking::run(int max_iteration, cv::Point2f init_object_center, c
 
     double score_last = std::numeric_limits<double>::max();
     int it = 0;
-    while (!it || (it < max_iteration && is_convergent(last_object_center, bbox_.center()))) {
+    while (!it || (it < max_iteration && !is_convergent(last_object_center, bbox_.center()))) {
         it++;
-
         Histogram hist_curr = make_histogramm(img_curr_64f, bbox_, hist_temp_.num_bin(), weight_geometirc_);
         double score_before_update = compute_matching_score(hist_curr, hist_temp_);
 
@@ -143,7 +147,6 @@ void MeanShiftTracking::run(int max_iteration, cv::Point2f init_object_center, c
             break;
         }
     }
-    visualize(img_curr);
 }
 
 void MeanShiftTracking::visualize(cv::Mat curr_img) const {
@@ -152,5 +155,5 @@ void MeanShiftTracking::visualize(cv::Mat curr_img) const {
     cv::Point2f up_left = bbox_.top_left();
     draw_bounding_box_vis_image(vis, up_left.x, up_left.y, bbox_.width(), bbox_.height());
     cv::imshow("Mean shift tracking", vis);
-    cv::waitKey(5);
+    cv::waitKey(10);
 }
