@@ -56,7 +56,7 @@ void TrackerDataBase::set_template(cv::Mat temp) {
     bbox_ = BoundingBox(0, 0, temp.cols, temp.rows);
 }
 
-cv::Mat get_gaussian_kernel(int width, int height, double sigma) {
+cv::Mat compute_gaussian_kernel(int width, int height, double sigma) {
     cv::Point center((width - 1) / 2, (height - 1) / 2);
     cv::Mat result = cv::Mat::zeros(cv::Size(width, height), CV_64F);
     for (int r = 0; r < height; r++) {
@@ -145,7 +145,7 @@ cv::Point2f compute_weighted_average(const std::vector<cv::Point2f>& data, cv::M
 }
 
 double TrackerDataBase::compute_energy() {
-    cv::Mat weight = get_gaussian_kernel(this->temp_64f_.cols, this->temp_64f_.rows, sigma);
+    cv::Mat weight = compute_gaussian_kernel(this->temp_64f_.cols, this->temp_64f_.rows, sigma);
     hist_temp_ = compute_histogram(num_bin, this->temp_64f_, weight);
     cv::Mat candidate =
         get_sub_image_from_ul(this->img_64f_, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
@@ -181,7 +181,7 @@ bool TrackerDataBase::iteration_call_back() {
 }
 
 cv::Mat TrackerDataBase::compute_back_projection_weight(int num_bin, double sigma) {
-    cv::Mat weight = get_gaussian_kernel(this->temp_64f_.cols, this->temp_64f_.rows, sigma);
+    cv::Mat weight = compute_gaussian_kernel(this->temp_64f_.cols, this->temp_64f_.rows, sigma);
     hist_temp_ = compute_histogram(num_bin, this->temp_64f_, weight);
     cv::Mat candidate =
         get_sub_image_from_ul(this->img_64f_, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
@@ -193,7 +193,7 @@ cv::Mat TrackerDataBase::compute_back_projection_weight(int num_bin, double sigm
 }
 
 cv::Point2f TrackerDataBase::compute_mean_shift(cv::Mat back_projection_weight, double sigma) {
-    cv::Mat gaussian_weight = get_gaussian_kernel(temp_64f_.cols, temp_64f_.rows, sigma);
+    cv::Mat gaussian_weight = compute_gaussian_kernel(temp_64f_.cols, temp_64f_.rows, sigma);
     cv::Mat weight = gaussian_weight.mul(back_projection_weight);
 
     std::vector<cv::Point2f> positions = get_positions();

@@ -1,5 +1,5 @@
 #include "bounding_box.h"
-#include "mean_shift_tracking.h"
+#include "ms_tracker.h"
 #include "opencv_utils.h"
 #include <iostream>
 #include <opencv2/core/core.hpp>
@@ -19,8 +19,10 @@ int main(int argc, char** argv) {
     cv::Point2f init_bbox_center =
         cv::Point2f(init_upper_left.x + temp.cols / 2.0f, init_upper_left.y + temp.rows / 2.0f);
 
-    MeanShiftTracking ms_tracking(temp, init_bbox_center);
-    ms_tracking.process(video);
+    BoundingBox init_bbox(init_upper_left.x, init_upper_left.y, temp.cols, temp.rows);
+
+    MeanShiftTracker ms_tracker(temp, init_bbox);
+    ms_tracker.process(video);
 
     return 0;
 }

@@ -1,4 +1,4 @@
-#include "mean_shift_segmentation.h"
+#include "ms_segmentation.h"
 #include "opencv_utils.h"
 #include "visualizer_3d.h"
 #include <iostream>

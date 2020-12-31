@@ -3,12 +3,7 @@
 
 class MotionPredictor {
    public:
-    MotionPredictor(cv::Point2f initial_pos) : curr_pos_(initial_pos) {
-        back_up();
-    }
-
-    void back_up() {
-        last_pos_ = curr_pos_;
+    MotionPredictor(cv::Point2f initial_pos) : curr_pos_(initial_pos), last_pos_(initial_pos) {
     }
 
     cv::Point2f get_curr_pos() const {
@@ -16,13 +11,13 @@ class MotionPredictor {
     }
 
     cv::Point2f next_pos() {
-        curr_pos_.x = 2 * curr_pos_.x - last_pos_.x;
-        curr_pos_.y = 2 * curr_pos_.y - last_pos_.y;
+        curr_pos_.x += curr_pos_.x - last_pos_.x;
+        curr_pos_.y += curr_pos_.y - last_pos_.y;
         return curr_pos_;
     }
 
-    void set_tracking_result(cv::Point2f pos) {
-        back_up();
+    void set_observation(cv::Point2f pos) {
+        last_pos_ = curr_pos_;
         curr_pos_ = pos;
     }
 

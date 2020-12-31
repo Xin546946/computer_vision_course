@@ -13,7 +13,7 @@
 int get_bin(float gray_value, int width_bin) {
     return gray_value / width_bin;
 }
-cv::Mat get_gaussian_kernel(int width, int height, double sigma) {
+cv::Mat compute_gaussian_kernel(int width, int height, double sigma) {
     cv::Point center((width - 1) / 2, (height - 1) / 2);
     cv::Mat result = cv::Mat::zeros(cv::Size(width, height), CV_64F);
     for (int r = 0; r < height; r++) {
@@ -64,7 +64,7 @@ int main(int argc, char** argv) {
     cv::Mat img = cv::imread("/home/kit/computer_vision_course/ch7_mean_shift/img/segmentation/horse.jpg", 0);
 
     img.convertTo(img, CV_64F);
-    cv::Mat gaussian = get_gaussian_kernel(img.cols, img.rows, 100);
+    cv::Mat gaussian = compute_gaussian_kernel(img.cols, img.rows, 100);
     std::vector<double> hist_temp = compute_histogram(10, img, gaussian);
     std::vector<double> hist_candidate = compute_histogram(10, img, gaussian);
     cv::Mat result = compute_back_projection(img, hist_temp, hist_temp);

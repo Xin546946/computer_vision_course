@@ -31,7 +31,7 @@ void MeanShiftTracker::process(const std::vector<cv::Mat>& video, const cv::Mat 
         db_ptr_->visualize_tracking_result();
 
         cv::Point2f tracking_center = db_ptr_->get_object_center();
-        motion_predictor.set_tracking_result(tracking_center);
+        motion_predictor.set_observation(tracking_center);
         /* code */
     }
 }

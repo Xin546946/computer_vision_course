@@ -1,4 +1,4 @@
-#include "mean_shift_segmentation.h"
+#include "ms_segmentation.h"
 #include <iostream>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc.hpp>
