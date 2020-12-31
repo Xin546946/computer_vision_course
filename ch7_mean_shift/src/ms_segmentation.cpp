@@ -87,22 +87,7 @@ void MeanShiftSeg::update_mass_center() {
 #pragma omp parallel for
     for (int r_curr = 0; r_curr < features_curr_.rows; r_curr++) {
         for (int c_curr = 0; c_curr < features_curr_.cols; c_curr++) {
-            cv::Vec3f& f_curr = features_curr_.at<cv::Vec3f>(r_curr, c_curr);
-
-            cv::Vec3f sum_f_origin_in_window(0.0, 0.0);
-            int num_f_origin_in_window = 0;
-
-            for (int r_ori = 0; r_ori < features_origin_.rows; r_ori++) {
-                for (int c_ori = 0; c_ori < features_origin_.cols; c_ori++) {
-                    cv::Vec3f f_ori = features_origin_.at<cv::Vec3f>(r_ori, c_ori);
-
-                    if (is_in_radius(f_curr, f_ori, radius_square_)) {
-                        sum_f_origin_in_window += f_ori;
-                        num_f_origin_in_window++;
-                    }
-                }
-            }
-            f_curr = sum_f_origin_in_window / static_cast<float>(num_f_origin_in_window);
+            // todo update the features. Each new feature is the mass center in local window
         }
     }
 }

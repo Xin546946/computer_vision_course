@@ -57,7 +57,7 @@ Histogram make_histogramm(cv::Mat img, int num_bins, cv::Mat weight) {
 
     for (int r = 0; r < img.rows; r++) {
         for (int c = 0; c < img.cols; c++) {
-            hist.add_data(img.at<double>(r, c), weight.at<double>(r, c));
+            // todo make histogramm use Histogramm::add_data();
         }
     }
 
@@ -91,9 +91,7 @@ double compute_matching_score(const Histogram& hist_candidate, const Histogram& 
     assert(hist_temp.num_bin() == hist_candidate.num_bin());
 
     double result = 0.0;
-    for (int i = 0; i < hist_temp.num_bin(); i++) {
-        result += std::sqrt(hist_temp.get_bin_height(i) * hist_candidate.get_bin_height(i));
-    }
+    // todo compute matching score
     return result;
 }
 /**
@@ -114,13 +112,7 @@ cv::Mat compute_back_project_weight(const Histogram& hist_candidate, const Histo
 
     cv::Mat result = cv::Mat::zeros(sub_img.size(), CV_64F);
 
-    for (int r = 0; r < result.rows; r++) {
-        for (int c = 0; c < result.cols; c++) {
-            int id_bin = hist_temp.get_bin_id(sub_img.at<double>(r, c));
-            result.at<double>(r, c) =
-                std::sqrt(hist_temp.get_bin_height(id_bin) / (hist_candidate.get_bin_height(id_bin) + 1e-8));
-        }
-    }
+    // todo compute back projection weight
 
     return result;
 }
@@ -132,21 +124,9 @@ cv::Mat compute_back_project_weight(const Histogram& hist_candidate, const Histo
  * @return cv::Point2f
  */
 cv::Point2f update_mass_center(BoundingBox bbox, cv::Mat weight) {
-    cv::Point2f up_left = bbox.top_left();
-
-    float sum_x = 0.0f;
-    float sum_y = 0.0f;
-
-    for (int r = 0; r < weight.rows; r++) {
-        for (int c = 0; c < weight.cols; c++) {
-            sum_x += (up_left.x + c) * weight.at<double>(r, c);
-            sum_y += (up_left.y + r) * weight.at<double>(r, c);
-        }
-    }
-
-    float sum_w = cv::sum(weight)[0];
-
-    return cv::Point2f(sum_x / sum_w, sum_y / sum_w);
+    cv::Point2f result;
+    // todo update the bbox position
+    return result;
 }
 
 /**
@@ -168,18 +148,7 @@ bool MeanShiftTracking::make_sure_score_increase(const BoundingBox& bbox_before_
     int it = 0;
     int max_iteration = 10;
     while (it++ < max_iteration && score_before_update > score_after_update) {
-        cv::Point2f center_curr = bbox_.center();
-        cv::Point2f mid_point = calc_mid_point(center_curr, center_before_update);
-
-        bbox_.move_center_to(mid_point.x, mid_point.y);
-
-        hist_curr = make_histogramm(img, bbox_, hist_temp_.num_bin(), weight_geometirc_);
-        float new_matching_score = compute_matching_score(hist_curr, hist_temp_);
-        if (new_matching_score - score_after_update < 1e-6) {
-            break;
-        } else {
-            score_after_update = new_matching_score;
-        }
+        // todo check score ,if not increase, downweight the step size
     }
 
     if (it == max_iteration + 1) {
