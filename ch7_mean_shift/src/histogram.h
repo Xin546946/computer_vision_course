@@ -4,20 +4,23 @@
 
 class Histogram {
    public:
+    /**
+     * @brief Construct a new Histogram object, the input data should be in the range [min_value, max_value]
+     * each bin cover the range [lhs,rhs)
+     *
+     * @param [in] num_bin
+     * @param [in] min_value
+     * @param [in] max_value
+     */
     Histogram(int num_bin, double min_value, double max_value)
-        : num_bin_(num_bin),
-          min_value_(min_value),
-          max_value_(max_value + 1),  //! fix the upper boundary problem.
-          width_bin_((max_value_ - min_value_) / num_bin_),
-          hist_(num_bin) {
-        // get_width_bin();
+        : width_bin_((max_value - min_value + 1) / num_bin), hist_(num_bin) {
     }
     void add_data(double value, double weight = 1) {
-        int bin = get_bin(value);
+        int bin = get_bin_id(value);
         hist_[bin] += weight;
     }
 
-    int get_bin(const double value) {
+    int get_bin_id(const double value) {
         return std::floor(value / width_bin_);
     }
 
@@ -30,13 +33,6 @@ class Histogram {
     }
 
    private:
-    // void get_width_bin() {
-    //     width_bin_ = (max_value_ - min_value_) / num_bin_;
-    // }
-
-    int num_bin_;
-    const double min_value_;
-    const double max_value_;
     double width_bin_;  //! it should not be an integer
     std::vector<double> hist_;
 };

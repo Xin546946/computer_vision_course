@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
     }
     std::cout << "@@@Finish building histogram! " << '\n';
 
-    int bin = histogram.get_bin(255.0);
+    int bin = histogram.get_bin_id(255.0);
     std::cout << "Value 255.0 is at " << bin << "-th histogram!" << '\n';
     double bin_height = histogram.get_bin_height(0);
     std::cout << " The 0-th histogram has height " << bin_height << '\n';
@@ -40,7 +40,7 @@ int main(int argc, char** argv) {
     cv::Mat hist;
     // we compute the histogram from the 0-th and 1-st channels
     int channels[] = {0};
-    cv::calcHist(&img2, 1, 0, cv::Mat(),  // do not use mask
+    cv::calcHist(&img2, 1, channels, cv::Mat(),  // do not use mask
                  hist, 1, &hist_size, &hist_range);
     std::cout << hist << '\n';
     return 0;
