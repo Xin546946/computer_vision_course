@@ -152,5 +152,5 @@ void MeanShiftTracking::visualize(cv::Mat curr_img) const {
     cv::Point2f up_left = bbox_.top_left();
     draw_bounding_box_vis_image(vis, up_left.x, up_left.y, bbox_.width(), bbox_.height());
     cv::imshow("Mean shift tracking", vis);
-    cv::waitKey(1);
+    cv::waitKey(5);
 }
