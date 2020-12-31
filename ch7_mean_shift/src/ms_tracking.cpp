@@ -1,6 +1,26 @@
+/**
+______________________________________________________________________
+*********************************************************************
+* @brief  This file is developed for the course of ShenLan XueYuan:
+* Fundamental implementations of Computer Vision
+* all rights preserved
+* @author Xin Jin, Zhaoran Wu
+* @contact: xinjin1109@gmail.com, zhaoran.wu1@gmail.com
+*
+______________________________________________________________________
+*********************************************************************
+**/
 #include "ms_tracking.h"
 #include "opencv_utils.h"
 
+/**
+ * @brief return a gauss kernel, the center of the gauss kernal is (width/2,height/2)
+ *
+ * @param [in] width
+ * @param [in] height
+ * @param [in] sigma
+ * @return cv::Mat
+ */
 cv::Mat compute_gauss_kernel(int width, int height, double sigma) {
     cv::Point center((width - 1) / 2, (height - 1) / 2);
     cv::Mat result = cv::Mat::zeros(cv::Size(width, height), CV_64F);
@@ -12,11 +32,26 @@ cv::Mat compute_gauss_kernel(int width, int height, double sigma) {
     }
     return result / cv::sum(result)[0];
 }
-
+/**
+ * @brief return true if the center moving with only a small radius
+ *
+ * @param [in] before
+ * @param [in] after
+ * @return true
+ * @return false
+ */
 inline bool is_convergent(cv::Point2f before, cv::Point2f after) {
     return cv::norm(cv::Mat(before - after), cv::NORM_L2SQR) < 0.1;
 }
 
+/**
+ * @brief make a histogramm of a given image, the resolution is control with num_bins.
+ *
+ * @param [in] img
+ * @param [in] num_bins
+ * @param [in] weight : how large is the element contribute to the histo gramm
+ * @return Histogram
+ */
 Histogram make_histogramm(cv::Mat img, int num_bins, cv::Mat weight) {
     Histogram hist(num_bins, 0.0, 255.0);
 
@@ -29,6 +64,14 @@ Histogram make_histogramm(cv::Mat img, int num_bins, cv::Mat weight) {
     return hist;
 }
 
+/**
+ * @brief make a histogramm of a sub image, the sub image is specified with an image and a bbox
+ *
+ * @param [in] img
+ * @param [in] num_bins
+ * @param [in] weight
+ * @return Histogram
+ */
 Histogram make_histogramm(cv::Mat img, const BoundingBox& bbox, int num_bins, cv::Mat weight) {
     cv::Point2f up_left = bbox.top_left();
     cv::Mat sub_img = get_sub_image_from_ul(img, up_left.x, up_left.y, bbox.width(), bbox.height());
@@ -37,7 +80,13 @@ Histogram make_histogramm(cv::Mat img, const BoundingBox& bbox, int num_bins, cv
 
     return make_histogramm(sub_img, num_bins, weight);
 }
-
+/**
+ * @brief compute the matching score, given two histogramm.
+ *
+ * @param [in] hist_candidate
+ * @param [in] hist_temp
+ * @return double
+ */
 double compute_matching_score(const Histogram& hist_candidate, const Histogram& hist_temp) {
     assert(hist_temp.num_bin() == hist_candidate.num_bin());
 
@@ -47,7 +96,16 @@ double compute_matching_score(const Histogram& hist_candidate, const Histogram& 
     }
     return result;
 }
-
+/**
+ * @brief compute the back-projection weight given two histogramm and a sub image, the sub image is specified with an
+ * image and a bbox
+ *
+ * @param [in] hist_candidate
+ * @param [in] hist_temp
+ * @param [in] img
+ * @param [in] bbox
+ * @return cv::Mat
+ */
 cv::Mat compute_back_project_weight(const Histogram& hist_candidate, const Histogram& hist_temp, cv::Mat img,
                                     BoundingBox bbox) {
     assert(hist_candidate.num_bin() == hist_temp.num_bin());
@@ -66,7 +124,13 @@ cv::Mat compute_back_project_weight(const Histogram& hist_candidate, const Histo
 
     return result;
 }
-
+/**
+ * @brief update the bbox position with given weight
+ *
+ * @param [in] bbox
+ * @param [in] weight
+ * @return cv::Point2f
+ */
 cv::Point2f update_mass_center(BoundingBox bbox, cv::Mat weight) {
     cv::Point2f up_left = bbox.top_left();
 
@@ -85,6 +149,15 @@ cv::Point2f update_mass_center(BoundingBox bbox, cv::Mat weight) {
     return cv::Point2f(sum_x / sum_w, sum_y / sum_w);
 }
 
+/**
+ * @brief downweight the stepsize if the matching score not increase
+ *
+ * @param [in] bbox_before_update
+ * @param [in] img
+ * @param [in] score_before_update
+ * @return true
+ * @return false
+ */
 bool MeanShiftTracking::make_sure_score_increase(const BoundingBox& bbox_before_update, cv::Mat img,
                                                  double score_before_update) {
     Histogram hist_curr = make_histogramm(img, bbox_, hist_temp_.num_bin(), weight_geometirc_);
@@ -117,6 +190,13 @@ bool MeanShiftTracking::make_sure_score_increase(const BoundingBox& bbox_before_
     return true;
 }
 
+/**
+ * @brief tracking object given a start position on current image
+ *
+ * @param [in] max_iteration
+ * @param [in] init_object_center
+ * @param [in] img_curr
+ */
 void MeanShiftTracking::run(int max_iteration, cv::Point2f init_object_center, cv::Mat img_curr) {
     cv::Mat img_curr_64f;
     img_curr.convertTo(img_curr_64f, CV_64FC1);

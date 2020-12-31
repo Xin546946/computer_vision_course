@@ -1,6 +1,18 @@
+/**
+______________________________________________________________________
+*********************************************************************
+* @brief  This file is developed for the course of ShenLan XueYuan:
+* Fundamental implementations of Computer Vision
+* all rights preserved
+* @author Xin Jin, Zhaoran Wu
+* @contact: xinjin1109@gmail.com, zhaoran.wu1@gmail.com
+*
+______________________________________________________________________
+*********************************************************************
+**/
+
 #pragma once
 #include <opencv2/core/core.hpp>
-
 class BoundingBox {
    public:
     BoundingBox(float x, float y, float width, float height) : window_(x, y, width, height){};
@@ -16,11 +28,23 @@ class BoundingBox {
         window_.y += delta_y;
     }
 
+    /**
+     * @brief move the bbox to a new position, which is specified with top left corner
+     *
+     * @param [in] x
+     * @param [in] y
+     */
     void move_top_left_to(float x, float y) {
         window_.x = x;
         window_.y = y;
     }
 
+    /**
+     * @brief move the bbox to a new position, which is specified with center position
+     *
+     * @param [in] x
+     * @param [in] y
+     */
     void move_center_to(float x, float y) {
         return move_top_left_to(x - window_.width / 2.f, y - window_.height / 2.f);
     }

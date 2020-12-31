@@ -1,13 +1,42 @@
+/**
+______________________________________________________________________
+*********************************************************************
+* @brief  This file is developed for the course of ShenLan XueYuan:
+* Fundamental implementations of Computer Vision
+* all rights preserved
+* @author Xin Jin, Zhaoran Wu
+* @contact: xinjin1109@gmail.com, zhaoran.wu1@gmail.com
+*
+______________________________________________________________________
+*********************************************************************
+**/
 #include "ms_segmentation.h"
 #include <iostream>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 #include <opencv2/viz/viz3d.hpp>
 
+/**
+ * @brief return true if the sample is in the radius of the center
+ *
+ * @param [in] center
+ * @param [in] sample
+ * @param [in] radius_square
+ * @return true
+ * @return false
+ */
 inline bool is_in_radius(cv::Vec3f center, cv::Vec3f sample, double radius_square) {
     return cv::norm(center - sample, cv::NORM_L2SQR) < radius_square;
 }
 
+/**
+ * @brief check if still some points moving
+ *
+ * @param [in] curr
+ * @param [in] last
+ * @return true
+ * @return false
+ */
 bool is_convergent(cv::Mat curr, cv::Mat last) {
     if (last.empty()) return false;
 
@@ -34,7 +63,8 @@ void MeanShiftSeg::process(cv::Mat img) {
     int it = 0;
     int max_iteration = 50;
     cv::Mat features_last;
-    while (it++ < max_iteration && !is_convergent(features_curr_, features_last)) {
+
+    while (!it || (it++ < max_iteration && !is_convergent(features_curr_, features_last))) {
         std::cout << "curr iteration : " << it << '\n';
         features_last = features_curr_.clone();
         update_mass_center();
@@ -47,6 +77,10 @@ void MeanShiftSeg::process(cv::Mat img) {
     }
 }
 
+/**
+ * @brief update the features. each new feature is the mass center in local window
+ *
+ */
 void MeanShiftSeg::update_mass_center() {
     visualizer->set_features(features_curr_);
 #pragma omp parallel for
