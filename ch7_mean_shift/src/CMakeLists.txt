@@ -23,3 +23,6 @@ target_link_libraries(mean_shift_tracker tracking_data_base)
 
 add_library(ms_segmentation mean_shift_segmentation.cpp)
 target_link_libraries(ms_segmentation ${OpenCV_LIBS} utils visualizer_3d)
+
+add_library(ms_tracking mean_shift_tracking.cpp)
+target_link_libraries(ms_tracking ${OpenCV_LIBS} utils)
