@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/test/test_ms_tracking",
-            "args": ["${workspaceFolder}/img/data25/","${workspaceFolder}/img/data25/template/template.png"],
+            "args": ["${workspaceFolder}/img/data25/","${workspaceFolder}/img/data25/template/1.png"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

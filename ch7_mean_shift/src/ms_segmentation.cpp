@@ -64,7 +64,8 @@ void MeanShiftSeg::process(cv::Mat img) {
     int max_iteration = 50;
     cv::Mat features_last;
 
-    while (!it || (it++ < max_iteration && !is_convergent(features_curr_, features_last))) {
+    while (!it || (it < max_iteration && !is_convergent(features_curr_, features_last))) {
+        it++;
         std::cout << "curr iteration : " << it << '\n';
         features_last = features_curr_.clone();
         update_mass_center();
