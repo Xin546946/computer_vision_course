@@ -68,6 +68,15 @@ class BoundingBox {
         return window_.height;
     }
 
+    cv::Size2f size() const {
+        return window_.size();
+    }
+
+    void resize(float w, float h) {
+        window_.width = w;
+        window_.height = h;
+    }
+
     const cv::Point2f center() const {
         return cv::Point2f(window_.tl().x + window_.width / 2, window_.tl().y + window_.height / 2);
     }

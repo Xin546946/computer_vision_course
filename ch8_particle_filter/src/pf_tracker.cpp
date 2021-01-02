@@ -1,4 +1,6 @@
 #include "pf_tracker.h"
+#include "bounding_box.h"
+#include "opencv_utils.h"
 
 PFTracker::PFTracker(cv::Mat temp, const BoundingBox& init_bbox, int num_particles)
     : pf_(temp, init_bbox, num_particles) {
@@ -9,5 +11,13 @@ void PFTracker::process(const std::vector<cv::Mat>& video) {
         pf_.update_status();
         pf_.update_weights(frame);
         pf_.resampling();
+        State mean_state = pf_.compute_mean_state();
+
+        cv::Mat vis;
+        cv::cvtColor(frame, vis, CV_GRAY2BGR);
+        draw_bounding_box_vis_image(vis, mean_state.x_center() - mean_state.w() / 2,
+                                    mean_state.y_center() - mean_state.h() / 2, mean_state.w(), mean_state.h());
+        cv::imshow("particle filter tracking", vis);
+        cv::waitKey(0);
     }
 }
