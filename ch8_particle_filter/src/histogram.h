@@ -12,9 +12,9 @@ ______________________________________________________________________
 **/
 
 #pragma once
+#include "opencv2/core.hpp"
 #include <cmath>
 #include <vector>
-
 class Histogram {
    public:
     /**
@@ -80,3 +80,7 @@ class Histogram {
     double width_bin_;  // the width of a bin
     std::vector<double> hist_;
 };
+
+class BoundingBox;
+Histogram make_histogramm(cv::Mat img, int num_bins, cv::Mat weight);
+Histogram make_histogramm(cv::Mat img, const BoundingBox& bbox, int num_bins, cv::Mat weight);
