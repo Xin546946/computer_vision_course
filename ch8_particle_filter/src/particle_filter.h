@@ -66,6 +66,7 @@ struct Particle {
 
     void update_with_motion_and_noise(cv::Vec2f delta_motion, std::array<double, 4> noise);
 
+    bool bad_ = false;
     State state_;
     double weight_;
 };
