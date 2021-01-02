@@ -2,7 +2,8 @@
 #include "math_utils.h"
 #include "opencv_utils.h"
 
-double compute_weight(const Histogram& temp_hist, const Histogram& candidata_hist, double sigma_square_inv = 2.5e-5);
+double compute_weight_factor(const Histogram& temp_hist, const Histogram& candidata_hist,
+                             double sigma_square_inv = 2.5e-5);
 
 ParticleFilter::ParticleFilter(cv::Mat temp, const BoundingBox& init_bbox, int num_particles, int num_histogramm_bins)
     : motion_model_(init_bbox.center()), hist_temp_(num_histogramm_bins, 0.0, 255.0) {
@@ -28,9 +29,10 @@ void ParticleFilter::init_particles(const BoundingBox& init_bbox, int num_partic
 
 void ParticleFilter::update_status() {
     cv::Vec2f delta_motion = motion_model_.predict_motion();
+
     // w,h,x,y
     std::array<double, 4> means{0.0, 0.0, 0.0, 0.0};
-    std::array<double, 4> stddev{3.0, 3.0, 2.0, 2.0};
+    std::array<double, 4> stddev{1.0, 1.0, 1.0, 1.0};
     auto noises = generate_gauss_data<double, 4>(particles_.size(), means, stddev);
 
     for (int i = 0; i < particles_.size(); i++) {
@@ -52,13 +54,13 @@ void ParticleFilter::update_weights(cv::Mat frame) {
             continue;
         }
 
-        cv::imshow("sub", sub_img_vis);
-        // cv::waitKey(0);
+        //       cv::imshow("sub", sub_img_vis);
+        //       cv::waitKey(0);
 
         Histogram hist_sub_img =
             make_histogramm(sub_img, hist_temp_.num_bin(), cv::Mat::ones(sub_img.size(), CV_64FC1), 0.0, 255.0);
 
-        particle.weight_ = compute_weight(hist_temp_, hist_sub_img, 2e-5);
+        particle.weight_ *= compute_weight_factor(hist_temp_, hist_sub_img, 2e-4);
         std::cout << "weight : " << particle.weight_ << '\n';
     }
 }
@@ -84,7 +86,8 @@ void ParticleFilter::resampling() {
         float rnd_num = generate_random_data(0.0f, integration);
         std::lower_bound(integration_to_id.begin(), integration_to_id.end(), rnd_num,
                          [](std::pair<float, int> lhs, float rhs) { return lhs.first < rhs; });
-        new_particles.push_back(particles_[i]);
+        auto& particle = particles_[i];
+        new_particles.emplace_back(particle.state_, 1.0f);
     }
 
     particles_ = new_particles;
@@ -97,18 +100,15 @@ Particle::Particle(float w, float h, float x_center, float y_center, float weigh
 State::State(float w, float h, float x_center, float y_center) : bbox_(x_center - w / 2, y_center - h / 2, w, h) {
 }
 
-void Particle::update_with_motion_and_noise(cv::Vec2f delta_motion, std::array<double, 4> noise) {
+void Particle::update_with_motion_and_noise(cv::Vec2f delta_motion, const std::array<double, 4>& noise) {
     cv::Size2f bbox_size = state_.size();
-
-    float new_w = std::max(2.f, bbox_size.width);
-    float new_h = std::max(2.f, bbox_size.height);
 
     state_.resize(bbox_size.width + noise[0], bbox_size.height + noise[1]);
 
     state_.move(delta_motion(0) + noise[2], delta_motion(1) + noise[3]);
 }
 
-double compute_weight(const Histogram& temp_hist, const Histogram& candidata_hist, double sigma_square_inv) {
+double compute_weight_factor(const Histogram& temp_hist, const Histogram& candidata_hist, double sigma_square_inv) {
     assert(candidata_hist.num_bin() == temp_hist.num_bin());
     double dist_saqure = 0.0;
     for (int i = 0; i < temp_hist.num_bin(); i++) {
@@ -124,21 +124,40 @@ State ParticleFilter::compute_mean_state() {
     float x = 0.0;
     float y = 0.0;
 
+    int num_good = 0;
     for (const auto& particle : particles_) {
+        if (particle.bad_) {
+            continue;
+        }
+
         w += particle.state_.w();
         h += particle.state_.h();
         x += particle.state_.x_center();
         y += particle.state_.y_center();
+        num_good++;
     }
 
-    int size = particles_.size();
-    w /= size;
-    h /= size;
-    x /= size;
-    y /= size;
+    w /= num_good;
+    h /= num_good;
+    x /= num_good;
+    y /= num_good;
 
     State mean_state(w, h, x, y);
     motion_model_.set_observation(mean_state.center());
 
     return mean_state;
+}
+
+Particle::Particle(State state, double weight) : state_(state), weight_(weight) {
+}
+
+void ParticleFilter::visualize(cv::Mat frame) {
+    cv::Mat vis;
+    cv::cvtColor(frame, vis, CV_GRAY2BGR);
+
+    for (auto p : particles_) {
+        cv::circle(vis, p.state_.center(), 1, cv::Scalar(0, 0, 255), 1);
+    }
+    cv::imshow("particles:", vis);
+    cv::waitKey(0);
 }

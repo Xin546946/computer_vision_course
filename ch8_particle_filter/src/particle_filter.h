@@ -17,6 +17,7 @@ class ParticleFilter {
     void update_weights(cv::Mat frame);
     void resampling();
     State compute_mean_state();
+    void visualize(cv::Mat frame);
 
    private:
     std::vector<Particle> particles_;
@@ -63,8 +64,9 @@ struct State {
 };
 struct Particle {
     Particle(float w, float h, float x_center, float y_center, float weight);
+    Particle(State state, double weight);
 
-    void update_with_motion_and_noise(cv::Vec2f delta_motion, std::array<double, 4> noise);
+    void update_with_motion_and_noise(cv::Vec2f delta_motion, const std::array<double, 4>& noise);
 
     bool bad_ = false;
     State state_;

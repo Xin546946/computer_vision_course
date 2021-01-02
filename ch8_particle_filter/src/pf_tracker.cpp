@@ -16,8 +16,11 @@ void PFTracker::process(const std::vector<cv::Mat>& video) {
         cv::imshow("particle filter tracking", vis);
         cv::waitKey(0);
 
+        pf_.visualize(frame);
         pf_.update_status();
+        pf_.visualize(frame);
         pf_.update_weights(frame);
         pf_.resampling();
+        pf_.visualize(frame);
     }
 }

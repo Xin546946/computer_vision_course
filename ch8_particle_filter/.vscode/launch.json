@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/test/test_pf_tracker",
-            "args": ["${workspaceFolder}/dataset/data25/","${workspaceFolder}/dataset/data25/template/4.png"],
+            "args": ["${workspaceFolder}/dataset/data25/","${workspaceFolder}/dataset/data25/template/2.png"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
