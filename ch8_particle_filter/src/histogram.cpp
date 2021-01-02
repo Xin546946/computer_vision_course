@@ -9,8 +9,8 @@
  * @param [in] weight : how large is the element contribute to the histo gramm
  * @return Histogram
  */
-Histogram make_histogramm(cv::Mat img, int num_bins, cv::Mat weight) {
-    Histogram hist(num_bins, 0.0, 255.0);
+Histogram make_histogramm(cv::Mat img, int num_bins, cv::Mat weight, double min, double max) {
+    Histogram hist(num_bins, min, max);
 
     for (int r = 0; r < img.rows; r++) {
         for (int c = 0; c < img.cols; c++) {
@@ -29,11 +29,11 @@ Histogram make_histogramm(cv::Mat img, int num_bins, cv::Mat weight) {
  * @param [in] weight
  * @return Histogram
  */
-Histogram make_histogramm(cv::Mat img, const BoundingBox& bbox, int num_bins, cv::Mat weight) {
+Histogram make_histogramm(cv::Mat img, const BoundingBox& bbox, int num_bins, cv::Mat weight, double min, double max) {
     cv::Point2f up_left = bbox.top_left();
     cv::Mat sub_img = get_sub_image_from_ul(img, up_left.x, up_left.y, bbox.width(), bbox.height());
 
     assert(sub_img.cols == weight.cols && sub_img.rows == weight.rows);
 
-    return make_histogramm(sub_img, num_bins, weight);
+    return make_histogramm(sub_img, num_bins, weight, min, max);
 }

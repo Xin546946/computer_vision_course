@@ -82,5 +82,5 @@ class Histogram {
 };
 
 class BoundingBox;
-Histogram make_histogramm(cv::Mat img, int num_bins, cv::Mat weight);
-Histogram make_histogramm(cv::Mat img, const BoundingBox& bbox, int num_bins, cv::Mat weight);
+Histogram make_histogramm(cv::Mat img, const BoundingBox& bbox, int num_bins, cv::Mat weight, double min, double max);
+Histogram make_histogramm(cv::Mat img, int num_bins, cv::Mat weight, double min, double max);

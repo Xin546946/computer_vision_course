@@ -1,11 +1,11 @@
 #include "particle_filter.h"
 #include "math_utils.h"
 
-ParticleFilter::ParticleFilter(cv::Mat temp, const BoundingBox& init_bbox, int num_particles)
-    : motion_model_(init_bbox.center()), hist_temp_(16, 0.0, 255.0) {
+ParticleFilter::ParticleFilter(cv::Mat temp, const BoundingBox& init_bbox, int num_particles, int num_histogramm_bins)
+    : motion_model_(init_bbox.center()), hist_temp_(num_histogramm_bins, 0.0, 255.0) {
     cv::Mat temp_64f;
     temp.convertTo(temp_64f, CV_64FC1);
-    hist_temp_ = make_histogramm(temp, hist_temp_.num_bin(), cv::Mat::ones(temp.size(), CV_64FC1));
+    hist_temp_ = make_histogramm(temp_64f, num_histogramm_bins, cv::Mat::ones(temp.size(), CV_64FC1), 0.0, 255.0);
 
     init_particles(init_bbox, num_particles);
 }

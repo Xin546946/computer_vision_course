@@ -9,7 +9,7 @@ class Particle;
 
 class ParticleFilter {
    public:
-    ParticleFilter(cv::Mat temp, const BoundingBox& init_bbox, int num_particles = 100);
+    ParticleFilter(cv::Mat temp, const BoundingBox& init_bbox, int num_particles = 100, int num_histogramm_bins = 16);
 
     void init_particles(const BoundingBox& init_bbox, int num_particles);
     void update_status();
