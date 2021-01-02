@@ -8,16 +8,16 @@ PFTracker::PFTracker(cv::Mat temp, const BoundingBox& init_bbox, int num_particl
 
 void PFTracker::process(const std::vector<cv::Mat>& video) {
     for (cv::Mat frame : video) {
-        pf_.update_status();
-        pf_.update_weights(frame);
-        pf_.resampling();
         State mean_state = pf_.compute_mean_state();
-
         cv::Mat vis;
         cv::cvtColor(frame, vis, CV_GRAY2BGR);
         draw_bounding_box_vis_image(vis, mean_state.x_center() - mean_state.w() / 2,
                                     mean_state.y_center() - mean_state.h() / 2, mean_state.w(), mean_state.h());
         cv::imshow("particle filter tracking", vis);
         cv::waitKey(0);
+
+        pf_.update_status();
+        pf_.update_weights(frame);
+        pf_.resampling();
     }
 }

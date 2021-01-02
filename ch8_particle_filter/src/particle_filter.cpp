@@ -58,7 +58,7 @@ Particle::Particle(float w, float h, float x_center, float y_center, float weigh
     : state_(w, h, x_center, y_center), weight_(weight) {
 }
 
-State::State(float w, float h, float x_center, float y_center) : bbox_(w, h, x_center, y_center) {
+State::State(float w, float h, float x_center, float y_center) : bbox_(x_center - w / 2, y_center - h / 2, w, h) {
 }
 
 void Particle::update_with_motion_and_noise(cv::Vec2f delta_motion, std::array<double, 4> noise) {
@@ -99,5 +99,8 @@ State ParticleFilter::compute_mean_state() {
     x /= size;
     y /= size;
 
-    return State(w, h, x, y);
+    State mean_state(w, h, x, y);
+    motion_model_.set_observation(mean_state.center());
+
+    return mean_state;
 }

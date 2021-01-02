@@ -44,6 +44,10 @@ struct State {
         return bbox_.center().y;
     }
 
+    cv::Point2f center() const {
+        return bbox_.center();
+    }
+
     void resize(float w, float h) {
         bbox_.resize(w, h);
     }
