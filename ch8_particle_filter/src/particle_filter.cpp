@@ -123,7 +123,7 @@ double compute_weight_factor(const Histogram& temp_hist, const Histogram& candid
     double factor = std::exp(-0.5 * sigma_square_inv * chi_saqure_dist);
     return factor;
 }
-State ParticleFilter::compute_mean_state() {
+State ParticleFilter::compute_mean_state_and_set_observation() {
     float w = 0.0f;
     float h = 0.0f;
     float x = 0.0f;
@@ -150,6 +150,7 @@ State ParticleFilter::compute_mean_state() {
     y /= sum_w;
 
     State mean_state(w, h, x, y);
+
     motion_model_.set_observation(mean_state.center());
 
     return mean_state;

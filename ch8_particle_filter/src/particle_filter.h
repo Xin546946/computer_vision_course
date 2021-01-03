@@ -16,7 +16,7 @@ class ParticleFilter {
     void update_status();
     void update_weights(cv::Mat frame);
     void resampling();
-    State compute_mean_state();
+    State compute_mean_state_and_set_observation();
     void visualize(cv::Mat frame);
 
    private:
