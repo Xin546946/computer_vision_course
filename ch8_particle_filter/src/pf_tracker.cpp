@@ -15,7 +15,7 @@ void PFTracker::process(const std::vector<cv::Mat>& video) {
         draw_bounding_box_vis_image(vis, mean_state.x_center() - mean_state.w() / 2,
                                     mean_state.y_center() - mean_state.h() / 2, mean_state.w(), mean_state.h());
         cv::imshow("particle filter tracking", vis);
-        cv::waitKey(0);
+        cv::waitKey(1);
 
         pf_.visualize(frame);
         pf_.update_status();

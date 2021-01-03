@@ -166,5 +166,5 @@ void ParticleFilter::visualize(cv::Mat frame) {
         cv::circle(vis, p.state_.center(), 1, cv::Scalar(0, 0, 255), 1);
     }
     cv::imshow("particles:", vis);
-    cv::waitKey(0);
+    cv::waitKey(1);
 }
