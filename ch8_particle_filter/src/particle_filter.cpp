@@ -35,7 +35,7 @@ void ParticleFilter::update_status() {
     std::array<double, 4> means{0.0, 0.0, 0.0, 0.0};
     std::array<double, 4> stddev{0.1, 0.1, 1.0, 1.0};
     auto noises = generate_gauss_data<double, 4>(particles_.size(), means, stddev);
-
+#pragma omp parallel for
     for (int i = 0; i < particles_.size(); i++) {
         particles_[i].update_with_motion_and_noise(delta_motion, noises[i]);
     }
@@ -45,14 +45,15 @@ void ParticleFilter::update_weights(cv::Mat frame) {
     cv::Mat frame_64f;
     frame.convertTo(frame_64f, CV_64FC1);
 
-    for (auto& particle : particles_) {
-        const State& state = particle.state_;
+#pragma omp parallel for
+    for (int i = 0; i < particles_.size(); i++) {
+        const State& state = particles_[i].state_;
         cv::Mat sub_frame_64f =
             get_sub_image_around(frame_64f, state.x_center(), state.y_center(), state.w(), state.h());
         cv::Mat sub_img_vis = get_sub_image_around(frame, state.x_center(), state.y_center(), state.w(), state.h());
 
         if (sub_frame_64f.cols == 0 || sub_frame_64f.rows == 0) {
-            particle.bad_ = true;
+            particles_[i].bad_ = true;
             continue;
         }
 
@@ -63,8 +64,8 @@ void ParticleFilter::update_weights(cv::Mat frame) {
                                                    cv::Mat::ones(sub_frame_64f.size(), CV_64FC1), 0.0, 255.0);
         hist_sub_frame.equalize();
 
-        particle.weight_ *= compute_weight_factor(hist_temp_, hist_sub_frame, 20);
-        std::cerr << "weight : " << particle.weight_ << '\n';
+        particles_[i].weight_ *= compute_weight_factor(hist_temp_, hist_sub_frame, 20);
+        std::cerr << "weight : " << particles_[i].weight_ << '\n';
     }
 }
 
