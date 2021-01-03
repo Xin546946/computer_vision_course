@@ -63,8 +63,8 @@ void ParticleFilter::update_weights(cv::Mat frame) {
                                                    cv::Mat::ones(sub_frame_64f.size(), CV_64FC1), 0.0, 255.0);
         hist_sub_frame.equalize();
 
-        particle.weight_ *= compute_weight_factor(hist_temp_, hist_sub_frame, 1e2);
-        std::cout << "weight : " << particle.weight_ << '\n';
+        particle.weight_ *= compute_weight_factor(hist_temp_, hist_sub_frame, 20);
+        std::cerr << "weight : " << particle.weight_ << '\n';
     }
 }
 
