@@ -13,10 +13,12 @@ class MotionPredictor {
     cv::Vec2f predict_motion() const {
         return cv::Point2f(curr_pos_.x - last_pos_.x, curr_pos_.y - last_pos_.y);
     }
-    cv::Point2f next_pos() {
-        curr_pos_.x += curr_pos_.x - last_pos_.x;
-        curr_pos_.y += curr_pos_.y - last_pos_.y;
-        return curr_pos_;
+    cv::Point2f predict_positon() const {
+        cv::Point2f next_pos(curr_pos_);
+
+        next_pos.x += curr_pos_.x - last_pos_.x;
+        next_pos.y += curr_pos_.y - last_pos_.y;
+        return next_pos;
     }
 
     void set_observation(cv::Point2f pos) {

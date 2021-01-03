@@ -1,6 +1,12 @@
 #include "histogram.h"
 #include "bounding_box.h"
 #include "opencv_utils.h"
+#include <numeric>
+void Histogram::equalize() {
+    double sum = std::accumulate(hist_.begin(), hist_.end(), 0.0);
+    std::for_each(hist_.begin(), hist_.end(), [=](double& height) { height /= sum; });
+}
+
 /**
  * @brief make a histogramm of a given image, the resolution is control with num_bins.
  *

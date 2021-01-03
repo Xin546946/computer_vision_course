@@ -9,6 +9,7 @@ PFTracker::PFTracker(cv::Mat temp, const BoundingBox& init_bbox, int num_particl
 void PFTracker::process(const std::vector<cv::Mat>& video) {
     for (cv::Mat frame : video) {
         State mean_state = pf_.compute_mean_state();
+
         cv::Mat vis;
         cv::cvtColor(frame, vis, CV_GRAY2BGR);
         draw_bounding_box_vis_image(vis, mean_state.x_center() - mean_state.w() / 2,
@@ -20,6 +21,7 @@ void PFTracker::process(const std::vector<cv::Mat>& video) {
         pf_.update_status();
         pf_.visualize(frame);
         pf_.update_weights(frame);
+        // todo check if need resampling
         pf_.resampling();
         pf_.visualize(frame);
     }

@@ -29,6 +29,12 @@ class Histogram {
         : width_bin_((max_value - min_value + 1) / num_bin), hist_(num_bin) {
     }
     /**
+     * @brief equalize the histogramm, so that the summ of the hight is equale to 1;
+     *
+     */
+    void equalize();
+
+    /**
      * @brief add a data to the histogramm
      *
      * @param [in] value

@@ -6,11 +6,11 @@
 #include <array>
 
 class State;
-class Particle;
+struct Particle;
 
 class ParticleFilter {
    public:
-    ParticleFilter(cv::Mat temp, const BoundingBox& init_bbox, int num_particles = 100, int num_histogramm_bins = 16);
+    ParticleFilter(cv::Mat temp, const BoundingBox& init_bbox, int num_particles = 100, int num_histogramm_bins = 256);
 
     void init_particles(const BoundingBox& init_bbox, int num_particles);
     void update_status();
@@ -26,7 +26,7 @@ class ParticleFilter {
     Histogram hist_temp_;
 };
 
-struct State {
+class State {
    public:
     State(float w, float h, float x_center, float y_center);
 
