@@ -28,7 +28,7 @@ void ParticleFilter::init_particles(const BoundingBox& init_bbox, int num_partic
     }
 }
 
-void ParticleFilter::update_status() {
+void ParticleFilter::predict_status() {
     cv::Vec2f delta_motion = motion_model_.predict_motion();
 
     // w,h,x,y
@@ -70,6 +70,7 @@ void ParticleFilter::update_weights(cv::Mat frame) {
 }
 
 void ParticleFilter::resampling() {
+    // todo : using std mutilple thread,  1 +　．．．　＋１００；
     double integration = 0.0;
     std::vector<std::pair<double, int>> integration_to_id;
     integration_to_id.reserve(particles_.size());
@@ -131,6 +132,7 @@ State ParticleFilter::compute_mean_state_and_set_observation() {
     float y = 0.0f;
 
     double sum_w = 0.0;
+    // todo : using std mutilple thread,  1 +　．．．　＋１００　；
     for (const auto& particle : particles_) {
         if (particle.bad_) {
             continue;

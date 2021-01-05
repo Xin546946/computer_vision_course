@@ -13,7 +13,7 @@ class ParticleFilter {
     ParticleFilter(cv::Mat temp, const BoundingBox& init_bbox, int num_particles = 100, int num_histogramm_bins = 256);
 
     void init_particles(const BoundingBox& init_bbox, int num_particles);
-    void update_status();
+    void predict_status();
     void update_weights(cv::Mat frame);
     void resampling();
     State compute_mean_state_and_set_observation();

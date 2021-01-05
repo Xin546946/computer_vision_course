@@ -18,7 +18,7 @@ void PFTracker::process(const std::vector<cv::Mat>& video) {
         cv::waitKey(1);
 
         pf_.visualize(frame);
-        pf_.update_status();
+        pf_.predict_status();
         pf_.visualize(frame);
         pf_.update_weights(frame);
         // todo check if need resampling
