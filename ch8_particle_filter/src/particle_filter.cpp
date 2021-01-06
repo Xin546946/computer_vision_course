@@ -67,7 +67,7 @@ void ParticleFilter::update_weights(cv::Mat frame) {
                                                    cv::Mat::ones(sub_frame_64f.size(), CV_64FC1), 0.0, 255.0);
         hist_sub_frame.equalize();
 
-        particles_[i].weight_ *= compute_weight_factor(hist_temp_, hist_sub_frame, 20);
+        particles_[i].weight_ *= compute_weight_factor(hist_temp_, hist_sub_frame, 50);
         std::cerr << "weight : " << particles_[i].weight_ << '\n';
     }
 }
@@ -161,14 +161,19 @@ Particle ParticleFilter::compute_state_from_single_thread(int from, int to) {
 }
 
 State ParticleFilter::multithread_compute_mean_state_and_set_observation() {
-    std::vector<std::future<Particle>> result;
     int num_thread = static_cast<int>(std::thread::hardware_concurrency());
+    std::cout << "Number of thread: " << num_thread << '\n';
+    std::vector<std::future<Particle>> result;  // num_thread = 4
     for (int i = 0; i < num_thread - 1; i++) {
         std::future<Particle> sum_single_thread =
             std::async(std::launch::async, &ParticleFilter::compute_state_from_single_thread, this,
-                       i * int(particles_.size()) / num_thread, (i + 1) * int(particles_.size()) / num_thread);
+                       i * int(particles_.size()) / num_thread, ((i + 1) * int(particles_.size()) / num_thread) - 1);
         result.push_back(std::move(sum_single_thread));
     }
+    std::future<Particle> last_thread =
+        std::async(std::launch::async, &ParticleFilter::compute_state_from_single_thread, this,
+                   3 * int(particles_.size()) / num_thread, int(particles_.size()) - 1);
+    result.push_back(std::move(last_thread));
 
     double sum = 0.0;
     float w = 0.0f;
@@ -176,11 +181,19 @@ State ParticleFilter::multithread_compute_mean_state_and_set_observation() {
     float x = 0.0f;
     float y = 0.0f;
     for (int i = 0; i < num_thread; i++) {
-        w += result[i].get().state_.w();
-        h += result[i].get().state_.h();
-        x += result[i].get().state_.x_center();
-        y += result[i].get().state_.y_center();
-        sum += result[i].get().weight_;
+        std::cout << "Current thread: " << i << '\n';
+
+        try {
+            Particle temp_p = result[i].get();
+            w += temp_p.state_.w();
+            h += temp_p.state_.h();
+            x += temp_p.state_.x_center();
+            y += temp_p.state_.y_center();
+            std::cerr << "bbox info: " << w << " " << h << " " << x << " " << y << '\n';
+            sum += temp_p.weight_;
+        } catch (const std::future_error& e) {
+            std::cout << "Caught a future_error with code \"" << e.code() << "\"\nMessage: \"" << e.what() << '\n';
+        }
     }
 
     w /= sum;
@@ -205,5 +218,5 @@ void ParticleFilter::visualize(cv::Mat frame) {
         cv::circle(vis, p.state_.center(), 1, cv::Scalar(0, 0, 255), 1);
     }
     cv::imshow("particles:", vis);
-    cv::waitKey(0);
+    cv::waitKey(1);
 }

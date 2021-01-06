@@ -19,7 +19,7 @@ int main(int argc, char** argv) {
 
     BoundingBox init_bbox(init_upper_left.x, init_upper_left.y, temp.cols, temp.rows);
 
-    PFTracker pf_tracker(temp, init_bbox, 300);
+    PFTracker pf_tracker(temp, init_bbox, 1000);
     pf_tracker.process(video);
 
     return 0;
