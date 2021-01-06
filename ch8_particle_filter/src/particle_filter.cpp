@@ -1,6 +1,9 @@
 #include "particle_filter.h"
 #include "math_utils.h"
 #include "opencv_utils.h"
+#include "tictoc.h"
+#include <future>
+#include <thread>
 
 double compute_weight_factor(const Histogram& temp_hist, const Histogram& candidata_hist,
                              double sigma_square_inv = 2.5e-5);
@@ -70,6 +73,7 @@ void ParticleFilter::update_weights(cv::Mat frame) {
 }
 
 void ParticleFilter::resampling() {
+    tictoc::tic();
     // todo : using std mutilple thread,  1 +　．．．　＋１００；
     double integration = 0.0;
     std::vector<std::pair<double, int>> integration_to_id;
@@ -96,6 +100,7 @@ void ParticleFilter::resampling() {
     }
 
     particles_ = new_particles;
+    std::cout << "Resampling costs " << tictoc::toc() / 1e6 << "miliseconds" << '\n';
 }
 
 Particle::Particle(float w, float h, float x_center, float y_center, float weight)
@@ -125,35 +130,65 @@ double compute_weight_factor(const Histogram& temp_hist, const Histogram& candid
     double factor = std::exp(-0.5 * sigma_square_inv * chi_saqure_dist);
     return factor;
 }
-State ParticleFilter::compute_mean_state_and_set_observation() {
+// State ParticleFilter::compute_mean_state_and_set_observation() {
+Particle ParticleFilter::compute_state_from_single_thread(int from, int to) {
     float w = 0.0f;
     float h = 0.0f;
     float x = 0.0f;
     float y = 0.0f;
 
     double sum_w = 0.0;
-    // todo : using std mutilple thread,  1 +　．．．　＋１００　；
-    for (const auto& particle : particles_) {
-        if (particle.bad_) {
+
+    // todo : using std mutilple thread,  1 + ... + 100　；
+    for (int i = from; i < to; i++) {
+        if (particles_[i].bad_) {
             continue;
         }
 
-        const State& state = particle.state_;
+        const State& state = particles_[i].state_;
 
-        w += particle.weight_ * state.w();
-        h += particle.weight_ * state.h();
-        x += particle.weight_ * state.x_center();
-        y += particle.weight_ * state.y_center();
-        sum_w += particle.weight_;
+        w += particles_[i].weight_ * state.w();
+        h += particles_[i].weight_ * state.h();
+        x += particles_[i].weight_ * state.x_center();
+        y += particles_[i].weight_ * state.y_center();
+        sum_w += particles_[i].weight_;
     }
-
     w /= sum_w;
     h /= sum_w;
     x /= sum_w;
     y /= sum_w;
+    return Particle(w, h, x, y, sum_w / (to - from));
+}
+
+State ParticleFilter::multithread_compute_mean_state_and_set_observation() {
+    std::vector<std::future<Particle>> result;
+    int num_thread = static_cast<int>(std::thread::hardware_concurrency());
+    for (int i = 0; i < num_thread - 1; i++) {
+        std::future<Particle> sum_single_thread =
+            std::async(std::launch::async, &ParticleFilter::compute_state_from_single_thread, this,
+                       i * int(particles_.size()) / num_thread, (i + 1) * int(particles_.size()) / num_thread);
+        result.push_back(std::move(sum_single_thread));
+    }
+
+    double sum = 0.0;
+    float w = 0.0f;
+    float h = 0.0f;
+    float x = 0.0f;
+    float y = 0.0f;
+    for (int i = 0; i < num_thread; i++) {
+        w += result[i].get().state_.w();
+        h += result[i].get().state_.h();
+        x += result[i].get().state_.x_center();
+        y += result[i].get().state_.y_center();
+        sum += result[i].get().weight_;
+    }
+
+    w /= sum;
+    h /= sum;
+    x /= sum;
+    y /= sum;
 
     State mean_state(w, h, x, y);
-
     motion_model_.set_observation(mean_state.center());
 
     return mean_state;
@@ -170,5 +205,5 @@ void ParticleFilter::visualize(cv::Mat frame) {
         cv::circle(vis, p.state_.center(), 1, cv::Scalar(0, 0, 255), 1);
     }
     cv::imshow("particles:", vis);
-    cv::waitKey(1);
+    cv::waitKey(0);
 }

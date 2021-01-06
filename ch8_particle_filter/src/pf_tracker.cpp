@@ -8,7 +8,7 @@ PFTracker::PFTracker(cv::Mat temp, const BoundingBox& init_bbox, int num_particl
 
 void PFTracker::process(const std::vector<cv::Mat>& video) {
     for (cv::Mat frame : video) {
-        State mean_state = pf_.compute_mean_state_and_set_observation();
+        State mean_state = pf_.multithread_compute_mean_state_and_set_observation();
 
         cv::Mat vis;
         cv::cvtColor(frame, vis, CV_GRAY2BGR);
