@@ -19,10 +19,11 @@ class ParticleFilter {
     State compute_mean_state_and_set_observation();
     void visualize(cv::Mat frame);
     State multithread_compute_mean_state_and_set_observation();
+    void multithread_resampling();
 
    private:
-    Particle compute_state_from_single_thread(int from, int to);
-
+    Particle compute_particle_from_single_thread(int from, int to);
+    std::vector<Particle> resampling_from_single_thread(int from, int to);
     std::vector<Particle> particles_;
     MotionPredictor motion_model_;  // assume a constant velocity model
 

@@ -22,7 +22,7 @@ void PFTracker::process(const std::vector<cv::Mat>& video) {
         pf_.visualize(frame);
         pf_.update_weights(frame);
         // todo check if need resampling
-        pf_.resampling();
+        pf_.multithread_resampling();
         pf_.visualize(frame);
     }
 }

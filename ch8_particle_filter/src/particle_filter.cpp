@@ -68,18 +68,19 @@ void ParticleFilter::update_weights(cv::Mat frame) {
         hist_sub_frame.equalize();
 
         particles_[i].weight_ *= compute_weight_factor(hist_temp_, hist_sub_frame, 50);
-        std::cerr << "weight : " << particles_[i].weight_ << '\n';
+        // std::cerr << "weight : " << particles_[i].weight_ << '\n';
     }
 }
 
-void ParticleFilter::resampling() {
-    tictoc::tic();
+std::vector<Particle> ParticleFilter::resampling_from_single_thread(int from, int to) {
+    // void ParticleFilter::resampling() {
+    // tictoc::tic();
     // todo : using std mutilple thread,  1 +　．．．　＋１００；
     double integration = 0.0;
     std::vector<std::pair<double, int>> integration_to_id;
     integration_to_id.reserve(particles_.size());
 
-    for (int i = 0; i < particles_.size(); i++) {
+    for (int i = from; i < to; i++) {
         if (particles_[i].bad_) {
             continue;
         }
@@ -89,9 +90,9 @@ void ParticleFilter::resampling() {
     }
 
     std::vector<Particle> new_particles;
-    new_particles.reserve(particles_.size());
+    new_particles.reserve(to - from);
 
-    for (int i = 0; i < particles_.size(); i++) {
+    for (int i = from; i < to; i++) {
         float rnd_num = generate_random_data(0.0f, integration);
         auto it_candidate = std::lower_bound(integration_to_id.begin(), integration_to_id.end(), rnd_num,
                                              [](std::pair<double, int> lhs, double rhs) { return lhs.first < rhs; });
@@ -99,8 +100,34 @@ void ParticleFilter::resampling() {
         new_particles.emplace_back(particles_[index_candidate].state_, 1.0f);
     }
 
-    particles_ = new_particles;
-    std::cout << "Resampling costs " << tictoc::toc() / 1e6 << "miliseconds" << '\n';
+    // particles_ = new_particles;
+    // std::cout << "Resampling costs " << tictoc::toc() / 1e6 << "miliseconds" << '\n';
+    return new_particles;
+}
+
+void ParticleFilter::multithread_resampling() {
+    int num_thread = 20;
+    std::vector<std::future<std::vector<Particle>>> result;
+
+    for (int i = 0; i < num_thread - 1; i++) {
+        std::future<std::vector<Particle>> new_particles_in_each_thread =
+            std::async(std::launch::async, &ParticleFilter::resampling_from_single_thread, this,
+                       i * int(particles_.size()) / num_thread, ((i + 1) * int(particles_.size()) / num_thread));
+        result.push_back(std::move(new_particles_in_each_thread));  //! todo search std::move
+    }
+    // assign the new_particles in the last thread avoiding divisible problem
+    std::future<std::vector<Particle>> last_thread =
+        std::async(std::launch::async, &ParticleFilter::resampling_from_single_thread, this,
+                   (num_thread - 1) * int(particles_.size()) / num_thread, int(particles_.size()));
+    result.push_back(std::move(last_thread));
+    particles_.clear();
+    for (int i = 0; i < num_thread; i++) {
+        // std::cout << "Current thread: " << i << '\n';
+        std::vector<Particle> temp_vec_p = result[i].get();
+        // std::cout << "Thread " << i << "has " << temp_vec_p.size() << " particles. " << '\n';
+        particles_.insert(particles_.end(), temp_vec_p.begin(), temp_vec_p.end());
+    }
+    assert(particles_.size() == 1000);
 }
 
 Particle::Particle(float w, float h, float x_center, float y_center, float weight)
@@ -131,7 +158,7 @@ double compute_weight_factor(const Histogram& temp_hist, const Histogram& candid
     return factor;
 }
 // State ParticleFilter::compute_mean_state_and_set_observation() {
-Particle ParticleFilter::compute_state_from_single_thread(int from, int to) {
+Particle ParticleFilter::compute_particle_from_single_thread(int from, int to) {
     float w = 0.0f;
     float h = 0.0f;
     float x = 0.0f;
@@ -139,7 +166,6 @@ Particle ParticleFilter::compute_state_from_single_thread(int from, int to) {
 
     double sum_w = 0.0;
 
-    // todo : using std mutilple thread,  1 + ... + 100　；
     for (int i = from; i < to; i++) {
         if (particles_[i].bad_) {
             continue;
@@ -161,18 +187,19 @@ Particle ParticleFilter::compute_state_from_single_thread(int from, int to) {
 }
 
 State ParticleFilter::multithread_compute_mean_state_and_set_observation() {
-    int num_thread = static_cast<int>(std::thread::hardware_concurrency());
-    std::cout << "Number of thread: " << num_thread << '\n';
+    // int num_thread = static_cast<int>(std::thread::hardware_concurrency());
+    int num_thread = 20;
+    // std::cout << "Number of thread: " << num_thread << '\n';
     std::vector<std::future<Particle>> result;  // num_thread = 4
     for (int i = 0; i < num_thread - 1; i++) {
         std::future<Particle> sum_single_thread =
-            std::async(std::launch::async, &ParticleFilter::compute_state_from_single_thread, this,
-                       i * int(particles_.size()) / num_thread, ((i + 1) * int(particles_.size()) / num_thread) - 1);
+            std::async(std::launch::async, &ParticleFilter::compute_particle_from_single_thread, this,
+                       i * int(particles_.size()) / num_thread, ((i + 1) * int(particles_.size()) / num_thread));
         result.push_back(std::move(sum_single_thread));
     }
     std::future<Particle> last_thread =
-        std::async(std::launch::async, &ParticleFilter::compute_state_from_single_thread, this,
-                   3 * int(particles_.size()) / num_thread, int(particles_.size()) - 1);
+        std::async(std::launch::async, &ParticleFilter::compute_particle_from_single_thread, this,
+                   (num_thread - 1) * int(particles_.size()) / num_thread, int(particles_.size()));
     result.push_back(std::move(last_thread));
 
     double sum = 0.0;
@@ -181,7 +208,7 @@ State ParticleFilter::multithread_compute_mean_state_and_set_observation() {
     float x = 0.0f;
     float y = 0.0f;
     for (int i = 0; i < num_thread; i++) {
-        std::cout << "Current thread: " << i << '\n';
+        // std::cout << "Current thread: " << i << '\n';
 
         try {
             Particle temp_p = result[i].get();
@@ -189,7 +216,7 @@ State ParticleFilter::multithread_compute_mean_state_and_set_observation() {
             h += temp_p.state_.h();
             x += temp_p.state_.x_center();
             y += temp_p.state_.y_center();
-            std::cerr << "bbox info: " << w << " " << h << " " << x << " " << y << '\n';
+
             sum += temp_p.weight_;
         } catch (const std::future_error& e) {
             std::cout << "Caught a future_error with code \"" << e.code() << "\"\nMessage: \"" << e.what() << '\n';
@@ -200,7 +227,7 @@ State ParticleFilter::multithread_compute_mean_state_and_set_observation() {
     h /= sum;
     x /= sum;
     y /= sum;
-
+    // std::cerr << "bbox info: " << w << " " << h << " " << x << " " << y << '\n';
     State mean_state(w, h, x, y);
     motion_model_.set_observation(mean_state.center());
 

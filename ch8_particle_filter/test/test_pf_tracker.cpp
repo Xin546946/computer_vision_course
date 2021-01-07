@@ -1,11 +1,11 @@
 #include "bounding_box.h"
 #include "opencv_utils.h"
 #include "pf_tracker.h"
+#include "tictoc.h"
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-
 int main(int argc, char** argv) {
     std::vector<cv::Mat> video;
     for (int id = 1; id < 251; id++) {
@@ -20,7 +20,8 @@ int main(int argc, char** argv) {
     BoundingBox init_bbox(init_upper_left.x, init_upper_left.y, temp.cols, temp.rows);
 
     PFTracker pf_tracker(temp, init_bbox, 1000);
+    tictoc::tic();
     pf_tracker.process(video);
-
+    std::cout << "Tracking uses " << tictoc::toc() / 1e6 << " seconds with multithread." << '\n';
     return 0;
 }
