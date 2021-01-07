@@ -1,3 +1,15 @@
+/**
+______________________________________________________________________
+*********************************************************************
+* @brief This file is developed for the course of ShenLan XueYuan:
+* Fundamental implementations of Computer Vision
+* all rights preserved
+* @author Xin Jin, Zhaoran Wu
+* @contact: xinjin1109@gmail.com, zhaoran.wu1@gmail.com
+*
+______________________________________________________________________
+*********************************************************************
+**/
 #pragma once
 #include "bounding_box.h"
 #include "histogram.h"
@@ -10,13 +22,54 @@ struct Particle;
 
 class ParticleFilter {
    public:
+    /**
+     * @brief Construct a new Particle Filter object
+     *
+     * @param temp
+     * @param init_bbox
+     * @param num_particles
+     * @param num_histogramm_bins
+     */
     ParticleFilter(cv::Mat temp, const BoundingBox& init_bbox, int num_particles = 100, int num_histogramm_bins = 256);
-
+    /**
+     * @brief Initialize particles
+     *
+     * @param init_bbox
+     * @param num_particles
+     */
     void init_particles(const BoundingBox& init_bbox, int num_particles);
+
+    /**
+     * @brief Predict states
+     *
+     */
     void predict_status();
+
+    /**
+     * @brief Update weights
+     *
+     * @param frame
+     */
     void update_weights(cv::Mat frame);
+
+    /**
+     * @brief Resampling
+     *
+     */
     void resampling();
+
+    /**
+     * @brief Compute mean state and set observation
+     *
+     * @return State
+     */
     State compute_mean_state_and_set_observation();
+
+    /**
+     * @brief Visualize particles on the frame
+     *
+     * @param frame
+     */
     void visualize(cv::Mat frame);
 
    private:
@@ -28,6 +81,14 @@ class ParticleFilter {
 
 class State {
    public:
+    /**
+     * @brief Construct a new State object
+     *
+     * @param w
+     * @param h
+     * @param x_center
+     * @param y_center
+     */
     State(float w, float h, float x_center, float y_center);
 
     float w() const {
@@ -63,9 +124,31 @@ class State {
     BoundingBox bbox_;
 };
 struct Particle {
+    /**
+     * @brief Construct a new Particle object
+     *
+     * @param w
+     * @param h
+     * @param x_center
+     * @param y_center
+     * @param weight
+     */
     Particle(float w, float h, float x_center, float y_center, float weight);
+
+    /**
+     * @brief Construct a new Particle object
+     *
+     * @param state
+     * @param weight
+     */
     Particle(State state, double weight);
 
+    /**
+     * @brief Update particles with motion and noise
+     *
+     * @param delta_motion
+     * @param noise
+     */
     void update_with_motion_and_noise(cv::Vec2f delta_motion, const std::array<double, 4>& noise);
 
     bool bad_ = false;
