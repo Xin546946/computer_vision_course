@@ -106,7 +106,7 @@ std::vector<Particle> ParticleFilter::resampling_from_single_thread(int from, in
 }
 
 void ParticleFilter::multithread_resampling() {
-    int num_thread = 20;
+    int num_thread = 8;
     std::vector<std::future<std::vector<Particle>>> result;
 
     for (int i = 0; i < num_thread - 1; i++) {
@@ -188,7 +188,7 @@ Particle ParticleFilter::compute_particle_from_single_thread(int from, int to) {
 
 State ParticleFilter::multithread_compute_mean_state_and_set_observation() {
     // int num_thread = static_cast<int>(std::thread::hardware_concurrency());
-    int num_thread = 20;
+    int num_thread = 8;
     // std::cout << "Number of thread: " << num_thread << '\n';
     std::vector<std::future<Particle>> result;  // num_thread = 4
     for (int i = 0; i < num_thread - 1; i++) {
