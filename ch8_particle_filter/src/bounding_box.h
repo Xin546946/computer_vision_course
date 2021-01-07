@@ -48,39 +48,87 @@ class BoundingBox {
     void move_center_to(float x, float y) {
         return move_top_left_to(x - window_.width / 2.f, y - window_.height / 2.f);
     }
-
+    /**
+     * @brief Get top left point
+     *
+     * @return const cv::Point2f
+     */
     const cv::Point2f top_left() const {
         return window_.tl();
     }
+
+    /**
+     * @brief Get bottom right point
+     *
+     * @return const cv::Point2f
+     */
     const cv::Point2f bottom_right() const {
         return window_.br();
     }
 
+    /**
+     * @brief Get area of the bbox
+     *
+     * @return int
+     */
     int area() const {
         return window_.width * window_.height;
     }
 
+    /**
+     * @brief Get width
+     *
+     * @return int
+     */
     int width() const {
         return window_.width;
     }
 
+    /**
+     * @brief Get height
+     *
+     * @return int
+     */
     int height() const {
         return window_.height;
     }
 
+    /**
+     * @brief Get size
+     *
+     * @return cv::Size2f
+     */
     cv::Size2f size() const {
         return window_.size();
     }
 
+    /**
+     * @brief Resize the bbox
+     *
+     * @param w
+     * @param h
+     */
     void resize(float w, float h) {
         window_.width = w;
         window_.height = h;
     }
 
+    /**
+     * @brief Get center
+     *
+     * @return const cv::Point2f
+     */
     const cv::Point2f center() const {
         return cv::Point2f(window_.tl().x + window_.width / 2, window_.tl().y + window_.height / 2);
     }
 
+    /**
+     * @brief Check if the bbox contains the point
+     *
+     * @param point
+     * @return true
+     * @return false
+     */
     bool contains(cv::Point2f point) const {
         return window_.contains(point);
     }

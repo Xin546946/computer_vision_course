@@ -1,3 +1,15 @@
+/**
+______________________________________________________________________
+*********************************************************************
+* @brief This file is developed for the course of ShenLan XueYuan:
+* Fundamental implementations of Computer Vision
+* all rights preserved
+* @author Xin Jin, Zhaoran Wu
+* @contact: xinjin1109@gmail.com, zhaoran.wu1@gmail.com
+*
+______________________________________________________________________
+*********************************************************************
+**/
 #include "particle_filter.h"
 #include "math_utils.h"
 #include "opencv_utils.h"
@@ -16,86 +28,24 @@ ParticleFilter::ParticleFilter(cv::Mat temp, const BoundingBox& init_bbox, int n
 }
 
 void ParticleFilter::init_particles(const BoundingBox& init_bbox, int num_particles) {
-    cv::Point2f center = init_bbox.center();
-    std::array<double, 4> means{init_bbox.width(), init_bbox.height(), center.x, center.y};
-    std::array<double, 4> stddev{2.0, 2.0, 10.0, 10.0};
-
-    auto gauss_datas = generate_gauss_data<double, 4>(num_particles, means, stddev);
-    particles_.reserve(num_particles);
-    for (const auto& data : gauss_datas) {
-        // each data contains {w,h,x,y}
-        particles_.emplace_back(data[0], data[1], data[2], data[3], 1.0);
-    }
+    // todo initialize the particles
+    // todo you can use generate_gauss_data to generate random numbers as noise
 }
 
 void ParticleFilter::predict_status() {
-    cv::Vec2f delta_motion = motion_model_.predict_motion();
-
-    // w,h,x,y
-    std::array<double, 4> means{0.0, 0.0, 0.0, 0.0};
-    std::array<double, 4> stddev{0.1, 0.1, 1.0, 1.0};
-    auto noises = generate_gauss_data<double, 4>(particles_.size(), means, stddev);
-#pragma omp parallel for
-    for (int i = 0; i < particles_.size(); i++) {
-        particles_[i].update_with_motion_and_noise(delta_motion, noises[i]);
-    }
+    // todo predict the status
+    // todo you can use generate_gauss_data and update_with_motion_and_noise
 }
 
 void ParticleFilter::update_weights(cv::Mat frame) {
     cv::Mat frame_64f;
-    frame.convertTo(frame_64f, CV_64FC1);
-
-#pragma omp parallel for
-    for (int i = 0; i < particles_.size(); i++) {
-        const State& state = particles_[i].state_;
-        cv::Mat sub_frame_64f =
-            get_sub_image_around(frame_64f, state.x_center(), state.y_center(), state.w(), state.h());
-        cv::Mat sub_img_vis = get_sub_image_around(frame, state.x_center(), state.y_center(), state.w(), state.h());
-
-        if (sub_frame_64f.cols == 0 || sub_frame_64f.rows == 0) {
-            particles_[i].bad_ = true;
-            continue;
-        }
-
-        // cv::imshow("sub", sub_img_vis);
-        // cv::waitKey(0);
-
-        Histogram hist_sub_frame = make_histogramm(sub_frame_64f, hist_temp_.num_bin(),
-                                                   cv::Mat::ones(sub_frame_64f.size(), CV_64FC1), 0.0, 255.0);
-        hist_sub_frame.equalize();
-
-        particles_[i].weight_ *= compute_weight_factor(hist_temp_, hist_sub_frame, 20);
-        // std::cerr << "weight : " << particles_[i].weight_ << '\n';
-    }
+    frame.convertTo(frame_64f, CV_64FC1);  // CV_64FC1 form for calculation
+    // todo update weight
+    // todo use get_sub_image_around, make_histogramm, compute_weight_factor
 }
 
 void ParticleFilter::resampling() {
-    // todo : using std mutilple thread,  1 +　．．．　＋１００；
-    double integration = 0.0;
-    std::vector<std::pair<double, int>> integration_to_id;
-    integration_to_id.reserve(particles_.size());
-
-    for (int i = 0; i < particles_.size(); i++) {
-        if (particles_[i].bad_) {
-            continue;
-        }
-
-        integration += particles_[i].weight_;
-        integration_to_id.emplace_back(integration, i);
-    }
-
-    std::vector<Particle> new_particles;
-    new_particles.reserve(particles_.size());
-
-    for (int i = 0; i < particles_.size(); i++) {
-        float rnd_num = generate_random_data(0.0f, integration);
-        auto it_candidate = std::lower_bound(integration_to_id.begin(), integration_to_id.end(), rnd_num,
-                                             [](std::pair<double, int> lhs, double rhs) { return lhs.first < rhs; });
-        int index_candidate = it_candidate->second;
-        new_particles.emplace_back(particles_[index_candidate].state_, 1.0f);
-    }
-
-    particles_ = new_particles;
+    // todo resample the particles
 }
 
 Particle::Particle(float w, float h, float x_center, float y_center, float weight)
@@ -132,7 +82,7 @@ State ParticleFilter::compute_mean_state_and_set_observation() {
     float y = 0.0f;
 
     double sum_w = 0.0;
-    // todo : using std mutilple thread,  1 +　．．．　＋１００　；
+
     for (const auto& particle : particles_) {
         if (particle.bad_) {
             continue;

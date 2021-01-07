@@ -21,8 +21,8 @@ int main(int argc, char** argv) {
     BoundingBox init_bbox(init_upper_left.x, init_upper_left.y, temp.cols, temp.rows);
 
     PFTracker pf_tracker(temp, init_bbox, 1000);
-    tictoc::tic();
+
     pf_tracker.process(video);
-    std::cout << "Tracking uses " << tictoc::toc() / 1e6 << " sec without multithreading. " << '\n';
+
     return 0;
 }

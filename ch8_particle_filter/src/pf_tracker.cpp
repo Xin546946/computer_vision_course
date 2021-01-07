@@ -1,3 +1,15 @@
+/**
+______________________________________________________________________
+*********************************************************************
+* @brief This file is developed for the course of ShenLan XueYuan:
+* Fundamental implementations of Computer Vision
+* all rights preserved
+* @author Xin Jin, Zhaoran Wu
+* @contact: xinjin1109@gmail.com, zhaoran.wu1@gmail.com
+*
+______________________________________________________________________
+*********************************************************************
+**/
 #include "pf_tracker.h"
 #include "bounding_box.h"
 #include "opencv_utils.h"
@@ -21,7 +33,6 @@ void PFTracker::process(const std::vector<cv::Mat>& video) {
         pf_.predict_status();
         pf_.visualize(frame);
         pf_.update_weights(frame);
-        // todo check if need resampling
         pf_.resampling();
         pf_.visualize(frame);
     }
