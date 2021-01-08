@@ -1,6 +1,6 @@
 #include "bounding_box.h"
+#include "cf_tracker.h"
 #include "opencv_utils.h"
-#include "pf_tracker.h"
 #include "tictoc.h"
 #include <iostream>
 #include <opencv2/core/core.hpp>
@@ -21,9 +21,9 @@ int main(int argc, char** argv) {
 
     BoundingBox init_bbox(init_upper_left.x, init_upper_left.y, temp.cols, temp.rows);
 
-    PFTracker pf_tracker(temp, init_bbox, 1000);
+    CFTracker cf_tracker(temp, init_bbox);
 
-    pf_tracker.process(video);
+    cf_tracker.process(video);
 
     return 0;
 }

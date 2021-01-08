@@ -72,6 +72,12 @@ cv::Mat draw_bounding_box_vis_image(cv::Mat image, float x_ul, float y_ul, float
     return image;
 }
 
+cv::Mat get_float_mat_vis_img(cv::Mat input) {
+    cv::Mat output;
+    cv::normalize(input, output, 0, 1, cv::NORM_MINMAX);
+    return output;
+}
+
 bool is_good_mat(cv::Mat mat, std::string mat_name) {
     if (mat.empty()) {
         std::cerr << "mat " << mat_name << " is empty!\n";

@@ -47,6 +47,8 @@ cv::Rect get_intersection_around(cv::Mat image, int x, int y, int width, int hei
 cv::Rect get_intersection_from_ul(cv::Rect rect_img, int x, int y, int width, int height);
 cv::Rect get_intersection_from_ul(cv::Mat image, int x, int y, int width, int height);
 
+cv::Mat get_float_mat_vis_img(cv::Mat);
+
 template <typename T1, typename T2>
 void put_val_from_ul(T1 val, T2 input_mat, int x_ul, int y_ul, int width, int height);
 
