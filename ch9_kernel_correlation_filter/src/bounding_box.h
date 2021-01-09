@@ -85,6 +85,12 @@ class BoundingBox {
         return window_.contains(point);
     }
 
+    BoundingBox set_larger_roi(double ratio_width, double ratio_height) {
+        return BoundingBox(this->center().x - this->width() * ratio_width / 2,
+                           this->center().y - this->height() * ratio_height / 2, ratio_width * this->width(),
+                           ratio_height * this->height());
+    }
+
    private:
     cv::Rect2f window_;
 };

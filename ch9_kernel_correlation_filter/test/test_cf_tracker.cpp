@@ -21,7 +21,7 @@ int main(int argc, char** argv) {
 
     BoundingBox init_bbox(init_upper_left.x, init_upper_left.y, temp.cols, temp.rows);
 
-    CFTracker cf_tracker(temp, init_bbox);
+    CFTracker cf_tracker(init_bbox);
 
     cf_tracker.process(video);
 

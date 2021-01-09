@@ -2,8 +2,7 @@
 #include "display.h"
 #include "opencv_utils.h"
 
-void draw_optical_flow(cv::Mat& fx, cv::Mat& fy, cv::Mat& cflowmap, int step,
-                       double scaleFactor, cv::Scalar& color) {
+void draw_optical_flow(cv::Mat& fx, cv::Mat& fy, cv::Mat& cflowmap, int step, double scaleFactor, cv::Scalar& color) {
     for (int r = 0; r < cflowmap.rows; r += step)
         for (int c = 0; c < cflowmap.cols; c += step) {
             cv::Point2f fxy;
@@ -13,9 +12,8 @@ void draw_optical_flow(cv::Mat& fx, cv::Mat& fy, cv::Mat& cflowmap, int step,
 
             if (fxy.x != 0 || fxy.y != 0) {
                 cv::line(cflowmap, cv::Point(c, r),
-                         cv::Point(cvRound(c + (fxy.x) * scaleFactor),
-                                   cvRound(r + (fxy.y) * scaleFactor)),
-                         color, 1, cv::LINE_AA);
+                         cv::Point(cvRound(c + (fxy.x) * scaleFactor), cvRound(r + (fxy.y) * scaleFactor)), color, 1,
+                         cv::LINE_AA);
             }
             cv::circle(cflowmap, cv::Point(c, r), 1, cv::Scalar(255, 0, 0), 1);
         }
@@ -84,8 +82,7 @@ void disp_image(cv::Mat& img, cv::String windowName, cv::String error_msg) {
     }
 }
 
-void disp_image(cv::Mat& img, cv::String windowName, cv::String error_msg,
-                int delay) {
+void disp_image(cv::Mat& img, cv::String windowName, cv::String error_msg, int delay) {
     if (img.empty()) {  // Read image and display after checking for image
                         // validity
         std::cout << error_msg;
@@ -140,25 +137,23 @@ cv::Mat draw_points(cv::Mat img, cv::Mat points, cv::Scalar color) {
 
     for (int i = 0; i < points.rows; i++) {
         const cv::Vec2d& p1 = points.at<cv::Vec2d>(i);
-        result.at<cv::Vec3b>(p1[1], p1[0]) =
-            cv::Vec3b(color(0), color(1), color(2));
+        result.at<cv::Vec3b>(p1[1], p1[0]) = cv::Vec3b(color(0), color(1), color(2));
     }
 
     return result;
 }
-cv::Mat get_float_mat_vis_img(cv::Mat input) {
-    cv::Mat output;
-    cv::normalize(input, output, 0, 1, cv::NORM_MINMAX);
-    return output;
-}
+// cv::Mat get_float_mat_vis_img(cv::Mat input) {
+//     cv::Mat output;
+//     cv::normalize(input, output, 0, 1, cv::NORM_MINMAX);
+//     return output;
+// }
 
 // callback for opencv api
 void drag_to_print_pixel(int event, int x, int y, int flags, void* img_ptr) {
     if ((flags & cv::EVENT_FLAG_LBUTTON) && event == cv::EVENT_MOUSEMOVE &&
         is_in_img(*reinterpret_cast<cv::Mat*>(img_ptr), y, x)) {
-        std::cout << "x = " << x << ", y = " << y << ", value : "
-                  << reinterpret_cast<cv::Mat*>(img_ptr)->at<cv::Vec3b>(y, x)
-                  << std::endl;
+        std::cout << "x = " << x << ", y = " << y
+                  << ", value : " << reinterpret_cast<cv::Mat*>(img_ptr)->at<cv::Vec3b>(y, x) << std::endl;
     }
 }
 
