@@ -4,6 +4,7 @@
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 cv::Mat compute_fft(cv::Mat img) {
     int rows_dft = cv::getOptimalDFTSize(img.rows);
@@ -67,6 +68,30 @@ cv::Mat get_output_response(cv::Mat sub_img_from_roi, BoundingBox bbox) {
     cv::Mat gaussian_G;
     cv::GaussianBlur(G, gaussian_G, cv::Size(11, 11), 3.0, 3.0);
     return gaussian_G;
+}
+
+//! no tested! Q: how to test??
+cv::Mat div_fft(cv::Mat fft_img1, cv::Mat fft_img2) {
+    cv::Mat fft_img1_2_channels[2], fft_img2_2_channels[2];
+    cv::split(fft_img1, fft_img1_2_channels);  // fft_img1 = a + ib
+    cv::split(fft_img2, fft_img2_2_channels);  // fft_img2 = c + id
+
+    // compute c**2 + d**2
+    cv::Mat denom =
+        fft_img2_2_channels[0].mul(fft_img2_2_channels[0]) + fft_img2_2_channels[1].mul(fft_img2_2_channels[1]);
+
+    // compute (ac+bd)/(cc+dd)
+    // compute (cb - ad)/(cc+dd)
+    cv::Mat re, im;
+    cv::divide(fft_img1_2_channels[0].mul(fft_img2_2_channels[0]) + fft_img1_2_channels[1].mul(fft_img2_2_channels[1]),
+               denom, re);
+    cv::divide(fft_img2_2_channels[0].mul(fft_img1_2_channels[1]) - fft_img1_2_channels[0].mul(fft_img2_2_channels[1]),
+               denom, im);
+
+    cv::Mat temp[2] = {re, im};
+    cv::Mat result;
+    cv::merge(temp, 2, result);
+    return result;
 }
 
 int main(int argc, char** argv) {
