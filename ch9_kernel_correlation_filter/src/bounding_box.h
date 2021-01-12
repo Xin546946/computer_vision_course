@@ -86,6 +86,12 @@ class BoundingBox {
         return window_.contains(point);
     }
 
+    bool is_out_of_img(cv::Mat img) {
+        std::cout << "@@@ intersection: " << img(window_).rows << " " << img(window_).cols << '\n';
+        std::cout << "@@@ window: " << this->height() << " " << this->width() << 'ņ';
+        return !(img(window_).rows == this->height() && img(window_).cols == this->width());
+    }
+
     void print_bbox_info() {
         std::cout << "Width: " << this->width() << '\n';
         std::cout << "Height: " << this->height() << '\n';

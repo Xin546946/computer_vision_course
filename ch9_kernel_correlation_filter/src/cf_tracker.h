@@ -33,7 +33,7 @@ class CFTracker {
 
     BoundingBox bbox_;
 
-    float rate_ = 0.01f;
+    float rate_ = 0.1f;
     cv::Mat RESPONSE_;
     cv::Mat KERNEL_A_;  //! need to be initialized as 0
     cv::Mat KERNEL_B_;

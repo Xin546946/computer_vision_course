@@ -201,21 +201,25 @@ void CFTracker::train_H(cv::Mat img) {
     cv::Mat vis_kernel = get_float_mat_vis_img(kernel);
     cv::imshow("kernel", vis_kernel);
     cv::waitKey(0);
-    // std::cout << KERNEL_.channels() << '\n';
-    // test for fft(img) * kernel == fft(response)
-    // cv::Mat ROI_IMG;
-    // cv::dft(roi_img, ROI_IMG, cv::DFT_COMPLEX_OUTPUT);
-    // cv::Mat TEST_RESPONSE, test_response;
-    // std::cout << "IMG size: " << ROI_IMG.size() << '\n' << "KERNEL size: " << KERNEL_.size() << '\n';
-    // cv::mulSpectrums(ROI_IMG, KERNEL_, TEST_RESPONSE, cv::DFT_ROWS, true);
-    // cv::idft(TEST_RESPONSE, test_response, cv::DFT_SCALE | cv::DFT_REAL_OUTPUT);
-    // std::cout << "Type of test response: " << test_response.type() << '\n';
-    // cv::Mat vis_test_response = get_float_mat_vis_img(test_response);
-    //  cv::imshow("test_response", vis_test_response);
-    // cv::waitKey(0);
+    std::cout << KERNEL_.channels() << '\n';
+    //! test for fft(img) * kernel == fft(response)
+    cv::Mat ROI_IMG;
+    cv::dft(roi_img, ROI_IMG, cv::DFT_COMPLEX_OUTPUT);
+    cv::Mat TEST_RESPONSE, test_response;
+    std::cout << "IMG size: " << ROI_IMG.size() << '\n' << "KERNEL size: " << KERNEL_.size() << '\n';
+    cv::mulSpectrums(ROI_IMG, KERNEL_, TEST_RESPONSE, cv::DFT_ROWS, true);
+    cv::idft(TEST_RESPONSE, test_response, cv::DFT_SCALE | cv::DFT_REAL_OUTPUT);
+    std::cout << "Type of test response: " << test_response.type() << '\n';
+    cv::Mat vis_test_response = get_float_mat_vis_img(test_response);
+    cv::imshow("test_response", vis_test_response);
+    cv::waitKey(0);
 }
 
 void CFTracker::update_H(cv::Mat img) {
+    if (img.size() != KERNEL_.size()) {
+        std::cout << " Tracking terminate." << '\n';
+        std::exit(0);
+    }
     preprocessing(img);
     // calculate G using previoud H and current img
     cv::Mat IMG;  //= compute_fft(img);
@@ -256,7 +260,7 @@ void CFTracker::visualize(cv::Mat img) {
     cv::Mat vis_bbox =
         draw_bounding_box_vis_image(img_color, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
     cv::imshow("Tracking result", vis_bbox);
-    cv::waitKey(1);
+    cv::waitKey(20);
 }
 
 void CFTracker::process(const std::vector<cv::Mat>& video) {
@@ -266,12 +270,18 @@ void CFTracker::process(const std::vector<cv::Mat>& video) {
         cv::Mat frame_64f;
         frame.convertTo(frame_64f, CV_64FC1);
         cv::Mat sub_frame = get_sub_image(frame_64f, 2.0f * bbox_);
+        std::cout << "sub frame size" << sub_frame.size() << '\n';
         // cv::Mat vis_sub_frame = get_float_mat_vis_img(sub_frame);
         // cv::imshow("vis sub frame", vis_sub_frame);
         // cv::waitKey(1);
-        update_H(sub_frame);
-        update_bbox(sub_frame);
-
         visualize(frame);
+        // if ((2.0f * bbox_).is_out_of_img(frame)) {
+        //     std::cout << "Tracking terminates." << '\n';
+        //     std::exit(0);
+        // }
+
+        update_H(sub_frame);
+
+        update_bbox(sub_frame);
     }
 }
