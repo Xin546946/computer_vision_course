@@ -9,7 +9,7 @@
 
 int main(int argc, char** argv) {
     std::vector<cv::Mat> video;
-    for (int id = 1; id < 251; id++) {
+    for (int id = 1; id < 914; id++) {
         cv::Mat img = read_img(argv[1] + std::to_string(id) + ".jpg", cv::IMREAD_GRAYSCALE);
         video.push_back(img);
     }

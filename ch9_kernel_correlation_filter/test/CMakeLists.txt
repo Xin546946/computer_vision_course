@@ -10,5 +10,3 @@ target_link_libraries(test_cf_tracker cf_tracker utils ${OpenCV_LIBS})
 add_executable(test_small_func test_small_func.cpp)
 target_link_libraries(test_small_func ${OpenCV_LIBS} utils)
 
-add_executable(test_random_affine_transformation test_rand_affine_transformation.cpp)
-target_link_libraries(test_random_affine_transformation utils ${OpenCV_LIBS})
