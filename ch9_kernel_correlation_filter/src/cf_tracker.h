@@ -28,9 +28,9 @@ class CFTracker {
     void train_H(cv::Mat img);
     void update_H(cv::Mat img);
     void update_bbox(cv::Mat img);
-
+    void visualize(cv::Mat img);
     BoundingBox bbox_;
-    float rate_ = 0.1;
+    float rate_ = 0.05;
     cv::Mat RESPONSE_;
     cv::Mat KERNEL_A_;  //! need to be initialized as 0
     cv::Mat KERNEL_B_;
