@@ -212,11 +212,13 @@ void FeaturePointsManager::mark_status_with_angle(const std::vector<cv::Vec2f>& 
     float mid = median(angle_vec, status);
 
     std::vector<float>::iterator it_angle = angle_vec.begin();
+
     std::replace_if(status.begin(), status.end(),
                     [&](uchar i) {
-                        bool is_outlier = ((*it_angle < mid - shift) || (*it_angle > mid + shift));
+                        float dist = std::min(std::abs(*it_angle - mid), std::abs(*it_angle - mid + 360));
+                        // bool is_outlier = ((*it_angle < mid - shift) || (*it_angle > mid + shift));
                         it_angle++;
-                        return is_outlier;
+                        return (dist > shift);
                     },
                     0);
 }
