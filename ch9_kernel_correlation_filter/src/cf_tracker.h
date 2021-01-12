@@ -25,12 +25,15 @@ class CFTracker {
     void process(const std::vector<cv::Mat>& video);
 
    private:
+    void preprocessing(cv::Mat& img);
     void train_H(cv::Mat img);
     void update_H(cv::Mat img);
     void update_bbox(cv::Mat img);
     void visualize(cv::Mat img);
+
     BoundingBox bbox_;
-    float rate_ = 0.05;
+
+    float rate_ = 0.01f;
     cv::Mat RESPONSE_;
     cv::Mat KERNEL_A_;  //! need to be initialized as 0
     cv::Mat KERNEL_B_;

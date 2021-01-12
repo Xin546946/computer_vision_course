@@ -132,16 +132,16 @@ cv::Mat train_H(cv::Mat img, BoundingBox& bbox) {
     cv::imshow("roi img", roi_img);
     cv::waitKey(0);
     cv::Mat response = compute_response(roi_img, bbox);
-    cv::Mat RESPONSE;
-    cv::dft(response, RESPONSE, cv::DFT_COMPLEX_OUTPUT);
+    cv::Mat RESPONSE = compute_fft(response);
+    // cv::dft(response, RESPONSE, cv::DFT_COMPLEX_OUTPUT);
     cv::Mat kernel_A = cv::Mat::zeros(RESPONSE.size(), RESPONSE.type());
     cv::Mat kernel_B = cv::Mat::zeros(RESPONSE.size(), RESPONSE.type());
     for (int i = 0; i < 8; i++) {
         cv::Mat img_train = cmpute_rand_affine_transformation(roi_img);
         cv::imshow("affine_transform", img_train);
         cv::waitKey(0);
-        cv::Mat IMG_TRAIN;
-        cv::dft(img_train, IMG_TRAIN, cv::DFT_COMPLEX_OUTPUT);
+        cv::Mat IMG_TRAIN = compute_fft(img_train);
+        // cv::dft(img_train, IMG_TRAIN, cv::DFT_COMPLEX_OUTPUT);
 
         cv::Mat nom, den;
         cv::mulSpectrums(RESPONSE, IMG_TRAIN, nom, cv::DFT_ROWS, true);
