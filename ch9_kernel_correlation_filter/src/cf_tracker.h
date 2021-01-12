@@ -11,6 +11,7 @@ ______________________________________________________________________
 *********************************************************************
 **/
 #pragma once
+#include "bounding_box.h"
 #include <opencv2/core.hpp>
 class CFTracker {
    public:
@@ -24,6 +25,14 @@ class CFTracker {
     void process(const std::vector<cv::Mat>& video);
 
    private:
+    void train_H(cv::Mat img);
+    void update_H(cv::Mat img);
+    void update_bbox(cv::Mat img);
+
     BoundingBox bbox_;
-    cv::Mat H_;  // H_ is mask
+    float rate_ = 0.1;
+    cv::Mat RESPONSE_;
+    cv::Mat KERNEL_A_;  //! need to be initialized as 0
+    cv::Mat KERNEL_B_;
+    cv::Mat KERNEL_;  // H
 };

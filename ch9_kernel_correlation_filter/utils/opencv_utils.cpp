@@ -57,6 +57,8 @@ cv::Rect get_intersection_around(cv::Mat image, int x, int y, int width, int hei
 cv::Mat get_sub_image_around(cv::Mat image, int x, int y, int width, int height) {
     cv::Rect intersection = get_intersection_around(image, x, y, width, height);
     cv::Mat sub_img = cv::Mat::zeros(intersection.size(), image.type());
+    // cv::imshow("testt", sub_img);
+    // cv::waitKey(0);
     image(intersection).copyTo(sub_img);
     return sub_img;
 }
@@ -92,3 +94,7 @@ bool is_good_mat(cv::Mat mat, std::string mat_name) {
 
     return true;
 }
+
+// cv::Mat get_sub_image(cv::Mat img, BoundingBox bbox) {
+//     return get_sub_image_around(img, bbox.center().x, bbox.center().y, bbox.width(), bbox.height());
+// }

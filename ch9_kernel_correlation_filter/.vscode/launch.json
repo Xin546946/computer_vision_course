@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/test/test_bbox",
-            "args": ["${workspaceFolder}/dataset/data25/100.jpg","${workspaceFolder}/dataset/data25/template/1.png"],
+            "args": ["${workspaceFolder}/dataset/data25/100.jpg","${workspaceFolder}/dataset/data25/template/4.png"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

@@ -1,4 +1,6 @@
 #pragma once
+// #include "bounding_box.h"
+// #include "opencv2/imgproc.hpp"
 #include <iostream>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -48,6 +50,8 @@ cv::Rect get_intersection_from_ul(cv::Rect rect_img, int x, int y, int width, in
 cv::Rect get_intersection_from_ul(cv::Mat image, int x, int y, int width, int height);
 
 cv::Mat get_float_mat_vis_img(cv::Mat);
+
+// cv::Mat get_sub_image(cv::Mat img, BoundingBox bbox);
 
 template <typename T1, typename T2>
 void put_val_from_ul(T1 val, T2 input_mat, int x_ul, int y_ul, int width, int height);

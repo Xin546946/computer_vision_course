@@ -12,6 +12,7 @@ ______________________________________________________________________
 **/
 
 #pragma once
+#include <iostream>
 #include <opencv2/core/core.hpp>
 class BoundingBox {
    public:
@@ -85,12 +86,24 @@ class BoundingBox {
         return window_.contains(point);
     }
 
-    BoundingBox set_larger_roi(double ratio_width, double ratio_height) {
-        return BoundingBox(this->center().x - this->width() * ratio_width / 2,
-                           this->center().y - this->height() * ratio_height / 2, ratio_width * this->width(),
-                           ratio_height * this->height());
+    void print_bbox_info() {
+        std::cout << "Width: " << this->width() << '\n';
+        std::cout << "Height: " << this->height() << '\n';
+        std::cout << "Center: " << this->center().x << " " << this->center().y << '\n';
+        std::cout << "Area: " << this->area() << '\n';
     }
+
+    // BoundingBox set_larger_roi(double ratio_width, double ratio_height) {
+    //     return BoundingBox(this->center().x - this->width() * ratio_width / 2,
+    //                        this->center().y - this->height() * ratio_height / 2, ratio_width * this->width(),
+    //                        ratio_height * this->height());
+    // }
 
    private:
     cv::Rect2f window_;
 };
+
+inline BoundingBox operator*(float ratio, BoundingBox bbox) {
+    return BoundingBox(bbox.center().x - bbox.width() * ratio / 2, bbox.center().y - bbox.height() * ratio / 2,
+                       ratio * bbox.width(), ratio * bbox.height());
+}

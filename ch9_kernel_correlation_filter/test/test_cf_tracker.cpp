@@ -1,7 +1,7 @@
-#include "bounding_box.h"
+// #include "bounding_box.h"
 #include "cf_tracker.h"
 #include "opencv_utils.h"
-#include "tictoc.h"
+
 #include <iostream>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -21,6 +21,10 @@ int main(int argc, char** argv) {
 
     BoundingBox init_bbox(init_upper_left.x, init_upper_left.y, temp.cols, temp.rows);
 
+    // cv::Mat vis_bbox = draw_bounding_box_vis_image(video.front(), init_bbox.top_left().x, init_bbox.top_left().y,
+    //                                                init_bbox.width(), init_bbox.height());
+    // cv::imshow("vis bbox", vis_bbox);
+    // cv::waitKey(0);
     CFTracker cf_tracker(init_bbox);
 
     cf_tracker.process(video);
