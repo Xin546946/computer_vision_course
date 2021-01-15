@@ -238,6 +238,7 @@ void CFTracker::update_H(cv::Mat img) {
 }
 
 void CFTracker::update_bbox(cv::Mat img) {
+    back_up_state();
     cv::Mat IMG;  //! = compute_fft(img);
 
     cv::dft(img, IMG, cv::DFT_COMPLEX_OUTPUT);
@@ -249,9 +250,22 @@ void CFTracker::update_bbox(cv::Mat img) {
     double max_val;
     cv::Point max_location;
     cv::minMaxLoc(response, 0, &max_val, 0, &max_location);
-    float delta_x = (float(max_location.x) - response.size().width / 2);
-    float delta_y = (float(max_location.y) - response.size().height / 2);
-    bbox_.move(delta_x, delta_y);
+    delta_x_ = (float(max_location.x) - response.size().width / 2);
+    delta_y_ = (float(max_location.y) - response.size().height / 2);
+    float PSR;
+    cv::Scalar mean, std_dev;
+    cv::meanStdDev(response, mean, std_dev);
+    PSR = (max_val - mean[0]) / (std_dev[0] + 1e-6);
+    if (PSR < 5.7) {
+        delta_x_ = delta_x_prev_ * 0.5 + delta_x_ * 0.5;
+        delta_y_ = delta_y_prev_ * 0.5 + delta_y_ * 0.5;
+    }
+    bbox_.move(delta_x_, delta_y_);
+}
+
+void CFTracker::back_up_state() {
+    delta_x_prev_ = delta_x_;
+    delta_y_prev_ = delta_y_;
 }
 
 void CFTracker::visualize(cv::Mat img) {
