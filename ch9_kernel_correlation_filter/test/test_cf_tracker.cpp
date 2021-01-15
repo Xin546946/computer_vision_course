@@ -9,7 +9,7 @@
 
 int main(int argc, char** argv) {
     std::vector<cv::Mat> video;
-    for (int id = 1; id < 914; id++) {
+    for (int id = 1; id < 251; id++) {
         cv::Mat img = read_img(argv[1] + std::to_string(id) + ".jpg", cv::IMREAD_GRAYSCALE);
         video.push_back(img);
     }
@@ -17,14 +17,11 @@ int main(int argc, char** argv) {
     cv::Mat temp = read_img(argv[2], cv::IMREAD_GRAYSCALE);
 
     cv::Point2i init_upper_left = template_matching(video.front(), temp);
-    cv::Point2f init_center = cv::Point2f(init_upper_left.x + temp.cols / 2.0f, init_upper_left.y + temp.rows / 2.0f);
+    // cv::Point2f init_center = cv::Point2f(init_upper_left.x + temp.cols / 2.0f, init_upper_left.y + temp.rows
+    // / 2.0f);
 
     BoundingBox init_bbox(init_upper_left.x, init_upper_left.y, temp.cols, temp.rows);
 
-    // cv::Mat vis_bbox = draw_bounding_box_vis_image(video.front(), init_bbox.top_left().x, init_bbox.top_left().y,
-    //                                                init_bbox.width(), init_bbox.height());
-    // cv::imshow("vis bbox", vis_bbox);
-    // cv::waitKey(0);
     CFTracker cf_tracker(init_bbox);
 
     cf_tracker.process(video);

@@ -13,6 +13,10 @@ ______________________________________________________________________
 #pragma once
 #include "bounding_box.h"
 #include <opencv2/core.hpp>
+/**
+ * @brief Correlation Filter Tracker
+ *
+ */
 class CFTracker {
    public:
     CFTracker(const BoundingBox& init_bbox);
@@ -25,17 +29,40 @@ class CFTracker {
     void process(const std::vector<cv::Mat>& video);
 
    private:
-    void preprocessing(cv::Mat& img);
-    void train_H(cv::Mat img);
-    void update_H(cv::Mat img);
+    /**
+     * @brief train init H matrix with random affine transformation
+     *
+     * @param img
+     */
+    void train_init_kernel(cv::Mat img);
+
+    /**
+     * @brief update H matrix
+     *
+     * @param img
+     */
+    void update_kernel(cv::Mat img);
+
+    /**
+     * @brief update bounding box
+     *
+     * @param img
+     */
     void update_bbox(cv::Mat img);
+
+    /**
+     * @brief visualize the bbox
+     *
+     * @param img
+     */
     void visualize(cv::Mat img);
 
     BoundingBox bbox_;
 
-    float rate_ = 0.1f;
+    float rate_ = 0.2f;
+
     cv::Mat RESPONSE_;
-    cv::Mat KERNEL_A_;  //! need to be initialized as 0
+    cv::Mat KERNEL_A_;
     cv::Mat KERNEL_B_;
     cv::Mat KERNEL_;  // H
 };
