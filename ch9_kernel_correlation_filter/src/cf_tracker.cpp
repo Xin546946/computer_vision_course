@@ -293,9 +293,7 @@ void CFTracker::process(const std::vector<cv::Mat>& video) {
         //     std::cout << "Tracking terminates." << '\n';
         //     std::exit(0);
         // }
-
-        update_H(sub_frame);
-
         update_bbox(sub_frame);
+        update_H(sub_frame);
     }
 }
