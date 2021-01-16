@@ -89,8 +89,8 @@ void CFTracker::process(const std::vector<cv::Mat>& video) {
 
         visualize(frame);
 
-        update_kernel(sub_frame);
-
         update_bbox(sub_frame);
+
+        update_kernel(sub_frame);
     }
 }
