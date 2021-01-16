@@ -1,3 +1,15 @@
+/**
+______________________________________________________________________
+*********************************************************************
+* @brief This file is developed for the course of ShenLan XueYuan:
+* Fundamental implementations of Computer Vision
+* all rights preserved
+* @author Xin Jin, Zhaoran Wu
+* @contact: xinjin1109@gmail.com, zhaoran.wu1@gmail.com
+*
+______________________________________________________________________
+*********************************************************************
+**/
 // #include "bounding_box.h"
 #include "cf_tracker.h"
 #include "opencv_utils.h"
@@ -17,8 +29,6 @@ int main(int argc, char** argv) {
     cv::Mat temp = read_img(argv[2], cv::IMREAD_GRAYSCALE);
 
     cv::Point2i init_upper_left = template_matching(video.front(), temp);
-    // cv::Point2f init_center = cv::Point2f(init_upper_left.x + temp.cols / 2.0f, init_upper_left.y + temp.rows
-    // / 2.0f);
 
     BoundingBox init_bbox(init_upper_left.x, init_upper_left.y, temp.cols, temp.rows);
 

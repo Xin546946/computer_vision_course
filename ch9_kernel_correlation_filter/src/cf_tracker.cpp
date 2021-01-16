@@ -1,3 +1,15 @@
+/**
+______________________________________________________________________
+*********************************************************************
+* @brief This file is developed for the course of ShenLan XueYuan:
+* Fundamental implementations of Computer Vision
+* all rights preserved
+* @author Xin Jin, Zhaoran Wu
+* @contact: xinjin1109@gmail.com, zhaoran.wu1@gmail.com
+*
+______________________________________________________________________
+*********************************************************************
+**/
 #include "cf_tracker.h"
 // #include "bounding_box.h"
 #include "math_utils.h"
@@ -46,14 +58,17 @@ cv::Mat cmpute_rand_affine_transformation(cv::Mat img) {
 
 void CFTracker::train_init_kernel(cv::Mat img) {
     // todo train initial kernel
+    // todo hints: cv::dft(XXX), cv::idft(XXX), cv::mulSpectrums(XXX)
 }
 
 void CFTracker::update_kernel(cv::Mat img) {
     // todo update kernel
+    // todo hints: div_fft(XXX)
 }
 
 void CFTracker::update_bbox(cv::Mat img) {
     // todo update bbox
+    // todo hints: minmaxLoc
 }
 
 void CFTracker::visualize(cv::Mat img) {

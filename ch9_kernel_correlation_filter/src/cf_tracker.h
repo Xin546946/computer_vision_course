@@ -61,8 +61,8 @@ class CFTracker {
 
     float rate_ = 0.2f;
 
-    cv::Mat RESPONSE_;
-    cv::Mat KERNEL_A_;
-    cv::Mat KERNEL_B_;
-    cv::Mat KERNEL_;  // H
+    cv::Mat RESPONSE_;  // G
+    cv::Mat KERNEL_A_;  // A
+    cv::Mat KERNEL_B_;  // B
+    cv::Mat KERNEL_;    // H
 };
