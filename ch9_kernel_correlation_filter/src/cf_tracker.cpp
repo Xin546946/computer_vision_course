@@ -4,7 +4,8 @@
 #include "opencv_utils.h"
 
 cv::Mat get_sub_image(cv::Mat img, BoundingBox bbox) {
-    return get_sub_image_around(img, bbox.center().x, bbox.center().y, bbox.width(), bbox.height());
+    return get_sub_image_around(img, std::round(bbox.center().x), std::round(bbox.center().y), std::round(bbox.width()),
+                                std::round(bbox.height()));
 }
 cv::Mat compute_mag_fft(cv::Mat complex_img) {
     cv::Mat planes[2];
@@ -219,14 +220,14 @@ void CFTracker::train_H(cv::Mat img) {
 }
 
 void CFTracker::update_H(cv::Mat img) {
-    if (img.size() != KERNEL_.size()) {
-        //! todo
-        img = get_sub_image_from_ul(img, 0, 0, KERNEL_.cols, KERNEL_.cols);
-        // KERNEL_ = get_sub_image_from_ul(KERNEL_, 0, 0, img.cols, img.rows);
-        // RESPONSE_ = get_sub_image_from_ul(RESPONSE_, 0, 0, img.cols, img.rows);
-        // std::cout << " Tracking terminate." << '\n';
-        // std::exit(0);
-    }
+    // if (img.size() != KERNEL_.size()) {
+    //     //! todo
+    //     img = get_sub_image_from_ul(img, 0, 0, KERNEL_.cols, KERNEL_.cols);
+    //     // KERNEL_ = get_sub_image_from_ul(KERNEL_, 0, 0, img.cols, img.rows);
+    //     // RESPONSE_ = get_sub_image_from_ul(RESPONSE_, 0, 0, img.cols, img.rows);
+    //     // std::cout << " Tracking terminate." << '\n';
+    //     // std::exit(0);
+    // }
     preprocessing(img);
     // calculate G using previoud H and current img
     cv::Mat IMG;  //= compute_fft(img);
@@ -245,17 +246,6 @@ void CFTracker::update_H(cv::Mat img) {
 }
 
 void CFTracker::update_bbox(cv::Mat img) {
-    if (img.size() != KERNEL_.size()) {
-        //! todo
-        img = get_sub_image_from_ul(img, 0, 0, KERNEL_.cols, KERNEL_.cols);
-        // KERNEL_ = get_sub_image_from_ul(KERNEL_, 0, 0, img.cols, img.rows);
-        // RESPONSE_ = get_sub_image_from_ul(RESPONSE_, 0, 0, img.cols, img.rows);
-        // std::cout << " Tracking terminate." << '\n';
-        // std::exit(0);
-    }
-    /*************************/
-
-    /********************/
     back_up_state();
     cv::Mat IMG;  //! = compute_fft(img);
 
@@ -289,12 +279,14 @@ void CFTracker::back_up_state() {
 }
 
 void CFTracker::visualize(cv::Mat img) {
+    // cv::Mat vis_img = get_float_mat_vis_img(img);
+    // vis_img.convertTo(vis_img, CV_8UC1);
     cv::Mat img_color;
     cv::cvtColor(img, img_color, CV_GRAY2BGR);
     cv::Mat vis_bbox =
         draw_bounding_box_vis_image(img_color, bbox_.top_left().x, bbox_.top_left().y, bbox_.width(), bbox_.height());
     cv::imshow("Tracking result", vis_bbox);
-    cv::waitKey(0);
+    cv::waitKey(10);
 }
 
 void CFTracker::process(const std::vector<cv::Mat>& video) {
@@ -303,8 +295,14 @@ void CFTracker::process(const std::vector<cv::Mat>& video) {
     for (cv::Mat frame : video) {
         cv::Mat frame_64f;
         frame.convertTo(frame_64f, CV_64FC1);
+        // int top = KERNEL_.rows * 3;
+        // int bottom = top;
+        // int left = KERNEL_.cols * 3;
+        // int right = left;
+        // cv::copyMakeBorder(frame_64f, frame_64f, top, bottom, left, right, cv::BORDER_CONSTANT);
         cv::Mat sub_frame = get_sub_image(frame_64f, 2.0f * bbox_);
-        std::cout << "sub frame size" << sub_frame.size() << '\n';
+
+        // std::cout << "sub frame size" << sub_frame.size() << '\n';
         // cv::Mat vis_sub_frame = get_float_mat_vis_img(sub_frame);
         // cv::imshow("vis sub frame", vis_sub_frame);
         // cv::waitKey(1);

@@ -56,12 +56,26 @@ cv::Rect get_intersection_around(cv::Mat image, int x, int y, int width, int hei
 
 cv::Mat get_sub_image_around(cv::Mat image, int x, int y, int width, int height) {
     cv::Rect intersection = get_intersection_around(image, x, y, width, height);
-    cv::Mat sub_img = cv::Mat::zeros(intersection.size(), image.type());
+    cv::Mat sub_img = cv::Mat::zeros(cv::Size(width, height), image.type());
+    cv::Rect intersection_local(intersection.x - x + width / 2, intersection.y - y + height / 2, intersection.width,
+                                intersection.height);
+
     // cv::imshow("testt", sub_img);
     // cv::waitKey(0);
-    image(intersection).copyTo(sub_img);
+    image(intersection).copyTo(sub_img(intersection_local));
     return sub_img;
 }
+
+// cv::Mat get_sub_image_around(cv::Mat image, int x, int y, int width, int height) {
+//     cv::Rect intersection = get_intersection_around(image, x, y, width, height);
+//     cv::Mat sub_img = cv::Mat::zeros(intersection.size(), image.type());
+//     // cv::Rect intersection_local(x - intersection.x, y - intersection.y, intersection.width, intersection.height);
+
+//     // cv::imshow("testt", sub_img);
+//     // cv::waitKey(0);
+//     image(intersection).copyTo(sub_img);
+//     return sub_img;
+// }
 
 cv::Mat get_sub_image_from_ul(cv::Mat image, int x, int y, int width, int height) {
     cv::Rect intersection = get_intersection_from_ul(image, x, y, width, height);
