@@ -95,6 +95,19 @@ bool is_good_mat(cv::Mat mat, std::string mat_name) {
     return true;
 }
 
+cv::Mat get_gaussian_kernel(int size, double sigma) {
+    assert(size % 2 == 1);
+    cv::Point center((size - 1) / 2, (size - 1) / 2);
+    cv::Mat result = cv::Mat::zeros(cv::Size(size, size), CV_64FC1);
+    for (int r = 0; r < size; r++) {
+        for (int c = 0; c < size; c++) {
+            result.at<double>(r, c) = (M_1_PI * 0.5 / (sigma * sigma)) *
+                                      exp(-(pow(r - center.x, 2) + pow(c - center.y, 2)) / (2 * sigma * sigma));
+        }
+    }
+    return result / cv::sum(result)[0];
+}
+
 // cv::Mat get_sub_image(cv::Mat img, BoundingBox bbox) {
 //     return get_sub_image_around(img, bbox.center().x, bbox.center().y, bbox.width(), bbox.height());
 // }

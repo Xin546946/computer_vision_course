@@ -51,6 +51,8 @@ cv::Rect get_intersection_from_ul(cv::Mat image, int x, int y, int width, int he
 
 cv::Mat get_float_mat_vis_img(cv::Mat);
 
+cv::Mat get_gaussian_kernel(int size, double sigma);
+
 // cv::Mat get_sub_image(cv::Mat img, BoundingBox bbox);
 
 template <typename T1, typename T2>

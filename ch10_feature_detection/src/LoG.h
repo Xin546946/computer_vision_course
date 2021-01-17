@@ -29,9 +29,9 @@ struct ParamThreshold {
     ParamThreshold(int threshold, int max_val, int threshold_type)
         : threshold_(threshold), max_val_(max_val), threshold_type_(threshold_type) {
     }
-    int threshold_ = 75;
+    int threshold_ = 40;
     int max_val_ = 255;
-    int threshold_type_ = 3;
+    int threshold_type_ = cv::THRESH_BINARY;
 };
 
 class LoG {
