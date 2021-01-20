@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/test/test_harris_corner",
-            "args": ["${workspaceFolder}/img/trump.jpg"],
+            "args": ["${workspaceFolder}/img/board.jpeg"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

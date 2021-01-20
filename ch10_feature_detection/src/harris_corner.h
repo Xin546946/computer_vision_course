@@ -9,9 +9,10 @@ class HarrisCornerDetector {
    public:
     HarrisCornerDetector(cv::Mat img) : img_(img), img_64f_(img.size(), CV_64FC1), result_(img.clone()) {
         img.convertTo(img_64f_, CV_64FC1);
+        cv::GaussianBlur(img_64f_, img_64f_, cv::Size(3, 3), 3.0, 3.0);
         cv::copyMakeBorder(img_64f_, img_64f_, 3, 3, 3, 3, cv::BORDER_CONSTANT, 200);
-        assert(img_64f_.type() == CV_64FC1);
-
+        // assert(img_64f_.type() == CV_64FC1);
+        std::cout << img_64f_.size() << " " << img_.size() << '\n';
         cv::cvtColor(img, result_, cv::COLOR_GRAY2BGR);
         cv::imshow("img color", result_);
         cv::waitKey(0);
