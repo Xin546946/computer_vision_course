@@ -49,8 +49,8 @@ void HarrisCornerDetector::run() {
             // }
         }
     }
-    int window_size = 5;
-    double threshold = 100.0;
+    int window_size = 10;
+    double threshold = 40.0;
     int border = (window_size - 1) / 2;
     for (int r = border; r < response.rows - border; r++) {
         for (int c = border; c < response.cols - border; c++) {
@@ -66,7 +66,7 @@ void HarrisCornerDetector::run() {
                     }
                 }
                 if (local_max) {
-                    cv::circle(result_, cv::Point(c, r), 5, cv::Scalar(0, 0, 255), 1);
+                    cv::circle(result_, cv::Point(c, r), 5, cv::Scalar(0, 0, 255), 1, cv::LINE_AA);
                 }
             }
         }
