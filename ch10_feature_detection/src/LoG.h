@@ -1,11 +1,37 @@
+/**
+______________________________________________________________________
+*********************************************************************
+* @brief This file is developed for the course of ShenLan XueYuan:
+* Fundamental implementations of Computer Vision
+* all rights preserved
+* @author Xin Jin, Zhaoran Wu
+* @contact: xinjin1109@gmail.com, zhaoran.wu1@gmail.com
+*
+______________________________________________________________________
+*********************************************************************
+**/
 #pragma once
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-
+/**
+ * @brief struct of gaussian parameter
+ *
+ */
 struct ParamGaussian {
+    /**
+     * @brief Construct a new Param Gaussian object by default
+     *
+     */
     ParamGaussian() = default;
+    /**
+     * @brief Construct a new Param Gaussian object
+     *
+     * @param size
+     * @param sigma_x
+     * @param sigma_y
+     */
     ParamGaussian(cv::Size size, float sigma_x, float sigma_y) : size_(size), sigma_x_(sigma_x), sigma_y_(sigma_y) {
     }
     cv::Size size_ = cv::Size(3, 3);
@@ -13,6 +39,10 @@ struct ParamGaussian {
     float sigma_y_ = 3.0;
 };
 
+/**
+ * @brief
+ *
+ */
 struct ParamLaplacian {
     ParamLaplacian() = default;
     ParamLaplacian(int ddepth, int kernel_size, int scale, int delta)

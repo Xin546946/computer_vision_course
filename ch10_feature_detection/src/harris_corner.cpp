@@ -30,7 +30,7 @@ void HarrisCornerDetector::run() {
     cv::Mat grad_y_zero_mean = img_grad_y - img_grad_y_mean * cv::Mat::ones(img_grad_y.size(), img_grad_y.type());
 
     assert(grad_x_zero_mean.type() == CV_64FC1);
-    cv::Mat response(img_.size(), CV_64FC1);
+    cv::Mat responses(img_.size(), CV_64FC1);
     for (int r = 3; r < img_64f_.rows - 3; r++) {
         for (int c = 3; c < img_64f_.cols - 3; c++) {
             cv::Mat grad_x_img_roi = get_sub_image_around(grad_x_zero_mean, c, r, 7, 7);
@@ -38,31 +38,24 @@ void HarrisCornerDetector::run() {
 
             cv::Matx22d M = compute_M(grad_x_img_roi, grad_y_img_roi);
 
-            // cv::Matx22d e_value, e_vector;
-            // cv::eigen(M, e_value, e_vector);
-
             double k = 0.05;
-            response.at<double>(r - 3, c - 3) = cv::determinant(M) - k * (cv::trace(M)) * (cv::trace(M));
-
-            // if (R > 20.0) {
-            //     cv::circle(result_, cv::Point(c, r), 1, cv::Scalar(0, 0, 255), 1);
-            // }
+            responses.at<double>(r - 3, c - 3) = cv::determinant(M) - k * (cv::trace(M)) * (cv::trace(M));
         }
     }
-    int window_size = 10;
-    double threshold = 40.0;
+    int window_size = 21;
+    double threshold = 300.0;
     int border = (window_size - 1) / 2;
-    for (int r = border; r < response.rows - border; r++) {
-        for (int c = border; c < response.cols - border; c++) {
-            if (response.at<double>(r, c) > threshold) {
+    for (int r = border; r < responses.rows - border; r++) {
+        for (int c = border; c < responses.cols - border; c++) {
+            double response = responses.at<double>(r, c);
+            if (response > threshold) {
                 bool local_max = true;
                 for (int r_win = -border; r_win < border; r_win++) {
                     for (int c_win = -border; c_win < border; c_win++) {
                         if (r_win == 0 && c_win == 0) {
                             continue;
                         }
-                        local_max =
-                            local_max && (response.at<double>(r, c) >= response.at<double>(r + r_win, c + c_win));
+                        local_max = local_max && (response > responses.at<double>(r + r_win, c + c_win));
                     }
                 }
                 if (local_max) {
