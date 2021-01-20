@@ -40,11 +40,23 @@ struct ParamGaussian {
 };
 
 /**
- * @brief
+ * @brief struct of parameter laplacian
  *
  */
 struct ParamLaplacian {
+    /**
+     * @brief Construct a new Param Laplacian object by defalut
+     *
+     */
     ParamLaplacian() = default;
+    /**
+     * @brief Construct a new Param Laplacian object
+     *
+     * @param ddepth
+     * @param kernel_size
+     * @param scale
+     * @param delta
+     */
     ParamLaplacian(int ddepth, int kernel_size, int scale, int delta)
         : ddepth_(ddepth), kernel_size_(kernel_size), scale_(scale), delta_(delta) {
     }
@@ -54,8 +66,23 @@ struct ParamLaplacian {
     int delta_ = 0;
 };
 
+/**
+ * @brief struct of paramter os threshold
+ *
+ */
 struct ParamThreshold {
+    /**
+     * @brief Construct a new Param Threshold object by default
+     *
+     */
     ParamThreshold() = default;
+    /**
+     * @brief Construct a new Param Threshold object
+     *
+     * @param threshold
+     * @param max_val
+     * @param threshold_type
+     */
     ParamThreshold(int threshold, int max_val, int threshold_type)
         : threshold_(threshold), max_val_(max_val), threshold_type_(threshold_type) {
     }
@@ -64,8 +91,20 @@ struct ParamThreshold {
     int threshold_type_ = cv::THRESH_BINARY;
 };
 
+/**
+ * @brief class Laplacian of Gaussian
+ *
+ */
 class LoG {
    public:
+    /**
+     * @brief Construct a new Lo G object
+     *
+     * @param img
+     * @param param_gaussian
+     * @param param_laplacian
+     * @param param_thres
+     */
     LoG(cv::Mat img, ParamGaussian param_gaussian, ParamLaplacian param_laplacian, ParamThreshold param_thres)
         : img_(img),
           result_(img.clone()),
@@ -73,6 +112,10 @@ class LoG {
           param_laplacian_(param_laplacian),
           param_thres_(param_thres) {
     }
+    /**
+     * @brief process of LoG
+     *
+     */
     void run();
 
    private:
