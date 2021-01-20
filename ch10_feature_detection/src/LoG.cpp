@@ -40,7 +40,7 @@ void LoG::run() {
     cv::Mat element = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3), cv::Point(1, 1));
     cv::Mat erosion_dist, dilation_dist;
     cv::dilate(thres_dist, dilation_dist, element, cv::Point(-1, -1), 1);   // 膨胀
-    cv::erode(dilation_dist, erosion_dist, element, cv::Point(-1, -1), 2);  // 腐蚀
+    cv::erode(dilation_dist, erosion_dist, element, cv::Point(-1, -1), 1);  // 腐蚀
     cv::imshow("Result", erosion_dist);
     cv::waitKey(0);
 }
