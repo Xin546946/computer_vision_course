@@ -17,18 +17,21 @@ cv::Matx22d compute_M(cv::Mat grad_x, cv::Mat grad_y) {
 }
 
 void HarrisCornerDetector::run() {
+    // step 1: compute x and y derivatives of image
     cv::Mat img_grad_x, img_grad_y;
     assert(img_64f_.type() == CV_64FC1);
     cv::Sobel(img_64f_, img_grad_x, -1, 1, 0, 3);
     cv::Sobel(img_64f_, img_grad_y, -1, 0, 1, 3);
 
+    // step 2: subtract the mean from each image gradient
     double img_grad_x_mean = cv::mean(img_grad_x)[0];
     double img_grad_y_mean = cv::mean(img_grad_y)[0];
     assert(img_grad_x.type() == CV_64F);
 
     cv::Mat grad_x_zero_mean = img_grad_x - img_grad_x_mean * cv::Mat::ones(img_grad_x.size(), img_grad_x.type());
     cv::Mat grad_y_zero_mean = img_grad_y - img_grad_y_mean * cv::Mat::ones(img_grad_y.size(), img_grad_y.type());
-
+    // step 3: compute M (covariance) matrix for each pixel
+    // step 4: compute eigenvalues and eigenvectors or other criterions such as in slides
     assert(grad_x_zero_mean.type() == CV_64FC1);
     cv::Mat responses(img_.size(), CV_64FC1);
     for (int r = 3; r < img_64f_.rows - 3; r++) {
@@ -42,9 +45,9 @@ void HarrisCornerDetector::run() {
             responses.at<double>(r - 3, c - 3) = cv::determinant(M) - k * (cv::trace(M)) * (cv::trace(M));
         }
     }
-
-    int window_size = 21;
-    double threshold = 200.0;
+    // step 5: use threshold on eigenvalues to detect corners
+    int window_size = 31;
+    double threshold = 300.0;
     int border = (window_size - 1) / 2;
     for (int r = border; r < responses.rows - border; r++) {
         for (int c = border; c < responses.cols - border; c++) {
