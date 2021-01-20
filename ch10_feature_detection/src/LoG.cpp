@@ -2,7 +2,6 @@
 #include "opencv_utils.h"
 
 void LoG::run() {
-    // todo implement LoG
     // step 1: 用Gaussian函数对图像进行平滑，抑制噪声
     cv::GaussianBlur(img_, result_, param_gaussian_.size_, param_gaussian_.sigma_x_, param_gaussian_.sigma_y_,
                      cv::BORDER_DEFAULT);
