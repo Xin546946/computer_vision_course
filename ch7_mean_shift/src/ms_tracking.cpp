@@ -117,6 +117,7 @@ cv::Mat compute_back_project_weight(const Histogram& hist_candidate, const Histo
     for (int r = 0; r < result.rows; r++) {
         for (int c = 0; c < result.cols; c++) {
             int id_bin = hist_temp.get_bin_id(sub_img.at<double>(r, c));
+
             result.at<double>(r, c) =
                 std::sqrt(hist_temp.get_bin_height(id_bin) / (hist_candidate.get_bin_height(id_bin) + 1e-8));
         }
@@ -139,8 +140,9 @@ cv::Point2f update_mass_center(BoundingBox bbox, cv::Mat weight) {
 
     for (int r = 0; r < weight.rows; r++) {
         for (int c = 0; c < weight.cols; c++) {
-            sum_x += (up_left.x + c) * weight.at<double>(r, c);
-            sum_y += (up_left.y + r) * weight.at<double>(r, c);
+            double w = weight.at<double>(r, c);
+            sum_x += (up_left.x + c) * w;
+            sum_y += (up_left.y + r) * w;
         }
     }
 
@@ -174,11 +176,12 @@ bool MeanShiftTracking::make_sure_score_increase(const BoundingBox& bbox_before_
         bbox_.move_center_to(mid_point.x, mid_point.y);
 
         hist_curr = make_histogramm(img, bbox_, hist_temp_.num_bin(), weight_geometirc_);
-        float new_matching_score = compute_matching_score(hist_curr, hist_temp_);
-        if (new_matching_score - score_after_update < 1e-6) {
+        float mid_point_matching_score = compute_matching_score(hist_curr, hist_temp_);
+
+        if (std::abs(mid_point_matching_score - score_after_update) < 1e-6) {
             break;
         } else {
-            score_after_update = new_matching_score;
+            score_after_update = mid_point_matching_score;
         }
     }
 
