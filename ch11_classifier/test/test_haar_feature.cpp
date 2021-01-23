@@ -34,21 +34,25 @@ int main(int argc, char** argv) {
     Matrix<cv::Mat> feature_matrix = compute_haar_feature_matrix(detection_window, integral_img);
     double min_dist = std::numeric_limits<double>::max();
     cv::Point detection_ul;
+    std::vector<cv::Point> multi_detection_ul;
+
+    std::vector<std::pair<double, cv::Point>> score_position;
     for (int r = 0; r < feature_matrix.rows_; r++) {
         for (int c = 0; c < feature_matrix.cols_; c++) {
             double dist = cv::norm(feature_matrix.at(r, c) - feature_ground_truth, cv::NORM_L2SQR);
-            std::cout << dist << '\n';
-            if (dist < min_dist) {
-                dist = min_dist;
-                detection_ul.x = c;
-                detection_ul.y = r;
-            }
+            score_position.emplace_back(dist, cv::Point(c, r));
         }
+    }
+    auto cmp = [](std::pair<double, cv::Point> lhs, std::pair<double, cv::Point> rhs) { return lhs.first < rhs.first; };
+    std::sort(score_position.begin(), score_position.end(), cmp);
+    cv::Mat vis_bbox;
+    cv::cvtColor(img, img, CV_GRAY2BGR);
+    for (int i = 0; i < 80; i++) {
+        vis_bbox = draw_bounding_box_vis_image(img, score_position[i].second.x, score_position[i].second.y,
+                                               detection_window.get_width(), detection_window.get_height());
     }
 
     // detection_center returns the center of bounding box with min_dist
-    cv::Mat vis_bbox = draw_bounding_box_vis_image(img, detection_ul.x, detection_ul.y, detection_window.get_width(),
-                                                   detection_window.get_height());
     cv::imshow("detection result", vis_bbox);
     cv::waitKey(0);
 
