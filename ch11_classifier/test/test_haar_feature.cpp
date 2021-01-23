@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
     std::sort(score_position.begin(), score_position.end(), cmp);
     cv::Mat vis_bbox;
     cv::cvtColor(img, img, CV_GRAY2BGR);
-    for (int i = 0; i < 80; i++) {
+    for (int i = 0; i < 1000; i++) {
         vis_bbox = draw_bounding_box_vis_image(img, score_position[i].second.x, score_position[i].second.y,
                                                detection_window.get_width(), detection_window.get_height());
     }
