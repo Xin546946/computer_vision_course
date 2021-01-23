@@ -13,9 +13,9 @@ double compute_rect_integral_img_from_ul(cv::Mat integral_img, int row, int col,
 
 cv::Mat make_integral_img(const cv::Mat& img);
 
-std::vector<double> compute_haar_feature_vector(DetectionWindow detection_window, cv::Mat integral_img, int x, int y);
+cv::Mat compute_haar_feature_vector(DetectionWindow detection_window, cv::Mat integral_img, int x, int y);
 
-Matrix<std::vector<double>> compute_haar_feature_matrix(DetectionWindow detection_window, cv::Mat integral_img);
+Matrix<cv::Mat> compute_haar_feature_matrix(DetectionWindow detection_window, cv::Mat integral_img);
 struct HaarSubRect {
     HaarSubRect(char sign, cv::Point2i ul, int width, int height)
         : sign_(sign), ul_(ul), width_(width), height_(height) {
@@ -44,6 +44,10 @@ class DetectionWindow {
     void show_all_sub_image(cv::Mat img, int x, int y);
     std::vector<HaarRect> get_haar_rects() {
         return haar_rects_;
+    }
+
+    int get_num_haar_rect() const {
+        return haar_rects_.size();
     }
 
     int get_width() const {

@@ -6,6 +6,9 @@
 #include <opencv2/imgproc/imgproc.hpp>
 
 int main(int argc, char** argv) {
+    Matrix<std::vector<double>> test(109, 10);
+    std::cout << "test pass" << '\n';
+
     cv::Mat img = read_img(argv[1], cv::IMREAD_GRAYSCALE);
     cv::Mat temp = read_img(argv[2], cv::IMREAD_GRAYSCALE);
 
@@ -16,18 +19,38 @@ int main(int argc, char** argv) {
     detection_window.add_haar_rect(0.400, 0.567, 0.300, 0.133, (cv::Mat_<int>(2, 2) << 1, -1, -1, 1));
     detection_window.add_haar_rect(0.360, 0.720, 0.340, 0.15, (cv::Mat_<int>(2, 1) << 1, -1));
     // show all sub img for testing visualization
-    detection_window.show_all_sub_image(temp, 0, 0);
+    // detection_window.show_all_sub_image(temp, 0, 0);
 
     // convert the img to integral img
     cv::Mat integral_img = make_integral_img(img);
+    cv::imshow("Integral img", get_float_mat_vis_img(integral_img));
+    cv::waitKey(0);
     cv::Mat integral_img_temp = make_integral_img(temp);
 
     // compute haar feature (ground truth) for each haar rect
-    std::vector<double> feature_ground_truth = compute_haar_feature_vector(detection_window, integral_img_temp, 0, 0);
-
+    cv::Mat feature_ground_truth = compute_haar_feature_vector(detection_window, integral_img_temp, 0, 0);
+    std::cout << feature_ground_truth << '\n';
     // compute haar feature on the img via haar rects
-    Matrix<std::vector<double>> feature_matrix = compute_haar_feature_matrix(detection_window, integral_img);
-    // cv::imshow("Test for haar_feature_via_img", get_float_mat_vis_img(haar_feature_via_img));
-    // cv::waitKey(0);
+    Matrix<cv::Mat> feature_matrix = compute_haar_feature_matrix(detection_window, integral_img);
+    double min_dist = std::numeric_limits<double>::max();
+    cv::Point detection_ul;
+    for (int r = 0; r < feature_matrix.rows_; r++) {
+        for (int c = 0; c < feature_matrix.cols_; c++) {
+            double dist = cv::norm(feature_matrix.at(r, c) - feature_ground_truth, cv::NORM_L2SQR);
+            std::cout << dist << '\n';
+            if (dist < min_dist) {
+                dist = min_dist;
+                detection_ul.x = c;
+                detection_ul.y = r;
+            }
+        }
+    }
+
+    // detection_center returns the center of bounding box with min_dist
+    cv::Mat vis_bbox = draw_bounding_box_vis_image(img, detection_ul.x, detection_ul.y, detection_window.get_width(),
+                                                   detection_window.get_height());
+    cv::imshow("detection result", vis_bbox);
+    cv::waitKey(0);
+
     return 0;
 }
