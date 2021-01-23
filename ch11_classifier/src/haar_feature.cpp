@@ -26,7 +26,7 @@ cv::Mat make_integral_img(const cv::Mat& img) {
     return integral_img;
 }
 
-std::vector<double> compute_haar_feature_vector(DetectionWindow detection_window, int x, int y, cv::Mat integral_img) {
+std::vector<double> compute_haar_feature_vector(DetectionWindow detection_window, cv::Mat integral_img, int x, int y) {
     std::vector<double> feature_vec;
     for (auto haar_rect : detection_window.get_haar_rects()) {
         double feature = 0.0;
@@ -48,8 +48,7 @@ Matrix<std::vector<double>> compute_haar_feature_matrix(DetectionWindow detectio
                                                 integral_img.cols - detection_window.get_width());
     for (int r = 0; r < integral_img.rows - detection_window.get_height(); r++) {
         for (int c = 0; c < integral_img.cols - detection_window.get_width(); c++) {
-            std::vector<double> feature_vec = compute_haar_feature_vector(detection_window, r, c, integral_img);
-            features_matrix.at(r, c) = feature_vec;
+            features_matrix.at(r, c) = compute_haar_feature_vector(detection_window, integral_img, r, c);
         }
     }
     return features_matrix;

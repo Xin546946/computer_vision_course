@@ -20,25 +20,13 @@ int main(int argc, char** argv) {
 
     // convert the img to integral img
     cv::Mat integral_img = make_integral_img(img);
-    std::vector<double> haar_feature_vec;
+    cv::Mat integral_img_temp = make_integral_img(temp);
 
     // compute haar feature (ground truth) for each haar rect
-    std::cout << "Haar feature vector:";
-    for (auto haar_rect : detection_window.get_haar_rects()) {
-        double haar_feature = 0.0;
-        for (auto haar_sub_rect : haar_rect.get_haar_sub_rects()) {
-            haar_feature +=
-                static_cast<double>(haar_sub_rect.sign_) *
-                cv::sum(get_sub_image_from_ul(temp, haar_sub_rect.ul_.x, haar_sub_rect.ul_.y,
-                                              haar_rect.get_width_sub_rect(), haar_rect.get_height_sub_rect()))[0];
-        }
-        std::cout << haar_feature << " ";
-        haar_feature_vec.push_back(haar_feature);
-    }
-    std::cout << '\n';
+    std::vector<double> feature_ground_truth = compute_haar_feature_vector(detection_window, integral_img_temp, 0, 0);
 
     // compute haar feature on the img via haar rects
-    Matrix<std::vector<double>> compute_haar_feature_matrix(detection_window, integral_img);
+    Matrix<std::vector<double>> feature_matrix = compute_haar_feature_matrix(detection_window, integral_img);
     // cv::imshow("Test for haar_feature_via_img", get_float_mat_vis_img(haar_feature_via_img));
     // cv::waitKey(0);
     return 0;
