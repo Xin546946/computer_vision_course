@@ -25,6 +25,7 @@ int main(int argc, char** argv) {
     detection_window.add_haar_rect(0.200, 0.330, 0.600, 0.260, (cv::Mat_<int>(2, 1) << 1, -1));
     detection_window.add_haar_rect(0.355, 0.567, 0.300, 0.153, (cv::Mat_<int>(2, 2) << 1, -1, -1, 1));
     detection_window.add_haar_rect(0.355, 0.720, 0.340, 0.18, (cv::Mat_<int>(2, 1) << 1, -1));
+    detection_window.add_haar_rect(0.2, 0.7, 0.340, 0.18, (cv::Mat_<int>(1, 2) << 1, -1));
 
     // convert the img to integral img
     cv::Mat integral_img = make_integral_img(img);
@@ -41,7 +42,7 @@ int main(int argc, char** argv) {
 
     cv::Mat minus_dist_map(feature_matrix.rows_, feature_matrix.cols_, CV_64FC1);
 
-    const double thres = 5e8;
+    const double thres = 1e9;
 
     for (int r = 0; r < feature_matrix.rows_; r++) {
         for (int c = 0; c < feature_matrix.cols_; c++) {
@@ -50,7 +51,7 @@ int main(int argc, char** argv) {
         }
     }
 
-    std::vector<cv::Point2i> max_pos = non_maxinum_suppress(minus_dist_map, 21);
+    std::vector<cv::Point2i> max_pos = non_maxinum_suppress(minus_dist_map, 15);
 
     cv::cvtColor(img, img, CV_GRAY2BGR);
     for (cv::Point2i pos : max_pos) {
