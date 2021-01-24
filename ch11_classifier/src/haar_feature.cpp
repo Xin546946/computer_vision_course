@@ -1,4 +1,5 @@
 #include "haar_feature.h"
+#include <utility>
 double compute_rect_integral_img_from_ul(cv::Mat integral_img, int row, int col, int width, int height) {
     // img(row,col) is 1
     return integral_img.at<double>(row, col) + integral_img.at<double>(row + height, col + width) -
