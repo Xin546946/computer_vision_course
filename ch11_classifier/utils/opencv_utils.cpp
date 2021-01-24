@@ -108,6 +108,37 @@ cv::Mat get_gaussian_kernel(int size, double sigma) {
     return result / cv::sum(result)[0];
 }
 
+std::vector<cv::Point2i> non_maxinum_suppress(cv::Mat input, int win_size) {
+    std::vector<cv::Point2i> maximum_pos;
+
+    assert(win_size & 0x1);
+    int half_size = win_size / 2;
+
+    for (int row = 0; row < input.rows; row++) {
+        for (int col = 0; col < input.cols; col++) {
+            bool local_max = true;
+            double center_value = input.at<double>(row, col);
+
+            for (int r_win = -half_size; r_win < half_size; r_win++) {
+                for (int c_win = -half_size; c_win < half_size; c_win++) {
+                    if (r_win == 0 && c_win == 0) {
+                        continue;
+                    }
+
+                    int r = std::max(std::min(row + r_win, input.rows - 1), 0);
+                    int c = std::max(std::min(col + c_win, input.cols - 1), 0);
+
+                    local_max = local_max && (center_value > input.at<double>(r, c));
+                }
+            }
+            if (local_max) {
+                maximum_pos.emplace_back(col, row);
+            }
+        }
+    }
+    return maximum_pos;
+}
+
 // cv::Mat get_sub_image(cv::Mat img, BoundingBox bbox) {
 //     return get_sub_image_around(img, bbox.center().x, bbox.center().y, bbox.width(), bbox.height());
 // }

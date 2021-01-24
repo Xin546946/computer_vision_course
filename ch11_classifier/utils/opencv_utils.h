@@ -148,3 +148,5 @@ cv::Point_<T> calc_mid_point(cv::Point_<T> p1, cv::Point_<T> p2) {
 }
 
 bool is_good_mat(cv::Mat mat, std::string mat_name);
+
+std::vector<cv::Point2i> non_maxinum_suppress(cv::Mat input, int win_size);

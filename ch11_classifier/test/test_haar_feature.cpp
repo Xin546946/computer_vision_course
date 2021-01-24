@@ -38,29 +38,46 @@ int main(int argc, char** argv) {
     cv::Mat feature_ground_truth = compute_feature_ground_truth(detection_window, integral_img_temps);
     // compute haar feature on the img via haar rects
     Matrix<cv::Mat> feature_matrix = compute_haar_feature_matrix(detection_window, integral_img);
-    double min_dist = std::numeric_limits<double>::max();
-    cv::Point detection_ul;
-    std::vector<cv::Point> multi_detection_ul;
 
-    std::vector<std::pair<double, cv::Point>> score_position;
+    cv::Mat minus_dist_map(feature_matrix.rows_, feature_matrix.cols_, CV_64FC1);
+
+    const double thres = 5e8;
+
     for (int r = 0; r < feature_matrix.rows_; r++) {
         for (int c = 0; c < feature_matrix.cols_; c++) {
-            double dist = cv::norm(feature_matrix.at(r, c) - feature_ground_truth, cv::NORM_L2SQR);
-            score_position.emplace_back(dist, cv::Point(c, r));
+            double dist = cv::norm(feature_ground_truth, feature_matrix.at(r, c), cv::NORM_L2SQR);
+            minus_dist_map.at<double>(r, c) = (dist < thres) ? -dist : std::numeric_limits<double>::min();
         }
     }
-    auto cmp = [](std::pair<double, cv::Point> lhs, std::pair<double, cv::Point> rhs) { return lhs.first < rhs.first; };
-    std::sort(score_position.begin(), score_position.end(), cmp);
-    cv::Mat vis_bbox;
+
+    std::vector<cv::Point2i> max_pos = non_maxinum_suppress(minus_dist_map, 21);
+
     cv::cvtColor(img, img, CV_GRAY2BGR);
-    for (int i = 0; i < 1000; i++) {
-        vis_bbox = draw_bounding_box_vis_image(img, score_position[i].second.x, score_position[i].second.y,
-                                               detection_window.get_width(), detection_window.get_height());
+    for (cv::Point2i pos : max_pos) {
+        cv::rectangle(img, cv::Rect2i(pos, cv::Size(detection_window.get_width(), detection_window.get_height())),
+                      cv::Scalar(0, 255, 0), 2);
     }
 
-    // detection_center returns the center of bounding box with min_dist
-    cv::imshow("detection result", vis_bbox);
+    cv::imshow("detection result", img);
     cv::waitKey(0);
+
+    /*     std::vector<std::pair<double, cv::Point>> score_position;
+        for (int r = 0; r < feature_matrix.rows_; r++) {
+            for (int c = 0; c < feature_matrix.cols_; c++) {
+                double dist = cv::norm(feature_matrix.at(r, c) - feature_ground_truth, cv::NORM_L2SQR);
+                score_position.emplace_back(dist, cv::Point(c, r));
+            }
+        }
+        auto cmp = [](std::pair<double, cv::Point> lhs, std::pair<double, cv::Point> rhs) { return lhs.first <
+       rhs.first; }; std::sort(score_position.begin(), score_position.end(), cmp); cv::Mat vis_bbox; cv::cvtColor(img,
+       img, CV_GRAY2BGR); for (int i = 0; i < 1000; i++) { vis_bbox = draw_bounding_box_vis_image(img,
+       score_position[i].second.x, score_position[i].second.y, detection_window.get_width(),
+       detection_window.get_height());
+        } */
+
+    // detection_center returns the center of bounding box with min_dist
+    // cv::imshow("detection result", vis_bbox);
+    // cv::waitKey(0);
 
     return 0;
 }
