@@ -12,10 +12,14 @@ int main(int argc, char** argv) {
     Matrix<std::vector<double>> test(109, 10);
     std::cout << "test pass" << '\n';
 
-    cv::Mat img = read_img(argv[1], cv::IMREAD_GRAYSCALE);
+    cv::Mat img_origin = read_img(argv[1], cv::IMREAD_GRAYSCALE);
+    cv::Mat img;
+    cv::GaussianBlur(img_origin, img, cv::Size(7, 7), 7);
+
     std::vector<cv::Mat> temps;
     for (int i = 0; i < 4; i++) {
         cv::Mat temp = read_img(std::string(argv[2]) + "template" + std::to_string(i) + ".png", cv::IMREAD_GRAYSCALE);
+        cv::GaussianBlur(temp, temp, cv::Size(7, 7), 7);
         temps.push_back(temp);
     }
 
@@ -25,6 +29,7 @@ int main(int argc, char** argv) {
     detection_window.add_haar_rect(0.200, 0.330, 0.600, 0.260, (cv::Mat_<int>(2, 1) << 1, -1));
     detection_window.add_haar_rect(0.355, 0.567, 0.300, 0.153, (cv::Mat_<int>(2, 2) << 1, -1, -1, 1));
     detection_window.add_haar_rect(0.355, 0.720, 0.340, 0.18, (cv::Mat_<int>(2, 1) << 1, -1));
+    detection_window.add_haar_rect(0.2, 0.7, 0.340, 0.18, (cv::Mat_<int>(1, 2) << 1, -1));
 
     // convert the img to integral img
     cv::Mat integral_img = make_integral_img(img);
@@ -41,7 +46,7 @@ int main(int argc, char** argv) {
 
     cv::Mat minus_dist_map(feature_matrix.rows_, feature_matrix.cols_, CV_64FC1);
 
-    const double thres = 5e8;
+    const double thres = 5e3;
 
     for (int r = 0; r < feature_matrix.rows_; r++) {
         for (int c = 0; c < feature_matrix.cols_; c++) {
@@ -50,15 +55,17 @@ int main(int argc, char** argv) {
         }
     }
 
-    std::vector<cv::Point2i> max_pos = non_maxinum_suppress(minus_dist_map, 21);
+    cv::GaussianBlur(minus_dist_map, minus_dist_map, cv::Size(7, 7), 7);
+    std::vector<cv::Point2i> max_pos = non_maxinum_suppress(minus_dist_map, 25);
 
-    cv::cvtColor(img, img, CV_GRAY2BGR);
+    cv::cvtColor(img_origin, img_origin, CV_GRAY2BGR);
     for (cv::Point2i pos : max_pos) {
-        cv::rectangle(img, cv::Rect2i(pos, cv::Size(detection_window.get_width(), detection_window.get_height())),
+        cv::rectangle(img_origin,
+                      cv::Rect2i(pos, cv::Size(detection_window.get_width(), detection_window.get_height())),
                       cv::Scalar(0, 255, 0), 2);
     }
 
-    cv::imshow("detection result", img);
+    cv::imshow("detection result", img_origin);
     cv::waitKey(0);
 
     /*     std::vector<std::pair<double, cv::Point>> score_position;
