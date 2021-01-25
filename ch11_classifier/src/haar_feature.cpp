@@ -1,8 +1,9 @@
 #include "haar_feature.h"
 #include <utility>
 double compute_rect_integral_img_from_ul(cv::Mat integral_img, int row, int col, int width, int height) {
-    // todo compute integral img from ul point(row, col) with an HarrRect(width,height)
-    // hints: Robust Real-Time Face Detection Figure 3.
+    // Robust Real-Time Face Detection Figure 3.
+    return integral_img.at<double>(row, col) + integral_img.at<double>(row + height, col + width) -
+           integral_img.at<double>(row, col + width) - integral_img.at<double>(row + height, col);
 }
 
 cv::Mat make_integral_img(const cv::Mat& img) {
