@@ -2,6 +2,7 @@
 // #include "bounding_box.h"
 // #include "opencv2/imgproc.hpp"
 #include <iostream>
+#include <limits>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -149,4 +150,37 @@ cv::Point_<T> calc_mid_point(cv::Point_<T> p1, cv::Point_<T> p2) {
 
 bool is_good_mat(cv::Mat mat, std::string mat_name);
 
-std::vector<cv::Point2i> non_maxinum_suppress(cv::Mat input, int win_size);
+template <typename T>
+std::vector<cv::Point2i> non_maxinum_suppress(cv::Mat_<T> input, int win_size,
+                                              T threshold = std::numeric_limits<T>::min()) {
+    std::vector<cv::Point2i> maximum_pos;
+
+    assert(win_size & 0x1);
+    int half_size = win_size / 2;
+
+    for (int row = 0; row < input.rows; row++) {
+        for (int col = 0; col < input.cols; col++) {
+            bool local_max = true;
+            T center_value = input(row, col);
+            if (center_value < threshold) {
+                continue;
+            }
+            for (int r_win = -half_size; r_win < half_size; r_win++) {
+                for (int c_win = -half_size; c_win < half_size; c_win++) {
+                    if (r_win == 0 && c_win == 0) {
+                        continue;
+                    }
+
+                    int r = std::max(std::min(row + r_win, input.rows - 1), 0);
+                    int c = std::max(std::min(col + c_win, input.cols - 1), 0);
+
+                    local_max = local_max && (center_value > input(r, c));
+                }
+            }
+            if (local_max) {
+                maximum_pos.emplace_back(col, row);
+            }
+        }
+    }
+    return maximum_pos;
+}
