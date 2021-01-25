@@ -14,12 +14,12 @@ int main(int argc, char** argv) {
 
     cv::Mat img_origin = read_img(argv[1], cv::IMREAD_GRAYSCALE);
     cv::Mat img;
-    cv::GaussianBlur(img_origin, img, cv::Size(7, 7), 7);
+    cv::GaussianBlur(img_origin, img, cv::Size(7, 7), 7, 7);
 
     std::vector<cv::Mat> temps;
     for (int i = 0; i < 4; i++) {
         cv::Mat temp = read_img(std::string(argv[2]) + "template" + std::to_string(i) + ".png", cv::IMREAD_GRAYSCALE);
-        cv::GaussianBlur(temp, temp, cv::Size(7, 7), 7);
+        cv::GaussianBlur(temp, temp, cv::Size(7, 7), 7, 7);
         temps.push_back(temp);
     }
 
