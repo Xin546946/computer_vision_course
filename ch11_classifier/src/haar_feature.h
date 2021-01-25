@@ -1,3 +1,15 @@
+/**
+______________________________________________________________________
+*********************************************************************
+* @brief This file is developed for the course of ShenLan XueYuan:
+* Fundamental implementations of Computer Vision
+* all rights preserved
+* @author Xin Jin, Zhaoran Wu
+* @contact: xinjin1109@gmail.com, zhaoran.wu1@gmail.com
+*
+______________________________________________________________________
+*********************************************************************
+**/
 #pragma once
 #include "matrix.h"
 #include "opencv_utils.h"
@@ -8,15 +20,59 @@
 
 class HaarRect;
 class DetectionWindow;
-
+/**
+ * @brief Compute integral image from one index
+ *
+ * @param integral_img
+ * @param row
+ * @param col
+ * @param width
+ * @param height
+ * @return double
+ */
 double compute_rect_integral_img_from_ul(cv::Mat integral_img, int row, int col, int width, int height);
 
+/**
+ * @brief Compute inregral img using dynamic programming
+ *
+ * @param img
+ * @return cv::Mat
+ */
 cv::Mat make_integral_img(const cv::Mat& img);
 
+/**
+ * @brief Compute haar feature vector for one pos
+ *
+ * @param detection_window
+ * @param integral_img
+ * @param x
+ * @param y
+ * @return cv::Mat
+ */
 cv::Mat compute_haar_feature_vector(DetectionWindow detection_window, cv::Mat integral_img, int x, int y);
 
+/**
+ * @brief Compute haar feature matrix for integral img
+ *
+ * @param detection_window
+ * @param integral_img
+ * @return Matrix<cv::Mat>
+ */
 Matrix<cv::Mat> compute_haar_feature_matrix(DetectionWindow detection_window, cv::Mat integral_img);
+/**
+ * @brief struct of HaarSubRect, which is contained from HarrRect
+ *
+ */
 struct HaarSubRect {
+    /**
+     * @brief Construct a new Haar Sub Rect object
+     *
+     * @param sign
+     * @param ul
+     * @param width
+     * @param height
+     */
+
     HaarSubRect(char sign, cv::Point2i ul, int width, int height)
         : sign_(sign), ul_(ul), width_(width), height_(height) {
     }
@@ -26,34 +82,66 @@ struct HaarSubRect {
     int height_ = -1;
 };
 
+/**
+ * @brief struct of DetectionWindow, which has some HarrRect
+ *
+ */
 class DetectionWindow {
    public:
     DetectionWindow(int width, int height) : width_(width), height_(height) {
     }
+
     /**
-     * @brief x and y are relative to the upper left of detection window
+     * @brief Add haar rect feature
      *
-     * @param x
-     * @param y
-     * @param width
-     * @param height
+     * @param x_ratio : ralative ul of detection window
+     * @param y_ratio
+     * @param width_ratio
+     * @param height_ratio
+     * @param indicator_matrix
      */
     void add_haar_rect(double x_ratio, double y_ratio, double width_ratio, double height_ratio,
                        cv::Mat indicator_matrix);
-
+    /**
+     * @brief Visualize all sub img for each HarrRect
+     *
+     * @param img
+     * @param x
+     * @param y
+     */
     void show_all_sub_image(cv::Mat img, int x, int y);
+
+    /**
+     * @brief Get the haar rects object
+     *
+     * @return std::vector<HaarRect>
+     */
     std::vector<HaarRect> get_haar_rects() {
         return haar_rects_;
     }
 
+    /**
+     * @brief Get the num haar rect object
+     *
+     * @return int
+     */
     int get_num_haar_rect() const {
         return haar_rects_.size();
     }
 
+    /**
+     * @brief Get the width object
+     *
+     * @return int
+     */
     int get_width() const {
         return width_;
     }
-
+    /**
+     * @brief Get the height object
+     *
+     * @return int
+     */
     int get_height() const {
         return height_;
     }
@@ -64,25 +152,73 @@ class DetectionWindow {
     std::vector<HaarRect> haar_rects_;
 };
 
+/**
+ * @brief class of HarrRect which has some HarrSubRect
+ *
+ */
 class HaarRect {
    public:
+    /**
+     * @brief Construct a new Haar Rect object
+     *
+     * @param x
+     * @param y
+     * @param width
+     * @param height
+     * @param indicator_matrix
+     */
     HaarRect(int x, int y, int width, int height, cv::Mat indicator_matrix);
+
+    /**
+     * @brief
+     *
+     * @return cv::Point
+     */
     cv::Point ul() {
         return ul_;
     }
+
+    /**
+     * @brief Get the num sub rect x object
+     *
+     * @return int
+     */
     int get_num_sub_rect_x() const {
         return num_sub_rect_x_;
     }
+
+    /**
+     * @brief Get the num sub rect y object
+     *
+     * @return int
+     */
     int get_num_sub_rect_y() const {
         return num_sub_rect_y_;
     }
+
+    /**
+     * @brief Get the width sub rect object
+     *
+     * @return int
+     */
     int get_width_sub_rect() const {
         return width_sub_rect_;
     }
 
+    /**
+     * @brief Get the height sub rect object
+     *
+     * @return int
+     */
     int get_height_sub_rect() const {
         return height_sub_rect_;
     }
+
+    /**
+     * @brief Get the haar sub rects object
+     *
+     * @return std::vector<HaarSubRect>
+     */
     std::vector<HaarSubRect> get_haar_sub_rects() {
         return haar_sub_rects_;
     }
