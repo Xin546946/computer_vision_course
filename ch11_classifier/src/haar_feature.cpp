@@ -41,7 +41,7 @@ cv::Mat compute_haar_feature_vector(DetectionWindow detection_window, cv::Mat in
                 compute_rect_integral_img_from_ul(integral_img, row + haar_sub_rect.ul_.y, col + haar_sub_rect.ul_.x,
                                                   haar_sub_rect.width_, haar_sub_rect.height_);
         }
-        feature_vec.at<double>(id, 0) = feature;
+        feature_vec.at<double>(id, 0) = feature / static_cast<double>(haar_rect.area());
         id++;
     }
     return feature_vec;

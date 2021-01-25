@@ -153,6 +153,10 @@ class HaarRect {
         return haar_sub_rects_;
     }
 
+    int area() const {
+        return num_sub_rect_x_ * num_sub_rect_y_ * width_sub_rect_ * height_sub_rect_;
+    }
+
    private:
     cv::Point ul_;
     std::vector<HaarSubRect> haar_sub_rects_;
