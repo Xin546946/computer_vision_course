@@ -1,3 +1,15 @@
+/**
+______________________________________________________________________
+*********************************************************************
+* @brief This file is developed for the course of ShenLan XueYuan:
+* Fundamental implementations of Computer Vision
+* all rights preserved
+* @author Xin Jin, Zhaoran Wu
+* @contact: xinjin1109@gmail.com, zhaoran.wu1@gmail.com
+*
+______________________________________________________________________
+*********************************************************************
+**/
 #include "haar_feature.h"
 #include <utility>
 double compute_rect_integral_img_from_ul(cv::Mat integral_img, int row, int col, int width, int height) {
