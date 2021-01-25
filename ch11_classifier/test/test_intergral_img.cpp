@@ -74,6 +74,9 @@ int main(int argc, char** argv) {
     cv::Mat haar_feature_mat_ver = cv::Mat(img.size(), CV_64FC1, std::numeric_limits<double>::infinity());
     cv::Mat haar_feature_mat_diag = cv::Mat(img.size(), CV_64FC1, std::numeric_limits<double>::infinity());
     cv::Mat img_integral = make_integral_img(img);
+    cv::Mat vis_inte_img = get_float_mat_vis_img(img_integral);
+    cv::imshow("Integral Img", vis_inte_img);
+    cv::waitKey(0);
 
     // compute hor haar feature
     for (int r = 0; r < img_integral.rows - height; r++) {
