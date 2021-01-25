@@ -174,7 +174,7 @@ std::vector<cv::Point2i> non_maxinum_suppress(cv::Mat_<T> input, int win_size,
                     int r = std::max(std::min(row + r_win, input.rows - 1), 0);
                     int c = std::max(std::min(col + c_win, input.cols - 1), 0);
 
-                    local_max = local_max && (center_value > input(r, c));
+                    local_max = local_max && (center_value >= input(r, c));
                 }
             }
             if (local_max) {
