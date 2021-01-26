@@ -9,7 +9,7 @@ int main(int argc, char** argv) {
     vis.add_point(-20, 20, false);
     vis.add_point(50, 50, true);
 
-    vis.add_line(1, 10, true, 10);
+    vis.add_line(1, 0, false, 10);
     vis.show(0);
 
     return 0;

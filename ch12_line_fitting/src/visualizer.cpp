@@ -36,6 +36,9 @@ void Visualizer::add_point(double x, double y, bool is_inlier) {
     cv::circle(board_, cv::Point(std::round(x - up_left_[0]), std::round(y - up_left_[1])), 1, color, 2, cv::LINE_AA);
 }
 
+void add_line_ground_truth(double a, double b) {
+}
+
 void Visualizer::add_line(double a, double b, bool draw_thresh_line, double threshold) {
     int x1, x2, y1, y2;
 
@@ -58,13 +61,14 @@ void Visualizer::add_line(double a, double b, bool draw_thresh_line, double thre
     y1 -= up_left_[1];
     y2 -= up_left_[1];
 
-    cv::line(board_, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(255, 0, 0), 1, cv::LINE_AA);
-
     if (draw_thresh_line) {
+        cv::line(board_, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(255, 0, 0), 1, cv::LINE_AA);
         cv::Scalar color(100, 100, 100);
 
         draw_dashed_line(board_, cv::Point(x1, y1 + threshold), cv::Point(x2, y2 + threshold), color, 1, cv::LINE_AA);
         draw_dashed_line(board_, cv::Point(x1, y1 - threshold), cv::Point(x2, y2 - threshold), color, 1, cv::LINE_AA);
+    } else {
+        cv::line(board_, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(255, 255, 0), 1, cv::LINE_AA);
     }
 }
 
