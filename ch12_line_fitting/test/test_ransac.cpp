@@ -9,9 +9,19 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <random>
 
-// todo change the std::vector<cv::Point2d> to TestData
+struct DataSet2D {
+    DataSet2D(std::vector<cv::Point2d> points) : points_(points) {
+    }
 
-std::vector<cv::Point2d> generate_2dtest_data(int num_data, double a, double b, double std_dev, int num_outlier);
+    std::vector<cv::Point2d> points_;
+
+    double max_x_;
+    double max_y_;
+    double min_x_;
+    double min_y_;
+};
+// todo change the std::vector<cv::Point2d> to TestData
+DataSet2D generate_2dtest_data(int num_data, double a, double b, double std_dev, int num_outlier);
 int main(int argc, char** argv) {
     // use opencv coordinate
     cv::Mat data_map(cv::Mat::zeros(300, 300, CV_64FC1));
@@ -36,62 +46,49 @@ int main(int argc, char** argv) {
     cv::imshow("data", point_data);
     cv::waitKey(0);
 
-    auto datas = generate_2dtest_data(10, 1.0, 5.0, 1, 3);
-    for (auto data : datas) {
-        std::cout << data.y << " ";
-    }
-    std::cout << '\n';
     return 0;
 }
 
-struct TestData {
-    std::vector<cv::Point2d> points_;
-    cv::Point2d max() {
-        double max_x = std::numeric_limits<double>::max();
-        double max_y = std::numeric_limits<double>::max();
-        for (cv::Point2d point : points_) {
-            if (point.y < max_y) {
-                max_y = point.y;
-            }
-            if (point.x < max_x) {
-                max_x = point.x;
-            }
-        }
-        return cv::Point2d(max_x, max_y);
-    }
-
-    cv::Point2d min() {
-        double min_x = std::numeric_limits<double>::min();
-        double min_y = std::numeric_limits<double>::min();
-        for (cv::Point2d point : points_) {
-            if (point.y < min_y) {
-                min_y = point.y;
-            }
-            if (point.x < min_x) {
-                min_x = point.x;
-            }
-        }
-        return cv::Point2d(min_x, min_y);
-    }
-};
-
-std::vector<cv::Point2d> generate_2dtest_data(int num_data, double a, double b, double std_dev, int num_outlier) {
+DataSet2D generate_2dtest_data(int num_data, double a, double b, double std_dev, int num_outlier) {
     std::random_device rd{};
     std::mt19937 gen{rd()};
+
     std::vector<cv::Point2d> points(num_data);
+
+    DataSet2D data_set(points);
+
+    data_set.min_x_ = 0.0;
+    data_set.max_x_ = static_cast<double>(num_data);
+
+    data_set.max_y_ = std::numeric_limits<double>::min();
+    data_set.min_y_ = std::numeric_limits<double>::max();
 
     for (int i = 0; i < num_data; i++) {
         double y = std::normal_distribution<double>(a * i + b, std_dev)(gen);
-        points[i].x = i;
-        points[i].y = y;
+        if (y > data_set.max_y_) {
+            data_set.max_y_ = y;
+        }
+        if (y < data_set.min_y_) {
+            data_set.min_y_ = y;
+        }
+        data_set.points_[i].x = i;
+        data_set.points_[i].y = y;
     }
     if (num_outlier) {
         std::vector<int> outlier_ids = generate_random_data(num_outlier, 0, num_data);
         for (int id : outlier_ids) {
             std::cout << " Outlier id: " << id << " ";
+
             points[id].y += std::normal_distribution<double>(a * id + b, 10.0 * std_dev)(gen);
+
+            if (points[id].y > data_set.max_y_) {
+                data_set.max_y_ = points[id].y;
+            }
+
+            if (points[id].y < data_set.min_y_) {
+                data_set.min_y_ = points[id].y;
+            }
         }
-        std::cout << '\n';
     }
     return points;
 }
