@@ -37,7 +37,13 @@ void Visualizer::draw_line(double a, double b, bool draw_thresh_line = false, do
     cv::line(board_, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(255, 0, 0), 2, cv::LINE_AA);
 
     if (draw_thresh_line) {
-        draw_dashed_line(board_, cv::Point(x1, y1 + threshold), cv::Point(x2, y2 + threshold), cv::Scalar(255, 0, 0), 2,
-                         cv::LINE_AA);
+        cv::Scalar color(50, 50, 50);
+
+        draw_dashed_line(board_, cv::Point(x1, y1 + threshold), cv::Point(x2, y2 + threshold), color, 2, cv::LINE_AA);
+        draw_dashed_line(board_, cv::Point(x1, y1 - threshold), cv::Point(x2, y2 - threshold), color, 2, cv::LINE_AA);
     }
+}
+void Visualizer::show(int delay) const {
+    cv::imshow("result", board_);
+    cv::waitKey(delay);
 }

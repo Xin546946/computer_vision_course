@@ -94,7 +94,7 @@ void draw_line(cv::Mat img, const std::vector<LineParam>& line_param) {
         }
         std::cout << " x1 , y1 :" << x1 << " ," << y1 << '\n';
         std::cout << " x2 , y2 :" << x2 << " ," << y2 << '\n';
-        draw_dashed_line(vis, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(0, 255, 0), 1, cv::LINE_AA);
+        cv::line(vis, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(0, 255, 0), 1, cv::LINE_AA);
     }
     cv::imshow("Line detection", vis);
     cv::waitKey(0);
