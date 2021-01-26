@@ -111,3 +111,57 @@ cv::Mat get_gaussian_kernel(int size, double sigma) {
 // cv::Mat get_sub_image(cv::Mat img, BoundingBox bbox) {
 //     return get_sub_image_around(img, bbox.center().x, bbox.center().y, bbox.width(), bbox.height());
 // }
+void draw_dashed_line(cv::Mat img, cv::Point p1, cv::Point p2, cv::Scalar color, int line_width,
+                      cv::LineTypes line_type) {
+    double delta_x = std::abs(p2.x - p1.x);
+    double delta_y = std::abs(p2.y - p1.y);
+
+    if (delta_y > delta_x) {
+        if (p2.x < p1.x) {
+            std::swap(p2, p1);
+        }
+
+        const double dy_dx = (p2.y - p1.y) / (p2.x - p1.x + 1e-6);
+
+        cv::Point p_begin = p1;
+        int i = 0;
+        while (p_begin.x < p2.x) {
+            double dx = 5.0;
+
+            double x1_end = p1.x + i * dx;
+            double y1_end = p1.y + i * dx * dy_dx;
+
+            cv::Point p_end(std::round(x1_end), std::round(y1_end));
+            cv::line(img, p_begin, p_end, color, line_width, line_type);
+
+            p_begin.x = x1_end + 0.5 * dx;
+            p_begin.y = y1_end + 0.5 * dx * dy_dx;
+
+            i++;
+        }
+    } else {
+        if (p2.y < p1.y) {
+            std::swap(p2, p1);
+        }
+
+        const double dx_dy = (p2.x - p1.x) / (p2.y - p1.y + 1e-6);
+
+        cv::Point p_begin = p1;
+
+        int i = 0;
+        while (p_begin.y < p2.y) {
+            double dy = 5.0;
+
+            double y1_end = p1.y + i * dy;
+            double x1_end = p1.x + i * dy * dx_dy;
+
+            cv::Point p_end(std::round(x1_end), std::round(y1_end));
+            cv::line(img, p_begin, p_end, color, line_width, line_type);
+
+            p_begin.y = y1_end + 0.5 * dy;
+            p_begin.x = x1_end + 0.5 * dy * dx_dy;
+
+            i++;
+        }
+    }
+}

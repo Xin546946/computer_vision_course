@@ -186,3 +186,6 @@ std::vector<cv::Point2i> non_maxinum_suppress(cv::Mat_<T> input, int win_size,
     }
     return maximum_pos;
 }
+
+void draw_dashed_line(cv::Mat img, cv::Point p1, cv::Point p2, cv::Scalar color, int line_width,
+                      cv::LineTypes line_type);
