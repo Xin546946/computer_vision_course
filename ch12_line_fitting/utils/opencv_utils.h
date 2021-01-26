@@ -179,6 +179,8 @@ std::vector<cv::Point2i> non_maxinum_suppress(cv::Mat_<T> input, int win_size,
             }
             if (local_max) {
                 maximum_pos.emplace_back(col, row);
+                put_val_around(std::numeric_limits<T>::min(), static_cast<cv::Mat>(input), col, row, win_size,
+                               win_size);
             }
         }
     }

@@ -15,12 +15,14 @@ struct LineParam {
 };
 
 /**
- * @brief Line detection using hough transformation
+ * @brief
  *
- * @param img
+ * @param [in] img
+ * @param [in] theta_resolution
+ * @param [in] rho_resoulution
  * @return std::vector<LineParam>
  */
-std::vector<LineParam> line_detection(cv::Mat img);
+std::vector<LineParam> line_detection(cv::Mat img, double theta_resolution = 1, double rho_resoulution = 1);
 
 /**
  * @brief draw line with line params on the img

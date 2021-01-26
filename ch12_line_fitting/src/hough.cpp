@@ -13,24 +13,28 @@ ______________________________________________________________________
 #include "hough.h"
 #include "opencv_utils.h"
 
+static constexpr double radian_per_grad = M_PI / 180.0;
 // rho [pixel], theta[grad]
 inline double compute_y(double x, double rho, double theta) {
-    theta *= M_PI / 180.0;
-    return (rho - x * std::cos(theta)) / std::sin(theta);
+    theta *= radian_per_grad;
+    return (rho - x * std::cos(theta)) / (std::sin(theta) + 1e-3);
+}
+
+inline double compute_x(double y, double rho, double theta) {
+    theta *= radian_per_grad;
+    return (rho - y * std::sin(theta)) / (std::cos(theta) + 1e-3);
 }
 
 inline double grad_to_radian(double grad) {
-    constexpr double radian_per_grad = M_PI / 180.0;
     return grad * radian_per_grad;
 }
 
 cv::Mat create_accumulator(double theta_reso, double rho_reso, double max_rho);
 
-void voting(cv::Mat img, cv::Mat accumulator);
-
+void voting(cv::Mat img, cv::Mat accumulator, double max_rho);
 void draw_line(cv::Mat img, const std::vector<LineParam>& line_param);
 
-std::vector<LineParam> line_detection(cv::Mat img) {
+std::vector<LineParam> line_detection(cv::Mat img, double theta_resolution, double rho_resoulution) {
     assert(img.type() == CV_8UC1);
     std::cout << "img.rows: " << img.rows << " "
               << "img.cols: " << img.cols << '\n';
@@ -41,17 +45,26 @@ std::vector<LineParam> line_detection(cv::Mat img) {
     cv::waitKey(0);
 
     double max_rho = std::sqrt(img.rows * img.rows + img.cols * img.cols);
-    double theta_reso = 1;
-    double rho_reso = 1;
-    cv::Mat accumulator = create_accumulator(theta_reso, rho_reso, max_rho);  // double
-    voting(img_canny, accumulator);
-    cv::Mat vis_accu = get_float_mat_vis_img(accumulator);
+    cv::Mat accumulator = create_accumulator(theta_resolution, rho_resoulution, max_rho);  // double
+    voting(img_canny, accumulator, max_rho);
+    cv::Mat vis_accu;
+    cv::normalize(accumulator, vis_accu, 0, 255, cv::NORM_MINMAX);
+
+    std::vector<cv::Point> max_pos = non_maxinum_suppress(static_cast<cv::Mat_<double>>(accumulator), 51, 101.0);
+    vis_accu.convertTo(vis_accu, CV_8UC1);
+    cv::cvtColor(vis_accu, vis_accu, cv::COLOR_GRAY2BGR);
+
+    for (auto param : max_pos) {
+        cv::drawMarker(vis_accu, param, cv::Scalar(0, 0, 255), cv::MARKER_CROSS);
+    }
+
+    // cv::resize(vis_accu, vis_accu, cv::Size(1000 * vis_accu.cols / vis_accu.rows, 1000));
     cv::imshow("accumulator", vis_accu);
     cv::waitKey(0);
-    std::vector<cv::Point> max_params = non_maxinum_suppress(static_cast<cv::Mat_<double>>(accumulator), 9, 15.0);
+
     std::vector<LineParam> line_param;
-    for (cv::Point param : max_params) {
-        line_param.emplace_back(param.y, param.x);
+    for (cv::Point pos : max_pos) {
+        line_param.emplace_back(pos.y * rho_resoulution, pos.x * theta_resolution);
     }
 
     return line_param;
@@ -64,13 +77,24 @@ void draw_line(cv::Mat img, const std::vector<LineParam>& line_param) {
     for (LineParam param : line_param) {
         std::cout << param.rho_ << " " << param.theta_ << '\n';
 
-        int x1 = -1;
-        int y1 = std::round(compute_y(x1, param.rho_, param.theta_));
+        int x1, x2, y1, y2;
 
-        int x2 = img.cols;
-        int y2 = std::round(compute_y(x2, param.rho_, param.theta_));
+        if ((param.theta_ < 45 && param.theta_ > 315) || (param.theta_ > 135 && param.theta_ < 225)) {
+            x1 = -1;
+            y1 = std::round(compute_y(x1, param.rho_, param.theta_));
 
-        cv::line(vis, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(0, 255, 0));
+            x2 = img.cols;
+            y2 = std::round(compute_y(x2, param.rho_, param.theta_));
+        } else {
+            y1 = -1;
+            x1 = std::round(compute_x(y1, param.rho_, param.theta_));
+
+            y2 = img.rows;
+            x2 = std::round(compute_x(y2, param.rho_, param.theta_));
+        }
+        std::cout << " x1 , y1 :" << x1 << " ," << y1 << '\n';
+        std::cout << " x2 , y2 :" << x2 << " ," << y2 << '\n';
+        cv::line(vis, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(0, 255, 0), 1, cv::LINE_AA);
     }
     cv::imshow("Line detection", vis);
     cv::waitKey(0);
@@ -78,17 +102,15 @@ void draw_line(cv::Mat img, const std::vector<LineParam>& line_param) {
 
 cv::Mat create_accumulator(double theta_reso, double rho_reso, double max_rho) {
     int rows = std::ceil(max_rho / rho_reso);
-    int cols = std::ceil(180.0 / theta_reso);
+    int cols = std::ceil(359.0 / theta_reso);
     std::cout << "rows: " << rows << " "
               << "cols: " << cols << '\n';
     return cv::Mat::zeros(rows, cols, CV_64FC1);
 }
 
-void voting(cv::Mat img, cv::Mat accumulator) {
-    double max_rho = std::sqrt(img.rows * img.rows + img.cols * img.cols);
-
+void voting(cv::Mat img, cv::Mat accumulator, double max_rho) {
     double pixel_per_row = max_rho / accumulator.rows;
-    double grad_per_col = 180.0 / accumulator.cols;
+    double grad_per_col = 359.0 / accumulator.cols;
 
     for (int r = 0; r < img.rows; r++) {
         for (int c = 0; c < img.cols; c++) {
@@ -97,13 +119,15 @@ void voting(cv::Mat img, cv::Mat accumulator) {
                     double theta_in_grad = col * grad_per_col;
                     double theta_in_radians = grad_to_radian(theta_in_grad);
 
-                    double rho = std::abs(c * std::cos(theta_in_radians) + r * std::sin(theta_in_radians));
+                    double rho = c * std::cos(theta_in_radians) + r * std::sin(theta_in_radians);
+                    if (rho < 0) continue;
 
                     int row = std::round(rho / pixel_per_row);
+
                     accumulator.at<double>(row, col)++;
                 }
             }
         }
     }
-    cv::GaussianBlur(accumulator, accumulator, cv::Size(3, 3), 3.0, 3.0);
+    // cv::GaussianBlur(accumulator, accumulator, cv::Size(5, 5), 5.0, 5.0);
 }
