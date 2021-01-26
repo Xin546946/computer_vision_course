@@ -18,11 +18,17 @@ Visualizer::Visualizer(double x_min, double x_max, double y_min, double y_max) :
     int row_x_axis = -up_left_[1];
     int col_y_axis = -up_left_[0];
 
-    cv::arrowedLine(board_, cv::Point(0, row_x_axis), cv::Point(board_.cols - 1, row_x_axis), cv::Scalar(0, 255, 255),
-                    2, cv::LINE_AA);
+    cv::arrowedLine(board_, cv::Point(0, row_x_axis), cv::Point(board_.cols - 5, row_x_axis), cv::Scalar(0, 0, 0), 1,
+                    cv::LINE_AA, 0, 0.05);
 
-    cv::arrowedLine(board_, cv::Point(col_y_axis, 0), cv::Point(col_y_axis, board_.rows - 1), cv::Scalar(0, 255, 255),
-                    2, cv::LINE_AA);
+    cv::arrowedLine(board_, cv::Point(col_y_axis, 0), cv::Point(col_y_axis, board_.rows - 5), cv::Scalar(0, 0, 0), 1,
+                    cv::LINE_AA, 0, 0.05);
+
+    cv::putText(board_, "x", cv::Point(board_.cols - 20, row_x_axis + 20), cv::FONT_HERSHEY_DUPLEX, 1.0,
+                cv::Scalar(0, 0, 0), 1, cv::LINE_AA);
+
+    cv::putText(board_, "y", cv::Point(col_y_axis + 10, board_.rows - 15), cv::FONT_HERSHEY_DUPLEX, 1.0,
+                cv::Scalar(0, 0, 0), 1, cv::LINE_AA);
 }
 
 void Visualizer::add_point(double x, double y, bool is_inlier) {
@@ -52,13 +58,13 @@ void Visualizer::add_line(double a, double b, bool draw_thresh_line, double thre
     y1 -= up_left_[1];
     y2 -= up_left_[1];
 
-    cv::line(board_, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(255, 0, 0), 2, cv::LINE_AA);
+    cv::line(board_, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(255, 0, 0), 1, cv::LINE_AA);
 
     if (draw_thresh_line) {
-        cv::Scalar color(50, 50, 50);
+        cv::Scalar color(100, 100, 100);
 
-        draw_dashed_line(board_, cv::Point(x1, y1 + threshold), cv::Point(x2, y2 + threshold), color, 2, cv::LINE_AA);
-        draw_dashed_line(board_, cv::Point(x1, y1 - threshold), cv::Point(x2, y2 - threshold), color, 2, cv::LINE_AA);
+        draw_dashed_line(board_, cv::Point(x1, y1 + threshold), cv::Point(x2, y2 + threshold), color, 1, cv::LINE_AA);
+        draw_dashed_line(board_, cv::Point(x1, y1 - threshold), cv::Point(x2, y2 - threshold), color, 1, cv::LINE_AA);
     }
 }
 
