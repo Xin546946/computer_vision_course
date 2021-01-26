@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/test/test_hough",
+            "program": "${workspaceFolder}/build/test/test_ransac",
             "args": ["${workspaceFolder}/img/rec.png"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
