@@ -1,5 +1,6 @@
 #include "math_utils.h"
 #include "opencv_utils.h"
+#include "visualizer.h"
 #include <array>
 #include <iostream>
 #include <limits>
@@ -23,7 +24,12 @@ struct DataSet2D {
 
 DataSet2D generate_data_set_2d(int num_data, double a, double b, double std_dev, int num_outlier);
 int main(int argc, char** argv) {
-    DataSet2D data_set = generate_data_set_2d(10, 0.0, 5.0, 0.01, 3);
+    DataSet2D data_set = generate_data_set_2d(10, 1.0, 5.0, 0.01, 3);
+    Visualizer vis(100, 100);
+    for (auto point : data_set.points_) {
+        vis.add_point(point, 1);
+    }
+    vis.show(0);
 
     return 0;
 }
@@ -72,8 +78,8 @@ DataSet2D generate_data_set_2d(int num_data, double a, double b, double std_dev,
     }
     std::cout << '\n';
     std::cout << "Min x: " << data_set.min_x_ << '\n';
-    std::cout << "Min y: " << data_set.min_y_ << '\n';
     std::cout << "Max x: " << data_set.max_x_ << '\n';
+    std::cout << "Min y: " << data_set.min_y_ << '\n';
     std::cout << "Max y: " << data_set.max_y_ << '\n';
 
     for (auto point : data_set.points_) {
