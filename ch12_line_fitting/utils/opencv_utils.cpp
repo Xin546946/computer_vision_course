@@ -129,11 +129,11 @@ void draw_dashed_line(cv::Mat img, cv::Point point1, cv::Point point2, cv::Scala
     const double slope = (p2[dim2] - p1[dim2]) / (p2[dim1] - p1[dim1] + 1e-6);
 
     cv::Vec2d begin = p1;
+    cv::Vec2d end;
     int i = 0;
+
     while (begin[dim1] < p2[dim1]) {
         double d = 5.0;
-
-        cv::Vec2d end;
 
         end[dim1] = p1[dim1] + i * d;
         end[dim2] = p1[dim2] + i * d * slope;
