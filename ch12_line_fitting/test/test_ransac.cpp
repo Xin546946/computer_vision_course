@@ -79,6 +79,7 @@ std::vector<cv::Point2d> generate_2dtest_data(int num_data, double a, double b, 
     std::random_device rd{};
     std::mt19937 gen{rd()};
     std::vector<cv::Point2d> points(num_data);
+
     for (int i = 0; i < num_data; i++) {
         double y = std::normal_distribution<double>(a * i + b, std_dev)(gen);
         points[i].x = i;

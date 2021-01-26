@@ -18,7 +18,7 @@ void Visualizer::add_point(const cv::Point2d& point, bool is_inlier) {
     cv::circle(board_, point, 1, color, 2, cv::LINE_AA);
 }
 
-void Visualizer::add_line(double a, double b, bool draw_thresh_line = false, double threshold = 0.0) {
+void Visualizer::add_line(double a, double b, bool draw_thresh_line, double threshold) {
     int x1, x2, y1, y2;
 
     if (a < 1 && a > -1) {

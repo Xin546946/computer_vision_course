@@ -111,57 +111,41 @@ cv::Mat get_gaussian_kernel(int size, double sigma) {
 // cv::Mat get_sub_image(cv::Mat img, BoundingBox bbox) {
 //     return get_sub_image_around(img, bbox.center().x, bbox.center().y, bbox.width(), bbox.height());
 // }
-void draw_dashed_line(cv::Mat img, cv::Point p1, cv::Point p2, cv::Scalar color, int line_width,
+void draw_dashed_line(cv::Mat img, cv::Point point1, cv::Point point2, cv::Scalar color, int line_width,
                       cv::LineTypes line_type) {
-    double delta_x = std::abs(p2.x - p1.x);
-    double delta_y = std::abs(p2.y - p1.y);
+    double delta_x = std::abs(point1.x - point2.x);
+    double delta_y = std::abs(point1.y - point2.y);
 
-    if (delta_y > delta_x) {
-        if (p2.x < p1.x) {
-            std::swap(p2, p1);
-        }
+    cv::Vec2i p1 = cv::Mat(point1);
+    cv::Vec2i p2 = cv::Mat(point2);
 
-        const double dy_dx = (p2.y - p1.y) / (p2.x - p1.x + 1e-6);
+    int dim1 = (delta_y < delta_x) ? 0 : 1;
+    int dim2 = 1 - dim1;
 
-        cv::Point p_begin = p1;
-        int i = 0;
-        while (p_begin.x < p2.x) {
-            double dx = 5.0;
+    if (p2[dim1] < p1[dim1]) {
+        std::swap(p2, p1);
+    }
 
-            double x1_end = p1.x + i * dx;
-            double y1_end = p1.y + i * dx * dy_dx;
+    const double slope = (p2[dim2] - p1[dim2]) / (p2[dim1] - p1[dim1] + 1e-6);
 
-            cv::Point p_end(std::round(x1_end), std::round(y1_end));
-            cv::line(img, p_begin, p_end, color, line_width, line_type);
+    cv::Vec2d begin = p1;
+    int i = 0;
+    while (begin[dim1] < p2[dim1]) {
+        double d = 5.0;
 
-            p_begin.x = x1_end + 0.5 * dx;
-            p_begin.y = y1_end + 0.5 * dx * dy_dx;
+        cv::Vec2d end;
 
-            i++;
-        }
-    } else {
-        if (p2.y < p1.y) {
-            std::swap(p2, p1);
-        }
+        end[dim1] = p1[dim1] + i * d;
+        end[dim2] = p1[dim2] + i * d * slope;
 
-        const double dx_dy = (p2.x - p1.x) / (p2.y - p1.y + 1e-6);
+        cv::Point p_begin(std::round(begin[0]), std::round(begin[1]));
+        cv::Point p_end(std::round(end[0]), std::round(end[1]));
 
-        cv::Point p_begin = p1;
+        cv::line(img, p_begin, p_end, color, line_width, line_type);
 
-        int i = 0;
-        while (p_begin.y < p2.y) {
-            double dy = 5.0;
+        begin[dim1] = end[dim1] + 0.5 * d;
+        begin[dim2] = end[dim2] + 0.5 * d * slope;
 
-            double y1_end = p1.y + i * dy;
-            double x1_end = p1.x + i * dy * dx_dy;
-
-            cv::Point p_end(std::round(x1_end), std::round(y1_end));
-            cv::line(img, p_begin, p_end, color, line_width, line_type);
-
-            p_begin.y = y1_end + 0.5 * dy;
-            p_begin.x = x1_end + 0.5 * dy * dx_dy;
-
-            i++;
-        }
+        i++;
     }
 }
