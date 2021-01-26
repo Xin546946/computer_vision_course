@@ -6,6 +6,26 @@
 #include <random>
 #include <vector>
 
+struct DataSet2D {
+    DataSet2D(std::vector<cv::Point2d> points)
+        : points_(points), num_(points_.size()), is_inlier_(points_.size(), true) {
+    }
+
+    std::vector<cv::Point2d> points_;
+
+    int num_;
+
+    std::vector<bool> is_inlier_;
+
+    double max_x_ = std::numeric_limits<double>::max();
+    double max_y_ = std::numeric_limits<double>::max();
+    double min_x_ = std::numeric_limits<double>::min();
+    double min_y_ = std::numeric_limits<double>::min();
+};
+
+DataSet2D generate_data_set_2d(int num_data, double a, double b, double std_dev, int num_outlier,
+                               bool print_info = true);
+
 template <typename T>
 T mean(const std::vector<T>& vec) {
     assert(!vec.empty());
