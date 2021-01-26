@@ -7,6 +7,8 @@
 int main(int argc, char** argv) {
     Visualizer vis(-100, 100, -100, 100);
     vis.add_point(-20, 20, false);
+    vis.add_point(50, 50, true);
+
     vis.add_line(1, 10, true, 10);
     vis.show(0);
 
