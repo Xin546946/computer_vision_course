@@ -1,5 +1,6 @@
 #include "math_utils.h"
 #include "opencv_utils.h"
+#include "ransac.h"
 #include "visualizer.h"
 #include <array>
 #include <iostream>
@@ -19,8 +20,11 @@ int main(int argc, char** argv) {
     for (int i = 0; i < data_set.points_.size(); i++) {
         vis.add_point(data_set.points_[i].x, data_set.points_[i].y, data_set.is_inlier_[i]);
     }
+    // vis.add_line(1.0, 0.0);
+
+    LineParam line_param = line_fitting(data_set.points_);
+    vis.add_line(line_param.a_, line_param.b_);
 
     vis.show(0);
-
     return 0;
 }
