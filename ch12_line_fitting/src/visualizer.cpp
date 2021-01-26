@@ -13,12 +13,12 @@ inline double compute_y(double a, double b, double x) {
 Visualizer::Visualizer(int height, int width) : board_(height, width, CV_8UC3, cv::Scalar(255, 255, 255)) {
 }
 
-void Visualizer::draw_point(const cv::Point2d& point, bool is_inlier) {
+void Visualizer::add_point(const cv::Point2d& point, bool is_inlier) {
     cv::Scalar color = (is_inlier) ? cv::Scalar(0, 255, 0) : cv::Scalar(0, 0, 255);
     cv::circle(board_, point, 1, color, 2, cv::LINE_AA);
 }
 
-void Visualizer::draw_line(double a, double b, bool draw_thresh_line = false, double threshold = 0.0) {
+void Visualizer::add_line(double a, double b, bool draw_thresh_line = false, double threshold = 0.0) {
     int x1, x2, y1, y2;
 
     if (a < 1 && a > -1) {
