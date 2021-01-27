@@ -1,7 +1,7 @@
 #include "ransac.h"
 #include "math_utils.h"
+#include <iostream>
 #include <vector>
-
 std::pair<cv::Point2d, cv::Point2d> pick_points(std::vector<cv::Point2d> points, int num) {
     std::vector<int> points_id;
 
@@ -28,7 +28,7 @@ LineParam fit_line(cv::Point2d point_front, cv::Point2d point_back) {
 
 int compute_num_outliers(LineParam line_param, const std::vector<cv::Point2d>& datas, double threshold) {
     int num_outlier = 0;
-    double den_line = std::sqrt(line_param.a_ * line_param.a_ + line_param.b_ * line_param.b_) + 1e-6;
+    double den_line = std::sqrt(line_param.a_ * line_param.a_ + 1.0) + 1e-6;
     for (cv::Point2d data : datas) {
         double dist = std::abs(line_param.a_ * data.x + line_param.b_ - data.y) / den_line;
         if (dist > threshold) {
@@ -40,11 +40,13 @@ int compute_num_outliers(LineParam line_param, const std::vector<cv::Point2d>& d
 
 LineParam line_fitting(const std::vector<cv::Point2d>& points) {
     std::vector<cv::Point2d> datas = points;
-
-    int max_iter = 1e4;
-
+    double procent_inlier_data_prior = 0.8;
+    double n = 2.0;
+    double success_rate = 0.9999999999;
+    int max_iter = std::log(1.0 - success_rate) / std::log(1.0 - std::pow(procent_inlier_data_prior, n));
+    std::cout << "Max iter: " << max_iter << '\n';
     LineParam fitted_line;
-    int min_num_outlier = points.size();
+    int min_num_outlier = datas.size();
     for (int it = 0; it < max_iter; it++) {
         std::pair<cv::Point2d, cv::Point2d> line_points = pick_points(points, 2);
         LineParam line_param = fit_line(line_points.first, line_points.second);
@@ -55,6 +57,8 @@ LineParam line_fitting(const std::vector<cv::Point2d>& points) {
         if (num_outliers < min_num_outlier) {
             min_num_outlier = num_outliers;
             fitted_line = line_param;
+            std::cout << "Num of outliers: " << num_outliers << '\n';
+            std::cout << "Line Param: " << line_param.a_ << " " << line_param.b_ << '\n';
         }
     }
     return fitted_line;

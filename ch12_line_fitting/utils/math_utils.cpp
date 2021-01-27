@@ -27,7 +27,7 @@ DataSet2D generate_data_set_2d(int num_data, double a, double b, double std_dev,
     }
     if (num_outlier) {
         std::vector<int> outlier_ids = generate_random_data(num_outlier, 0, num_data - 1);
-        std::cout << " Outlier id: ";
+        // std::cout << " Outlier id: ";
         for (int id : outlier_ids) {
             std::cout << id << " ";
             data_set.is_inlier_[id] = false;
