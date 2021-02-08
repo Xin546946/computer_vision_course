@@ -1,3 +1,15 @@
+/**
+______________________________________________________________________
+*********************************************************************
+* @brief This file is developed for the course of ShenLan XueYuan:
+* Fundamental implementations of Computer Vision
+* all rights preserved
+* @author Xin Jin, Zhaoran Wu
+* @contact: xinjin1109@gmail.com, zhaoran.wu1@gmail.com
+*
+______________________________________________________________________
+*********************************************************************
+**/
 #include "math_utils.h"
 #include "opencv_utils.h"
 #include "ransac.cpp"
@@ -26,7 +38,7 @@ int main(int argc, char** argv) {
     // vis.add_line(1.0, 0.0);
 
     LineParam line_param = line_fitting(data_set.points_);
-    vis.add_line(line_param.a_, line_param.b_);
+    vis.add_line(line_param.a_, line_param.b_, true, 10.0);
 
     vis.show(0);
     return 0;
