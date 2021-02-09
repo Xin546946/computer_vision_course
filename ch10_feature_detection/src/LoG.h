@@ -86,7 +86,7 @@ struct ParamThreshold {
     ParamThreshold(int threshold, int max_val, int threshold_type)
         : threshold_(threshold), max_val_(max_val), threshold_type_(threshold_type) {
     }
-    int threshold_ = 97;
+    int threshold_ = 80;
     int max_val_ = 255;
     int threshold_type_ = cv::THRESH_BINARY;
 };

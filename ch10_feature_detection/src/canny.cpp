@@ -15,11 +15,8 @@ void Canny::run() {
     cv::imshow("amplitude", vis);
     cv::waitKey(0);
 
-    // non-maxima-suppression
+    // gradient non-maxima-suppression
     int nms_size = 10;
-    // int border = (nms_size - 1) / 2;
-    // cv::copyMakeBorder(img_64f_, img_64f_, border, border, border, border, cv::BORDER_CONSTANT, 200);
-    // todo nms should be along the gradient
     cv::Mat img_grad_x_normalized(img_grad_x.mul(1 / amplitudes));
     cv::Mat img_grad_y_normalized(img_grad_y.mul(1 / amplitudes));
     int max, r_grad, c_grad;
@@ -45,7 +42,7 @@ void Canny::run() {
     cv::waitKey(0);
 
     cv::Mat img_threshold_1, img_threshold_2;
-    double threshold_1(0.03), threshold_2(0.3);
+    double threshold_1(0.08), threshold_2(0.26);
     cv::threshold(amplitudes, img_threshold_1, threshold_1, 1, cv::THRESH_BINARY);
     cv::threshold(amplitudes, img_threshold_2, threshold_2, 1, cv::THRESH_BINARY);
     cv::imshow("threshold 1", img_threshold_1);
