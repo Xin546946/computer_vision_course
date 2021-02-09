@@ -74,20 +74,6 @@ LineParam line_fitting(const std::vector<cv::Point2d>& points) {
     int max_iter = std::log(1.0 - success_rate) / std::log(1.0 - std::pow(procent_inlier_data_prior, n));
     std::cout << "Max iter: " << max_iter << '\n';
     LineParam fitted_line;
-    int min_num_outlier = datas.size();
-    for (int it = 0; it < max_iter; it++) {
-        std::pair<cv::Point2d, cv::Point2d> line_points = pick_points(points, 2);
-        LineParam line_param = fit_line(line_points.first, line_points.second);
-
-        double threshold = 5.0;
-        int num_outliers = compute_num_outliers(line_param, datas, threshold);
-
-        if (num_outliers < min_num_outlier) {
-            min_num_outlier = num_outliers;
-            fitted_line = line_param;
-            std::cout << "Num of outliers: " << num_outliers << '\n';
-            std::cout << "Line Param: " << line_param.a_ << " " << line_param.b_ << '\n';
-        }
-    }
+    // todo implement how to fit a line given points by using RANSAC
     return fitted_line;
 }

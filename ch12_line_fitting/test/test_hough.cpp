@@ -20,14 +20,6 @@ ______________________________________________________________________
 int main(int argc, char** argv) {
     cv::Mat img = read_img(argv[1], cv::IMREAD_GRAYSCALE);
     cv::GaussianBlur(img, img, cv::Size(5, 5), 5, 5);
-    // cv::Mat img(cv::Mat::ones(100, 100, CV_8UC1) * 255);
-    //
-    // cv::line(img, cv::Point(30, 0), cv::Point(60, 100), cv::Scalar(0, 0, 0), 1, cv::LINE_AA);
-    //// cv::line(img, cv::Point(10, 0), cv::Point(11, 100), cv::Scalar(0, 0, 0), 2);
-    //
-    // img.convertTo(img, CV_8UC1);
-    // cv::imshow("xx", img);
-    // cv::waitKey(0);
 
     std::vector<LineParam> line_param = line_detection(img, 1, 1);
     draw_line(img, line_param);
