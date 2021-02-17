@@ -105,16 +105,32 @@ void draw_line(cv::Mat img, const std::vector<LineParam>& line_param) {
 }
 
 cv::Mat create_accumulator(double theta_reso, double rho_reso, double max_rho) {
-    // todo implement how to create accumulator
+    int rows = std::ceil(max_rho / rho_reso);
+    int cols = std::ceil(359.0 / theta_reso);
+    std::cout << "rows: " << rows << " "
+              << "cols: " << cols << '\n';
+    return cv::Mat::zeros(rows, cols, CV_64FC1);
 }
 
 void voting(cv::Mat img, cv::Mat accumulator, double max_rho) {
     double pixel_per_row = max_rho / accumulator.rows;
     double grad_per_col = 359.0 / accumulator.cols;
 
-    // todo implement voting function
-    // For each image edge(r,c)
-    // For each element in accumulator(row,col)
-    // if (row,col) lies on the line
-    // increment accumulator(row,col)
+    for (int r = 0; r < img.rows; r++) {
+        for (int c = 0; c < img.cols; c++) {
+            if (img.at<uchar>(r, c)) {
+                for (int col = 0; col < accumulator.cols; col++) {
+                    double theta_in_grad = col * grad_per_col;
+                    double theta_in_radians = grad_to_radian(theta_in_grad);
+
+                    double rho = c * std::cos(theta_in_radians) + r * std::sin(theta_in_radians);
+                    if (rho < 0) continue;
+
+                    int row = std::round(rho / pixel_per_row);
+
+                    accumulator.at<double>(row, col)++;
+                }
+            }
+        }
+    }
 }
