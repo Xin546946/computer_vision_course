@@ -27,7 +27,7 @@ void LoG::run() {
     cv::Laplacian(result_gray, lap_dist, param_laplacian_.ddepth_, param_laplacian_.kernel_size_,
                   param_laplacian_.scale_, param_laplacian_.delta_, cv::BORDER_DEFAULT);
     // cv::Laplacian(result_gray, lap_dist, CV_16S, 3, 1, 0, cv::BORDER_DEFAULT);
-    cv::convertScaleAbs(lap_dist, lap_dist);
+    // cv::convertScaleAbs(lap_dist, lap_dist);
     lap_dist.convertTo(lap_dist, CV_8UC1);
 
     // cv::Mat vis_lap = get_float_mat_vis_img(lap_dist);
@@ -35,7 +35,7 @@ void LoG::run() {
     cv::waitKey(0);
     // step 3: threshold for binary image
     cv::Mat thres_dist;
-    cv::threshold(lap_dist, thres_dist, param_thres_.threshold_, param_thres_.max_val_, param_thres_.threshold_type_);
+    cv::threshold(lap_dist, thres_dist, 0.0, param_thres_.max_val_, param_thres_.threshold_type_);
 
     cv::imshow("threshold to binary img", thres_dist);
     cv::waitKey(0);
